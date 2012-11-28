@@ -9,17 +9,17 @@ import java.math.BigInteger;
 
 import org.apache.commons.io.FileUtils;
 
-import com.gkd.PeterBochsDebugger.OSType;
+import com.gkd.GeneralKernelDebugger.OSType;
 import com.peterswing.CommonLib;
 
 public class Disassemble {
 	public static String disassemble(BigInteger address, int bits) {
 		try {
-			int bytes[] = PeterBochsCommonLib.getMemoryFromBochs(address, 100);
+			int bytes[] = GKDCommonLib.getMemoryFromBochs(address, 100);
 			FileUtils.writeByteArrayToFile(new File("temp"), CommonLib.intArrayToByteArray(bytes));
 
 			ProcessBuilder pb;
-			if (PeterBochsDebugger.os == OSType.mac || PeterBochsDebugger.os == OSType.linux) {
+			if (GeneralKernelDebugger.os == OSType.mac || GeneralKernelDebugger.os == OSType.linux) {
 				pb = new ProcessBuilder("ndisasm", "-b " + bits, "temp");
 			} else {
 				pb = new ProcessBuilder("ndisasm.exe", "-b " + bits, "temp");

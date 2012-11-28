@@ -617,7 +617,7 @@ public class Setting {
 			return setting;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(PeterBochsDebugger.instance, "Loading peter-bochs.xml error.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(GeneralKernelDebugger.instance, "Loading peter-bochs.xml error.", "Error", JOptionPane.ERROR_MESSAGE);
 			new File("peter-bochs.xml").delete();
 			return new Setting();
 		}

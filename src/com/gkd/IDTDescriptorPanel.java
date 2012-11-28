@@ -38,11 +38,11 @@ public class IDTDescriptorPanel extends JPanel {
 	private int b[] = new int[8];
 	private long value;
 	private long bit[] = new long[64];
-	private PeterBochsDebugger peterBochsDebugger;
+	private GeneralKernelDebugger peterBochsDebugger;
 	private BigInteger idtAddress;
 	private JScrollPane jScrollPane2;
 
-	public IDTDescriptorPanel(PeterBochsDebugger peterBochsDebugger, BigInteger idtAddress, int idtNo) {
+	public IDTDescriptorPanel(GeneralKernelDebugger peterBochsDebugger, BigInteger idtAddress, int idtNo) {
 		this.peterBochsDebugger = peterBochsDebugger;
 		this.idtAddress = idtAddress;
 		this.idtNo = idtNo;
@@ -111,9 +111,9 @@ public class IDTDescriptorPanel extends JPanel {
 			//			String idtNoHex = String.format("0x%02x", idtNo);
 			//			result = PeterBochsDebugger.commandReceiver.getCommandResult("IDT[" + idtNoHex + "]");
 
-			PeterBochsDebugger.commandReceiver.clearBuffer();
-			PeterBochsDebugger.sendCommand("x /8bx " + String.format("0x%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
-			result = PeterBochsDebugger.commandReceiver.getCommandResult(String.format("%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
+			GeneralKernelDebugger.commandReceiver.clearBuffer();
+			GeneralKernelDebugger.sendCommand("x /8bx " + String.format("0x%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
+			result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
 			System.out.println("idtNo=" + idtNo + " , idtAddress+" + idtAddress + " , " + (idtAddress.add (BigInteger.valueOf(idtNo * 8))));
 			System.out.println(result);
 			String lines[] = result.split("\n");
@@ -218,7 +218,7 @@ public class IDTDescriptorPanel extends JPanel {
 			if (limit > 1000) {
 				limit = 1000;
 			}
-			int bytes[] = PeterBochsDebugger.getLinearMemory(base, (int) (limit + 1));
+			int bytes[] = GeneralKernelDebugger.getLinearMemory(base, (int) (limit + 1));
 
 			for (int x = 0; x < limit; x += 8) {
 				long value = CommonLib.getLong(bytes, x);

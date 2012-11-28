@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import org.apache.commons.io.FileUtils;
 
-import com.gkd.PeterBochsCommonLib;
+import com.gkd.GKDCommonLib;
 import com.peterswing.CommonLib;
 
 public class ElfUtil {
@@ -66,7 +66,7 @@ public class ElfUtil {
 				section.put("No.", x);
 				long sh_name = CommonLib.getInt(bytes, offset + 0);
 				try {
-					section.put("sh_name", PeterBochsCommonLib.copyToStringUntilZero(bytes, (int) (sectionNameOffset + sh_name)));
+					section.put("sh_name", GKDCommonLib.copyToStringUntilZero(bytes, (int) (sectionNameOffset + sh_name)));
 				} catch (Exception ex) {
 					section.put("sh_name", sh_name + "= ERROR");
 				}
@@ -218,9 +218,9 @@ public class ElfUtil {
 					long sh_name = CommonLib.getInt(bytes, offset + 0);
 
 					if (symtabTables.get(x).get("name").equals(".symtab")) {
-						symbolTable.put("st_name", PeterBochsCommonLib.copyToStringUntilZero(bytes, (int) (strtabOffset + sh_name)));
+						symbolTable.put("st_name", GKDCommonLib.copyToStringUntilZero(bytes, (int) (strtabOffset + sh_name)));
 					} else {
-						symbolTable.put("st_name", PeterBochsCommonLib.copyToStringUntilZero(bytes, (int) (dynstrOffset + sh_name)));
+						symbolTable.put("st_name", GKDCommonLib.copyToStringUntilZero(bytes, (int) (dynstrOffset + sh_name)));
 					}
 					symbolTable.put("st_value", CommonLib.getInt(bytes, offset + 4));
 					symbolTable.put("st_size", CommonLib.getInt(bytes, offset + 8));
@@ -258,9 +258,9 @@ public class ElfUtil {
 					long type = CommonLib.getInt(bytes, tempOffset);
 					noteSectionMap.put("type", type);
 					tempOffset += 4;
-					noteSectionMap.put("name", PeterBochsCommonLib.convertToString(Arrays.copyOfRange(bytes, tempOffset, (int) (tempOffset + namesz))));
+					noteSectionMap.put("name", GKDCommonLib.convertToString(Arrays.copyOfRange(bytes, tempOffset, (int) (tempOffset + namesz))));
 					tempOffset += namesz + 1;
-					noteSectionMap.put("desc", PeterBochsCommonLib.convertToString(Arrays.copyOfRange(bytes, tempOffset, (int) (tempOffset + descsz))));
+					noteSectionMap.put("desc", GKDCommonLib.convertToString(Arrays.copyOfRange(bytes, tempOffset, (int) (tempOffset + descsz))));
 					tempOffset += descsz * 4;
 					v.add(noteSectionMap);
 					z++;

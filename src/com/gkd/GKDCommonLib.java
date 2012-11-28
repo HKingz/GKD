@@ -38,11 +38,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
 
-public class PeterBochsCommonLib {
+public class GKDCommonLib {
 	private final static int max_row_limit_in_xls = 1000000;
 	private final static short rowHeight = 250;
 
-	public PeterBochsCommonLib() {
+	public GKDCommonLib() {
 	}
 
 	public static void dumpByteArray(byte b[]) {
@@ -405,9 +405,9 @@ public class PeterBochsCommonLib {
 
 		BigInteger pdAddr = cr3.add(pdNo);
 		System.out.println("pdAddr=" + pdAddr.toString(16));
-		PeterBochsDebugger.commandReceiver.clearBuffer();
-		PeterBochsDebugger.sendCommand("xp /8bx " + pdAddr);
-		String result = PeterBochsDebugger.commandReceiver.getCommandResult(String.format("%08x", pdAddr));
+		GeneralKernelDebugger.commandReceiver.clearBuffer();
+		GeneralKernelDebugger.sendCommand("xp /8bx " + pdAddr);
+		String result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", pdAddr));
 		int bytes[] = new int[8];
 		String[] b = result.replaceFirst("^.*:", "").split("\t");
 		for (int y = 1; y <= 8; y++) {
@@ -418,9 +418,9 @@ public class PeterBochsCommonLib {
 
 		BigInteger ptAddr = pde.shiftLeft(10).add(ptNo);
 		System.out.println("ptAddr=" + ptAddr.toString(16));
-		PeterBochsDebugger.commandReceiver.clearBuffer();
-		PeterBochsDebugger.sendCommand("xp /8bx " + ptAddr);
-		result = PeterBochsDebugger.commandReceiver.getCommandResult(String.format("%08x", ptAddr));
+		GeneralKernelDebugger.commandReceiver.clearBuffer();
+		GeneralKernelDebugger.sendCommand("xp /8bx " + ptAddr);
+		result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", ptAddr));
 		bytes = new int[8];
 		b = result.replaceFirst("^.*:", "").split("\t");
 		for (int y = 1; y <= 8; y++) {
@@ -433,9 +433,9 @@ public class PeterBochsCommonLib {
 	}
 
 	public static long getLongFromBochs(BigInteger address) {
-		PeterBochsDebugger.commandReceiver.clearBuffer();
-		PeterBochsDebugger.sendCommand("xp /8bx " + address);
-		String result = PeterBochsDebugger.commandReceiver.getCommandResult(String.format("%08x", address));
+		GeneralKernelDebugger.commandReceiver.clearBuffer();
+		GeneralKernelDebugger.sendCommand("xp /8bx " + address);
+		String result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", address));
 		int bytes[] = new int[8];
 		String[] b = result.replaceFirst("^.*:", "").split("\t");
 		for (int y = 1; y <= 8; y++) {
@@ -447,8 +447,8 @@ public class PeterBochsCommonLib {
 	public static int[] getMemoryFromBochs(BigInteger address, int totalByte) {
 		int bytes[] = new int[totalByte];
 
-		PeterBochsDebugger.commandReceiver.clearBuffer();
-		PeterBochsDebugger.sendCommand("xp /" + totalByte + "bx " + address);
+		GeneralKernelDebugger.commandReceiver.clearBuffer();
+		GeneralKernelDebugger.sendCommand("xp /" + totalByte + "bx " + address);
 
 		if (totalByte > 0) {
 			float totalByte2 = totalByte - 1;
@@ -462,7 +462,7 @@ public class PeterBochsCommonLib {
 			realEndAddressStr = String.format("%08x", realEndAddress);
 			// System.out.println(realStartAddressStr);
 			// System.out.println(realEndAddressStr);
-			String result = PeterBochsDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			// System.out.println(result);
 			if (result != null) {
 				String[] lines = result.split("\n");

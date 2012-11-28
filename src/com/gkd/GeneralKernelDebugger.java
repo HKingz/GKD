@@ -145,7 +145,7 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 @SuppressWarnings("serial")
-public class PeterBochsDebugger extends javax.swing.JFrame {
+public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JMenuItem aboutUsMenuItem;
 	private JPanel jPanel8;
 	private JDropDownButton stepBochsButton;
@@ -491,7 +491,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 	private boolean isUpdateBochsStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/peterbochs/images/ajax-loader.gif");
-	public static PeterBochsDebugger instance;
+	public static GeneralKernelDebugger instance;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
 			"Disp Enb Address", MyLanguage.getString("Hit") }) {
@@ -541,7 +541,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		if (os == OSType.mac) {
 			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
 			// System.setProperty("dock:name", "Your Application Name");
-			macApp.setDockIconImage(new ImageIcon(PeterBochsDebugger.class.getClassLoader().getResource("com/peterbochs/icons/peter.png")).getImage());
+			macApp.setDockIconImage(new ImageIcon(GeneralKernelDebugger.class.getClassLoader().getResource("com/peterbochs/icons/peter.png")).getImage());
 			// java.awt.PopupMenu menu = new java.awt.PopupMenu();
 			// menu.add(new MenuItem("test"));
 			// macApp.setDockMenu(menu);
@@ -557,8 +557,8 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		}
 
 		try {
-			if (PeterBochsDebugger.class.getProtectionDomain().getCodeSource().getLocation().getFile().endsWith(".jar")) {
-				JarFile jarFile = new JarFile(PeterBochsDebugger.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+			if (GeneralKernelDebugger.class.getProtectionDomain().getCodeSource().getLocation().getFile().endsWith(".jar")) {
+				JarFile jarFile = new JarFile(GeneralKernelDebugger.class.getProtectionDomain().getCodeSource().getLocation().getFile());
 				if (System.getProperty("os.name").toLowerCase().contains("linux")) {
 					if (System.getProperty("os.arch").contains("64")) {
 						if (Global.debug) {
@@ -663,8 +663,8 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				PeterBochsDebugger inst = new PeterBochsDebugger();
-				PeterBochsDebugger.instance = inst;
+				GeneralKernelDebugger inst = new GeneralKernelDebugger();
+				GeneralKernelDebugger.instance = inst;
 
 				new Thread("preventSetVisibleHang thread") {
 					public void run() {
@@ -693,7 +693,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		});
 	}
 
-	public PeterBochsDebugger() {
+	public GeneralKernelDebugger() {
 		super();
 
 		if (Global.debug) {
@@ -718,7 +718,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		initChineseFont();
 		new Thread("checkLatestVersion thread") {
 			public void run() {
-				HashMap<String, String> map = PeterBochsCommonLib.checkLatestVersion();
+				HashMap<String, String> map = GKDCommonLib.checkLatestVersion();
 				if (Global.debug) {
 					System.out.println("finished checkLatestVersion()");
 					System.out.println("checkLatestVersion()=" + map.get("latestVersion"));
@@ -3358,7 +3358,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 			if (!file.getName().toLowerCase().endsWith(".png")) {
 				file = new File(file.getAbsolutePath() + ".png");
 			}
-			if (!PeterBochsCommonLib.saveImage(jHexTable1, file)) {
+			if (!GKDCommonLib.saveImage(jHexTable1, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -4117,7 +4117,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(instructionTable, file)) {
+			if (!GKDCommonLib.saveImage(instructionTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -4162,7 +4162,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 				}
 
 				public void run() {
-					PeterBochsCommonLib.exportRegisterHistory(file, d);
+					GKDCommonLib.exportRegisterHistory(file, d);
 				}
 			}
 			d.thread = new MyThread(file);
@@ -4197,7 +4197,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 				if (!file.getName().toLowerCase().endsWith(".xls")) {
 					file = new File(file.getAbsolutePath() + ".xls");
 				}
-				PeterBochsCommonLib.exportTableModelToExcel(file, jHexTable1.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
+				GKDCommonLib.exportTableModelToExcel(file, jHexTable1.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
 			}
 		}
 	}
@@ -4230,7 +4230,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(this.jGDTTable, file)) {
+			if (!GKDCommonLib.saveImage(this.jGDTTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -4254,7 +4254,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			PeterBochsCommonLib.exportTableModelToExcel(file, this.jGDTTable.getModel(), "GDT");
+			GKDCommonLib.exportTableModelToExcel(file, this.jGDTTable.getModel(), "GDT");
 		}
 	}
 
@@ -4294,7 +4294,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			PeterBochsCommonLib.exportTableModelToExcel(file, this.jIDTTable.getModel(), "IDT");
+			GKDCommonLib.exportTableModelToExcel(file, this.jIDTTable.getModel(), "IDT");
 		}
 	}
 
@@ -4316,7 +4316,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(this.jIDTTable, file)) {
+			if (!GKDCommonLib.saveImage(this.jIDTTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -4374,7 +4374,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			PeterBochsCommonLib.exportTableModelToExcel(file, PeterBochsDebugger.instructionTable.getModel(), "instruction 0x"
+			GKDCommonLib.exportTableModelToExcel(file, GeneralKernelDebugger.instructionTable.getModel(), "instruction 0x"
 					+ this.jInstructionComboBox.getSelectedItem().toString());
 		}
 	}
@@ -4404,9 +4404,9 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 
 			class MyThread extends Thread {
 				File file;
-				PeterBochsDebugger peterBochsDebugger;
+				GeneralKernelDebugger peterBochsDebugger;
 
-				public MyThread(PeterBochsDebugger peterBochsDebugger, File file) {
+				public MyThread(GeneralKernelDebugger peterBochsDebugger, File file) {
 					this.peterBochsDebugger = peterBochsDebugger;
 					this.file = file;
 				}
@@ -4414,12 +4414,12 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 				public void run() {
 					XSSFWorkbook wb = new XSSFWorkbook();// Write the output to
 															// a file
-					PeterBochsCommonLib.exportRegisterHistory(wb, d);
-					PeterBochsCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jGDTTable.getModel(), "GDT", wb);
-					PeterBochsCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jIDTTable.getModel(), "IDT", wb);
-					PeterBochsCommonLib.exportTableModelToExcel(file, peterBochsDebugger.instructionTable.getModel(), "instruction 0x"
+					GKDCommonLib.exportRegisterHistory(wb, d);
+					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jGDTTable.getModel(), "GDT", wb);
+					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jIDTTable.getModel(), "IDT", wb);
+					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.instructionTable.getModel(), "instruction 0x"
 							+ peterBochsDebugger.jInstructionComboBox.getSelectedItem().toString(), wb);
-					PeterBochsCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jHexTable1.getModel(), jMemoryAddressComboBox.getSelectedItem().toString(), wb);
+					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jHexTable1.getModel(), jMemoryAddressComboBox.getSelectedItem().toString(), wb);
 					FileOutputStream fileOut;
 					try {
 						fileOut = new FileOutputStream(file);
@@ -5236,7 +5236,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(jSplitPane3, file)) {
+			if (!GKDCommonLib.saveImage(jSplitPane3, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -5474,7 +5474,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = PeterBochsCommonLib.getMemoryFromBochs(
+			int descriptor[] = GKDCommonLib.getMemoryFromBochs(
 					CommonLib.string2decimal(this.registerPanel.jGDTRTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
@@ -5483,7 +5483,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = PeterBochsCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
 					4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
@@ -5491,15 +5491,15 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2decimal("0xfffff000"));
-			int pteBytes[] = PeterBochsCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2decimal("0xfffff000"));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = PeterBochsCommonLib.getMemoryFromBochs(physicalAddress, 8);
-			model.bytes.add(PeterBochsCommonLib.convertToString(bytesAtPhysicalAddress));
+			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
 		} else if (jSearchAddressRadioButton2.isSelected()) {
@@ -5522,7 +5522,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = PeterBochsCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
 					4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
@@ -5530,15 +5530,15 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2decimal("0xfffff000"));
-			int pteBytes[] = PeterBochsCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2decimal("0xfffff000"));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = PeterBochsCommonLib.getMemoryFromBochs(physicalAddress, 8);
-			model.bytes.add(PeterBochsCommonLib.convertToString(bytesAtPhysicalAddress));
+			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
 		} else if (jSearchAddressRadioButton3.isSelected()) {
@@ -5585,7 +5585,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
-				BigInteger gdtBase = PeterBochsCommonLib.getPhysicalAddress(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()),
+				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()),
 						CommonLib.string2decimal(this.registerPanel.jGDTRTextField.getText()));
 				commandReceiver.clearBuffer();
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
@@ -6593,7 +6593,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			PeterBochsCommonLib.exportTableModelToExcel(file, this.jPageDirectoryTable.getModel(), this.jPageTableTable.getModel(), jMemoryAddressComboBox.getSelectedItem()
+			GKDCommonLib.exportTableModelToExcel(file, this.jPageDirectoryTable.getModel(), this.jPageTableTable.getModel(), jMemoryAddressComboBox.getSelectedItem()
 					.toString());
 		}
 	}
@@ -6603,7 +6603,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(jHistoryTable, file)) {
+			if (!GKDCommonLib.saveImage(jHistoryTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -6614,7 +6614,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(jAddressTranslateTable2, file)) {
+			if (!GKDCommonLib.saveImage(jAddressTranslateTable2, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -6625,7 +6625,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			PeterBochsCommonLib.exportTableModelToExcel(file, this.jAddressTranslateTable2.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, this.jAddressTranslateTable2.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -6748,7 +6748,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		if (diskPanel == null) {
 			diskPanel = new DiskPanel();
 			try {
-				String line = PeterBochsCommonLib.findLineInFile(new File(bochsrc), "ata0-master");
+				String line = GKDCommonLib.findLineInFile(new File(bochsrc), "ata0-master");
 				if (line != null) {
 					String strs[] = line.split(",");
 					for (String str : strs) {
@@ -6879,10 +6879,10 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 	private void jSetPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (jRegisterToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-			PeterBochsDebugger.sendCommand("pb " + model.getMemoryAddress(instructionTable.getSelectedRow()));
+			GeneralKernelDebugger.sendCommand("pb " + model.getMemoryAddress(instructionTable.getSelectedRow()));
 		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) sourceLevelDebugger.instructionTable.getModel();
-			PeterBochsDebugger.sendCommand("pb " + model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow()));
+			GeneralKernelDebugger.sendCommand("pb " + model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow()));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
@@ -6890,9 +6890,9 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 
 	private void jSetLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (jRegisterToggleButton.isSelected()) {
-			PeterBochsDebugger.sendCommand("lb " + PeterBochsDebugger.instructionTable.getValueAt(PeterBochsDebugger.instructionTable.getSelectedRow(), 1));
+			GeneralKernelDebugger.sendCommand("lb " + GeneralKernelDebugger.instructionTable.getValueAt(GeneralKernelDebugger.instructionTable.getSelectedRow(), 1));
 		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
-			PeterBochsDebugger.sendCommand("lb " + this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1));
+			GeneralKernelDebugger.sendCommand("lb " + this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
@@ -7016,12 +7016,12 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 
 	private void jMenuItem8ActionPerformed(ActionEvent evt) {
 		System.out.println(this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
-		PeterBochsDebugger.sendCommand("pb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
+		GeneralKernelDebugger.sendCommand("pb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
 		this.updateBreakpoint();
 	}
 
 	private void jMenuItem9ActionPerformed(ActionEvent evt) {
-		PeterBochsDebugger.sendCommand("lb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
+		GeneralKernelDebugger.sendCommand("lb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
 		this.updateBreakpoint();
 	}
 
@@ -7056,11 +7056,11 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 	}
 
 	public void jInstructionUpButtonActionPerformed(ActionEvent evt) {
-		if (PeterBochsDebugger.instructionTable.getRowCount() > 0) {
+		if (GeneralKernelDebugger.instructionTable.getRowCount() > 0) {
 			String firstAddress = "";
 			int x = 0;
 			do {
-				firstAddress = PeterBochsDebugger.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
+				firstAddress = GeneralKernelDebugger.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
 				x++;
 			} while (!CommonLib.isNumber(firstAddress));
 			firstAddress = CommonLib.string2decimal(firstAddress).subtract(BigInteger.valueOf(1)).toString(16);
@@ -7073,10 +7073,10 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 
 	public void jInstructionDownButtonActionPerformed(ActionEvent evt) {
 		try {
-			if (PeterBochsDebugger.instructionTable.getRowCount() > 10) {
+			if (GeneralKernelDebugger.instructionTable.getRowCount() > 10) {
 				String firstAddress = "";
-				for (int x = 0, count = 0; count < 10 && x < PeterBochsDebugger.instructionTable.getRowCount(); x++) {
-					firstAddress = PeterBochsDebugger.instructionTable.getValueAt(x, 1).toString().split(":")[0];
+				for (int x = 0, count = 0; count < 10 && x < GeneralKernelDebugger.instructionTable.getRowCount(); x++) {
+					firstAddress = GeneralKernelDebugger.instructionTable.getValueAt(x, 1).toString().split(":")[0];
 					if (CommonLib.isNumber(firstAddress)) {
 						count++;
 					}
@@ -7108,7 +7108,7 @@ public class PeterBochsDebugger extends javax.swing.JFrame {
 		String firstAddress = "";
 		int x = 0;
 		do {
-			firstAddress = PeterBochsDebugger.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
+			firstAddress = GeneralKernelDebugger.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
 			x++;
 		} while (!CommonLib.isNumber(firstAddress));
 		firstAddress = CommonLib.string2decimal(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);

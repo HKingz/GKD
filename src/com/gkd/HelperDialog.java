@@ -39,13 +39,13 @@ public class HelperDialog extends javax.swing.JDialog {
 	}
 
 	private void initData() {
-		long bytes = PeterBochsCommonLib.getLongFromBochs(address);
+		long bytes = GKDCommonLib.getLongFromBochs(address);
 		jBytesLabel.setText("0x" + address.toString(16) + " : 0x" + Long.toHexString(bytes));
 
 		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
 		if (type.equals("GDT")) {
 			int totalGDT = 40;
-			int b[] = PeterBochsCommonLib.getMemoryFromBochs(address, totalGDT * 8);
+			int b[] = GKDCommonLib.getMemoryFromBochs(address, totalGDT * 8);
 			for (int x = 0; x < totalGDT * 8; x += 8) {
 				long value = CommonLib.getLong(b, x);
 				long bit[] = new long[64];
@@ -76,7 +76,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				// end parse descriptor
 			}
 		} else if (type.equals("GDT Descriptor")) {
-			int b[] = PeterBochsCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 
@@ -152,7 +152,7 @@ public class HelperDialog extends javax.swing.JDialog {
 
 				// TSS
 				// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
-				PeterBochsDebugger.sendCommand("x /" + limit + "bx " + base);
+				GeneralKernelDebugger.sendCommand("x /" + limit + "bx " + base);
 
 				float totalByte2 = limit - 1;
 				totalByte2 = totalByte2 / 8;
@@ -169,7 +169,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				int realEndAddress = realStartAddress + totalByte3 * 8;
 				realEndAddressStr = String.format("%08x", realEndAddress);
 
-				String result2 = PeterBochsDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+				String result2 = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 				String[] lines2 = result2.split("\n");
 
 				byte tssByte[] = new byte[(int) limit];
@@ -215,7 +215,7 @@ public class HelperDialog extends javax.swing.JDialog {
 			}
 		} else if (type.equals("IDT")) {
 			int totalGDT = 40;
-			int b[] = PeterBochsCommonLib.getMemoryFromBochs(address, totalGDT * 8);
+			int b[] = GKDCommonLib.getMemoryFromBochs(address, totalGDT * 8);
 			for (int x = 0; x < totalGDT * 8; x += 8) {
 				long value = CommonLib.getLong(b, x);
 				long bit[] = new long[64];
@@ -240,7 +240,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				// end parse descriptor
 			}
 		} else if (type.equals("IDT Descriptor")) {
-			int b[] = PeterBochsCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 
@@ -268,7 +268,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				model.addRow(new String[] { "type", "wrong descriptor, value=0x" + Long.toHexString(value) });
 			}
 		} else if (type.equals("PDE")) {
-			int b[] = PeterBochsCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 
@@ -290,7 +290,7 @@ public class HelperDialog extends javax.swing.JDialog {
 			model.addRow(new String[] { "avl", String.valueOf(avl) });
 			model.addRow(new String[] { "page table address", "0x" + Long.toHexString(pageTableAddress) });
 		} else if (type.equals("PTE")) {
-			int b[] = PeterBochsCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 

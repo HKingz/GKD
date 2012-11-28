@@ -94,13 +94,13 @@ public class TSSPanel extends JPanel {
 	private int b[] = new int[8];
 	private long value;
 	private long bit[] = new long[64];
-	private PeterBochsDebugger peterBochsDebugger;
+	private GeneralKernelDebugger peterBochsDebugger;
 	private int type;
 	private BigInteger gdtAddress;
 	private BigInteger ldtr;
 	private BigInteger cr3;
 
-	public TSSPanel(PeterBochsDebugger peterBochsDebugger, int type, BigInteger gdtAddress, int gdtNo) {
+	public TSSPanel(GeneralKernelDebugger peterBochsDebugger, int type, BigInteger gdtAddress, int gdtNo) {
 		this.peterBochsDebugger = peterBochsDebugger;
 		this.type = type;
 		this.gdtAddress = gdtAddress;
@@ -360,25 +360,25 @@ public class TSSPanel extends JPanel {
 			}
 
 			String result;
-			if (PeterBochsDebugger.commandReceiver != null) {
+			if (GeneralKernelDebugger.commandReceiver != null) {
 				if (type == 0) {
-					PeterBochsDebugger.sendCommand("info gdt " + gdtNo);
+					GeneralKernelDebugger.sendCommand("info gdt " + gdtNo);
 					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = PeterBochsDebugger.commandReceiver.getCommandResult("GDT[" + gdtNoHex + "]");
+					result = GeneralKernelDebugger.commandReceiver.getCommandResult("GDT[" + gdtNoHex + "]");
 				} else if (type == 1) {
-					PeterBochsDebugger.sendCommand("info ldt " + gdtNo);
+					GeneralKernelDebugger.sendCommand("info ldt " + gdtNo);
 					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = PeterBochsDebugger.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
+					result = GeneralKernelDebugger.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
 				} else if (type == 2) {
-					PeterBochsDebugger.sendCommand("info idt " + gdtNo);
+					GeneralKernelDebugger.sendCommand("info idt " + gdtNo);
 					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = PeterBochsDebugger.commandReceiver.getCommandResult("IDT[" + gdtNoHex + "]");
+					result = GeneralKernelDebugger.commandReceiver.getCommandResult("IDT[" + gdtNoHex + "]");
 					System.out.println(result);
 				}
 
-				PeterBochsDebugger.commandReceiver.clearBuffer();
-				PeterBochsDebugger.sendCommand("x /8bx " + String.format("0x%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
-				result = PeterBochsDebugger.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
+				GeneralKernelDebugger.commandReceiver.clearBuffer();
+				GeneralKernelDebugger.sendCommand("x /8bx " + String.format("0x%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
+				result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
 				String lines[] = result.split("\n");
 
 				String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");
@@ -486,8 +486,8 @@ public class TSSPanel extends JPanel {
 			jTable2.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 			jTable2.setPreferredSize(new Dimension(600, 600));
 			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(20);
-			PeterBochsDebugger.sendCommand("info ldt 0 20");
-			String result = PeterBochsDebugger.commandReceiver.getCommandResult("XX", "XX", null);
+			GeneralKernelDebugger.sendCommand("info ldt 0 20");
+			String result = GeneralKernelDebugger.commandReceiver.getCommandResult("XX", "XX", null);
 			String lines[] = result.split("\n");
 			for (int x = 1; x < lines.length; x++) {
 				try {
@@ -525,8 +525,8 @@ public class TSSPanel extends JPanel {
 
 			// TSS
 			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
-			PeterBochsDebugger.commandReceiver.clearBuffer();
-			PeterBochsDebugger.sendCommand("x /" + limit + "bx " + base);
+			GeneralKernelDebugger.commandReceiver.clearBuffer();
+			GeneralKernelDebugger.sendCommand("x /" + limit + "bx " + base);
 
 			float totalByte2 = limit - 1;
 			totalByte2 = totalByte2 / 8;
@@ -538,7 +538,7 @@ public class TSSPanel extends JPanel {
 			long realEndAddress = realStartAddress + totalByte3 * 8;
 			realEndAddressStr = String.format("%08x", realEndAddress);
 
-			String result2 = PeterBochsDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result2 = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			String[] lines2 = result2.split("\n");
 
 			int tssByte[] = new int[(int) limit];
@@ -594,7 +594,7 @@ public class TSSPanel extends JPanel {
 		Vector<IA32PageDirectory> ia32_pageDirectories = new Vector<IA32PageDirectory>();
 		try {
 			// commandReceiver.setCommandNoOfLine(512);
-			PeterBochsDebugger.sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
+			GeneralKernelDebugger.sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
 			float totalByte2 = 4096 - 1;
 			totalByte2 = totalByte2 / 8;
 			int totalByte3 = (int) Math.floor(totalByte2);
@@ -604,7 +604,7 @@ public class TSSPanel extends JPanel {
 			realStartAddressStr = String.format("%08x", realStartAddress);
 			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
 			realEndAddressStr = String.format("%08x", realEndAddress);
-			String result = PeterBochsDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			if (result != null) {
 				String[] lines = result.split("\n");
 				DefaultTableModel model = (DefaultTableModel) jPageDirectoryTable.getModel();
@@ -668,7 +668,7 @@ public class TSSPanel extends JPanel {
 			String pageTableAddress = jPageDirectoryTable.getValueAt(jPageDirectoryTable.getSelectedRow(), 1).toString();
 
 			// commandReceiver.setCommandNoOfLine(512);
-			PeterBochsDebugger.sendCommand("xp /4096bx " + pageTableAddress);
+			GeneralKernelDebugger.sendCommand("xp /4096bx " + pageTableAddress);
 
 			float totalByte2 = 4096 - 1;
 			totalByte2 = totalByte2 / 8;
@@ -682,7 +682,7 @@ public class TSSPanel extends JPanel {
 			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
 			realEndAddressStr = String.format("%08x", realEndAddress);
 
-			String result = PeterBochsDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			String[] lines = result.split("\n");
 			DefaultTableModel model = (DefaultTableModel) jPageTableTable.getModel();
 			while (model.getRowCount() > 0) {
@@ -830,7 +830,7 @@ public class TSSPanel extends JPanel {
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = PeterBochsCommonLib.getMemoryFromBochs(ldtr.add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			int descriptor[] = GKDCommonLib.getMemoryFromBochs(ldtr.add(segNo.multiply(BigInteger.valueOf(8))), 8);
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
@@ -838,22 +838,22 @@ public class TSSPanel extends JPanel {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = PeterBochsCommonLib.getMemoryFromBochs(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(BigInteger.valueOf(0xfffff000));
-			int pteBytes[] = PeterBochsCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(BigInteger.valueOf(0xfffff000));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = PeterBochsCommonLib.getMemoryFromBochs(physicalAddress, 8);
-			model.bytes.add(PeterBochsCommonLib.convertToString(bytesAtPhysicalAddress));
+			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
 		} else if (jSearchAddressRadioButton2.isSelected()) {
@@ -876,22 +876,22 @@ public class TSSPanel extends JPanel {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = PeterBochsCommonLib.getMemoryFromBochs(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(BigInteger.valueOf(0xfffff000));
-			int pteBytes[] = PeterBochsCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(BigInteger.valueOf(0xfffff000));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = PeterBochsCommonLib.getMemoryFromBochs(physicalAddress, 8);
-			model.bytes.add(PeterBochsCommonLib.convertToString(bytesAtPhysicalAddress));
+			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
 		} else if (jSearchAddressRadioButton3.isSelected()) {
@@ -928,7 +928,7 @@ public class TSSPanel extends JPanel {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(jAddressTranslateTable2, file)) {
+			if (!GKDCommonLib.saveImage(jAddressTranslateTable2, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -939,7 +939,7 @@ public class TSSPanel extends JPanel {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			PeterBochsCommonLib.exportTableModelToExcel(file, this.jAddressTranslateTable2.getModel(), String.valueOf(cr3));
+			GKDCommonLib.exportTableModelToExcel(file, this.jAddressTranslateTable2.getModel(), String.valueOf(cr3));
 		}
 	}
 
@@ -950,12 +950,12 @@ public class TSSPanel extends JPanel {
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
-				BigInteger gdtBase = PeterBochsCommonLib.getPhysicalAddress(cr3, ldtr);
+				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(cr3, ldtr);
 				System.out.println("gdtBase=" + gdtBase.toString(16));
-				PeterBochsDebugger.commandReceiver.clearBuffer();
+				GeneralKernelDebugger.commandReceiver.clearBuffer();
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
-				PeterBochsDebugger.sendCommand("xp /8bx " + gdtBase);
-				String result = PeterBochsDebugger.commandReceiver.getCommandResult(String.format("%08x", gdtBase));
+				GeneralKernelDebugger.sendCommand("xp /8bx " + gdtBase);
+				String result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", gdtBase));
 
 				int bytes[] = new int[8];
 				String[] b = result.replaceFirst("^.*:", "").split("\t");

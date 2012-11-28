@@ -52,8 +52,8 @@ import com.gkd.Global;
 import com.gkd.InstructionTableCellRenderer;
 import com.gkd.InstructionTableModel;
 import com.gkd.MyLanguage;
-import com.gkd.PeterBochsCommonLib;
-import com.gkd.PeterBochsDebugger;
+import com.gkd.GKDCommonLib;
+import com.gkd.GeneralKernelDebugger;
 import com.gkd.instrument.CallGraphComponent;
 import com.gkd.instrument.PeterSwingCanvas;
 import com.mxgraph.canvas.mxICanvas;
@@ -115,7 +115,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	private JPanel jPanel3;
 	private JMaximizableTabbedPane jTabbedPane1;
 
-	private PeterBochsDebugger peterBochsDebugger;
+	private GeneralKernelDebugger peterBochsDebugger;
 	private File elfFile;
 	private ProjectTreeNode root;
 	private JLabel jErrorLabel;
@@ -145,7 +145,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	mxGraph graph;
 	CallGraphComponent graphComponent;
 
-	public SourceLevelDebugger3(PeterBochsDebugger peterBochsDebugger) {
+	public SourceLevelDebugger3(GeneralKernelDebugger peterBochsDebugger) {
 		this.peterBochsDebugger = peterBochsDebugger;
 		initGUI();
 	}
@@ -227,7 +227,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 											instructionTable = new JTable();
 											instructionTableScrollPane.setViewportView(instructionTable);
 											instructionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-											instructionTable.setModel(PeterBochsDebugger.instructionTable.getModel());
+											instructionTable.setModel(GeneralKernelDebugger.instructionTable.getModel());
 											instructionTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 											instructionTable.getTableHeader().setReorderingAllowed(false);
 											instructionTable.getColumnModel().getColumn(0).setMaxWidth(20);
@@ -338,7 +338,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 												onOffButton.setSelected(true);
 												onOffButton.addItemListener(new ItemListener() {
 													public void itemStateChanged(ItemEvent e) {
-														InstructionTableModel model = (InstructionTableModel) PeterBochsDebugger.instructionTable.getModel();
+														InstructionTableModel model = (InstructionTableModel) GeneralKernelDebugger.instructionTable.getModel();
 														if (e.getStateChange() == ItemEvent.SELECTED) {
 															model.showAsmLevel = true;
 														} else {
@@ -522,7 +522,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!PeterBochsCommonLib.saveImage(instructionTable, file)) {
+			if (!GKDCommonLib.saveImage(instructionTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -533,7 +533,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			PeterBochsCommonLib.exportTableModelToExcel(file, this.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, this.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
 		}
 	}
 

@@ -114,9 +114,9 @@ public class SourceCodeTableModel extends AbstractTableModel {
 		this.eip = eip;
 		try {
 			// commandReceiver.setCommandNoOfLine(-1);
-			PeterBochsDebugger.commandReceiver.clearBuffer();
-			PeterBochsDebugger.sendCommand("info break");
-			String result = PeterBochsDebugger.commandReceiver.getCommandResultUntilEnd();
+			GeneralKernelDebugger.commandReceiver.clearBuffer();
+			GeneralKernelDebugger.sendCommand("info break");
+			String result = GeneralKernelDebugger.commandReceiver.getCommandResultUntilEnd();
 			String[] lines = result.split("\n");
 
 			breakpoint.clear();

@@ -14,7 +14,7 @@ import javax.swing.JEditorPane;
 import javax.swing.SwingUtilities;
 
 public class CommandReceiver implements Runnable {
-	PeterBochsDebugger peterBochsDebugger;
+	GeneralKernelDebugger peterBochsDebugger;
 	private final InputStream is;
 	// private int threadID = 0;
 	public boolean shouldShow;
@@ -24,7 +24,7 @@ public class CommandReceiver implements Runnable {
 	boolean readCommandFinish;
 	Vector<String> lines = new Vector<String>();
 
-	public CommandReceiver(InputStream is, PeterBochsDebugger peterBochsDebugger) {
+	public CommandReceiver(InputStream is, GeneralKernelDebugger peterBochsDebugger) {
 		this.is = is;
 		this.peterBochsDebugger = peterBochsDebugger;
 	}

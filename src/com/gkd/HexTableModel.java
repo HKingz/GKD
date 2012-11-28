@@ -67,7 +67,7 @@ public class HexTableModel extends AbstractTableModel {
 
 	public void setValueAt(Object newVal, int row, int column) {
 		long address = CommonLib.string2long(this.getValueAt(row, 0).toString()) + (column - 1);
-		PeterBochsDebugger.sendCommand("setpmem " + address + " 1 " + CommonLib.string2long(newVal.toString()));
+		GeneralKernelDebugger.sendCommand("setpmem " + address + " 1 " + CommonLib.string2long(newVal.toString()));
 		qw[(int) (address - currentAddress)] = (int) (long) CommonLib.string2long(newVal.toString());
 	}
 

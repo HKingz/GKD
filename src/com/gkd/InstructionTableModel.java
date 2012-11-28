@@ -113,10 +113,10 @@ public class InstructionTableModel extends AbstractTableModel {
 		this.eip = eip;
 		try {
 			// commandReceiver.setCommandNoOfLine(-1);
-			PeterBochsDebugger.commandReceiver.clearBuffer();
-			PeterBochsDebugger.sendCommand("info break");
+			GeneralKernelDebugger.commandReceiver.clearBuffer();
+			GeneralKernelDebugger.sendCommand("info break");
 			Thread.currentThread().sleep(100);
-			String result = PeterBochsDebugger.commandReceiver.getCommandResultUntilEnd();
+			String result = GeneralKernelDebugger.commandReceiver.getCommandResultUntilEnd();
 			String[] lines = result.split("\n");
 
 			breakpoint.clear();
