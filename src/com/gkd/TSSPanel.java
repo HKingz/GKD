@@ -37,9 +37,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import com.gkd.architecture.IA32PageDirectory;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
-import com.peterbochs.architecture.IA32PageDirectory;
 import com.peterswing.CommonLib;
 
 /**

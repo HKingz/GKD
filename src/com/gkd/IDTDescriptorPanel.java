@@ -13,7 +13,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import com.peterbochs.architecture.DescriptorParser;
+import com.gkd.architecture.DescriptorParser;
 import com.peterswing.CommonLib;
 
 /**

@@ -9,7 +9,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
-import com.peterbochs.syntaxhighlight.Keywords;
+import com.gkd.syntaxhighlight.Keywords;
 
 public class InstructionTableCellRenderer extends JLabel implements TableCellRenderer {
 	ImageIcon hereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_right_red.png"));
