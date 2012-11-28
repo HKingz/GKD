@@ -490,7 +490,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private int skipBreakpointTime;
 	private boolean isUpdateBochsStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
-	URL url = getClass().getClassLoader().getResource("com/peterbochs/images/ajax-loader.gif");
+	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
 	public static GeneralKernelDebugger instance;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
@@ -541,7 +541,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (os == OSType.mac) {
 			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
 			// System.setProperty("dock:name", "Your Application Name");
-			macApp.setDockIconImage(new ImageIcon(GeneralKernelDebugger.class.getClassLoader().getResource("com/peterbochs/icons/peter.png")).getImage());
+			macApp.setDockIconImage(new ImageIcon(GeneralKernelDebugger.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
 			// java.awt.PopupMenu menu = new java.awt.PopupMenu();
 			// menu.add(new MenuItem("test"));
 			// macApp.setDockMenu(menu);
@@ -564,18 +564,18 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						if (Global.debug) {
 							System.out.println("Loading linux 64 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_amd64/libgluegen-rt.so")), new File("libgluegen-rt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_amd64/libjogl_awt.so")), new File("libjogl_awt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_amd64/libjogl_cg.so")), new File("libjogl_cg.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_amd64/libjogl.so")), new File("libjogl.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libgluegen-rt.so")), new File("libgluegen-rt.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl_awt.so")), new File("libjogl_awt.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl_cg.so")), new File("libjogl_cg.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl.so")), new File("libjogl.so"));
 					} else {
 						if (Global.debug) {
 							System.out.println("Loading linux 32 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_i586/libgluegen-rt.so")), new File("libgluegen-rt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_i586/libjogl_awt.so")), new File("libjogl_awt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_i586/libjogl_cg.so")), new File("libjogl_cg.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/linux_i586/libjogl.so")), new File("libjogl.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libgluegen-rt.so")), new File("libgluegen-rt.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl_awt.so")), new File("libjogl_awt.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl_cg.so")), new File("libjogl_cg.so"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl.so")), new File("libjogl.so"));
 					}
 					try {
 						File f = new File(".");
@@ -590,26 +590,26 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						System.err.println("Solution : Please add \"-Djava.library.path=.\" to start peter-bochs\n" + e);
 					}
 				} else if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/exe/PauseBochs.exe")), new File("PauseBochs.exe"));
-					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/exe/StopBochs.exe")), new File("StopBochs.exe"));
-					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/exe/ndisasm.exe")), new File("ndisasm.exe"));
+					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/PauseBochs.exe")), new File("PauseBochs.exe"));
+					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/StopBochs.exe")), new File("StopBochs.exe"));
+					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/ndisasm.exe")), new File("ndisasm.exe"));
 
 					if (System.getProperty("os.arch").contains("64")) {
 						if (Global.debug) {
 							System.out.println("Loading windows 64 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_amd64/jogl.dll")), new File("jogl.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_amd64/jogl_awt.dll")), new File("jogl_awt.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_amd64/jogl_cg.dll")), new File("jogl_cg.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_amd64/gluegen-rt.dll")), new File("gluegen-rt.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl.dll")), new File("jogl.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl_awt.dll")), new File("jogl_awt.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl_cg.dll")), new File("jogl_cg.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/gluegen-rt.dll")), new File("gluegen-rt.dll"));
 					} else {
 						if (Global.debug) {
 							System.out.println("Loading windows 32 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_i586/jogl.dll")), new File("jogl.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_i586/jogl_awt.dll")), new File("jogl_awt.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_i586/jogl_cg.dll")), new File("jogl_cg.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/peterbochs/jogl_dll/windows_i586/gluegen-rt.dll")), new File("gluegen-rt.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl.dll")), new File("jogl.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl_awt.dll")), new File("jogl_awt.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl_cg.dll")), new File("jogl_cg.dll"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/gluegen-rt.dll")), new File("gluegen-rt.dll"));
 					}
 					try {
 						File f = new File(".");
@@ -746,7 +746,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			this.enableAllButtons(true, false);
 			runBochsButton.setText(MyLanguage.getString("Run_bochs"));
 			runBochsButton.setToolTipText("Start emulation");
-			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/resultset_next.png")));
+			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 
 			if (p != null) {
 				p.destroy();
@@ -817,7 +817,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			this.enableAllButtons(false, false);
 			runBochsButton.setText(MyLanguage.getString("Run_bochs"));
 			runBochsButton.setToolTipText("Start emulation");
-			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/resultset_next.png")));
+			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 
 			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
 				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
@@ -877,7 +877,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					if (skipBreakpointTime <= 0 && customCommandQueue.size() <= 0) {
 						runBochsButton.setText(MyLanguage.getString("Run_bochs"));
 						runBochsButton.setToolTipText("Start emulation");
-						runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/resultset_next.png")));
+						runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 					}
 				}
 			} catch (Exception ex) {
@@ -919,7 +919,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 			runBochsButton.setText(MyLanguage.getString("Pause_bochs"));
 			runBochsButton.setToolTipText("Pause emulation");
-			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/pause.png")));
+			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
 
 			new Thread("runBochs() update thread") {
 				public void run() {
@@ -1013,7 +1013,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					this.setTitle(MyLanguage.getString("Title") + " " + Global.version);
 				}
 
-				this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/peter.png")).getImage());
+				this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
 				this.addWindowListener(new WindowAdapter() {
 					public void windowOpened(WindowEvent evt) {
 						thisWindowOpened(evt);
@@ -1036,7 +1036,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jToolBar1.add(startBochsButton);
 					startBochsButton.setText(MyLanguage.getString("Start_bochs"));
 					startBochsButton.setToolTipText("Launch bochs");
-					startBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/accept.png")));
+					startBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/accept.png")));
 					startBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							startBochsButtonActionPerformed(evt);
@@ -1048,7 +1048,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jToolBar1.add(stopBochsButton);
 					stopBochsButton.setText(MyLanguage.getString("Stop_bochs"));
 					stopBochsButton.setToolTipText("Quit bochs");
-					stopBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/stop.png")));
+					stopBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/stop.png")));
 					stopBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							stopBochsButtonActionPerformed(evt);
@@ -1063,7 +1063,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					runBochsButton.setMaximumSize(new java.awt.Dimension(85, 26));
 					runBochsButton.add(getJRunBochsAndSkipBreakpointMenuItem());
 					runBochsButton.add(getJRunCustomCommandMenuItem());
-					runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/resultset_next.png")));
+					runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 					runBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							runBochsButtonActionPerformed(evt);
@@ -1075,7 +1075,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jToolBar1.add(stepBochsButton);
 					jToolBar1.add(getJStepOverDropDownButton());
 					jToolBar1.add(getJFastStepBochsButton());
-					stepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/step.png")));
+					stepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 					stepBochsButton.setText(MyLanguage.getString("Step"));
 					stepBochsButton.setMaximumSize(new java.awt.Dimension(85, 26));
 					stepBochsButton.add(getJStep10MenuItem());
@@ -1094,7 +1094,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				}
 				{
 					nextButton = new JButton();
-					nextButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/step.png")));
+					nextButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 					nextButton.setText(MyLanguage.getString("Nexti"));
 					nextButton.setToolTipText("c/c++ level step-in");
 					jToolBar1.add(nextButton);
@@ -1117,7 +1117,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jToolBar1.add(getJOSLogToggleButton());
 					jUpdateBochsButton.setEnabled(true);
 					jUpdateBochsButton.setText(MyLanguage.getString("Update"));
-					jUpdateBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_refresh.png")));
+					jUpdateBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
 					jUpdateBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							jUpdateBochsButtonActionPerformed(evt);
@@ -4076,7 +4076,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton1() {
 		if (jButton1 == null) {
 			jButton1 = new JButton();
-			jButton1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jButton1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton1ActionPerformed(evt);
@@ -4089,7 +4089,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton2() {
 		if (jButton2 == null) {
 			jButton2 = new JButton();
-			jButton2.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jButton2.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton2.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton2ActionPerformed(evt);
@@ -4102,7 +4102,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton3() {
 		if (jButton3 == null) {
 			jButton3 = new JButton();
-			jButton3.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jButton3.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton3.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton3ActionPerformed(evt);
@@ -4126,7 +4126,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJExportHistoryToExcelButton() {
 		if (jExportHistoryToExcelButton == null) {
 			jExportHistoryToExcelButton = new JButton();
-			jExportHistoryToExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jExportHistoryToExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jExportHistoryToExcelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jExportHistoryToExcelButtonActionPerformed(evt);
@@ -4173,7 +4173,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton5() {
 		if (jButton5 == null) {
 			jButton5 = new JButton();
-			jButton5.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton5.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton5.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton5ActionPerformed(evt);
@@ -4215,7 +4215,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton6() {
 		if (jButton6 == null) {
 			jButton6 = new JButton();
-			jButton6.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jButton6.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton6.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton6ActionPerformed(evt);
@@ -4239,7 +4239,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton7() {
 		if (jButton7 == null) {
 			jButton7 = new JButton();
-			jButton7.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton7.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton7.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton7ActionPerformed(evt);
@@ -4279,7 +4279,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton8() {
 		if (jButton8 == null) {
 			jButton8 = new JButton();
-			jButton8.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton8.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton8.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton8ActionPerformed(evt);
@@ -4301,7 +4301,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton9() {
 		if (jButton9 == null) {
 			jButton9 = new JButton();
-			jButton9.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jButton9.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton9.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton9ActionPerformed(evt);
@@ -4325,7 +4325,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton10() {
 		if (jButton10 == null) {
 			jButton10 = new JButton();
-			jButton10.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton10.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton10.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton10ActionPerformed(evt);
@@ -4342,7 +4342,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton11() {
 		if (jButton11 == null) {
 			jButton11 = new JButton();
-			jButton11.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jButton11.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton11.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton11ActionPerformed(evt);
@@ -4359,7 +4359,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton12() {
 		if (jButton12 == null) {
 			jButton12 = new JButton();
-			jButton12.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton12.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton12.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton12ActionPerformed(evt);
@@ -4382,7 +4382,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJExportToExcelButton() {
 		if (jButton13 == null) {
 			jButton13 = new JButton();
-			jButton13.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton13.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton13.setText("Excel");
 			jButton13.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -4648,7 +4648,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					BorderLayout jPanel10Layout = new BorderLayout();
 					jPanel10.setLayout(jPanel10Layout);
 					jTabbedPane1.addTab(MyLanguage.getString("Instruction"),
-							new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/text_padding_top.png")), jPanel10, null);
+							new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")), jPanel10, null);
 					jPanel10.setPreferredSize(new java.awt.Dimension(604, 452));
 					{
 						jInstructionControlPanel = new JPanel();
@@ -4707,7 +4707,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				}
 				{
 					jPanel4 = new JPanel();
-					jTabbedPane1.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/cancel.png")),
+					jTabbedPane1.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")),
 							jPanel4, null);
 					BorderLayout jPanel4Layout = new BorderLayout();
 					jPanel4.setLayout(jPanel4Layout);
@@ -4811,12 +4811,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				{
 					jPanel1 = new JPanel();
 					jTabbedPane1.addTab(MyLanguage.getString("Bochs"),
-							new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/application_xp_terminal.png")), jPanel1, null);
-					jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(),
+							new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), jPanel1, null);
+					jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(),
 							null);
 					DiskPanel diskPanel = getDiskPanel();
 					if (diskPanel.getFile() != null) {
-						jTabbedPane1.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/package.png")),
+						jTabbedPane1.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")),
 								diskPanel, null);
 					}
 					BorderLayout jPanel1Layout = new BorderLayout();
@@ -4870,7 +4870,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel8 = new JPanel();
 					BorderLayout jPanel8Layout = new BorderLayout();
 					jPanel8.setLayout(jPanel8Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/memory.png")),
+					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
 							jPanel8, null);
 					{
 						jScrollPane2 = new JScrollPane();
@@ -5006,7 +5006,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				}
 				{
 					jPanel5 = new JPanel();
-					jTabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/gdt.png")), jPanel5,
+					jTabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5,
 							null);
 					BorderLayout jPanel5Layout = new BorderLayout();
 					jPanel5.setLayout(jPanel5Layout);
@@ -5035,7 +5035,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel6 = new JPanel();
 					BorderLayout jPanel6Layout = new BorderLayout();
 					jPanel6.setLayout(jPanel6Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("IDT"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/idt.png")), jPanel6,
+					jTabbedPane3.addTab(MyLanguage.getString("IDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/idt.png")), jPanel6,
 							null);
 					{
 						jScrollPane10 = new JScrollPane();
@@ -5061,12 +5061,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel7 = new JPanel();
 					BorderLayout jPanel7Layout = new BorderLayout();
 					jPanel7.setLayout(jPanel7Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/ldt.png")), jPanel7,
+					jTabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7,
 							null);
 					jTabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader()
-							.getResource("com/peterbochs/icons/famfam_icons/memory.png")), getJPanel17(), null);
+							.getResource("com/gkd/icons/famfam_icons/memory.png")), getJPanel17(), null);
 					jTabbedPane3
-							.addTab("bochsout.txt", new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/script.png")), getJPanel31(), null);
+							.addTab("bochsout.txt", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
 					{
 						jScrollPane11 = new JScrollPane();
 						jPanel7.add(jScrollPane11, BorderLayout.CENTER);
@@ -5109,7 +5109,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			jSplitPane2.add(jTabbedPane2, JSplitPane.BOTTOM);
 			{
 				registerPanelScrollPane = new JScrollPane();
-				jTabbedPane2.addTab(MyLanguage.getString("Register"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/text_kerning.png")),
+				jTabbedPane2.addTab(MyLanguage.getString("Register"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_kerning.png")),
 						registerPanelScrollPane, null);
 				{
 					registerPanel = new RegisterPanel(this);
@@ -5119,7 +5119,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			{
 				jPanel3 = new JPanel();
 				jTabbedPane2.addTab(MyLanguage.getString("History"),
-						new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/book_addresses.png")), jPanel3, null);
+						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")), jPanel3, null);
 				BorderLayout jPanel3Layout = new BorderLayout();
 				jPanel3.setLayout(jPanel3Layout);
 				{
@@ -5131,20 +5131,20 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 			{
 				jPanel11 = new JPanel();
-				jTabbedPane2.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/page_copy.png")),
+				jTabbedPane2.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")),
 						jPanel11, null);
 				jTabbedPane2.addTab(MyLanguage.getString("Address_translate"),
-						new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/page_go.png")), getJAddressTranslatePanel(), null);
+						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")), getJAddressTranslatePanel(), null);
 				jTabbedPane2.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader()
-						.getResource("com/peterbochs/icons/famfam_icons/page_lightning.png")), getJPageTableGraphPanel(), null);
+						.getResource("com/gkd/icons/famfam_icons/page_lightning.png")), getJPageTableGraphPanel(), null);
 				if (!Global.debug) {
 					jTabbedPane2.removeTabAt(jTabbedPane2.getTabCount() - 1);
 				}
 				jTabbedPane2.addTab(MyLanguage.getString("Table_translate"),
-						new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/page_refresh.png")), getJTableTranslateScrollPane(), null);
-				jTabbedPane2.addTab(MyLanguage.getString("ELF_dump"), new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/linux.png")),
+						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")), getJTableTranslateScrollPane(), null);
+				jTabbedPane2.addTab(MyLanguage.getString("ELF_dump"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
 						getJELFDumpScrollPane(), null);
-				jTabbedPane2.addTab("OS debug informations", new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/bug.png")),
+				jTabbedPane2.addTab("OS debug informations", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/bug.png")),
 						getJOSDebugStandardPanel(), null);
 				BorderLayout jPanel11Layout = new BorderLayout();
 				jPanel11.setLayout(jPanel11Layout);
@@ -5189,7 +5189,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJGDTGraphButton() {
 		if (jGDTGraphButton == null) {
 			jGDTGraphButton = new JButton();
-			jGDTGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/map.png")));
+			jGDTGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/map.png")));
 			jGDTGraphButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jGDTGraphButtonActionPerformed(evt);
@@ -5221,7 +5221,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJPagingGraphButton() {
 		if (jPagingGraphButton == null) {
 			jPagingGraphButton = new JButton();
-			jPagingGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jPagingGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jPagingGraphButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jPagingGraphButtonActionPerformed(evt);
@@ -5396,7 +5396,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton17() {
 		if (jButton17 == null) {
 			jButton17 = new JButton();
-			jButton17.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+			jButton17.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton17.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton17ActionPerformed(evt);
@@ -5409,7 +5409,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton18() {
 		if (jButton18 == null) {
 			jButton18 = new JButton();
-			jButton18.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton18.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton18.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton18ActionPerformed(evt);
@@ -5567,7 +5567,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (jRefreshAddressTranslateTableButton == null) {
 			jRefreshAddressTranslateTableButton = new JButton();
 			jRefreshAddressTranslateTableButton.setText(MyLanguage.getString("Refresh"));
-			jRefreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_refresh.png")));
+			jRefreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
 			jRefreshAddressTranslateTableButton.setText("Refresh");
 			jRefreshAddressTranslateTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -6512,7 +6512,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (jButton19 == null) {
 			jButton19 = new JButton();
 			jButton19.setText("Delete");
-			jButton19.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/cross.png")));
+			jButton19.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cross.png")));
 			jButton19.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton19ActionPerformed(evt);
@@ -6578,7 +6578,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton21x() {
 		if (jButton21 == null) {
 			jButton21 = new JButton();
-			jButton21.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jButton21.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton21.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton21ActionPerformed(evt);
@@ -7028,7 +7028,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJInstructionUpButton() {
 		if (jInstructionUpButton == null) {
 			jInstructionUpButton = new JButton();
-			jInstructionUpButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_up1.png")));
+			jInstructionUpButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up1.png")));
 			jInstructionUpButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jInstructionUpButtonActionPerformed(evt);
@@ -7041,7 +7041,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJButton22() {
 		if (jInstructionDownButton == null) {
 			jInstructionDownButton = new JButton();
-			jInstructionDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_down.png")));
+			jInstructionDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_down.png")));
 			jInstructionDownButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jInstructionDownButtonActionPerformed(evt);
@@ -7094,7 +7094,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJInstructionUpTenButton() {
 		if (jInstructionUpTenButton == null) {
 			jInstructionUpTenButton = new JButton();
-			jInstructionUpTenButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_up10.png")));
+			jInstructionUpTenButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up10.png")));
 			jInstructionUpTenButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jInstructionUpTenButtonActionPerformed(evt);
@@ -7169,7 +7169,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJFastStepBochsButton() {
 		if (fastStepBochsButton == null) {
 			fastStepBochsButton = new JButton();
-			fastStepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/step.png")));
+			fastStepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 			fastStepBochsButton.setText(MyLanguage.getString("Fast_Step"));
 			fastStepBochsButton
 					.setToolTipText("<html><body>A faster step<br><br>It will only update:<br>1) Memory panel<br>2) Instruction panel<br>3) Register panel<br>4) EFlags</body></html>");
@@ -7304,7 +7304,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (jSettingButton == null) {
 			jSettingButton = new JButton();
 			jSettingButton.setText(MyLanguage.getString("Setting"));
-			jSettingButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/wrench.png")));
+			jSettingButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/wrench.png")));
 			jSettingButton.setToolTipText("System setting");
 			jSettingButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -7670,7 +7670,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JToggleButton getJProfilerToggleButton() {
 		if (jProfilerToggleButton == null) {
 			jProfilerToggleButton = new JToggleButton();
-			jProfilerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/chart_organisation.png")));
+			jProfilerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_organisation.png")));
 			jProfilerToggleButton.setText(MyLanguage.getString("Profile_and_Sampling"));
 			getButtonGroup4().add(jProfilerToggleButton);
 			jProfilerToggleButton.setToolTipText("Profile & Sampling");
@@ -7697,7 +7697,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JToggleButton getJLogToggleButton() {
 		if (jLogToggleButton == null) {
 			jLogToggleButton = new JToggleButton();
-			jLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/script.png")));
+			jLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")));
 			jLogToggleButton.setText("Log");
 			getButtonGroup4().add(jLogToggleButton);
 			jLogToggleButton.setToolTipText("Log");
@@ -7731,7 +7731,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JToggleButton getJRegisterToggleButton() {
 		if (jRegisterToggleButton == null) {
 			jRegisterToggleButton = new JToggleButton();
-			jRegisterToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/chart_bar.png")));
+			jRegisterToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_bar.png")));
 			getButtonGroup4().add(jRegisterToggleButton);
 			jRegisterToggleButton.setSelected(true);
 			jRegisterToggleButton.setText(MyLanguage.getString("Register"));
@@ -7771,7 +7771,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (jOSLogToggleButton == null) {
 			jOSLogToggleButton = new JToggleButton();
 			jOSLogToggleButton.setText("os.log");
-			jOSLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/page_red.png")));
+			jOSLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_red.png")));
 			jOSLogToggleButton.setToolTipText("os.log");
 			getButtonGroup4().add(jOSLogToggleButton);
 			jOSLogToggleButton.addActionListener(new ActionListener() {
@@ -7994,7 +7994,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JLabel getJRunningLabel2() {
 		if (jRunningLabel2 == null) {
 			jRunningLabel2 = new JLabel();
-			URL url = getClass().getClassLoader().getResource("com/peterbochs/images/ajax-loader_red.gif");
+			URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader_red.gif");
 			if (Setting.getInstance().getCurrentLanguage().equals("zh_TW")) {
 				jRunningLabel2
 						.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
@@ -8110,7 +8110,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJNextMemoryPageButton() {
 		if (jNextMemoryPageButton == null) {
 			jNextMemoryPageButton = new JButton();
-			jNextMemoryPageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/resultset_next_grey.png")));
+			jNextMemoryPageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next_grey.png")));
 			jNextMemoryPageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jNextMemoryPageButtonActionPerformed(evt);
@@ -8123,7 +8123,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getJPreviousMemoryButton() {
 		if (jPreviousMemoryButton == null) {
 			jPreviousMemoryButton = new JButton();
-			jPreviousMemoryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/resultset_previous_grey.png")));
+			jPreviousMemoryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_previous_grey.png")));
 			jPreviousMemoryButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jPreviousMemoryButtonActionPerformed(evt);
@@ -8268,7 +8268,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			jSourceLevelDebuggerToggleButton = new JToggleButton();
 			getButtonGroup4().add(jSourceLevelDebuggerToggleButton);
 			jSourceLevelDebuggerToggleButton.setText("C/C++");
-			jSourceLevelDebuggerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/page_white_text.png")));
+			jSourceLevelDebuggerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_white_text.png")));
 			jSourceLevelDebuggerToggleButton.setEnabled(false);
 			jSourceLevelDebuggerToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -8742,7 +8742,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (jStepOverDropDownButton == null) {
 			jStepOverDropDownButton = new JDropDownButton();
 			jStepOverDropDownButton.setText(MyLanguage.getString("Step_over"));
-			jStepOverDropDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/step_over.png")));
+			jStepOverDropDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step_over.png")));
 			jStepOverDropDownButton.setMaximumSize(new java.awt.Dimension(115, 26));
 			jStepOverDropDownButton.add(getJStepOver10MenuItem());
 			jStepOverDropDownButton.add(getJStepOver100MenuItem());
@@ -8882,7 +8882,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton getNextOverButton() {
 		if (nextOverButton == null) {
 			nextOverButton = new JButton();
-			nextOverButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/step.png")));
+			nextOverButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 			nextOverButton.setText("NextO");
 			nextOverButton.setToolTipText("c/c++ level step-over");
 			nextOverButton.addActionListener(new ActionListener() {

@@ -805,7 +805,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 					{
 						jButton1 = new JButton();
 						jPanel1.add(jButton1);
-						jButton1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+						jButton1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 						jButton1.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
 								jButton1ActionPerformed(evt);
@@ -815,7 +815,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 					{
 						jExportExcelButton = new JButton();
 						jPanel1.add(jExportExcelButton);
-						jExportExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+						jExportExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 						jExportExcelButton.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
 								jExportExcelButtonActionPerformed(evt);

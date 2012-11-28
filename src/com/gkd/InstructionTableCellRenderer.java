@@ -12,10 +12,10 @@ import javax.swing.table.TableCellRenderer;
 import com.gkd.syntaxhighlight.Keywords;
 
 public class InstructionTableCellRenderer extends JLabel implements TableCellRenderer {
-	ImageIcon hereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_right_red.png"));
-	ImageIcon hereWithBreakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_right_red_breakpoint.png"));
-	ImageIcon breakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/breakpoint/breakpoint.png"));
-	ImageIcon breakpointDisableIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/breakpoint/breakpointDisable.png"));
+	ImageIcon hereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red.png"));
+	ImageIcon hereWithBreakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red_breakpoint.png"));
+	ImageIcon breakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpoint.png"));
+	ImageIcon breakpointDisableIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpointDisable.png"));
 	Color darkGreen = new Color(0, 100, 0);
 	Color darkBlue = new Color(0, 0, 100);
 	Color alterRow = new Color(0xf8f8f8);

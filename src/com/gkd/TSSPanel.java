@@ -315,7 +315,7 @@ public class TSSPanel extends JPanel {
 						{
 							jButton17 = new JButton();
 							jToolBar3.add(jButton17);
-							jButton17.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+							jButton17.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 							jButton17.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent evt) {
 									jButton17ActionPerformed(evt);
@@ -325,7 +325,7 @@ public class TSSPanel extends JPanel {
 						{
 							jButton18 = new JButton();
 							jToolBar3.add(jButton18);
-							jButton18.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+							jButton18.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 							jButton18.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent evt) {
 									jButton18ActionPerformed(evt);
@@ -337,7 +337,7 @@ public class TSSPanel extends JPanel {
 							jToolBar3.add(jRefreshAddressTranslateTableButton);
 							jRefreshAddressTranslateTableButton.setText("Refresh");
 							jRefreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader()
-									.getResource("com/peterbochs/icons/famfam_icons/arrow_refresh.png")));
+									.getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
 							jRefreshAddressTranslateTableButton.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent evt) {
 									jRefreshAddressTranslateTableButtonActionPerformed(evt);
@@ -348,7 +348,7 @@ public class TSSPanel extends JPanel {
 							jButton19 = new JButton();
 							jToolBar3.add(jButton19);
 							jButton19.setText("Delete");
-							jButton19.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/cross.png")));
+							jButton19.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cross.png")));
 							jButton19.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent evt) {
 									jButton19ActionPerformed(evt);

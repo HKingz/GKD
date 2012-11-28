@@ -755,7 +755,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		if (jZoomOutButton == null) {
 			jZoomOutButton = new JButton();
 			jZoomOutButton.setText("out");
-			jZoomOutButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/zoom_out.png")));
+			jZoomOutButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/zoom_out.png")));
 			jZoomOutButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jZoomOutButtonActionPerformed(evt);
@@ -773,7 +773,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		if (jZoomInButton == null) {
 			jZoomInButton = new JButton();
 			jZoomInButton.setText("in");
-			jZoomInButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/zoom_in.png")));
+			jZoomInButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/zoom_in.png")));
 			jZoomInButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jZoomInButtonActionPerformed(evt);
@@ -791,7 +791,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		if (jZoomOutAutoRangeButton == null) {
 			jZoomOutAutoRangeButton = new JButton();
 			jZoomOutAutoRangeButton.setText("fit");
-			jZoomOutAutoRangeButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/zoom.png")));
+			jZoomOutAutoRangeButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/zoom.png")));
 			jZoomOutAutoRangeButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jZoomOutAutoRangeButtonActionPerformed(evt);

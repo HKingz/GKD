@@ -14,15 +14,15 @@ import javax.swing.border.LineBorder;
 import javax.swing.tree.TreeCellRenderer;
 
 public class ProjectTreeRenderer extends JPanel implements TreeCellRenderer {
-	ImageIcon rootIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/package.png"));
-	ImageIcon fileIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/sourceleveldebugger/file.png"));
-	ImageIcon fileCIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/sourceleveldebugger/file_c.png"));
-	ImageIcon fileHIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/sourceleveldebugger/file_h.png"));
-	//	ImageIcon archiveIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/package.png"));
-	//	ImageIcon objectIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/image.png"));
-	//	ImageIcon objectsIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/images.png"));
-	//	ImageIcon libraryIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/book.png"));
-	//	ImageIcon functionIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/page_white_cplusplus.png"));
+	ImageIcon rootIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png"));
+	ImageIcon fileIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/sourceleveldebugger/file.png"));
+	ImageIcon fileCIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/sourceleveldebugger/file_c.png"));
+	ImageIcon fileHIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/sourceleveldebugger/file_h.png"));
+	//	ImageIcon archiveIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png"));
+	//	ImageIcon objectIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/image.png"));
+	//	ImageIcon objectsIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/images.png"));
+	//	ImageIcon libraryIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book.png"));
+	//	ImageIcon functionIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_white_cplusplus.png"));
 
 	JLabel nameLabel = new JLabel();
 	JLabel sizeLabel = new JLabel();

@@ -281,7 +281,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 											jInstructionUpTenButton = new JButton();
 											jInstructionControlPanel.add(jInstructionUpTenButton);
 											jInstructionUpTenButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource(
-													"com/peterbochs/icons/famfam_icons/arrow_up10.png")));
+													"com/gkd/icons/famfam_icons/arrow_up10.png")));
 											jInstructionUpTenButton.addActionListener(new ActionListener() {
 												public void actionPerformed(ActionEvent evt) {
 													jInstructionUpTenButtonActionPerformed(evt);
@@ -291,7 +291,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 										{
 											jInstructionUpButton = new JButton();
 											jInstructionControlPanel.add(jInstructionUpButton);
-											jInstructionUpButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_up1.png")));
+											jInstructionUpButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up1.png")));
 											jInstructionUpButton.addActionListener(new ActionListener() {
 												public void actionPerformed(ActionEvent evt) {
 													jInstructionUpButtonActionPerformed(evt);
@@ -302,7 +302,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 											jInstructionDownButton = new JButton();
 											jInstructionControlPanel.add(jInstructionDownButton);
 											jInstructionDownButton.setIcon(new ImageIcon(getClass().getClassLoader()
-													.getResource("com/peterbochs/icons/famfam_icons/arrow_down.png")));
+													.getResource("com/gkd/icons/famfam_icons/arrow_down.png")));
 											jInstructionDownButton.addActionListener(new ActionListener() {
 												public void actionPerformed(ActionEvent evt) {
 													jInstructionDownButtonActionPerformed(evt);
@@ -312,7 +312,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 										{
 											jDiskButton = new JButton();
 											jInstructionControlPanel.add(jDiskButton);
-											jDiskButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/disk.png")));
+											jDiskButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 											jDiskButton.addActionListener(new ActionListener() {
 												public void actionPerformed(ActionEvent evt) {
 													jButton3ActionPerformed(evt);
@@ -323,7 +323,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 											jExcelButton = new JButton();
 											jInstructionControlPanel.add(jExcelButton);
 											jInstructionControlPanel.add(getJSearchTextField());
-											jExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+											jExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 											{
 												btnSearch = new JButton("Search");
 												jInstructionControlPanel.add(btnSearch);

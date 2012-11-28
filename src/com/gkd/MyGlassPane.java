@@ -23,7 +23,7 @@ public class MyGlassPane extends JComponent implements ItemListener {
 	JLabel jLabel1 = new JLabel();
 
 	public MyGlassPane(JMenuBar menuBar, Container contentPane) {
-		URL url = getClass().getClassLoader().getResource("com/peterbochs/images/ajax-loader.gif");
+		URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
 		jLabel1.setText("<html><center><font color=white>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
 				+ "\" /></font><br><br></center></html>");
 

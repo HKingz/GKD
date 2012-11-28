@@ -7,16 +7,16 @@ import javax.swing.tree.DefaultMutableTreeNode;
 public class FunctionTreeNode extends DefaultMutableTreeNode {
 	String type;
 	String text;
-	Icon os = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/os.png"));
-	Icon kernel = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/kernel.png"));
-	Icon device = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/device.png"));
-	Icon fs = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/fs.png"));
-	Icon network = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/network.png"));
-	Icon process = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/process.png"));
-	Icon memory = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/memory.png"));
-	Icon table = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/table.png"));
-	Icon tag = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/tag.png"));
-	Icon library = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/OSDebug/library.png"));
+	Icon os = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/os.png"));
+	Icon kernel = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/kernel.png"));
+	Icon device = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/device.png"));
+	Icon fs = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/fs.png"));
+	Icon network = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/network.png"));
+	Icon process = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/process.png"));
+	Icon memory = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/memory.png"));
+	Icon table = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/table.png"));
+	Icon tag = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/tag.png"));
+	Icon library = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/OSDebug/library.png"));
 
 	public FunctionTreeNode(String text, String type) {
 		this.text = text;

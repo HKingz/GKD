@@ -37,7 +37,7 @@ public class LicenseDialog extends javax.swing.JDialog {
 					getContentPane().add(jScrollPane1, BorderLayout.CENTER);
 					{
 						jEditorPane1 = new JEditorPane();
-						URL url = getClass().getClassLoader().getResource("com/peterbochs/license.html");
+						URL url = getClass().getClassLoader().getResource("com/gkd/license.html");
 						jEditorPane1.setPage(url);
 						jScrollPane1.setViewportView(jEditorPane1);
 					}

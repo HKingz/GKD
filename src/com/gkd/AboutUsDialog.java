@@ -58,7 +58,7 @@ public class AboutUsDialog extends javax.swing.JDialog {
 				jLabel1 = new JLabel();
 				getContentPane().add(jLabel1);
 				jTextArea1.setBounds(12, 263, 360, 95);
-				jLabel1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/peter-bochs-aboutbox.png")));
+				jLabel1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/peter-bochs-aboutbox.png")));
 				jLabel1.setBounds(0, 12, 384, 356);
 			}
 			this.setSize(400, 400);

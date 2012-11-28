@@ -9,9 +9,9 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 public class SourceCodeCellRenderer extends JLabel implements TableCellRenderer {
-	ImageIcon breakpointHereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_right_red.png"));
-	ImageIcon breakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/breakpoint/breakpoint.png"));
-	ImageIcon breakpointDisableIcon = new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/images/breakpoint/breakpointDisable.png"));
+	ImageIcon breakpointHereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red.png"));
+	ImageIcon breakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpoint.png"));
+	ImageIcon breakpointDisableIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpointDisable.png"));
 	long eip;
 
 	public SourceCodeCellRenderer() {

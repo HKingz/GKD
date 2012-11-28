@@ -112,7 +112,7 @@ public class JOSDebugInformationPanel extends JPanel {
 				{
 					jExcelButton = new JButton();
 					jToolBar1.add(jExcelButton);
-					jExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+					jExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 				}
 			}
 			{

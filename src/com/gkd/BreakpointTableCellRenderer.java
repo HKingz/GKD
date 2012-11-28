@@ -20,7 +20,7 @@ public class BreakpointTableCellRenderer extends JLabel implements TableCellRend
 			this.setBackground(Color.white);
 		}
 		if (value.toString().startsWith("-")) {
-			this.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/arrow_right_red.png")));
+			this.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red.png")));
 			this.setText(value.toString().replaceAll("^-*", ""));
 		} else {
 			this.setIcon(null);

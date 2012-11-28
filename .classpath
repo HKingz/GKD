@@ -24,6 +24,7 @@
 	<classpathentry kind="lib" path="lib/jzy3d/org.jzy3d-0.8.4.jar"/>
 	<classpathentry kind="lib" path="lib/axis-1_4/lib/axis.jar"/>
 	<classpathentry kind="lib" path="lib/axis-1_4/lib/jaxrpc.jar"/>
+	<classpathentry kind="lib" path="lib/axis-1_4/lib/commons-discovery-0.2.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/LibGKD"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/peter-ar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/peter-dwarf"/>

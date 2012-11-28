@@ -153,7 +153,7 @@ public class SaveMemoryToXLSDialog extends javax.swing.JDialog {
 		if (jExportButton == null) {
 			jExportButton = new JButton();
 			jExportButton.setText("Export to excel");
-			jExportButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/peterbochs/icons/famfam_icons/excel.gif")));
+			jExportButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jExportButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jExportButtonActionPerformed(evt);
