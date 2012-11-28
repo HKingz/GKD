@@ -501,7 +501,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	};
 
 	public static void main(String[] args) {
-		WebServiceUtil.log("peter-bochs", "start", null, null, null);
+		WebServiceUtil.log("gkd", "start", null, null, null);
 		try {
 			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingWhiteLookAndFeel");
 		} catch (Exception e) {
@@ -812,7 +812,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void stopBochs() {
-		WebServiceUtil.log("peter-bochs", "stop", null, null, null);
+		WebServiceUtil.log("gkd", "stop", null, null, null);
 		try {
 			this.enableAllButtons(false, false);
 			runBochsButton.setText(MyLanguage.getString("Run_bochs"));
@@ -846,7 +846,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			processPauseBoch = true;
 			try {
 				if (runBochsButton.getText().equals(MyLanguage.getString("Pause_bochs"))) {
-					WebServiceUtil.log("peter-bochs", "pause", null, null, null);
+					WebServiceUtil.log("gkd", "pause", null, null, null);
 
 					commandReceiver.clearBuffer();
 					commandReceiver.waitUntilNoInput();
@@ -888,7 +888,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void runBochs() {
-		WebServiceUtil.log("peter-bochs", "run", null, null, null);
+		WebServiceUtil.log("gkd", "run", null, null, null);
 		try {
 			enableAllButtons(false, true);
 			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
@@ -1529,7 +1529,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			new Thread(untilThread, "Step until thread").start();
 		} else {
 			sendCommand("s");
-			WebServiceUtil.log("peter-bochs", "step", null, null, null);
+			WebServiceUtil.log("gkd", "step", null, null, null);
 			updateBochsStatus(true);
 		}
 	}
@@ -1864,7 +1864,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	public void updateBochsStatus(final boolean updateHistoryTable) {
 		isUpdateBochsStatusEnd = false;
-		WebServiceUtil.log("peter-bochs", "updateBochsStatus", null, null, null);
+		WebServiceUtil.log("gkd", "updateBochsStatus", null, null, null);
 		final JProgressBarDialog d = new JProgressBarDialog(this, true);
 		Thread updateThread = new Thread("updateBochsStatus thread") {
 			public void run() {
@@ -7185,7 +7185,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void fastStepButtonActionPerformed(ActionEvent evt) {
 		try {
 			sendCommand("s");
-			WebServiceUtil.log("peter-bochs", "fast step", null, null, null);
+			WebServiceUtil.log("gkd", "fast step", null, null, null);
 			Thread updateThread = new Thread("Fast step update thread") {
 				public void run() {
 					String result = commandReceiver.getCommandResultUntilEnd();
@@ -8774,7 +8774,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			new Thread(untilThread, "Step until thread").start();
 		} else {
 			sendCommand("next");
-			WebServiceUtil.log("peter-bochs", "step over", null, null, null);
+			WebServiceUtil.log("gkd", "step over", null, null, null);
 			updateBochsStatus(true);
 			// updateHistoryTable(re);
 		}
