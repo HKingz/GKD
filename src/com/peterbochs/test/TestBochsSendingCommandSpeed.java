@@ -14,7 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
-import com.peterbochs.Global;
+import com.gkd.Global;
 
 /**
  * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI

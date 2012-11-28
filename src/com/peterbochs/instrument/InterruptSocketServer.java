@@ -11,7 +11,7 @@ import java.util.Hashtable;
 
 import javax.swing.JOptionPane;
 
-import com.peterbochs.Global;
+import com.gkd.Global;
 import com.peterswing.CommonLib;
 
 public class InterruptSocketServer implements Runnable {

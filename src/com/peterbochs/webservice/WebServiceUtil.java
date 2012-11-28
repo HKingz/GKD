@@ -2,7 +2,7 @@ package com.peterbochs.webservice;
 
 import java.util.Random;
 
-import com.peterbochs.Global;
+import com.gkd.Global;
 
 public class WebServiceUtil {
 	static String magicNumber = String.valueOf(new Random().nextInt(100000000));

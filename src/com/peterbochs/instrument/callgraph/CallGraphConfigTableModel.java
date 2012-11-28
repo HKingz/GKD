@@ -4,7 +4,7 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.peterbochs.Setting;
+import com.gkd.Setting;
 
 
 public class CallGraphConfigTableModel extends AbstractTableModel {

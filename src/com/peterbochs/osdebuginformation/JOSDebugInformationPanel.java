@@ -18,7 +18,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import com.peterbochs.SortableTableModel;
+import com.gkd.SortableTableModel;
 
 
 /**

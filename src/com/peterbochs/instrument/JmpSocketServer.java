@@ -12,7 +12,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
-import com.peterbochs.Global;
+import com.gkd.Global;
 import com.peterbochs.instrument.callgraph.JmpData;
 import com.peterswing.CommonLib;
 

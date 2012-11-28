@@ -2,7 +2,7 @@ package com.peterbochs.instrument;
 
 import javax.swing.JTextArea;
 
-import com.peterbochs.Global;
+import com.gkd.Global;
 
 
 public class SMServer implements Runnable {

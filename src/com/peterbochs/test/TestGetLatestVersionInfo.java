@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.peterbochs.PeterBochsCommonLib;
+import com.gkd.PeterBochsCommonLib;
 
 public class TestGetLatestVersionInfo {
 

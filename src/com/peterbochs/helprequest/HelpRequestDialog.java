@@ -23,8 +23,8 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 
-import com.peterbochs.CommandReceiver;
-import com.peterbochs.PeterBochsDebugger;
+import com.gkd.CommandReceiver;
+import com.gkd.PeterBochsDebugger;
 import com.peterswing.advancedswing.enhancedtextarea.EnhancedTextArea;
 
 /**

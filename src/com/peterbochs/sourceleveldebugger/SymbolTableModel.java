@@ -4,7 +4,7 @@ import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.peterbochs.MyLanguage;
+import com.gkd.MyLanguage;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {

@@ -5,8 +5,8 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
-import com.peterbochs.Global;
-import com.peterbochs.ReverseFileReader;
+import com.gkd.Global;
+import com.gkd.ReverseFileReader;
 
 
 public class JmpTableModel extends DefaultTableModel implements Runnable {

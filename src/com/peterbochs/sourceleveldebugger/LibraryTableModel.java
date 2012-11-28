@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.peterbochs.MyLanguage;
+import com.gkd.MyLanguage;
 import com.peterswing.CommonLib;
 
 public class LibraryTableModel extends AbstractTableModel {
