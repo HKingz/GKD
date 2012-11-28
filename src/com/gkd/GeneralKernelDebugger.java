@@ -1491,16 +1491,6 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 	}
 
-	// public void sendCommand2(String command) {
-	// try {
-	// p.getOutputStream().write(3);
-	// // commandOutputStream.write(3);
-	// // commandOutputStream.flush();
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-
 	private void aboutUsMenuItemActionPerformed(ActionEvent evt) {
 		new AboutUsDialog(this).setVisible(true);
 	}
@@ -4374,8 +4364,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, GeneralKernelDebugger.instructionTable.getModel(), "instruction 0x"
-					+ this.jInstructionComboBox.getSelectedItem().toString());
+			GKDCommonLib
+					.exportTableModelToExcel(file, GeneralKernelDebugger.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -4812,8 +4802,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel1 = new JPanel();
 					jTabbedPane1.addTab(MyLanguage.getString("Bochs"),
 							new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), jPanel1, null);
-					jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(),
-							null);
+					jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
 					DiskPanel diskPanel = getDiskPanel();
 					if (diskPanel.getFile() != null) {
 						jTabbedPane1.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")),
@@ -4870,8 +4859,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel8 = new JPanel();
 					BorderLayout jPanel8Layout = new BorderLayout();
 					jPanel8.setLayout(jPanel8Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
-							jPanel8, null);
+					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8,
+							null);
 					{
 						jScrollPane2 = new JScrollPane();
 						jPanel8.add(jScrollPane2, BorderLayout.CENTER);
@@ -5006,8 +4995,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				}
 				{
 					jPanel5 = new JPanel();
-					jTabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5,
-							null);
+					jTabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5, null);
 					BorderLayout jPanel5Layout = new BorderLayout();
 					jPanel5.setLayout(jPanel5Layout);
 					{
@@ -5035,8 +5023,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel6 = new JPanel();
 					BorderLayout jPanel6Layout = new BorderLayout();
 					jPanel6.setLayout(jPanel6Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("IDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/idt.png")), jPanel6,
-							null);
+					jTabbedPane3.addTab(MyLanguage.getString("IDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/idt.png")), jPanel6, null);
 					{
 						jScrollPane10 = new JScrollPane();
 						jPanel6.add(jScrollPane10, BorderLayout.CENTER);
@@ -5061,12 +5048,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel7 = new JPanel();
 					BorderLayout jPanel7Layout = new BorderLayout();
 					jPanel7.setLayout(jPanel7Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7,
-							null);
-					jTabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader()
-							.getResource("com/gkd/icons/famfam_icons/memory.png")), getJPanel17(), null);
-					jTabbedPane3
-							.addTab("bochsout.txt", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
+					jTabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7, null);
+					jTabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
+							getJPanel17(), null);
+					jTabbedPane3.addTab("bochsout.txt", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
 					{
 						jScrollPane11 = new JScrollPane();
 						jPanel7.add(jScrollPane11, BorderLayout.CENTER);
@@ -5118,8 +5103,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 			{
 				jPanel3 = new JPanel();
-				jTabbedPane2.addTab(MyLanguage.getString("History"),
-						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")), jPanel3, null);
+				jTabbedPane2.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")),
+						jPanel3, null);
 				BorderLayout jPanel3Layout = new BorderLayout();
 				jPanel3.setLayout(jPanel3Layout);
 				{
@@ -5131,17 +5116,17 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 			{
 				jPanel11 = new JPanel();
-				jTabbedPane2.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")),
-						jPanel11, null);
-				jTabbedPane2.addTab(MyLanguage.getString("Address_translate"),
-						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")), getJAddressTranslatePanel(), null);
-				jTabbedPane2.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader()
-						.getResource("com/gkd/icons/famfam_icons/page_lightning.png")), getJPageTableGraphPanel(), null);
+				jTabbedPane2.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), jPanel11,
+						null);
+				jTabbedPane2.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")),
+						getJAddressTranslatePanel(), null);
+				jTabbedPane2.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
+						getJPageTableGraphPanel(), null);
 				if (!Global.debug) {
 					jTabbedPane2.removeTabAt(jTabbedPane2.getTabCount() - 1);
 				}
-				jTabbedPane2.addTab(MyLanguage.getString("Table_translate"),
-						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")), getJTableTranslateScrollPane(), null);
+				jTabbedPane2.addTab(MyLanguage.getString("Table_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")),
+						getJTableTranslateScrollPane(), null);
 				jTabbedPane2.addTab(MyLanguage.getString("ELF_dump"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
 						getJELFDumpScrollPane(), null);
 				jTabbedPane2.addTab("OS debug informations", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/bug.png")),
@@ -5474,8 +5459,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = GKDCommonLib.getMemoryFromBochs(
-					CommonLib.string2decimal(this.registerPanel.jGDTRTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			int descriptor[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jGDTRTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
@@ -5483,8 +5467,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
-					4);
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
@@ -5522,8 +5505,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
-					4);
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.jCR3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
@@ -6593,8 +6575,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.jPageDirectoryTable.getModel(), this.jPageTableTable.getModel(), jMemoryAddressComboBox.getSelectedItem()
-					.toString());
+			GKDCommonLib.exportTableModelToExcel(file, this.jPageDirectoryTable.getModel(), this.jPageTableTable.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
 		}
 	}
 
