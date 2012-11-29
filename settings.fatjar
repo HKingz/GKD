@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Thu Nov 29 12:46:48 HKT 2012
+onejar.license.required=true
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=false
+jarname=GKD.jar
+manifest.mergeall=true
+manifest.mainclass=com.gkd.GeneralKernelDebugger
+manifest.file=<createnew>
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=

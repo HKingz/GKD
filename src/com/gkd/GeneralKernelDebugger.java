@@ -101,6 +101,13 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Highlighter;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -122,7 +129,6 @@ import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
 import com.gkd.webservice.WebServiceUtil;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
-import com.peterdwarf.dwarf.DwarfHeaderFilename;
 import com.peterdwarf.dwarf.DwarfLine;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.diskpanel.DiskPanel;
@@ -409,10 +415,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JMenu jMenu2;
 	private JMenu jMenu1;
 	private JScrollPane jTableTranslateScrollPane;
-	// Vector<HashMap> bochsCommandLength =
-	// XMLHelper.xmltoVector(getClass().getClassLoader().getResourceAsStream("peter/bochsCommandLength.xml"),
-	// "/bochsCommandLength");
-	private static String[] vmArguments;
+	private static CommandLine cmd;
 	private JMenuItem jFont14MenuItem;
 	private JMenuItem jFont12MenuItem;
 	private JMenuItem jFont10MenuItem;
@@ -502,18 +505,31 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	public static void main(String[] args) {
 		WebServiceUtil.log("gkd", "start", null, null, null);
+		CommandLineParser parser = new PosixParser();
+		Options options = new Options();
+		try {
+			options.addOption(OptionBuilder.withDescription("specific config xml").hasArg().withArgName("file").create("f"));
+			options.addOption("v", false, "display version info");
+			cmd = parser.parse(options, args);
+		} catch (ParseException e1) {
+			e1.printStackTrace();
+			System.exit(1);
+		}
+
 		try {
 			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingWhiteLookAndFeel");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		if (ArrayUtils.contains(args, "-version") || ArrayUtils.contains(args, "-v")) {
+		if (cmd.hasOption("version") || cmd.hasOption("v")) {
 			System.out.println(Global.version);
+			HelpFormatter formatter = new HelpFormatter();
+			formatter.printHelp("java -jar GDK.jar [OPTION]", options);
 			System.exit(1);
 		}
 
-		if (!ArrayUtils.contains(args, "-f")) {
+		if (!cmd.hasOption("f")) {
 			String errorMessage = "Please specific the config xml by -f <file>";
 			System.err.println(errorMessage);
 			JOptionPane.showMessageDialog(null, errorMessage);
@@ -617,8 +633,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		Global.vmType=GKDCommonLib.parseXML(file, xpath)
+
+		Global.vmType = GKDCommonLib.parseXML(cmd.getOptionValue("f"), "/gkd/vmType/text()");
+
+		if (!Global.vmType.equals("bochs") && !Global.vmType.equals("qemu")) {
+			System.err.println("<vmType> only supports qemu and bochs");
+		}
 
 		/*if (ArrayUtils.contains(args, "-loadBreakpoint")) {
 			Setting.getInstance().setLoadBreakpointAtStartup(true);
@@ -652,7 +672,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 
 		arguments = args;
-*/
+		*/
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -701,13 +721,24 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			System.out.println("end initGUI()");
 		}
 
-		if (Global.debug) {
-			System.out.println("startBochs()");
+		if (Global.vmType.equals("bochs")) {
+			if (Global.debug) {
+				System.out.println("startBochs()");
+			}
+			startBochs();
+			if (Global.debug) {
+				System.out.println("end startBochs()");
+			}
+		} else {
+			if (Global.debug) {
+				System.out.println("startBochs()");
+			}
+			startQemu();
+			if (Global.debug) {
+				System.out.println("end startBochs()");
+			}
 		}
-		startBochs();
-		if (Global.debug) {
-			System.out.println("end startBochs()");
-		}
+
 		initChineseFont();
 		new Thread("checkLatestVersion thread") {
 			public void run() {
@@ -744,12 +775,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			if (p != null) {
 				p.destroy();
 			}
-			ProcessBuilder pb;
-			if (vmArguments.length == 0) {
-				pb = new ProcessBuilder("bochs", "-q");
-			} else {
-				pb = new ProcessBuilder(vmArguments);
-			}
+			ProcessBuilder pb = new ProcessBuilder(GKDCommonLib.parseXML(cmd.getOptionValue("f"), "/gkd/vmArguments/text()"));
 
 			pb.redirectErrorStream(true);
 			p = pb.start();
@@ -799,6 +825,29 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_bochs") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_bochs"));
+			ex.printStackTrace();
+			System.exit(1);
+		}
+	}
+
+	private void startQemu() {
+		try {
+			this.enableAllButtons(true, false);
+			runBochsButton.setText(MyLanguage.getString("Run_bochs"));
+			runBochsButton.setToolTipText("Start emulation");
+			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+
+			if (p != null) {
+				p.destroy();
+			}
+
+			p = Runtime.getRuntime().exec(GKDCommonLib.parseXML(cmd.getOptionValue("f"), "/gkd/vmArguments/text()"));
+			InputStream is = p.getInputStream();
+			commandReceiver = new CommandReceiver(is, this);
+			new Thread(commandReceiver, "commandReceiver thread").start();
+			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_qemu") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_qemu"));
 			ex.printStackTrace();
 			System.exit(1);
 		}
@@ -2006,18 +2055,20 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	protected void updatePTime(boolean updateGUI) {
-		try {
-			if (updateGUI) {
-				jStatusLabel.setText("Updating ptime");
+		if (Global.vmType.equals("bochs")) {
+			try {
+				if (updateGUI) {
+					jStatusLabel.setText("Updating ptime");
+				}
+				commandReceiver.shouldShow = false;
+				sendCommand("ptime");
+				String result = commandReceiver.getCommandResultUntilEnd();
+				if (result.contains(":") && result.contains("ptime")) {
+					registerPanel.jPTimeTextField.setText(result.replaceAll("<.*>", "").split(":")[1].trim());
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-			commandReceiver.shouldShow = false;
-			sendCommand("ptime");
-			String result = commandReceiver.getCommandResultUntilEnd();
-			if (result.contains(":") && result.contains("ptime")) {
-				registerPanel.jPTimeTextField.setText(result.replaceAll("<.*>", "").split(":")[1].trim());
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
 		}
 	}
 
@@ -2907,232 +2958,181 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void updateRegister(boolean updateGUI) {
-		try {
-			if (updateGUI) {
-				jStatusLabel.setText("Updating general registers");
-			}
-			commandReceiver.shouldShow = false;
-			sendCommand("r");
-			String result = commandReceiver.getCommandResult("ax:", "eflags", null);
-			result = result.replaceAll("r", "\nr");
-			String lines[] = result.split("\n");
-			if (updateGUI) {
-				if (updateGUI) {
-					jStatusProgressBar.setMaximum(lines.length - 1);
-				}
-
-				int x = 0;
-				for (String line : lines) {
-					if (updateGUI) {
-						jStatusProgressBar.setValue(x++);
-					}
-					if (line.matches(".*.ax:.*")) {
-						changeText(this.registerPanel.jEAXTextField, line.replaceAll(":", "").replaceAll("^.*ax", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.bx:.*")) {
-						changeText(this.registerPanel.jEBXTextField, line.replaceAll(":", "").replaceAll("^.*bx", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.cx:.*")) {
-						changeText(this.registerPanel.jECXTextField, line.replaceAll(":", "").replaceAll("^.*cx", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.dx:.*")) {
-						changeText(this.registerPanel.jEDXTextField, line.replaceAll(":", "").replaceAll("^.*dx", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.si:.*")) {
-						changeText(this.registerPanel.jESITextField, line.replaceAll(":", "").replaceAll("^.*si", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.di:.*")) {
-						changeText(this.registerPanel.jEDITextField, line.replaceAll(":", "").replaceAll("^.*di", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.bp:.*")) {
-						changeText(this.registerPanel.jEBPTextField, line.replaceAll(":", "").replaceAll("^.*bp", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.sp:.*")) {
-						changeText(this.registerPanel.jESPTextField, line.replaceAll(":", "").replaceAll("^.*sp", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*.ip:.*")) {
-						changeText(this.registerPanel.eipTextField, line.replaceAll(":", "").replaceAll("^.*ip", "").split(" ")[1].replaceAll("_", ""));
-					}
-					if (line.matches(".*eflags .*")) {
-						changeText(this.registerPanel.jEFLAGSTextField, line.replaceAll(":", "").replaceAll("^.*eflags", "").split(" ")[1].replaceAll("_", ""));
-					}
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		if (version.contains("2.4.1")) {
+		if (Global.vmType.equals("bochs")) {
 			try {
-				// sregs
 				if (updateGUI) {
-					jStatusLabel.setText("Updating segment registers");
+					jStatusLabel.setText("Updating general registers");
 				}
-				// System.out.println("want sreg");
-				commandReceiver.clearBuffer();
-				sendCommand("sreg");
-				String result = commandReceiver.getCommandResult("s:", "idtr:", null);
-				// System.out.println(result);
-				String[] lines = result.split("\n");
-
-				int x = 0;
+				commandReceiver.shouldShow = false;
+				sendCommand("r");
+				String result = commandReceiver.getCommandResult("ax:", "eflags", null);
+				result = result.replaceAll("r", "\nr");
+				String lines[] = result.split("\n");
 				if (updateGUI) {
-					jStatusProgressBar.setMaximum(lines.length - 1);
-				}
-
-				for (String line : lines) {
-					line = line.replaceFirst("<.*>", "");
 					if (updateGUI) {
-						jStatusProgressBar.setValue(x++);
+						jStatusProgressBar.setMaximum(lines.length - 1);
 					}
-					String str[] = line.split(" ");
 
-					if (line.matches(".*cs:.*")) {
-						changeText(this.registerPanel.jCSTextField, line.split("=")[1].split(",")[0]);
-					} else if (line.matches(".*ds:.*")) {
-						changeText(this.registerPanel.jDSTextField, line.split("=")[1].split(",")[0]);
-					} else if (line.matches(".*es:.*")) {
-						changeText(this.registerPanel.jESTextField, line.split("=")[1].split(",")[0]);
-					} else if (line.matches(".*fs:.*")) {
-						changeText(this.registerPanel.jFSTextField, line.split("=")[1].split(",")[0]);
-					} else if (line.matches(".*gs:.*")) {
-						changeText(this.registerPanel.jGSTextField, line.split("=")[1].split(",")[0]);
-					} else if (line.matches(".*ss:.*")) {
-						changeText(this.registerPanel.jSSTextField, line.split("=")[1].split(",")[0]);
-					} else
-
-					if (line.matches(".*gdtr:.*")) {
-						changeText(this.registerPanel.jGDTRTextField, line.split("=")[1].split(",")[0]);
-						changeText(this.registerPanel.jGDTRLimitTextField, str[1].split("=")[1]);
-					} else if (line.matches(".*ldtr.*")) {
-						changeText(this.registerPanel.jLDTRTextField, line.split("=")[1].split(",")[0]);
-					} else if (line.matches(".*idtr:.*")) {
-						changeText(this.registerPanel.jIDTRTextField, line.split("=")[1].split(",")[0]);
-						changeText(this.registerPanel.jIDTRLimitTextField, str[1].split("=")[1]);
-					} else if (line.matches(".*tr:.*")) {
-						changeText(this.registerPanel.jTRTextField, line.split("=")[1].split(",")[0]);
+					int x = 0;
+					for (String line : lines) {
+						if (updateGUI) {
+							jStatusProgressBar.setValue(x++);
+						}
+						if (line.matches(".*.ax:.*")) {
+							changeText(this.registerPanel.jEAXTextField, line.replaceAll(":", "").replaceAll("^.*ax", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.bx:.*")) {
+							changeText(this.registerPanel.jEBXTextField, line.replaceAll(":", "").replaceAll("^.*bx", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.cx:.*")) {
+							changeText(this.registerPanel.jECXTextField, line.replaceAll(":", "").replaceAll("^.*cx", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.dx:.*")) {
+							changeText(this.registerPanel.jEDXTextField, line.replaceAll(":", "").replaceAll("^.*dx", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.si:.*")) {
+							changeText(this.registerPanel.jESITextField, line.replaceAll(":", "").replaceAll("^.*si", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.di:.*")) {
+							changeText(this.registerPanel.jEDITextField, line.replaceAll(":", "").replaceAll("^.*di", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.bp:.*")) {
+							changeText(this.registerPanel.jEBPTextField, line.replaceAll(":", "").replaceAll("^.*bp", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.sp:.*")) {
+							changeText(this.registerPanel.jESPTextField, line.replaceAll(":", "").replaceAll("^.*sp", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*.ip:.*")) {
+							changeText(this.registerPanel.eipTextField, line.replaceAll(":", "").replaceAll("^.*ip", "").split(" ")[1].replaceAll("_", ""));
+						}
+						if (line.matches(".*eflags .*")) {
+							changeText(this.registerPanel.jEFLAGSTextField, line.replaceAll(":", "").replaceAll("^.*eflags", "").split(" ")[1].replaceAll("_", ""));
+						}
 					}
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-		} else {
-			try {
-				// sregs
-				if (updateGUI) {
-					jStatusLabel.setText("Updating segment registers");
-				}
-				// System.out.println("want sreg");
-				commandReceiver.clearBuffer();
-				sendCommand("sreg");
-				String result = commandReceiver.getCommandResult("s:", "idtr:", null);
-				// System.out.println(result);
-				String[] lines = result.split("\n");
 
-				int x = 0;
-				if (updateGUI) {
-					jStatusProgressBar.setMaximum(lines.length - 1);
-				}
-
-				for (String line : lines) {
-					line = line.replaceFirst("<.*>", "");
-					if (updateGUI) {
-						jStatusProgressBar.setValue(x++);
-					}
-					String str[] = line.split(" ");
-
-					if (line.matches(".*cs:.*")) {
-						changeText(this.registerPanel.jCSTextField, line.split(":")[1].split(",")[0]);
-					} else if (line.matches(".*ds:.*")) {
-						changeText(this.registerPanel.jDSTextField, line.split(":")[1].split(",")[0]);
-					} else if (line.matches(".*es:.*")) {
-						changeText(this.registerPanel.jESTextField, line.split(":")[1].split(",")[0]);
-					} else if (line.matches(".*fs:.*")) {
-						changeText(this.registerPanel.jFSTextField, line.split(":")[1].split(",")[0]);
-					} else if (line.matches(".*gs:.*")) {
-						changeText(this.registerPanel.jGSTextField, line.split(":")[1].split(",")[0]);
-					} else if (line.matches(".*ss:.*")) {
-						changeText(this.registerPanel.jSSTextField, line.split(":")[1].split(",")[0]);
-					}
-
-					if (line.matches(".*gdtr:.*")) {
-						changeText(this.registerPanel.jGDTRTextField, line.split("=")[1].split(",")[0]);
-						changeText(this.registerPanel.jGDTRLimitTextField, str[1].split("=")[1]);
-					} else if (line.matches(".*ldtr.*")) {
-						changeText(this.registerPanel.jLDTRTextField, line.split("=")[1].split(",")[0]);
-					} else if (line.matches(".*idtr:.*")) {
-						changeText(this.registerPanel.jIDTRTextField, line.split("=")[1].split(",")[0]);
-						changeText(this.registerPanel.jIDTRLimitTextField, str[1].split("=")[1]);
-					} else if (line.matches(".*tr:.*")) {
-						changeText(this.registerPanel.jTRTextField, line.split(":")[1].split(",")[0]);
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
-
-		try {
-			// cregs
-			if (updateGUI) {
-				jStatusLabel.setText("Updating control registers");
-			}
-			// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
-			commandReceiver.clearBuffer();
-			sendCommand("creg");
-			String result = commandReceiver.getCommandResult("CR0", "CR4", null);
-			String[] lines = result.split("\n");
-
-			int x = 0;
-			if (updateGUI) {
-				jStatusProgressBar.setMaximum(lines.length - 1);
-			}
-
-			for (String line : lines) {
-				if (updateGUI) {
-					jStatusProgressBar.setValue(x++);
-				}
-				if (line.matches(".*CR0=.*")) {
-					line = line.replaceFirst("^.*CR0", "CR0");
-					changeText(this.registerPanel.jCR0TextField, line.split(" ")[0].split("=")[1].replace(":", ""));
-
-					if (CommonLib.getBit(CommonLib.string2long(registerPanel.jCR0TextField.getText()), 0) == 1) {
-						jCPUModeLabel.setText(MyLanguage.getString("Protected_mode") + "     ");
-					} else {
-						jCPUModeLabel.setText(MyLanguage.getString("Real_mode") + "     ");
-					}
-					String arr[] = line.split(":")[1].split(" ");
-
-					registerPanel.jCR0DetailLabel.setText("");
-					registerPanel.jCR0DetailLabel2.setText(" ");
-					for (int z = 0; z < 7; z++) {
-						registerPanel.jCR0DetailLabel.setText(registerPanel.jCR0DetailLabel.getText() + arr[z] + " ");
-					}
-					for (int z = 7; z < arr.length; z++) {
-						registerPanel.jCR0DetailLabel2.setText(registerPanel.jCR0DetailLabel2.getText() + arr[z] + " ");
-					}
-				} else if (line.matches(".*CR2=.*")) {
-					changeText(this.registerPanel.jCR2TextField, line.split(" ")[2].split("=")[1]);
-				} else if (line.matches(".*CR3=.*")) {
-					changeText(this.registerPanel.jCR3TextField, line.split(" ")[0].split("=")[1]);
-				} else if (line.matches(".*CR4=.*")) {
-					changeText(this.registerPanel.jCR4TextField, line.split(" ")[0].split("=")[1].replace(":", ""));
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		try {
 			if (version.contains("2.4.1")) {
+				try {
+					// sregs
+					if (updateGUI) {
+						jStatusLabel.setText("Updating segment registers");
+					}
+					// System.out.println("want sreg");
+					commandReceiver.clearBuffer();
+					sendCommand("sreg");
+					String result = commandReceiver.getCommandResult("s:", "idtr:", null);
+					// System.out.println(result);
+					String[] lines = result.split("\n");
+
+					int x = 0;
+					if (updateGUI) {
+						jStatusProgressBar.setMaximum(lines.length - 1);
+					}
+
+					for (String line : lines) {
+						line = line.replaceFirst("<.*>", "");
+						if (updateGUI) {
+							jStatusProgressBar.setValue(x++);
+						}
+						String str[] = line.split(" ");
+
+						if (line.matches(".*cs:.*")) {
+							changeText(this.registerPanel.jCSTextField, line.split("=")[1].split(",")[0]);
+						} else if (line.matches(".*ds:.*")) {
+							changeText(this.registerPanel.jDSTextField, line.split("=")[1].split(",")[0]);
+						} else if (line.matches(".*es:.*")) {
+							changeText(this.registerPanel.jESTextField, line.split("=")[1].split(",")[0]);
+						} else if (line.matches(".*fs:.*")) {
+							changeText(this.registerPanel.jFSTextField, line.split("=")[1].split(",")[0]);
+						} else if (line.matches(".*gs:.*")) {
+							changeText(this.registerPanel.jGSTextField, line.split("=")[1].split(",")[0]);
+						} else if (line.matches(".*ss:.*")) {
+							changeText(this.registerPanel.jSSTextField, line.split("=")[1].split(",")[0]);
+						} else
+
+						if (line.matches(".*gdtr:.*")) {
+							changeText(this.registerPanel.jGDTRTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.jGDTRLimitTextField, str[1].split("=")[1]);
+						} else if (line.matches(".*ldtr.*")) {
+							changeText(this.registerPanel.jLDTRTextField, line.split("=")[1].split(",")[0]);
+						} else if (line.matches(".*idtr:.*")) {
+							changeText(this.registerPanel.jIDTRTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.jIDTRLimitTextField, str[1].split("=")[1]);
+						} else if (line.matches(".*tr:.*")) {
+							changeText(this.registerPanel.jTRTextField, line.split("=")[1].split(",")[0]);
+						}
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
 			} else {
-				// dregs
+				try {
+					// sregs
+					if (updateGUI) {
+						jStatusLabel.setText("Updating segment registers");
+					}
+					// System.out.println("want sreg");
+					commandReceiver.clearBuffer();
+					sendCommand("sreg");
+					String result = commandReceiver.getCommandResult("s:", "idtr:", null);
+					// System.out.println(result);
+					String[] lines = result.split("\n");
+
+					int x = 0;
+					if (updateGUI) {
+						jStatusProgressBar.setMaximum(lines.length - 1);
+					}
+
+					for (String line : lines) {
+						line = line.replaceFirst("<.*>", "");
+						if (updateGUI) {
+							jStatusProgressBar.setValue(x++);
+						}
+						String str[] = line.split(" ");
+
+						if (line.matches(".*cs:.*")) {
+							changeText(this.registerPanel.jCSTextField, line.split(":")[1].split(",")[0]);
+						} else if (line.matches(".*ds:.*")) {
+							changeText(this.registerPanel.jDSTextField, line.split(":")[1].split(",")[0]);
+						} else if (line.matches(".*es:.*")) {
+							changeText(this.registerPanel.jESTextField, line.split(":")[1].split(",")[0]);
+						} else if (line.matches(".*fs:.*")) {
+							changeText(this.registerPanel.jFSTextField, line.split(":")[1].split(",")[0]);
+						} else if (line.matches(".*gs:.*")) {
+							changeText(this.registerPanel.jGSTextField, line.split(":")[1].split(",")[0]);
+						} else if (line.matches(".*ss:.*")) {
+							changeText(this.registerPanel.jSSTextField, line.split(":")[1].split(",")[0]);
+						}
+
+						if (line.matches(".*gdtr:.*")) {
+							changeText(this.registerPanel.jGDTRTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.jGDTRLimitTextField, str[1].split("=")[1]);
+						} else if (line.matches(".*ldtr.*")) {
+							changeText(this.registerPanel.jLDTRTextField, line.split("=")[1].split(",")[0]);
+						} else if (line.matches(".*idtr:.*")) {
+							changeText(this.registerPanel.jIDTRTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.jIDTRLimitTextField, str[1].split("=")[1]);
+						} else if (line.matches(".*tr:.*")) {
+							changeText(this.registerPanel.jTRTextField, line.split(":")[1].split(",")[0]);
+						}
+					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
+				}
+			}
+
+			try {
+				// cregs
 				if (updateGUI) {
-					jStatusLabel.setText("Updating debug registers");
+					jStatusLabel.setText("Updating control registers");
 				}
 				// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
-				sendCommand("dreg");
-				String result = commandReceiver.getCommandResult("DR0", "DR7", null);
+				commandReceiver.clearBuffer();
+				sendCommand("creg");
+				String result = commandReceiver.getCommandResult("CR0", "CR4", null);
 				String[] lines = result.split("\n");
 
 				int x = 0;
@@ -3144,124 +3144,179 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					if (updateGUI) {
 						jStatusProgressBar.setValue(x++);
 					}
-					if (line.matches(".*DR0=0x.*")) {
-						changeText(this.registerPanel.jDR0TextField, line.split("=")[1].split(":")[0]);
-					} else if (line.matches(".*DR1=0x.*")) {
-						changeText(this.registerPanel.jDR1TextField, line.split("=")[1].split(":")[0]);
-					} else if (line.matches(".*DR2=0x.*")) {
-						changeText(this.registerPanel.jDR2TextField, line.split("=")[1].split(":")[0]);
-					} else if (line.matches(".*DR3=0x.*")) {
-						changeText(this.registerPanel.jDR3TextField, line.split("=")[1].split(":")[0]);
-					} else if (line.matches(".*DR6=0x.*")) {
-						changeText(this.registerPanel.jDR6TextField, line.split("=")[1].split(":")[0]);
-					} else if (line.matches(".*DR7=0x.*")) {
-						changeText(this.registerPanel.jDR7TextField, line.split("=")[1].split(":")[0]);
+					if (line.matches(".*CR0=.*")) {
+						line = line.replaceFirst("^.*CR0", "CR0");
+						changeText(this.registerPanel.jCR0TextField, line.split(" ")[0].split("=")[1].replace(":", ""));
+
+						if (CommonLib.getBit(CommonLib.string2long(registerPanel.jCR0TextField.getText()), 0) == 1) {
+							jCPUModeLabel.setText(MyLanguage.getString("Protected_mode") + "     ");
+						} else {
+							jCPUModeLabel.setText(MyLanguage.getString("Real_mode") + "     ");
+						}
+						String arr[] = line.split(":")[1].split(" ");
+
+						registerPanel.jCR0DetailLabel.setText("");
+						registerPanel.jCR0DetailLabel2.setText(" ");
+						for (int z = 0; z < 7; z++) {
+							registerPanel.jCR0DetailLabel.setText(registerPanel.jCR0DetailLabel.getText() + arr[z] + " ");
+						}
+						for (int z = 7; z < arr.length; z++) {
+							registerPanel.jCR0DetailLabel2.setText(registerPanel.jCR0DetailLabel2.getText() + arr[z] + " ");
+						}
+					} else if (line.matches(".*CR2=.*")) {
+						changeText(this.registerPanel.jCR2TextField, line.split(" ")[2].split("=")[1]);
+					} else if (line.matches(".*CR3=.*")) {
+						changeText(this.registerPanel.jCR3TextField, line.split(" ")[0].split("=")[1]);
+					} else if (line.matches(".*CR4=.*")) {
+						changeText(this.registerPanel.jCR4TextField, line.split(" ")[0].split("=")[1].replace(":", ""));
 					}
 				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		try {
-			// fpu
-			if (updateGUI) {
-				jStatusLabel.setText("Updating FPU registers");
-			}
-			commandReceiver.clearBuffer();
-			sendCommand("fpu");
-			String result = commandReceiver.getCommandResult("status", "FP7", null);
-			String[] lines = result.split("\n");
-
-			int x = 0;
-			if (updateGUI) {
-				jStatusProgressBar.setMaximum(lines.length - 1);
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
 
-			for (String line : lines) {
+			try {
+				if (version.contains("2.4.1")) {
+				} else {
+					// dregs
+					if (updateGUI) {
+						jStatusLabel.setText("Updating debug registers");
+					}
+					// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
+					sendCommand("dreg");
+					String result = commandReceiver.getCommandResult("DR0", "DR7", null);
+					String[] lines = result.split("\n");
+
+					int x = 0;
+					if (updateGUI) {
+						jStatusProgressBar.setMaximum(lines.length - 1);
+					}
+
+					for (String line : lines) {
+						if (updateGUI) {
+							jStatusProgressBar.setValue(x++);
+						}
+						if (line.matches(".*DR0=0x.*")) {
+							changeText(this.registerPanel.jDR0TextField, line.split("=")[1].split(":")[0]);
+						} else if (line.matches(".*DR1=0x.*")) {
+							changeText(this.registerPanel.jDR1TextField, line.split("=")[1].split(":")[0]);
+						} else if (line.matches(".*DR2=0x.*")) {
+							changeText(this.registerPanel.jDR2TextField, line.split("=")[1].split(":")[0]);
+						} else if (line.matches(".*DR3=0x.*")) {
+							changeText(this.registerPanel.jDR3TextField, line.split("=")[1].split(":")[0]);
+						} else if (line.matches(".*DR6=0x.*")) {
+							changeText(this.registerPanel.jDR6TextField, line.split("=")[1].split(":")[0]);
+						} else if (line.matches(".*DR7=0x.*")) {
+							changeText(this.registerPanel.jDR7TextField, line.split("=")[1].split(":")[0]);
+						}
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+
+			try {
+				// fpu
 				if (updateGUI) {
-					jStatusProgressBar.setValue(x++);
+					jStatusLabel.setText("Updating FPU registers");
 				}
-				String ss[] = line.split(":");
-				if (line.matches(".*ST0.*")) {
-					changeTextStr(this.registerPanel.jST0TextField, line.split(" ")[10]);
-				} else if (line.matches(".*ST1.*")) {
-					changeTextStr(this.registerPanel.jST1TextField, line.split(" ")[12]);
-				} else if (line.matches(".*ST2.*")) {
-					changeTextStr(this.registerPanel.jST2TextField, line.split(" ")[12]);
-				} else if (line.matches(".*ST3.*")) {
-					changeTextStr(this.registerPanel.jST3TextField, line.split(" ")[12]);
-				} else if (line.matches(".*ST4.*")) {
-					changeTextStr(this.registerPanel.jST4TextField, line.split(" ")[12]);
-				} else if (line.matches(".*ST5.*")) {
-					changeTextStr(this.registerPanel.jST5TextField, line.split(" ")[12]);
-				} else if (line.matches(".*ST6.*")) {
-					changeTextStr(this.registerPanel.jST6TextField, line.split(" ")[12]);
-				} else if (line.matches(".*ST7.*")) {
-					changeTextStr(this.registerPanel.jST7TextField, line.split(" ")[12]);
-				} else if (line.matches(".*status.*")) {
-					changeTextStr(this.registerPanel.jFPUStatusTextField, line.substring(line.indexOf(":")));
-				} else if (line.matches(".*control.*")) {
-					changeTextStr(this.registerPanel.jFPUControlTextField, ss[ss.length - 2].trim() + " " + ss[ss.length - 1].trim());
-				} else if (line.matches(".*tag.*")) {
-					changeTextStr(this.registerPanel.jFPUTagTextField, ss[ss.length - 1].trim());
-				} else if (line.matches(".*operand.*")) {
-					changeTextStr(this.registerPanel.jFPUOperandTextField, ss[ss.length - 1].trim());
-				} else if (line.matches("fip.*")) {
-					changeTextStr(this.registerPanel.jFIPTextField, line.split(":")[1].trim());
-				} else if (line.matches("fcs.*")) {
-					changeTextStr(this.registerPanel.jFCSTextField, line.split(":")[1].trim());
-				} else if (line.matches("fdp.*")) {
-					changeTextStr(this.registerPanel.jFDPTextField, line.split(":")[1].trim());
-				} else if (line.matches("fds.*")) {
-					changeTextStr(this.registerPanel.jFDSTextField, line.split(":")[1].trim());
-				}
-			}
+				commandReceiver.clearBuffer();
+				sendCommand("fpu");
+				String result = commandReceiver.getCommandResult("status", "FP7", null);
+				String[] lines = result.split("\n");
 
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
-		try {
-			// mmx
-			if (updateGUI) {
-				jStatusLabel.setText("Updating MMX registers");
-			}
-			commandReceiver.clearBuffer();
-			sendCommand("mmx");
-			String result = commandReceiver.getCommandResult("MM[0]", "MM[7]", null);
-			String[] lines = result.split("\n");
-
-			int x = 0;
-			if (updateGUI) {
-				jStatusProgressBar.setMaximum(lines.length - 1);
-			}
-
-			for (String line : lines) {
+				int x = 0;
 				if (updateGUI) {
-					jStatusProgressBar.setValue(x++);
+					jStatusProgressBar.setMaximum(lines.length - 1);
 				}
-				String ss[] = line.split(":");
-				if (line.matches(".*MM\\[0\\].*")) {
-					changeTextStr(this.registerPanel.jMMX0TextField, ss[1].trim());
-				} else if (line.matches(".*MM\\[1\\].*")) {
-					changeTextStr(this.registerPanel.jMMX1TextField, ss[1].trim());
-				} else if (line.matches(".*MM\\[2\\].*")) {
-					changeTextStr(this.registerPanel.jMMX2TextField, ss[1].trim());
-				} else if (line.matches(".*MM\\[3\\].*")) {
-					changeTextStr(this.registerPanel.jMMX3TextField, ss[1].trim());
-				} else if (line.matches(".*MM\\[4\\].*")) {
-					changeTextStr(this.registerPanel.jMMX4TextField, ss[1].trim());
-				} else if (line.matches(".*MM\\[5\\].*")) {
-					changeTextStr(this.registerPanel.jMMX5TextField, ss[1].trim());
-				} else if (line.matches(".*MM\\[6\\].*")) {
-					changeTextStr(this.registerPanel.jMMX6TextField, ss[1].trim());
-				} else if (line.matches(".*MM\\[7\\].*")) {
-					changeTextStr(this.registerPanel.jMMX7TextField, ss[1].trim());
+
+				for (String line : lines) {
+					if (updateGUI) {
+						jStatusProgressBar.setValue(x++);
+					}
+					String ss[] = line.split(":");
+					if (line.matches(".*ST0.*")) {
+						changeTextStr(this.registerPanel.jST0TextField, line.split(" ")[10]);
+					} else if (line.matches(".*ST1.*")) {
+						changeTextStr(this.registerPanel.jST1TextField, line.split(" ")[12]);
+					} else if (line.matches(".*ST2.*")) {
+						changeTextStr(this.registerPanel.jST2TextField, line.split(" ")[12]);
+					} else if (line.matches(".*ST3.*")) {
+						changeTextStr(this.registerPanel.jST3TextField, line.split(" ")[12]);
+					} else if (line.matches(".*ST4.*")) {
+						changeTextStr(this.registerPanel.jST4TextField, line.split(" ")[12]);
+					} else if (line.matches(".*ST5.*")) {
+						changeTextStr(this.registerPanel.jST5TextField, line.split(" ")[12]);
+					} else if (line.matches(".*ST6.*")) {
+						changeTextStr(this.registerPanel.jST6TextField, line.split(" ")[12]);
+					} else if (line.matches(".*ST7.*")) {
+						changeTextStr(this.registerPanel.jST7TextField, line.split(" ")[12]);
+					} else if (line.matches(".*status.*")) {
+						changeTextStr(this.registerPanel.jFPUStatusTextField, line.substring(line.indexOf(":")));
+					} else if (line.matches(".*control.*")) {
+						changeTextStr(this.registerPanel.jFPUControlTextField, ss[ss.length - 2].trim() + " " + ss[ss.length - 1].trim());
+					} else if (line.matches(".*tag.*")) {
+						changeTextStr(this.registerPanel.jFPUTagTextField, ss[ss.length - 1].trim());
+					} else if (line.matches(".*operand.*")) {
+						changeTextStr(this.registerPanel.jFPUOperandTextField, ss[ss.length - 1].trim());
+					} else if (line.matches("fip.*")) {
+						changeTextStr(this.registerPanel.jFIPTextField, line.split(":")[1].trim());
+					} else if (line.matches("fcs.*")) {
+						changeTextStr(this.registerPanel.jFCSTextField, line.split(":")[1].trim());
+					} else if (line.matches("fdp.*")) {
+						changeTextStr(this.registerPanel.jFDPTextField, line.split(":")[1].trim());
+					} else if (line.matches("fds.*")) {
+						changeTextStr(this.registerPanel.jFDSTextField, line.split(":")[1].trim());
+					}
 				}
+
+			} catch (Exception ex) {
+				ex.printStackTrace();
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+
+			try {
+				// mmx
+				if (updateGUI) {
+					jStatusLabel.setText("Updating MMX registers");
+				}
+				commandReceiver.clearBuffer();
+				sendCommand("mmx");
+				String result = commandReceiver.getCommandResult("MM[0]", "MM[7]", null);
+				String[] lines = result.split("\n");
+
+				int x = 0;
+				if (updateGUI) {
+					jStatusProgressBar.setMaximum(lines.length - 1);
+				}
+
+				for (String line : lines) {
+					if (updateGUI) {
+						jStatusProgressBar.setValue(x++);
+					}
+					String ss[] = line.split(":");
+					if (line.matches(".*MM\\[0\\].*")) {
+						changeTextStr(this.registerPanel.jMMX0TextField, ss[1].trim());
+					} else if (line.matches(".*MM\\[1\\].*")) {
+						changeTextStr(this.registerPanel.jMMX1TextField, ss[1].trim());
+					} else if (line.matches(".*MM\\[2\\].*")) {
+						changeTextStr(this.registerPanel.jMMX2TextField, ss[1].trim());
+					} else if (line.matches(".*MM\\[3\\].*")) {
+						changeTextStr(this.registerPanel.jMMX3TextField, ss[1].trim());
+					} else if (line.matches(".*MM\\[4\\].*")) {
+						changeTextStr(this.registerPanel.jMMX4TextField, ss[1].trim());
+					} else if (line.matches(".*MM\\[5\\].*")) {
+						changeTextStr(this.registerPanel.jMMX5TextField, ss[1].trim());
+					} else if (line.matches(".*MM\\[6\\].*")) {
+						changeTextStr(this.registerPanel.jMMX6TextField, ss[1].trim());
+					} else if (line.matches(".*MM\\[7\\].*")) {
+						changeTextStr(this.registerPanel.jMMX7TextField, ss[1].trim());
+					}
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+		} else if (Global.vmType.equals("qemu")) {
+
 		}
 	}
 
@@ -6722,20 +6777,24 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (diskPanel == null) {
 			diskPanel = new DiskPanel();
 			try {
-				String line = GKDCommonLib.findLineInFile(new File(bochsrc), "ata0-master");
-				if (line != null) {
-					String strs[] = line.split(",");
-					for (String str : strs) {
-						if (str.toLowerCase().contains("path=")) {
-							String filename = str.split("=")[1];
-							filename = filename.replaceAll("\"", "");
-							File file = new File(filename);
-							if (file.exists()) {
-								diskPanel.setFile(new File(filename));
+				if (Global.vmType.equals("bochs")) {
+					String line = GKDCommonLib.findLineInFile(new File(bochsrc), "ata0-master");
+					if (line != null) {
+						String strs[] = line.split(",");
+						for (String str : strs) {
+							if (str.toLowerCase().contains("path=")) {
+								String filename = str.split("=")[1];
+								filename = filename.replaceAll("\"", "");
+								File file = new File(filename);
+								if (file.exists()) {
+									diskPanel.setFile(new File(filename));
+								}
+								break;
 							}
-							break;
 						}
 					}
+				} else if (Global.vmType.equals("qemu")) {
+					diskPanel.setFile(new File(GKDCommonLib.parseXML(cmd.getOptionValue("f"), "/gkd/hd/text()")));
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
