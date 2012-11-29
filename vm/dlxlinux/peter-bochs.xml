@@ -4,12 +4,12 @@
     <breakpoint/>
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
-    <divX>400</divX>
+    <divX>617</divX>
     <divY>348</divY>
     <fontFamily>Dialog</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>747</height>
+    <height>808</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -56,7 +56,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>928</width>
-    <x>407</x>
-    <y>72</y>
+    <width>1283</width>
+    <x>327</x>
+    <y>110</y>
   </Setting>
