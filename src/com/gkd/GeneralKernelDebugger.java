@@ -40,6 +40,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -127,6 +128,7 @@ import com.gkd.osdebuginformation.JOSDebugInformationPanel;
 import com.gkd.osdebuginformation.OSDebugInfoHelper;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
 import com.gkd.webservice.WebServiceUtil;
+import com.libgkd.LibGKD;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
 import com.peterdwarf.dwarf.DwarfLine;
@@ -495,6 +497,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
 	public static GeneralKernelDebugger instance;
+	private static LibGKD libGKD;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
 			"Disp Enb Address", MyLanguage.getString("Hit") }) {
@@ -635,9 +638,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 
 		Global.vmType = GKDCommonLib.parseXML(cmd.getOptionValue("f"), "/gkd/vmType/text()");
-
 		if (!Global.vmType.equals("bochs") && !Global.vmType.equals("qemu")) {
 			System.err.println("<vmType> only supports qemu and bochs");
+		}
+		if (Global.vmType.equals("qemu")) {
+			libGKD = new LibGKD("localhost", Integer.parseInt(GKDCommonLib.parseXML(cmd.getOptionValue("f"), "/gkd/gkd_server_port/text()")));
 		}
 
 		/*if (ArrayUtils.contains(args, "-loadBreakpoint")) {
@@ -2937,15 +2942,19 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 	}
 
-	private void changeText(JTextField jTextField, String value) {
-		Long l = CommonLib.string2long(value);
-		String newValue = "0x" + Long.toHexString(l);
+	private void changeText(JTextField jTextField, long value) {
+		String newValue = "0x" + Long.toHexString(value);
 		if (jTextField.getText().equals(newValue)) {
 			jTextField.setForeground(Color.black);
 		} else {
 			jTextField.setForeground(Color.red);
 		}
 		jTextField.setText(newValue);
+	}
+
+	private void changeText(JTextField jTextField, String value) {
+		Long l = CommonLib.string2long(value);
+		changeText(jTextField, value);
 	}
 
 	private void changeTextStr(JTextField jTextField, String value) {
@@ -3316,7 +3325,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				ex.printStackTrace();
 			}
 		} else if (Global.vmType.equals("qemu")) {
+			Hashtable<String, Long> ht = libGKD.readRegister();
 
+			changeText(this.registerPanel.jEAXTextField, ht.get("eax"));
+
+			System.out.println(ht);
 		}
 	}
 
@@ -3333,7 +3346,6 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				jHexTable1.getModel().set(bytes);
 				jHexTable1.getModel().fireTableDataChanged();
 			}
-			// }
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
