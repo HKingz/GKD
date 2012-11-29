@@ -213,7 +213,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JPanel jPanel11;
 	private JTable jGDTTable;
 	private JScrollPane jScrollPane3;
-	private JMenuItem jUpdateBochsStatusMenuItem;
+	private JMenuItem jupdateVMStatusMenuItem;
 	private JButton jGOMemoryButton;
 	private JPanel jPanel9;
 	private JMenu jMenu3;
@@ -493,7 +493,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private boolean saveToRunDotTxt;
 	private boolean processPauseBoch;
 	private int skipBreakpointTime;
-	private boolean isUpdateBochsStatusEnd;
+	private boolean isupdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource(
 			"com/gkd/images/ajax-loader.gif");
@@ -1055,7 +1055,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						}
 					}
 
-					updateBochsStatus(true);
+					updateVMStatus(true);
 
 					if (resumeMainPanel) {
 						SwingUtilities.invokeLater(new Runnable() {
@@ -1165,7 +1165,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							commandReceiver.clearBuffer();
 							if (command.equals("s")) {
 								sendCommand("s");
-								updateBochsStatus(true);
+								updateVMStatus(true);
 								waitUpdateFinish();
 							} else if (command.equals("c")) {
 								runBochs();
@@ -1186,7 +1186,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void waitUpdateFinish() {
-		while (!isUpdateBochsStatusEnd) {
+		while (!isupdateVMStatusEnd) {
 			try {
 				Thread.currentThread();
 				Thread.sleep(200);
@@ -1465,15 +1465,15 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								});
 					}
 					{
-						jUpdateBochsStatusMenuItem = new JMenuItem();
-						jMenu4.add(jUpdateBochsStatusMenuItem);
-						jUpdateBochsStatusMenuItem.setText(MyLanguage
+						jupdateVMStatusMenuItem = new JMenuItem();
+						jMenu4.add(jupdateVMStatusMenuItem);
+						jupdateVMStatusMenuItem.setText(MyLanguage
 								.getString("Update_bochs_status"));
-						jUpdateBochsStatusMenuItem.setBounds(83, 86, 79, 20);
-						jUpdateBochsStatusMenuItem
+						jupdateVMStatusMenuItem.setBounds(83, 86, 79, 20);
+						jupdateVMStatusMenuItem
 								.addActionListener(new ActionListener() {
 									public void actionPerformed(ActionEvent evt) {
-										jUpdateBochsStatusMenuItemActionPerformed(evt);
+										jupdateVMStatusMenuItemActionPerformed(evt);
 									}
 								});
 					}
@@ -1645,7 +1645,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 				sendCommand(this.jBochsCommandTextField.getText());
 				if (Setting.getInstance().isUpdateAfterBochsCommand()) {
-					updateBochsStatusForBochsCommand(true);
+					updateVMStatusForBochsCommand(true);
 				}
 				commandHistoryIndex = 0;
 			}
@@ -1827,7 +1827,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		} else {
 			sendCommand("s");
 			WebServiceUtil.log("gkd", "step", null, null, null);
-			updateBochsStatus(true);
+			updateVMStatus(true);
 		}
 	}
 
@@ -1908,7 +1908,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							sendCommand("s");
 							result = update(result, out);
 						}
-						updateBochsStatus(false);
+						updateVMStatus(false);
 					} else if (eventSource == jStep100MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 100 && !shouldStop; x++) {
@@ -1916,7 +1916,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							sendCommand("s");
 							result = update(result, out);
 						}
-						updateBochsStatus(false);
+						updateVMStatus(false);
 					} else if (eventSource == jStepOver10MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 10 && !shouldStop; x++) {
@@ -1924,7 +1924,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							sendCommand("next");
 							result = update(result, out);
 						}
-						updateBochsStatus(false);
+						updateVMStatus(false);
 					} else if (eventSource == jStepOver100MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 100 && !shouldStop; x++) {
@@ -1932,7 +1932,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							sendCommand("next");
 							result = update(result, out);
 						}
-						updateBochsStatus(false);
+						updateVMStatus(false);
 					} else if (eventSource == jStepNMenuItem) {
 						String result = "";
 						jStepCountLabel.setVisible(true);
@@ -1955,7 +1955,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								lastTime = new Date().getTime();
 							}
 						}
-						updateBochsStatus(false);
+						updateVMStatus(false);
 					} else if (eventSource == jStepOverNTimesMenuItem) {
 						String result = "";
 						jStepCountLabel.setVisible(true);
@@ -1978,7 +1978,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								lastTime = new Date().getTime();
 							}
 						}
-						updateBochsStatus(false);
+						updateVMStatus(false);
 					} else if (eventSource == jStepUntilCallOrJumpMenuItem) {
 						boolean notMatch = true;
 						do {
@@ -2004,7 +2004,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								notMatch = false;
 							}
 						} while (notMatch && !shouldStop);
-						updateBochsStatus(true);
+						updateVMStatus(true);
 					} else if (eventSource == jStepUntilRetMenuItem) {
 						boolean notMatch = true;
 						do {
@@ -2015,7 +2015,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								notMatch = false;
 							}
 						} while (notMatch && !shouldStop);
-						updateBochsStatus(true);
+						updateVMStatus(true);
 					} else if (eventSource == jStepUntilIRetMenuItem) {
 						boolean notMatch = true;
 						do {
@@ -2026,7 +2026,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								notMatch = false;
 							}
 						} while (notMatch && !shouldStop);
-						updateBochsStatus(true);
+						updateVMStatus(true);
 					} else if (eventSource == jStepUntilMovMenuItem) {
 						boolean notMatch = true;
 						do {
@@ -2037,7 +2037,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								notMatch = false;
 							}
 						} while (notMatch && !shouldStop);
-						updateBochsStatus(true);
+						updateVMStatus(true);
 					} else if (eventSource == jStepUntilIPBigChangeMenuItem) {
 						boolean notMatch = true;
 						long lastIP = -1;
@@ -2161,7 +2161,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 							updateRegister(true);
 						} while (notMatch && !shouldStop);
-						updateBochsStatus(true);
+						updateVMStatus(true);
 					}
 				}
 			} catch (Exception ex) {
@@ -2222,18 +2222,18 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		jInstructionComboBox.addItem(str.trim());
 	}
 
-	private void jUpdateBochsStatusMenuItemActionPerformed(ActionEvent evt) {
-		updateBochsStatus(true);
+	private void jupdateVMStatusMenuItemActionPerformed(ActionEvent evt) {
+		updateVMStatus(true);
 	}
 
-	public void updateBochsStatus(final boolean updateHistoryTable) {
-		isUpdateBochsStatusEnd = false;
-		WebServiceUtil.log("gkd", "updateBochsStatus", null, null, null);
+	public void updateVMStatus(final boolean updateHistoryTable) {
+		isupdateVMStatusEnd = false;
+		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);
 		final JProgressBarDialog d = new JProgressBarDialog(this, true);
-		Thread updateThread = new Thread("updateBochsStatus thread") {
+		Thread updateThread = new Thread("updateVMStatus thread") {
 			public void run() {
 				if (Global.debug) {
-					System.out.println("updateBochsStatus thread start");
+					System.out.println("updateVMStatus thread start");
 				}
 				enableAllButtons(false, skipBreakpointTime > 0);
 
@@ -2365,14 +2365,14 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 				jumpToRowInstructionTable(getRealEIP());
 
-				d.jProgressBar.setString("updateBochsStatus end");
+				d.jProgressBar.setString("updateVMStatus end");
 				d.setVisible(false);
 
 				enableAllButtons(true, skipBreakpointTime > 0
 						|| customCommandQueue.size() > 0);
-				isUpdateBochsStatusEnd = true;
+				isupdateVMStatusEnd = true;
 				if (Global.debug) {
-					System.out.println("updateBochsStatus thread end");
+					System.out.println("updateVMStatus thread end");
 				}
 			}
 		};
@@ -2386,7 +2386,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		updateThread.start();
 
 		if (Global.debug) {
-			System.out.println("updateBochsStatus() end");
+			System.out.println("updateVMStatus() end");
 		}
 	}
 
@@ -2435,9 +2435,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 	}
 
-	public void updateBochsStatusForBochsCommand(boolean shouldWait) {
+	public void updateVMStatusForBochsCommand(boolean shouldWait) {
 		Thread updateThread = new Thread(
-				"updateBochsStatusForBochsCommand thread") {
+				"updateVMStatusForBochsCommand thread") {
 			public void run() {
 				enableAllButtons(false, false);
 
@@ -2756,7 +2756,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 		pauseBochsMenuItem.setEnabled(b);
 		runBochsMenuItem.setEnabled(b);
-		jUpdateBochsStatusMenuItem.setEnabled(b);
+		jupdateVMStatusMenuItem.setEnabled(b);
 		jRunBochsAndSkipBreakpointMenuItem.setEnabled(b);
 		jRunCustomCommandMenuItem.setEnabled(b);
 	}
@@ -3881,6 +3881,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			changeText(this.registerPanel.jSSTextField, ht.get("ss"));
 			changeText(this.registerPanel.eipTextField, ht.get("eip"));
 			changeText(this.registerPanel.jEFLAGSTextField, ht.get("eflags"));
+			
 			changeText(this.registerPanel.jEAXTextField, ht.get("eax"));
 			changeText(this.registerPanel.jEBXTextField, ht.get("ebx"));
 			changeText(this.registerPanel.jECXTextField, ht.get("ecx"));
@@ -3889,6 +3890,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			changeText(this.registerPanel.jEDITextField, ht.get("edi"));
 			changeText(this.registerPanel.jEBPTextField, ht.get("ebp"));
 			changeText(this.registerPanel.jESPTextField, ht.get("esp"));
+			
+
+			changeText(this.registerPanel.jCR0TextField, ht.get("cr0"));
+			changeText(this.registerPanel.jCR2TextField, ht.get("cr2"));
+			changeText(this.registerPanel.jCR3TextField, ht.get("cr3"));
+			changeText(this.registerPanel.jCR4TextField, ht.get("cr4"));
 
 			System.out.println(ht);
 		}
@@ -4003,7 +4010,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jUpdateBochsButtonActionPerformed(ActionEvent evt) {
-		updateBochsStatus(true);
+		updateVMStatus(true);
 	}
 
 	private void jPageDirectoryTableMouseClicked(MouseEvent evt) {
@@ -7581,11 +7588,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	private void thisWindowOpened(WindowEvent evt) {
 		if (Global.debug) {
-			System.out.println("updateBochsStatus");
+			System.out.println("updateVMStatus");
 		}
-		updateBochsStatus(true);
+		updateVMStatus(true);
 		if (Global.debug) {
-			System.out.println("updateBochsStatus end");
+			System.out.println("updateVMStatus end");
 		}
 	}
 
@@ -10213,7 +10220,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		} else {
 			sendCommand("next");
 			WebServiceUtil.log("gkd", "step over", null, null, null);
-			updateBochsStatus(true);
+			updateVMStatus(true);
 			// updateHistoryTable(re);
 		}
 	}
@@ -10309,7 +10316,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 		}
 
-		// updateBochsStatus(true);
+		// updateVMStatus(true);
 
 		updateRegister(true);
 		updateEFlags();
