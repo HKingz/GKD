@@ -23,6 +23,12 @@ import java.util.Vector;
 import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableModel;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,6 +40,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.w3c.dom.Document;
 
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
@@ -590,5 +597,26 @@ public class GKDCommonLib {
 			buffer.append("}");
 		}
 		return buffer.toString();
+	}
+
+	public static String parseXML(String file, String xpath) {
+		return parseXML(new File(file), xpath);
+	}
+
+	public static String parseXML(File file, String xpath) {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+
+			Document doc = builder.parse(file);
+			XPathFactory xPathfactory = XPathFactory.newInstance();
+			XPath xp = xPathfactory.newXPath();
+			XPathExpression expr = xp.compile(xpath);
+			String text = (String) expr.evaluate(doc, XPathConstants.STRING);
+			return text;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
 	}
 }

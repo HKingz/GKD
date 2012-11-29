@@ -17,4 +17,5 @@ public class Global {
 	public static boolean isBeta = false;
 	public static String lastCommand;
 	public static int MAX_NEXTI_INSTRUCTION_COUNT = 10;
+	public static String vmType = null;
 }

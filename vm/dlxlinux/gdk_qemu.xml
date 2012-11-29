@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gdk>
+	<vm>qemu</vm>
+	<vmArguments>~/qemu/bin/qemu-system-i386 -hda hd10meg.img -gkd
+		tcp::1234
+		-k en-us -S
+	</vmArguments>
+	<gdk_server_port>1234</gdk_server_port>
+</gdk>

@@ -412,7 +412,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	// Vector<HashMap> bochsCommandLength =
 	// XMLHelper.xmltoVector(getClass().getClassLoader().getResourceAsStream("peter/bochsCommandLength.xml"),
 	// "/bochsCommandLength");
-	private static String[] arguments;
+	private static String[] vmArguments;
 	private JMenuItem jFont14MenuItem;
 	private JMenuItem jFont12MenuItem;
 	private JMenuItem jFont10MenuItem;
@@ -508,29 +508,23 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			e.printStackTrace();
 		}
 
-		if (args.length == 0) {
-			String errorMessage = "Wrong number of argument\n\n";
-			errorMessage += "GDK supports bochs and qemu\n";
-			errorMessage += "For qemu :\n\n";
-			errorMessage += "For bochs :\n\n";
-			errorMessage += "\tIn Linux/Mac : java -jar gkd.jar bochs -f bochxrc.bxrc\n";
-			errorMessage += "\tIn windows : java -jar gkd.jar c:\\program files\\bochs2.4.3\\bochsdbg.exe -q -f bochxrc.bxrc\n";
-			errorMessage += "\t!!! if using gkd in windows, you need to pass the full path of bochs exe and -q to the parameter. (!!! relative path of bochs exe will not work)\n";
-			errorMessage += "\t!!! to use \"experimental feature\", please add \"-debug\" to the parameter list\n";
-			System.out.println(errorMessage);
-			JOptionPane.showMessageDialog(null, errorMessage);
+		if (ArrayUtils.contains(args, "-version") || ArrayUtils.contains(args, "-v")) {
+			System.out.println(Global.version);
 			System.exit(1);
-		} else {
-			if (args[0].equals("-version") || args[0].equals("-v")) {
-				System.out.println(Global.version);
-				System.exit(1);
-			}
 		}
 
-		for (String str : args) {
-			if (str.contains("bochsrc") || str.contains(".bxrc")) {
-				bochsrc = str;
-			}
+		if (!ArrayUtils.contains(args, "-f")) {
+			String errorMessage = "Please specific the config xml by -f <file>";
+			System.err.println(errorMessage);
+			JOptionPane.showMessageDialog(null, errorMessage);
+			System.exit(1);
+		}
+
+		if (ArrayUtils.contains(args, "-debug")) {
+			Global.debug = true;
+			args = (String[]) ArrayUtils.removeElement(args, "-debug");
+		} else {
+			Global.debug = false;
 		}
 
 		String osName = System.getProperty("os.name").toLowerCase();
@@ -550,13 +544,6 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			// macApp.setDockMenu(menu);
 
 			macApp.addApplicationListener(new MacAboutBoxHandler());
-		}
-
-		if (ArrayUtils.contains(args, "-debug")) {
-			Global.debug = true;
-			args = (String[]) ArrayUtils.removeElement(args, "-debug");
-		} else {
-			Global.debug = false;
 		}
 
 		try {
@@ -630,8 +617,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		Global.vmType=GKDCommonLib.parseXML(file, xpath)
 
-		if (ArrayUtils.contains(args, "-loadBreakpoint")) {
+		/*if (ArrayUtils.contains(args, "-loadBreakpoint")) {
 			Setting.getInstance().setLoadBreakpointAtStartup(true);
 			args = (String[]) ArrayUtils.removeElement(args, "-loadBreakpoint");
 		} else if (ArrayUtils.contains(args, "-loadbreakpoint")) {
@@ -663,6 +652,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 
 		arguments = args;
+*/
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -755,10 +745,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				p.destroy();
 			}
 			ProcessBuilder pb;
-			if (arguments.length == 0) {
+			if (vmArguments.length == 0) {
 				pb = new ProcessBuilder("bochs", "-q");
 			} else {
-				pb = new ProcessBuilder(arguments);
+				pb = new ProcessBuilder(vmArguments);
 			}
 
 			pb.redirectErrorStream(true);
