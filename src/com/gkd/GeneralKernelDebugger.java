@@ -510,10 +510,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 		if (args.length == 0) {
 			String errorMessage = "Wrong number of argument\n\n";
-			errorMessage += "\nIn Linux/Mac : java -jar peter-bochs-debugger.jar bochs -f bochxrc.bxrc";
-			errorMessage += "\nIn windows : java -jar peter-bochs-debugger.jar c:\\program files\\bochs2.4.3\\bochsdbg.exe -q -f bochxrc.bxrc";
-			errorMessage += "\n!!! if using peter-bochs in windows, you need to pass the full path of bochs exe and -q to the parameter. (!!! relative path of bochs exe will not work)";
-			errorMessage += "\n!!! to use \"experimental feature\", please add \"-debug\" to the parameter list";
+			errorMessage += "GDK supports bochs and qemu\n";
+			errorMessage += "For qemu :\n\n";
+			errorMessage += "For bochs :\n\n";
+			errorMessage += "\tIn Linux/Mac : java -jar gkd.jar bochs -f bochxrc.bxrc\n";
+			errorMessage += "\tIn windows : java -jar gkd.jar c:\\program files\\bochs2.4.3\\bochsdbg.exe -q -f bochxrc.bxrc\n";
+			errorMessage += "\t!!! if using gkd in windows, you need to pass the full path of bochs exe and -q to the parameter. (!!! relative path of bochs exe will not work)\n";
+			errorMessage += "\t!!! to use \"experimental feature\", please add \"-debug\" to the parameter list\n";
 			System.out.println(errorMessage);
 			JOptionPane.showMessageDialog(null, errorMessage);
 			System.exit(1);
