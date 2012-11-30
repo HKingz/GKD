@@ -3891,11 +3891,17 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			changeText(this.registerPanel.jEBPTextField, ht.get("ebp"));
 			changeText(this.registerPanel.jESPTextField, ht.get("esp"));
 			
-
 			changeText(this.registerPanel.jCR0TextField, ht.get("cr0"));
 			changeText(this.registerPanel.jCR2TextField, ht.get("cr2"));
 			changeText(this.registerPanel.jCR3TextField, ht.get("cr3"));
 			changeText(this.registerPanel.jCR4TextField, ht.get("cr4"));
+			
+			changeText(this.registerPanel.jDR0TextField, ht.get("dr0"));
+			changeText(this.registerPanel.jDR1TextField, ht.get("dr1"));
+			changeText(this.registerPanel.jDR2TextField, ht.get("dr2"));
+			changeText(this.registerPanel.jDR3TextField, ht.get("dr3"));
+			changeText(this.registerPanel.jDR6TextField, ht.get("dr6"));
+			changeText(this.registerPanel.jDR7TextField, ht.get("dr7"));
 
 			System.out.println(ht);
 		}
