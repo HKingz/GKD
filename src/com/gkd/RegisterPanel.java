@@ -43,7 +43,7 @@ import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
  */
 public class RegisterPanel extends javax.swing.JPanel {
 	private JLabel jEAXLabel;
-	public JTextField jEAXTextField;
+	public JTextField eaxTextField;
 	private JLabel jECXLabel;
 	private JLabel jEDXLabel;
 	private JLabel jESILabel;
@@ -52,35 +52,35 @@ public class RegisterPanel extends javax.swing.JPanel {
 	private JLabel jFSLabel;
 	public JLabel jESLabel;
 	public JLabel jDSLabel;
-	public JTextField jCSTextField;
-	public JTextField jGSTextField;
+	public JTextField csTextField;
+	public JTextField gsTextField;
 	public JTextField jSSTextField;
 	public JTextField eipTextField;
-	public JTextField jCR0TextField;
-	public JTextField jDR7TextField;
-	public JTextField jDR6TextField;
-	public JTextField jDR3TextField;
-	public JTextField jDR2TextField;
+	public JTextField cr0TextField;
+	public JTextField dr7TextField;
+	public JTextField dr6TextField;
+	public JTextField dr3TextField;
+	public JTextField dr2TextField;
 	private JSeparator jSeparator1;
-	public JTextField jDR1TextField;
+	public JTextField dr1TextField;
 	private JLabel jDR7Label;
 	private JLabel jDR6Label;
 	private JLabel jDR3Label;
 	private JLabel jDR2Label;
 	private JLabel jDR1Label;
-	public JTextField jDR0TextField;
+	public JTextField dr0TextField;
 	private JLabel jDR0Label;
 	private JLabel jLabel25;
 	public JTextField jTRTextField;
 	public JTextField jIDTRTextField;
 	public JTextField jLDTRTextField;
-	public JTextField jGDTRTextField;
+	public JTextField gdtrTextField;
 	private JLabel jTRLabel;
 	private JLabel jIDTRLabel;
 	private JLabel jLDTRLabel;
 	private JLabel jGDTRLabel;
-	public JTextField jCR4TextField;
-	public JTextField jCR3TextField;
+	public JTextField cr4TextField;
+	public JTextField cr3TextField;
 	private JLabel jST1Label;
 	public JTextField jFDSTextField;
 	public JTextField jFDPTextField;
@@ -124,8 +124,8 @@ public class RegisterPanel extends javax.swing.JPanel {
 	private JButton jExportExcelButton;
 	private JButton jButton1;
 	public JList jStackList;
-	public JTextField jGDTRLimitTextField;
-	public JTextField jCR2TextField;
+	public JTextField gdtrLimitTextField;
+	public JTextField cr2TextField;
 	private JLabel jMM3Label;
 	private JLabel jMM2Label;
 	private JLabel jMM1Label;
@@ -147,24 +147,24 @@ public class RegisterPanel extends javax.swing.JPanel {
 	private JLabel jCR3Label;
 	private JLabel jCR2Label;
 	public JLabel jCR0Label;
-	public JTextField jEFLAGSTextField;
+	public JTextField eflagsTextField;
 	private JLabel jEFlagsLabel;
 	private JLabel jEIPLabel;
-	public JTextField jFSTextField;
-	public JTextField jESTextField;
-	public JTextField jDSTextField;
+	public JTextField fsTextField;
+	public JTextField esTextField;
+	public JTextField dsTextField;
 	private JLabel jCSLabel;
 	private JPanel jPanel99;
-	public JTextField jESPTextField;
-	public JTextField jEBPTextField;
-	public JTextField jEDITextField;
-	public JTextField jESITextField;
+	public JTextField espTextField;
+	public JTextField ebpTextField;
+	public JTextField ediTextField;
+	public JTextField esiTextField;
 	private JLabel jESPLabel;
 	private JLabel jEBPLabel;
 	private JLabel jEDILabel;
-	public JTextField jEDXTextField;
-	public JTextField jECXTextField;
-	public JTextField jEBXTextField;
+	public JTextField edxTextField;
+	public JTextField ecxTextField;
+	public JTextField ebxTextField;
 	private JLabel jEBXLabel;
 	GeneralKernelDebugger peterBochsDebugger;
 	BorderLayout thisLayout = new BorderLayout();
@@ -210,9 +210,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jCSTextField = new JTextField();
-					jPanel99.add(jCSTextField, new CellConstraints("3, 1, 2, 1, default, default"));
-					jCSTextField.addKeyListener(new KeyAdapter() {
+					csTextField = new JTextField();
+					jPanel99.add(csTextField, new CellConstraints("3, 1, 2, 1, default, default"));
+					csTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jCSTextFieldKeyTyped(evt);
 						}
@@ -269,36 +269,36 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jDSTextField = new JTextField();
-					jPanel99.add(jDSTextField, new CellConstraints("3, 3, 2, 1, default, default"));
-					jDSTextField.addKeyListener(new KeyAdapter() {
+					dsTextField = new JTextField();
+					jPanel99.add(dsTextField, new CellConstraints("3, 3, 2, 1, default, default"));
+					dsTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jDSTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jESTextField = new JTextField();
-					jPanel99.add(jESTextField, new CellConstraints("3, 4, 2, 1, default, default"));
-					jESTextField.addKeyListener(new KeyAdapter() {
+					esTextField = new JTextField();
+					jPanel99.add(esTextField, new CellConstraints("3, 4, 2, 1, default, default"));
+					esTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jESTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jFSTextField = new JTextField();
-					jPanel99.add(jFSTextField, new CellConstraints("3, 5, 2, 1, default, default"));
-					jFSTextField.addKeyListener(new KeyAdapter() {
+					fsTextField = new JTextField();
+					jPanel99.add(fsTextField, new CellConstraints("3, 5, 2, 1, default, default"));
+					fsTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jFSTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jGSTextField = new JTextField();
-					jPanel99.add(jGSTextField, new CellConstraints("3, 6, 2, 1, default, default"));
-					jGSTextField.addKeyListener(new KeyAdapter() {
+					gsTextField = new JTextField();
+					jPanel99.add(gsTextField, new CellConstraints("3, 6, 2, 1, default, default"));
+					gsTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jGSTextFieldKeyTyped(evt);
 						}
@@ -343,8 +343,8 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jEFLAGSTextField = new JTextField();
-					jPanel99.add(jEFLAGSTextField, new CellConstraints("3, 8, 2, 1, default, default"));
+					eflagsTextField = new JTextField();
+					jPanel99.add(eflagsTextField, new CellConstraints("3, 8, 2, 1, default, default"));
 				}
 				{
 					jEFlagLabel = new JLabel();
@@ -435,72 +435,72 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jEAXTextField = new JTextField();
-					jPanel99.add(jEAXTextField, new CellConstraints("7, 1, 1, 1, default, default"));
-					jEAXTextField.addKeyListener(new KeyAdapter() {
+					eaxTextField = new JTextField();
+					jPanel99.add(eaxTextField, new CellConstraints("7, 1, 1, 1, default, default"));
+					eaxTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jEAXTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jEBXTextField = new JTextField();
-					jPanel99.add(jEBXTextField, new CellConstraints("7, 2, 1, 1, default, default"));
-					jEBXTextField.addKeyListener(new KeyAdapter() {
+					ebxTextField = new JTextField();
+					jPanel99.add(ebxTextField, new CellConstraints("7, 2, 1, 1, default, default"));
+					ebxTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jEBXTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jECXTextField = new JTextField();
-					jPanel99.add(jECXTextField, new CellConstraints("7, 3, 1, 1, default, default"));
-					jECXTextField.addKeyListener(new KeyAdapter() {
+					ecxTextField = new JTextField();
+					jPanel99.add(ecxTextField, new CellConstraints("7, 3, 1, 1, default, default"));
+					ecxTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jECXTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jEDXTextField = new JTextField();
-					jPanel99.add(jEDXTextField, new CellConstraints("7, 4, 1, 1, default, default"));
-					jEDXTextField.addKeyListener(new KeyAdapter() {
+					edxTextField = new JTextField();
+					jPanel99.add(edxTextField, new CellConstraints("7, 4, 1, 1, default, default"));
+					edxTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jEDXTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jESITextField = new JTextField();
-					jPanel99.add(jESITextField, new CellConstraints("7, 5, 1, 1, default, default"));
-					jESITextField.addKeyListener(new KeyAdapter() {
+					esiTextField = new JTextField();
+					jPanel99.add(esiTextField, new CellConstraints("7, 5, 1, 1, default, default"));
+					esiTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jESITextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jEDITextField = new JTextField();
-					jPanel99.add(jEDITextField, new CellConstraints("7, 6, 1, 1, default, default"));
-					jEDITextField.addKeyListener(new KeyAdapter() {
+					ediTextField = new JTextField();
+					jPanel99.add(ediTextField, new CellConstraints("7, 6, 1, 1, default, default"));
+					ediTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jEDITextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jEBPTextField = new JTextField();
-					jPanel99.add(jEBPTextField, new CellConstraints("7, 7, 1, 1, default, default"));
-					jEBPTextField.addKeyListener(new KeyAdapter() {
+					ebpTextField = new JTextField();
+					jPanel99.add(ebpTextField, new CellConstraints("7, 7, 1, 1, default, default"));
+					ebpTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jEBPTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jESPTextField = new JTextField();
-					jPanel99.add(jESPTextField, new CellConstraints("7, 8, 1, 1, default, default"));
-					jESPTextField.addKeyListener(new KeyAdapter() {
+					espTextField = new JTextField();
+					jPanel99.add(espTextField, new CellConstraints("7, 8, 1, 1, default, default"));
+					espTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jESPTextFieldKeyTyped(evt);
 						}
@@ -517,9 +517,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jCR0TextField = new JTextField();
-					jPanel99.add(jCR0TextField, new CellConstraints("10, 1, 3, 1, default, default"));
-					jCR0TextField.addKeyListener(new KeyAdapter() {
+					cr0TextField = new JTextField();
+					jPanel99.add(cr0TextField, new CellConstraints("10, 1, 3, 1, default, default"));
+					cr0TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jCR0TextFieldKeyTyped(evt);
 						}
@@ -536,9 +536,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jCR2TextField = new JTextField();
-					jPanel99.add(jCR2TextField, new CellConstraints("10, 4, 3, 1, default, default"));
-					jCR2TextField.addKeyListener(new KeyAdapter() {
+					cr2TextField = new JTextField();
+					jPanel99.add(cr2TextField, new CellConstraints("10, 4, 3, 1, default, default"));
+					cr2TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jCR2TextFieldKeyTyped(evt);
 						}
@@ -555,9 +555,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jCR3TextField = new JTextField();
-					jPanel99.add(jCR3TextField, new CellConstraints("10, 5, 3, 1, default, default"));
-					jCR3TextField.addKeyListener(new KeyAdapter() {
+					cr3TextField = new JTextField();
+					jPanel99.add(cr3TextField, new CellConstraints("10, 5, 3, 1, default, default"));
+					cr3TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jCR3TextFieldKeyTyped(evt);
 						}
@@ -574,9 +574,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jCR4TextField = new JTextField();
-					jPanel99.add(jCR4TextField, new CellConstraints("10, 6, 3, 1, default, default"));
-					jCR4TextField.addKeyListener(new KeyAdapter() {
+					cr4TextField = new JTextField();
+					jPanel99.add(cr4TextField, new CellConstraints("10, 6, 3, 1, default, default"));
+					cr4TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jCR4TextFieldKeyTyped(evt);
 						}
@@ -587,9 +587,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					jPanel99.add(jSeparator1, new CellConstraints("9, 7, 4, 1, default, default"));
 				}
 				{
-					jGDTRTextField = new JTextField();
-					jPanel99.add(jGDTRTextField, new CellConstraints("10, 8, 1, 1, default, default"));
-					jGDTRTextField.addKeyListener(new KeyAdapter() {
+					gdtrTextField = new JTextField();
+					jPanel99.add(gdtrTextField, new CellConstraints("10, 8, 1, 1, default, default"));
+					gdtrTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jGDTRTextFieldKeyTyped(evt);
 						}
@@ -606,8 +606,8 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jGDTRLimitTextField = new JTextField();
-					jPanel99.add(jGDTRLimitTextField, new CellConstraints("12, 8, 1, 1, default, default"));
+					gdtrLimitTextField = new JTextField();
+					jPanel99.add(gdtrLimitTextField, new CellConstraints("12, 8, 1, 1, default, default"));
 				}
 				{
 					jLDTRLabel = new JLabel();
@@ -739,54 +739,54 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jDR0TextField = new JTextField();
-					jPanel99.add(jDR0TextField, new CellConstraints("15, 1, 1, 1, default, default"));
-					jDR0TextField.addKeyListener(new KeyAdapter() {
+					dr0TextField = new JTextField();
+					jPanel99.add(dr0TextField, new CellConstraints("15, 1, 1, 1, default, default"));
+					dr0TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jDR0TextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jDR1TextField = new JTextField();
-					jPanel99.add(jDR1TextField, new CellConstraints("15, 2, 1, 1, default, default"));
-					jDR1TextField.addKeyListener(new KeyAdapter() {
+					dr1TextField = new JTextField();
+					jPanel99.add(dr1TextField, new CellConstraints("15, 2, 1, 1, default, default"));
+					dr1TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jDR1TextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jDR2TextField = new JTextField();
-					jPanel99.add(jDR2TextField, new CellConstraints("15, 3, 1, 1, default, default"));
-					jDR2TextField.addKeyListener(new KeyAdapter() {
+					dr2TextField = new JTextField();
+					jPanel99.add(dr2TextField, new CellConstraints("15, 3, 1, 1, default, default"));
+					dr2TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jDR2TextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jDR3TextField = new JTextField();
-					jPanel99.add(jDR3TextField, new CellConstraints("15, 4, 1, 1, default, default"));
-					jDR3TextField.addKeyListener(new KeyAdapter() {
+					dr3TextField = new JTextField();
+					jPanel99.add(dr3TextField, new CellConstraints("15, 4, 1, 1, default, default"));
+					dr3TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jDR3TextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jDR6TextField = new JTextField();
-					jPanel99.add(jDR6TextField, new CellConstraints("15, 5, 1, 1, default, default"));
-					jDR6TextField.addKeyListener(new KeyAdapter() {
+					dr6TextField = new JTextField();
+					jPanel99.add(dr6TextField, new CellConstraints("15, 5, 1, 1, default, default"));
+					dr6TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jDR6TextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jDR7TextField = new JTextField();
-					jPanel99.add(jDR7TextField, new CellConstraints("15, 6, 1, 1, default, default"));
-					jDR7TextField.addKeyListener(new KeyAdapter() {
+					dr7TextField = new JTextField();
+					jPanel99.add(dr7TextField, new CellConstraints("15, 6, 1, 1, default, default"));
+					dr7TextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jDR7TextFieldKeyTyped(evt);
 						}
@@ -1125,7 +1125,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jCSLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jCSTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.csTextField.getText());
 	}
 
 	private void jEIPLabelMouseClicked(MouseEvent evt) {
@@ -1133,19 +1133,19 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jDSLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jDSTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.dsTextField.getText());
 	}
 
 	private void jESLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jESTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.esTextField.getText());
 	}
 
 	private void jFSLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jFSTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.fsTextField.getText());
 	}
 
 	private void jGSLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jGSTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.gsTextField.getText());
 	}
 
 	private void jSSLabelMouseClicked(MouseEvent evt) {
@@ -1153,43 +1153,43 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jEFlagsLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jEFLAGSTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.eflagsTextField.getText());
 	}
 
 	private void jEAXLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jEAXTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.eaxTextField.getText());
 	}
 
 	private void jEBXLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jEBXTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.ebxTextField.getText());
 	}
 
 	private void jECXLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jECXTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.ecxTextField.getText());
 	}
 
 	private void jEDXLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jEDXTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.edxTextField.getText());
 	}
 
 	private void jESILabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jESITextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.esiTextField.getText());
 	}
 
 	private void jEDILabel6MouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jEDITextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.ediTextField.getText());
 	}
 
 	private void jEBPLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jEBPTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.ebpTextField.getText());
 	}
 
 	private void jESPLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jESPTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.espTextField.getText());
 	}
 
 	private void jGDTRLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jGDTRTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.gdtrTextField.getText());
 	}
 
 	private void jLDTRLabelMouseClicked(MouseEvent evt) {
@@ -1205,43 +1205,43 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jCR0LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jCR0TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.cr0TextField.getText());
 	}
 
 	private void jCR2LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jCR2TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.cr2TextField.getText());
 	}
 
 	private void jCR3LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jCR3TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.cr3TextField.getText());
 	}
 
 	private void jCR4LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jCR4TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.cr4TextField.getText());
 	}
 
 	private void jDR0LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jDR0TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.dr0TextField.getText());
 	}
 
 	private void jDR1LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jDR1TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.dr1TextField.getText());
 	}
 
 	private void jDR2LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jDR2TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.dr2TextField.getText());
 	}
 
 	private void jDR3LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jDR3TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.dr3TextField.getText());
 	}
 
 	private void jDR6LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jDR6TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.dr6TextField.getText());
 	}
 
 	private void jDR7LabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jDR7TextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.dr7TextField.getText());
 	}
 
 	private void textFieldKeyTyped(KeyEvent evt) {
@@ -1260,7 +1260,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jCSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cs=" + jCSTextField.getText());
+		GeneralKernelDebugger.sendCommand("set cs=" + csTextField.getText());
 	}
 
 	private void jEIPTextFieldKeyTyped(KeyEvent evt) {
@@ -1268,19 +1268,19 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jDSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ds=" + jDSTextField.getText());
+		GeneralKernelDebugger.sendCommand("set ds=" + dsTextField.getText());
 	}
 
 	private void jESTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set es=" + jESTextField.getText());
+		GeneralKernelDebugger.sendCommand("set es=" + esTextField.getText());
 	}
 
 	private void jFSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set fs=" + jFSTextField.getText());
+		GeneralKernelDebugger.sendCommand("set fs=" + fsTextField.getText());
 	}
 
 	private void jGSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set gs=" + jGSTextField.getText());
+		GeneralKernelDebugger.sendCommand("set gs=" + gsTextField.getText());
 	}
 
 	private void jSSTextFieldKeyTyped(KeyEvent evt) {
@@ -1288,55 +1288,55 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jEAXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set eax=" + jEAXTextField.getText());
+		GeneralKernelDebugger.sendCommand("set eax=" + eaxTextField.getText());
 	}
 
 	private void jEBXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ebx=" + jEBXTextField.getText());
+		GeneralKernelDebugger.sendCommand("set ebx=" + ebxTextField.getText());
 	}
 
 	private void jECXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ecx=" + jECXTextField.getText());
+		GeneralKernelDebugger.sendCommand("set ecx=" + ecxTextField.getText());
 	}
 
 	private void jEDXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set edx=" + jEDXTextField.getText());
+		GeneralKernelDebugger.sendCommand("set edx=" + edxTextField.getText());
 	}
 
 	private void jESITextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set esi=" + jESITextField.getText());
+		GeneralKernelDebugger.sendCommand("set esi=" + esiTextField.getText());
 	}
 
 	private void jEDITextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set edi=" + jEDITextField.getText());
+		GeneralKernelDebugger.sendCommand("set edi=" + ediTextField.getText());
 	}
 
 	private void jEBPTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ebp=" + jEBPTextField.getText());
+		GeneralKernelDebugger.sendCommand("set ebp=" + ebpTextField.getText());
 	}
 
 	private void jESPTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set esp=" + jESPTextField.getText());
+		GeneralKernelDebugger.sendCommand("set esp=" + espTextField.getText());
 	}
 
 	private void jCR0TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr0=" + jCR0TextField.getText());
+		GeneralKernelDebugger.sendCommand("set cr0=" + cr0TextField.getText());
 	}
 
 	private void jCR2TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr2=" + jCR2TextField.getText());
+		GeneralKernelDebugger.sendCommand("set cr2=" + cr2TextField.getText());
 	}
 
 	private void jCR3TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr3=" + jCR3TextField.getText());
+		GeneralKernelDebugger.sendCommand("set cr3=" + cr3TextField.getText());
 	}
 
 	private void jCR4TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr4=" + jCR4TextField.getText());
+		GeneralKernelDebugger.sendCommand("set cr4=" + cr4TextField.getText());
 	}
 
 	private void jGDTRTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set gdtr=" + jGDTRTextField.getText());
+		GeneralKernelDebugger.sendCommand("set gdtr=" + gdtrTextField.getText());
 	}
 
 	private void jLDTRTextFieldKeyTyped(KeyEvent evt) {
@@ -1352,26 +1352,26 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jDR0TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr0=" + jDR0TextField.getText());
+		GeneralKernelDebugger.sendCommand("set dr0=" + dr0TextField.getText());
 	}
 
 	private void jDR1TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr1=" + jDR1TextField.getText());
+		GeneralKernelDebugger.sendCommand("set dr1=" + dr1TextField.getText());
 	}
 
 	private void jDR2TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr2=" + jDR2TextField.getText());
+		GeneralKernelDebugger.sendCommand("set dr2=" + dr2TextField.getText());
 	}
 
 	private void jDR3TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr3=" + jDR3TextField.getText());
+		GeneralKernelDebugger.sendCommand("set dr3=" + dr3TextField.getText());
 	}
 
 	private void jDR6TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr6=" + jDR6TextField.getText());
+		GeneralKernelDebugger.sendCommand("set dr6=" + dr6TextField.getText());
 	}
 
 	private void jDR7TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr7=" + jDR7TextField.getText());
+		GeneralKernelDebugger.sendCommand("set dr7=" + dr7TextField.getText());
 	}
 }

@@ -2290,7 +2290,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					System.out.println("updatePageTable");
 				}
 				updatePageTable(CommonLib
-						.string2decimal(registerPanel.jCR3TextField.getText()));
+						.string2decimal(registerPanel.cr3TextField.getText()));
 
 				d.jProgressBar.setString("updateStack");
 				if (Global.debug) {
@@ -2436,8 +2436,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	public void updateVMStatusForBochsCommand(boolean shouldWait) {
-		Thread updateThread = new Thread(
-				"updateVMStatusForBochsCommand thread") {
+		Thread updateThread = new Thread("updateVMStatusForBochsCommand thread") {
 			public void run() {
 				enableAllButtons(false, false);
 
@@ -2493,7 +2492,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						System.out.println("updatePageTable");
 					}
 					updatePageTable(CommonLib
-							.string2decimal(registerPanel.jCR3TextField
+							.string2decimal(registerPanel.cr3TextField
 									.getText()));
 				}
 
@@ -2580,50 +2579,50 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			AllRegisters.time.add(new Date());
 			AllRegisters.ptime.add(registerPanel.jPTimeTextField.getText());
 			AllRegisters.eax.add(CommonLib
-					.string2decimal(registerPanel.jEAXTextField.getText()));
+					.string2decimal(registerPanel.eaxTextField.getText()));
 			AllRegisters.ebx.add(CommonLib
-					.string2decimal(registerPanel.jEBXTextField.getText()));
+					.string2decimal(registerPanel.ebxTextField.getText()));
 			AllRegisters.ecx.add(CommonLib
-					.string2decimal(registerPanel.jECXTextField.getText()));
+					.string2decimal(registerPanel.ecxTextField.getText()));
 			AllRegisters.edx.add(CommonLib
-					.string2decimal(registerPanel.jEDXTextField.getText()));
+					.string2decimal(registerPanel.edxTextField.getText()));
 			AllRegisters.esi.add(CommonLib
-					.string2decimal(registerPanel.jESITextField.getText()));
+					.string2decimal(registerPanel.esiTextField.getText()));
 			AllRegisters.edi.add(CommonLib
-					.string2decimal(registerPanel.jEDITextField.getText()));
+					.string2decimal(registerPanel.ediTextField.getText()));
 			AllRegisters.ebp.add(CommonLib
-					.string2decimal(registerPanel.jEBPTextField.getText()));
+					.string2decimal(registerPanel.ebpTextField.getText()));
 			AllRegisters.esp.add(CommonLib
-					.string2decimal(registerPanel.jESPTextField.getText()));
+					.string2decimal(registerPanel.espTextField.getText()));
 
 			AllRegisters.cs.add(CommonLib
-					.string2decimal(registerPanel.jCSTextField.getText()));
+					.string2decimal(registerPanel.csTextField.getText()));
 			AllRegisters.eip.add(CommonLib
 					.string2decimal(registerPanel.eipTextField.getText()));
 			AllRegisters.ds.add(CommonLib
-					.string2decimal(registerPanel.jDSTextField.getText()));
+					.string2decimal(registerPanel.dsTextField.getText()));
 			AllRegisters.es.add(CommonLib
-					.string2decimal(registerPanel.jESTextField.getText()));
+					.string2decimal(registerPanel.esTextField.getText()));
 			AllRegisters.fs.add(CommonLib
-					.string2decimal(registerPanel.jFSTextField.getText()));
+					.string2decimal(registerPanel.fsTextField.getText()));
 			AllRegisters.gs.add(CommonLib
-					.string2decimal(registerPanel.jGSTextField.getText()));
+					.string2decimal(registerPanel.gsTextField.getText()));
 			AllRegisters.ss.add(CommonLib
 					.string2decimal(registerPanel.jSSTextField.getText()));
 			AllRegisters.eflags.add(registerPanel.jEFlagLabel.getText().trim()
 					+ registerPanel.jEFlagLabel2.getText().trim());
 
 			AllRegisters.cr0.add(CommonLib
-					.string2decimal(registerPanel.jCR0TextField.getText()));
+					.string2decimal(registerPanel.cr0TextField.getText()));
 			AllRegisters.cr2.add(CommonLib
-					.string2decimal(registerPanel.jCR2TextField.getText()));
+					.string2decimal(registerPanel.cr2TextField.getText()));
 			AllRegisters.cr3.add(CommonLib
-					.string2decimal(registerPanel.jCR3TextField.getText()));
+					.string2decimal(registerPanel.cr3TextField.getText()));
 			AllRegisters.cr4.add(CommonLib
-					.string2decimal(registerPanel.jCR4TextField.getText()));
+					.string2decimal(registerPanel.cr4TextField.getText()));
 
 			AllRegisters.gdtr.add(CommonLib
-					.string2decimal(registerPanel.jGDTRTextField.getText()));
+					.string2decimal(registerPanel.gdtrTextField.getText()));
 			AllRegisters.idtr.add(CommonLib
 					.string2decimal(registerPanel.jIDTRTextField.getText()));
 			AllRegisters.ldtr.add(CommonLib
@@ -3056,7 +3055,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			jStatusLabel.setText("Updating instruction");
 			if (address == null) {
 				BigInteger cs = CommonLib
-						.string2decimal(this.registerPanel.jCSTextField
+						.string2decimal(this.registerPanel.csTextField
 								.getText());
 				BigInteger eip = CommonLib
 						.string2decimal(this.registerPanel.eipTextField
@@ -3268,7 +3267,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			jStatusLabel.setText("Updating GDT");
 			// commandReceiver.setCommandNoOfLine(20);
 
-			int limit = Integer.parseInt(this.registerPanel.jGDTRLimitTextField
+			int limit = Integer.parseInt(this.registerPanel.gdtrLimitTextField
 					.getText().substring(2), 16);
 			limit = (limit + 1) / 8 - 1;
 			if (limit > 100) {
@@ -3428,49 +3427,49 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							jStatusProgressBar.setValue(x++);
 						}
 						if (line.matches(".*.ax:.*")) {
-							changeText(this.registerPanel.jEAXTextField, line
+							changeText(this.registerPanel.eaxTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*ax", "").split(" ")[1]
 									.replaceAll("_", ""));
 						}
 						if (line.matches(".*.bx:.*")) {
-							changeText(this.registerPanel.jEBXTextField, line
+							changeText(this.registerPanel.ebxTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*bx", "").split(" ")[1]
 									.replaceAll("_", ""));
 						}
 						if (line.matches(".*.cx:.*")) {
-							changeText(this.registerPanel.jECXTextField, line
+							changeText(this.registerPanel.ecxTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*cx", "").split(" ")[1]
 									.replaceAll("_", ""));
 						}
 						if (line.matches(".*.dx:.*")) {
-							changeText(this.registerPanel.jEDXTextField, line
+							changeText(this.registerPanel.edxTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*dx", "").split(" ")[1]
 									.replaceAll("_", ""));
 						}
 						if (line.matches(".*.si:.*")) {
-							changeText(this.registerPanel.jESITextField, line
+							changeText(this.registerPanel.esiTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*si", "").split(" ")[1]
 									.replaceAll("_", ""));
 						}
 						if (line.matches(".*.di:.*")) {
-							changeText(this.registerPanel.jEDITextField, line
+							changeText(this.registerPanel.ediTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*di", "").split(" ")[1]
 									.replaceAll("_", ""));
 						}
 						if (line.matches(".*.bp:.*")) {
-							changeText(this.registerPanel.jEBPTextField, line
+							changeText(this.registerPanel.ebpTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*bp", "").split(" ")[1]
 									.replaceAll("_", ""));
 						}
 						if (line.matches(".*.sp:.*")) {
-							changeText(this.registerPanel.jESPTextField, line
+							changeText(this.registerPanel.espTextField, line
 									.replaceAll(":", "")
 									.replaceAll("^.*sp", "").split(" ")[1]
 									.replaceAll("_", ""));
@@ -3483,7 +3482,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						}
 						if (line.matches(".*eflags .*")) {
 							changeText(
-									this.registerPanel.jEFLAGSTextField,
+									this.registerPanel.eflagsTextField,
 									line.replaceAll(":", "")
 											.replaceAll("^.*eflags", "")
 											.split(" ")[1].replaceAll("_", ""));
@@ -3521,19 +3520,19 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						String str[] = line.split(" ");
 
 						if (line.matches(".*cs:.*")) {
-							changeText(this.registerPanel.jCSTextField,
+							changeText(this.registerPanel.csTextField,
 									line.split("=")[1].split(",")[0]);
 						} else if (line.matches(".*ds:.*")) {
-							changeText(this.registerPanel.jDSTextField,
+							changeText(this.registerPanel.dsTextField,
 									line.split("=")[1].split(",")[0]);
 						} else if (line.matches(".*es:.*")) {
-							changeText(this.registerPanel.jESTextField,
+							changeText(this.registerPanel.esTextField,
 									line.split("=")[1].split(",")[0]);
 						} else if (line.matches(".*fs:.*")) {
-							changeText(this.registerPanel.jFSTextField,
+							changeText(this.registerPanel.fsTextField,
 									line.split("=")[1].split(",")[0]);
 						} else if (line.matches(".*gs:.*")) {
-							changeText(this.registerPanel.jGSTextField,
+							changeText(this.registerPanel.gsTextField,
 									line.split("=")[1].split(",")[0]);
 						} else if (line.matches(".*ss:.*")) {
 							changeText(this.registerPanel.jSSTextField,
@@ -3541,9 +3540,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						} else
 
 						if (line.matches(".*gdtr:.*")) {
-							changeText(this.registerPanel.jGDTRTextField,
+							changeText(this.registerPanel.gdtrTextField,
 									line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.jGDTRLimitTextField,
+							changeText(this.registerPanel.gdtrLimitTextField,
 									str[1].split("=")[1]);
 						} else if (line.matches(".*ldtr.*")) {
 							changeText(this.registerPanel.jLDTRTextField,
@@ -3588,19 +3587,19 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						String str[] = line.split(" ");
 
 						if (line.matches(".*cs:.*")) {
-							changeText(this.registerPanel.jCSTextField,
+							changeText(this.registerPanel.csTextField,
 									line.split(":")[1].split(",")[0]);
 						} else if (line.matches(".*ds:.*")) {
-							changeText(this.registerPanel.jDSTextField,
+							changeText(this.registerPanel.dsTextField,
 									line.split(":")[1].split(",")[0]);
 						} else if (line.matches(".*es:.*")) {
-							changeText(this.registerPanel.jESTextField,
+							changeText(this.registerPanel.esTextField,
 									line.split(":")[1].split(",")[0]);
 						} else if (line.matches(".*fs:.*")) {
-							changeText(this.registerPanel.jFSTextField,
+							changeText(this.registerPanel.fsTextField,
 									line.split(":")[1].split(",")[0]);
 						} else if (line.matches(".*gs:.*")) {
-							changeText(this.registerPanel.jGSTextField,
+							changeText(this.registerPanel.gsTextField,
 									line.split(":")[1].split(",")[0]);
 						} else if (line.matches(".*ss:.*")) {
 							changeText(this.registerPanel.jSSTextField,
@@ -3608,9 +3607,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						}
 
 						if (line.matches(".*gdtr:.*")) {
-							changeText(this.registerPanel.jGDTRTextField,
+							changeText(this.registerPanel.gdtrTextField,
 									line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.jGDTRLimitTextField,
+							changeText(this.registerPanel.gdtrLimitTextField,
 									str[1].split("=")[1]);
 						} else if (line.matches(".*ldtr.*")) {
 							changeText(this.registerPanel.jLDTRTextField,
@@ -3653,12 +3652,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					}
 					if (line.matches(".*CR0=.*")) {
 						line = line.replaceFirst("^.*CR0", "CR0");
-						changeText(this.registerPanel.jCR0TextField,
+						changeText(this.registerPanel.cr0TextField,
 								line.split(" ")[0].split("=")[1].replace(":",
 										""));
 
 						if (CommonLib.getBit(CommonLib
-								.string2long(registerPanel.jCR0TextField
+								.string2long(registerPanel.cr0TextField
 										.getText()), 0) == 1) {
 							jCPUModeLabel.setText(MyLanguage
 									.getString("Protected_mode") + "     ");
@@ -3681,13 +3680,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 											.getText() + arr[z] + " ");
 						}
 					} else if (line.matches(".*CR2=.*")) {
-						changeText(this.registerPanel.jCR2TextField,
+						changeText(this.registerPanel.cr2TextField,
 								line.split(" ")[2].split("=")[1]);
 					} else if (line.matches(".*CR3=.*")) {
-						changeText(this.registerPanel.jCR3TextField,
+						changeText(this.registerPanel.cr3TextField,
 								line.split(" ")[0].split("=")[1]);
 					} else if (line.matches(".*CR4=.*")) {
-						changeText(this.registerPanel.jCR4TextField,
+						changeText(this.registerPanel.cr4TextField,
 								line.split(" ")[0].split("=")[1].replace(":",
 										""));
 					}
@@ -3719,22 +3718,22 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							jStatusProgressBar.setValue(x++);
 						}
 						if (line.matches(".*DR0=0x.*")) {
-							changeText(this.registerPanel.jDR0TextField,
+							changeText(this.registerPanel.dr0TextField,
 									line.split("=")[1].split(":")[0]);
 						} else if (line.matches(".*DR1=0x.*")) {
-							changeText(this.registerPanel.jDR1TextField,
+							changeText(this.registerPanel.dr1TextField,
 									line.split("=")[1].split(":")[0]);
 						} else if (line.matches(".*DR2=0x.*")) {
-							changeText(this.registerPanel.jDR2TextField,
+							changeText(this.registerPanel.dr2TextField,
 									line.split("=")[1].split(":")[0]);
 						} else if (line.matches(".*DR3=0x.*")) {
-							changeText(this.registerPanel.jDR3TextField,
+							changeText(this.registerPanel.dr3TextField,
 									line.split("=")[1].split(":")[0]);
 						} else if (line.matches(".*DR6=0x.*")) {
-							changeText(this.registerPanel.jDR6TextField,
+							changeText(this.registerPanel.dr6TextField,
 									line.split("=")[1].split(":")[0]);
 						} else if (line.matches(".*DR7=0x.*")) {
-							changeText(this.registerPanel.jDR7TextField,
+							changeText(this.registerPanel.dr7TextField,
 									line.split("=")[1].split(":")[0]);
 						}
 					}
@@ -3873,35 +3872,39 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		} else if (Global.vmType.equals("qemu")) {
 			Hashtable<String, Long> ht = libGKD.readRegister();
 
-			changeText(this.registerPanel.jCSTextField, ht.get("cs"));
-			changeText(this.registerPanel.jDSTextField, ht.get("ds"));
-			changeText(this.registerPanel.jESTextField, ht.get("es"));
-			changeText(this.registerPanel.jFSTextField, ht.get("fs"));
-			changeText(this.registerPanel.jGSTextField, ht.get("gs"));
+			changeText(this.registerPanel.csTextField, ht.get("cs"));
+			changeText(this.registerPanel.dsTextField, ht.get("ds"));
+			changeText(this.registerPanel.esTextField, ht.get("es"));
+			changeText(this.registerPanel.fsTextField, ht.get("fs"));
+			changeText(this.registerPanel.gsTextField, ht.get("gs"));
 			changeText(this.registerPanel.jSSTextField, ht.get("ss"));
 			changeText(this.registerPanel.eipTextField, ht.get("eip"));
-			changeText(this.registerPanel.jEFLAGSTextField, ht.get("eflags"));
-			
-			changeText(this.registerPanel.jEAXTextField, ht.get("eax"));
-			changeText(this.registerPanel.jEBXTextField, ht.get("ebx"));
-			changeText(this.registerPanel.jECXTextField, ht.get("ecx"));
-			changeText(this.registerPanel.jEDXTextField, ht.get("edx"));
-			changeText(this.registerPanel.jESITextField, ht.get("esi"));
-			changeText(this.registerPanel.jEDITextField, ht.get("edi"));
-			changeText(this.registerPanel.jEBPTextField, ht.get("ebp"));
-			changeText(this.registerPanel.jESPTextField, ht.get("esp"));
-			
-			changeText(this.registerPanel.jCR0TextField, ht.get("cr0"));
-			changeText(this.registerPanel.jCR2TextField, ht.get("cr2"));
-			changeText(this.registerPanel.jCR3TextField, ht.get("cr3"));
-			changeText(this.registerPanel.jCR4TextField, ht.get("cr4"));
-			
-			changeText(this.registerPanel.jDR0TextField, ht.get("dr0"));
-			changeText(this.registerPanel.jDR1TextField, ht.get("dr1"));
-			changeText(this.registerPanel.jDR2TextField, ht.get("dr2"));
-			changeText(this.registerPanel.jDR3TextField, ht.get("dr3"));
-			changeText(this.registerPanel.jDR6TextField, ht.get("dr6"));
-			changeText(this.registerPanel.jDR7TextField, ht.get("dr7"));
+			changeText(this.registerPanel.eflagsTextField, ht.get("eflags"));
+
+			changeText(this.registerPanel.eaxTextField, ht.get("eax"));
+			changeText(this.registerPanel.ebxTextField, ht.get("ebx"));
+			changeText(this.registerPanel.ecxTextField, ht.get("ecx"));
+			changeText(this.registerPanel.edxTextField, ht.get("edx"));
+			changeText(this.registerPanel.esiTextField, ht.get("esi"));
+			changeText(this.registerPanel.ediTextField, ht.get("edi"));
+			changeText(this.registerPanel.ebpTextField, ht.get("ebp"));
+			changeText(this.registerPanel.espTextField, ht.get("esp"));
+
+			changeText(this.registerPanel.cr0TextField, ht.get("cr0"));
+			changeText(this.registerPanel.cr2TextField, ht.get("cr2"));
+			changeText(this.registerPanel.cr3TextField, ht.get("cr3"));
+			changeText(this.registerPanel.cr4TextField, ht.get("cr4"));
+
+			changeText(this.registerPanel.dr0TextField, ht.get("dr0"));
+			changeText(this.registerPanel.dr1TextField, ht.get("dr1"));
+			changeText(this.registerPanel.dr2TextField, ht.get("dr2"));
+			changeText(this.registerPanel.dr3TextField, ht.get("dr3"));
+			changeText(this.registerPanel.dr6TextField, ht.get("dr6"));
+			changeText(this.registerPanel.dr7TextField, ht.get("dr7"));
+
+			changeText(this.registerPanel.gdtrTextField, ht.get("gdtr"));
+			changeText(this.registerPanel.gdtrLimitTextField,
+					ht.get("gdtr_limit"));
 
 			System.out.println(ht);
 		}
@@ -3974,7 +3977,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 									this,
 									0,
 									CommonLib
-											.string2decimal(this.registerPanel.jGDTRTextField
+											.string2decimal(this.registerPanel.gdtrTextField
 													.getText()), jGDTTable
 											.getSelectedRow() + 1), null);
 			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
@@ -6470,10 +6473,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = GKDCommonLib.getMemoryFromBochs(
-					CommonLib.string2decimal(
-							this.registerPanel.jGDTRTextField.getText()).add(
-							segNo.multiply(BigInteger.valueOf(8))), 8);
+			int descriptor[] = GKDCommonLib.getMemoryFromBochs(CommonLib
+					.string2decimal(this.registerPanel.gdtrTextField.getText())
+					.add(segNo.multiply(BigInteger.valueOf(8))), 8);
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2],
 					descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
@@ -6483,7 +6485,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
 			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib
-					.string2decimal(this.registerPanel.jCR3TextField.getText())
+					.string2decimal(this.registerPanel.cr3TextField.getText())
 					.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
@@ -6531,7 +6533,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
 			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib
-					.string2decimal(this.registerPanel.jCR3TextField.getText())
+					.string2decimal(this.registerPanel.cr3TextField.getText())
 					.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
@@ -6613,9 +6615,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
 				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(CommonLib
-						.string2decimal(this.registerPanel.jCR3TextField
+						.string2decimal(this.registerPanel.cr3TextField
 								.getText()), CommonLib
-						.string2decimal(this.registerPanel.jGDTRTextField
+						.string2decimal(this.registerPanel.gdtrTextField
 								.getText()));
 				commandReceiver.clearBuffer();
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(
@@ -7058,13 +7060,14 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	public BigInteger getRealEIP() {
 		try {
 			BigInteger eip;
-			if (CommonLib.getBit(CommonLib
-					.string2long(registerPanel.jCR0TextField.getText()), 0) == 1) {
+			if (CommonLib
+					.getBit(CommonLib.string2long(registerPanel.cr0TextField
+							.getText()), 0) == 1) {
 				eip = CommonLib.string2decimal(registerPanel.eipTextField
 						.getText());
 			} else {
 				eip = CommonLib
-						.string2decimal(registerPanel.jCSTextField.getText())
+						.string2decimal(registerPanel.csTextField.getText())
 						.multiply(BigInteger.valueOf(16))
 						.add(CommonLib
 								.string2decimal(registerPanel.eipTextField
@@ -7707,7 +7710,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jDumpCR3ButtonActionPerformed(ActionEvent evt) {
-		updatePageTable(CommonLib.string2decimal(registerPanel.jCR3TextField
+		updatePageTable(CommonLib.string2decimal(registerPanel.cr3TextField
 				.getText()));
 	}
 
