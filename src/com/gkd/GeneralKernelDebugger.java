@@ -7867,7 +7867,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				return null;
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			return new int[] { 1, 2, 3 };
+			return libGKD.memory(address, totalByte);
 		} else {
 			return null;
 		}
