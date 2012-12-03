@@ -7818,52 +7818,59 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	public static int[] getMemory(long address, int totalByte,
 			boolean isPhysicalAddress) {
-		try {
-			commandReceiver.clearBuffer();
-			commandReceiver.shouldShow = false;
-			if (isPhysicalAddress) {
-				sendCommand("xp /" + totalByte + "bx " + address);
-			} else {
-				sendCommand("x /" + totalByte + "bx " + address);
-			}
-			int bytes[] = new int[totalByte];
+		if (Global.vmType.equals("bochs")) {
+			try {
+				commandReceiver.clearBuffer();
+				commandReceiver.shouldShow = false;
+				if (isPhysicalAddress) {
+					sendCommand("xp /" + totalByte + "bx " + address);
+				} else {
+					sendCommand("x /" + totalByte + "bx " + address);
+				}
+				int bytes[] = new int[totalByte];
 
-			if (totalByte > 0) {
-				float totalByte2 = totalByte - 1;
-				totalByte2 = totalByte2 / 8;
-				int totalByte3 = (int) Math.floor(totalByte2);
-				String realEndAddressStr;
-				String realStartAddressStr;
-				long realStartAddress = address;
-				realStartAddressStr = String.format("%08x", realStartAddress);
-				long realEndAddress = realStartAddress + totalByte3 * 8;
-				realEndAddressStr = String.format("%08x", realEndAddress);
-				String result = commandReceiver.getCommandResult(
-						realStartAddressStr, realEndAddressStr, null);
-				if (result != null) {
-					String[] lines = result.split("\n");
-					int offset = 0;
-					// System.out.println(result);
-					for (int y = 0; y < lines.length; y++) {
-						String[] b = lines[y].replaceFirst("^.*:", "").split(
-								"\t");
-						// System.out.println(lines[y]);
+				if (totalByte > 0) {
+					float totalByte2 = totalByte - 1;
+					totalByte2 = totalByte2 / 8;
+					int totalByte3 = (int) Math.floor(totalByte2);
+					String realEndAddressStr;
+					String realStartAddressStr;
+					long realStartAddress = address;
+					realStartAddressStr = String.format("%08x",
+							realStartAddress);
+					long realEndAddress = realStartAddress + totalByte3 * 8;
+					realEndAddressStr = String.format("%08x", realEndAddress);
+					String result = commandReceiver.getCommandResult(
+							realStartAddressStr, realEndAddressStr, null);
+					if (result != null) {
+						String[] lines = result.split("\n");
+						int offset = 0;
+						// System.out.println(result);
+						for (int y = 0; y < lines.length; y++) {
+							String[] b = lines[y].replaceFirst("^.*:", "")
+									.split("\t");
+							// System.out.println(lines[y]);
 
-						for (int x = 1; x < b.length && offset < totalByte; x++) {
-							// System.out.println(offset + "==" + x);
-							bytes[offset] = (int) CommonLib.string2long(b[x]);
-							offset++;
+							for (int x = 1; x < b.length && offset < totalByte; x++) {
+								// System.out.println(offset + "==" + x);
+								bytes[offset] = (int) CommonLib
+										.string2long(b[x]);
+								offset++;
+							}
 						}
 					}
 				}
+				return bytes;
+			} catch (OutOfMemoryError ex) {
+				System.gc();
+				ex.printStackTrace();
+				return null;
 			}
-			return bytes;
-		} catch (OutOfMemoryError ex) {
-			System.gc();
-			ex.printStackTrace();
+		} else if (Global.vmType.equals("qemu")) {
+			return new int[] { 1, 2, 3 };
+		} else {
 			return null;
 		}
-
 	}
 
 	private static String getMemoryStr(long address, int totalByte,
