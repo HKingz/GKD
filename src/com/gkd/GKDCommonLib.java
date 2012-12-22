@@ -30,6 +30,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -618,5 +619,9 @@ public class GKDCommonLib {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	public static String readConfig(CommandLine cmd, String xpath) {
+		return parseXML(cmd.getOptionValue("f"), xpath);
 	}
 }

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gkd>
+	<vmType>bochs</vmType>
+	<bochs>/usr/local/bin/bochs</bochs>
+	<bochsArguments>-f bochsrc.txt -q</bochsArguments>
+</gkd>

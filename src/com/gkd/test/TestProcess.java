@@ -21,7 +21,7 @@ public class TestProcess implements Runnable {
 
 	public TestProcess() {
 		Process p;
-		String[] arguments = { "/Users/peter/install/bin/bochs", "-q", "-f", "bochsrc.bxrc" };
+		String[] arguments = { "bochs", "-q", "-f", "bochsrc.txt" };
 		//		String[] arguments = { "bochs", "-q", "-f", "bochsrc.bxrc" };
 		ProcessBuilder pb = new ProcessBuilder(arguments);
 

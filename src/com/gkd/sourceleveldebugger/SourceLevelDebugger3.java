@@ -845,7 +845,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	private JLabel getJErrorLabel() {
 		if (jErrorLabel == null) {
 			jErrorLabel = new JLabel();
-			jErrorLabel.setText("<html>Source level debug is disabled before you load the map file,<br>by clicking menu \"system\" -> \"load map file\"</html>");
+			jErrorLabel.setText("<html>Source level debug is disabled before you load the map file,<br>by clicking menu \"system\" -> \"load elf\"</html>");
 			jErrorLabel.setBackground(new java.awt.Color(0, 0, 0, 200));
 			jErrorLabel.setForeground(new java.awt.Color(255, 255, 255));
 			jErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
