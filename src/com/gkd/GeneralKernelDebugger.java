@@ -2624,7 +2624,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	public void updateInstruction(BigInteger address) {
-		updateInstructionUsingBochs(address);
+		if (Global.vmType.equals("bochs")) {
+			updateInstructionUsingBochs(address);
+		} else if (Global.vmType.equals("qemu")) {
+			updateInstructionUsingMaxine(address);
+		}
 
 		if (!registerPanel.eipTextField.getText().equals("")) {
 			((SourceCodeTableModel) elfTable.getModel()).updateBreakpoint(getRealEIP());
@@ -2692,6 +2696,55 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 						// load cCode
 						String pcStr = strs[0].trim();
+						BigInteger pc = CommonLib.string2decimal("0x" + pcStr);
+						if (pc == null) {
+							continue;
+						}
+						String s[] = getCCode(pc, false);
+						String lineNo[] = getCCode(pc, true);
+						if (s != null && lineNo != null) {
+							for (int index = 0; index < s.length; index++) {
+								model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
+							}
+						}
+						// end load cCode
+						model.addRow(new String[] { "", "0x" + pc.toString(16), lines[x].substring(secondColon + 1).trim().split(";")[0].trim(), lines[x].split(";")[1] });
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+
+				model.removeNonOrderInstruction();
+				model.fireTableDataChanged();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void updateInstructionUsingMaxine(BigInteger address) {
+		try {
+			final int maxNoOfByte = 400;
+			jStatusLabel.setText("Updating instruction");
+			if (address == null) {
+				BigInteger cs = CommonLib.string2decimal(this.registerPanel.csTextField.getText());
+				BigInteger eip = CommonLib.string2decimal(this.registerPanel.eipTextField.getText());
+				eip = eip.and(CommonLib.string2decimal("0xffffffffffffffff"));
+				address = eip;
+			}
+			String lines[] = libGKD.disassemble(address, maxNoOfByte);
+			if (lines.length > 0) {
+				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
+				jStatusProgressBar.setMaximum(lines.length - 1);
+				for (int x = 0; x < lines.length; x++) {
+					jStatusProgressBar.setValue(x);
+					try {
+//						lines[x] = lines[x].replaceFirst("\\<.*\\>", "");
+//						String strs[] = lines[x].split(":");
+//						int secondColon = lines[x].indexOf(":", lines[x].indexOf(":") + 1);
+
+						// load cCode
+						String pcStr = lines[x].replaceFirst(" *", "");
 						BigInteger pc = CommonLib.string2decimal("0x" + pcStr);
 						if (pc == null) {
 							continue;
