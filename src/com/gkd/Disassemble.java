@@ -13,9 +13,8 @@ import com.gkd.GeneralKernelDebugger.OSType;
 import com.peterswing.CommonLib;
 
 public class Disassemble {
-	public static String disassemble(BigInteger address, int bits) {
+	public static String disassemble(int bytes[] , int bits) {
 		try {
-			int bytes[] = GKDCommonLib.getMemoryFromBochs(address, 100);
 			FileUtils.writeByteArrayToFile(new File("temp"), CommonLib.intArrayToByteArray(bytes));
 
 			ProcessBuilder pb;
