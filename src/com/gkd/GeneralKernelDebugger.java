@@ -128,6 +128,7 @@ import com.gkd.osdebuginformation.JOSDebugInformationPanel;
 import com.gkd.osdebuginformation.OSDebugInfoHelper;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
 import com.gkd.webservice.WebServiceUtil;
+import com.libgkd.Breakpoint;
 import com.libgkd.LibGKD;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
@@ -2740,7 +2741,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void updateInstructionUsingMaxine(BigInteger address) {
-		try {
+		/*try {
 			final int maxNoOfByte = 400;
 			jStatusLabel.setText("Updating instruction");
 			if (address == null) {
@@ -2785,7 +2786,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}*/
 	}
 
 	public void jumpToRowInstructionTable(BigInteger eip) {
@@ -3406,7 +3407,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				ex.printStackTrace();
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			Hashtable<String, Long> ht = libGKD.readRegister();
+			Hashtable<String, Long> ht = libGKD.register();
 
 			changeText(this.registerPanel.csTextField, ht.get("cs"));
 			changeText(this.registerPanel.dsTextField, ht.get("ds"));
@@ -3616,28 +3617,39 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void updateBreakpoint() {
 		try {
 			jStatusLabel.setText("Updating breakpoint");
-			// commandReceiver.setCommandNoOfLine(-1);
-			commandReceiver.clearBuffer();
-			sendCommand("info break");
-			Thread.currentThread();
-			String result = commandReceiver.getCommandResultUntilEnd();
-			String[] lines = result.split("\n");
-			DefaultTableModel model = (DefaultTableModel) breakpointTable.getModel();
-			while (model.getRowCount() > 0) {
-				model.removeRow(0);
-			}
+			if (Global.vmType.equals("bochs")) {
+				// commandReceiver.setCommandNoOfLine(-1);
+				commandReceiver.clearBuffer();
+				sendCommand("info break");
+				Thread.currentThread();
+				String result = commandReceiver.getCommandResultUntilEnd();
+				String[] lines = result.split("\n");
+				DefaultTableModel model = (DefaultTableModel) breakpointTable.getModel();
+				while (model.getRowCount() > 0) {
+					model.removeRow(0);
+				}
 
-			for (int x = 1; x < lines.length; x++) {
-				if (lines[x].contains("breakpoint")) {
-					Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
-					strs.add("0"); // hit count
-					if (strs.size() > 1) {
-						strs.remove(1);
-						model.addRow(strs);
+				for (int x = 1; x < lines.length; x++) {
+					if (lines[x].contains("breakpoint")) {
+						Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
+						strs.add("0"); // hit count
+						if (strs.size() > 1) {
+							strs.remove(1);
+							model.addRow(strs);
+						}
 					}
 				}
+			} else if (Global.vmType.equals("qemu")) {
+				DefaultTableModel model = (DefaultTableModel) breakpointTable.getModel();
+				while (model.getRowCount() > 0) {
+					model.removeRow(0);
+				}
+				Vector<Breakpoint> breakpoints = libGKD.listBreakpoint();
+				int x = 0;
+				for (Breakpoint bp : breakpoints) {
+					model.addRow(new String[] { String.valueOf(x++), "P", "0x" + Long.toHexString(bp.addr), "0x" + Long.toHexString(bp.flag) });
+				}
 			}
-
 			this.jRefreshELFBreakpointButtonActionPerformed(null);
 			jStatusLabel.setText("");
 		} catch (Exception ex) {
@@ -3679,11 +3691,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	private void jSaveBreakpointButtonActionPerformed(ActionEvent evt) {
 		jSaveBreakpointButton.setEnabled(false);
-		LinkedList<Breakpoint> v = Setting.getInstance().getBreakpoint();
+		LinkedList<com.gkd.Breakpoint> v = Setting.getInstance().getBreakpoint();
 		v.clear();
 
 		for (int x = 0; x < this.breakpointTable.getRowCount(); x++) {
-			Breakpoint h = new Breakpoint();
+			com.gkd.Breakpoint h = new com.gkd.Breakpoint();
 			h.setNo(x);
 			h.setType(this.breakpointTable.getValueAt(x, 0).toString());
 			h.setEnable(this.breakpointTable.getValueAt(x, 1).toString());
@@ -3706,7 +3718,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 		} else {
 			jLoadBreakpointButton.setEnabled(false);
-			LinkedList<Breakpoint> vector = Setting.getInstance().getBreakpoint();
+			LinkedList<com.gkd.Breakpoint> vector = Setting.getInstance().getBreakpoint();
 			try {
 				for (int x = 0; x < vector.size(); x++) {
 					boolean match = false;

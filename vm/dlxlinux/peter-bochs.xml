@@ -57,6 +57,6 @@
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
     <width>1255</width>
-    <x>138</x>
-    <y>24</y>
+    <x>100</x>
+    <y>25</y>
   </Setting>

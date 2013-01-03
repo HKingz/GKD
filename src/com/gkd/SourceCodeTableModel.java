@@ -113,24 +113,26 @@ public class SourceCodeTableModel extends AbstractTableModel {
 	public void updateBreakpoint(BigInteger eip) {
 		this.eip = eip;
 		try {
-			// commandReceiver.setCommandNoOfLine(-1);
-			GeneralKernelDebugger.commandReceiver.clearBuffer();
-			GeneralKernelDebugger.sendCommand("info break");
-			String result = GeneralKernelDebugger.commandReceiver.getCommandResultUntilEnd();
-			String[] lines = result.split("\n");
+			if (Global.vmType.equals("bochs")) {
+				// commandReceiver.setCommandNoOfLine(-1);
+				GeneralKernelDebugger.commandReceiver.clearBuffer();
+				GeneralKernelDebugger.sendCommand("info break");
+				String result = GeneralKernelDebugger.commandReceiver.getCommandResultUntilEnd();
+				String[] lines = result.split("\n");
 
-			breakpoint.clear();
-			for (int x = 1; x < lines.length; x++) {
-				if (lines[x].contains("breakpoint")) {
-					Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
-					strs.add("0"); // hit count
-					if (strs.size() > 1) {
-						strs.remove(1);
+				breakpoint.clear();
+				for (int x = 1; x < lines.length; x++) {
+					if (lines[x].contains("breakpoint")) {
+						Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
+						strs.add("0"); // hit count
+						if (strs.size() > 1) {
+							strs.remove(1);
 
-						if (strs.get(1).contains("y")) {
-							breakpoint.put(CommonLib.string2decimal(strs.get(2)), true);
-						} else {
-							breakpoint.put(CommonLib.string2decimal(strs.get(2)), false);
+							if (strs.get(1).contains("y")) {
+								breakpoint.put(CommonLib.string2decimal(strs.get(2)), true);
+							} else {
+								breakpoint.put(CommonLib.string2decimal(strs.get(2)), false);
+							}
 						}
 					}
 				}
