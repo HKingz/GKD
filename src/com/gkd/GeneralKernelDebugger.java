@@ -2921,38 +2921,45 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void updateGDT() {
 		try {
 			jStatusLabel.setText("Updating GDT");
-			// commandReceiver.setCommandNoOfLine(20);
+			if (Global.vmType.equals("bochs")) {
+				// commandReceiver.setCommandNoOfLine(20);
 
-			int limit = Integer.parseInt(this.registerPanel.gdtrLimitTextField.getText().substring(2), 16);
-			limit = (limit + 1) / 8 - 1;
-			if (limit > 100) {
-				limit = 100;
-			}
-			commandReceiver.clearBuffer();
-			commandReceiver.shouldShow = false;
-			sendCommand("info gdt 0 " + limit);
-			String limitStr = String.format("0x%02x", limit);
-
-			String result = commandReceiver.getCommandResult("GDT[0x00]", "GDT[" + limitStr + "]", null);
-			if (result != null) {
-				String lines[] = result.split("\n");
-				GDTTableModel model = (GDTTableModel) jGDTTable.getModel();
-				model.clear();
-				// jStatusProgressBar.setMaximum(lines.length - 1);
-				for (int x = 1; x < lines.length; x++) {
-					jStatusLabel.setText("Updating GDT " + x);
-					// System.out.println(">++>>" + lines[x]);
-					jStatusProgressBar.setValue(x);
-					try {
-						Vector<String> v = new Vector<String>();
-						v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
-						v.add(lines[x].replaceFirst("^.*]=", ""));
-						model.addValue(v);
-					} catch (Exception ex) {
-					}
+				int limit = Integer.parseInt(this.registerPanel.gdtrLimitTextField.getText().substring(2), 16);
+				limit = (limit + 1) / 8 - 1;
+				if (limit > 100) {
+					limit = 100;
 				}
+				commandReceiver.clearBuffer();
+				commandReceiver.shouldShow = false;
+				sendCommand("info gdt 0 " + limit);
+				String limitStr = String.format("0x%02x", limit);
 
-				((GDTTableModel) jGDTTable.getModel()).fireTableDataChanged();
+				String result = commandReceiver.getCommandResult("GDT[0x00]", "GDT[" + limitStr + "]", null);
+				if (result != null) {
+					String lines[] = result.split("\n");
+					GDTTableModel model = (GDTTableModel) jGDTTable.getModel();
+					model.clear();
+					// jStatusProgressBar.setMaximum(lines.length - 1);
+					for (int x = 1; x < lines.length; x++) {
+						jStatusLabel.setText("Updating GDT " + x);
+						// System.out.println(">++>>" + lines[x]);
+						jStatusProgressBar.setValue(x);
+						try {
+							Vector<String> v = new Vector<String>();
+							v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
+							v.add(lines[x].replaceFirst("^.*]=", ""));
+							model.addValue(v);
+						} catch (Exception ex) {
+						}
+					}
+
+					((GDTTableModel) jGDTTable.getModel()).fireTableDataChanged();
+				}
+			} else if (Global.vmType.equals("qemu")) {
+//				GDTTableModel model = (GDTTableModel) jGDTTable.getModel();
+//				model.clear();
+//				model.addValue(v);
+
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
