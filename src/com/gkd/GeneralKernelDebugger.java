@@ -201,7 +201,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JButton jDisableBreakpointButton;
 	private JButton jEnableBreakpointButton;
 	private JButton jSaveBreakpointButton;
-	private JButton jAddBreakpointButton;
+	private JButton addBreakpointButton;
 	private JButton jRefreshBreakpointButton;
 	private JScrollPane jScrollPane9;
 	private JPanel jPanel4;
@@ -514,6 +514,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		try {
 			options.addOption(OptionBuilder.withDescription("specific config xml").hasArg().withArgName("file").create("f"));
 			options.addOption("v", false, "display version info");
+			options.addOption("debug", false, "display debug info to stdout");
 			cmd = parser.parse(options, args);
 		} catch (ParseException e1) {
 			e1.printStackTrace();
@@ -646,6 +647,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 
 		Global.vmType = GKDCommonLib.readConfig(cmd, "/gkd/vmType/text()");
+		if (!Global.vmType.equals("bochs") && !Global.vmType.equals("qemu")) {
+			System.err.println("vmtype : \"" + Global.vmType + "\" not supported");
+		}
 		if (!new File(cmd.getOptionValue("f")).exists()) {
 			System.err.println(cmd.getOptionValue("f") + " not exist");
 			System.exit(-1);
@@ -745,13 +749,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			if (Global.debug) {
 				System.out.println("end startBochs()");
 			}
-		} else {
+		} else if (Global.vmType.equals("qemu")) {
 			if (Global.debug) {
-				System.out.println("startBochs()");
+				System.out.println("startQemu()");
 			}
 			startQemu();
 			if (Global.debug) {
-				System.out.println("end startBochs()");
+				System.out.println("end startQemu()");
 			}
 		}
 
@@ -946,7 +950,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 	}
 
-	private void runBochs() {
+	private void runVM() {
 		WebServiceUtil.log("gkd", "run", null, null, null);
 		try {
 			enableAllButtons(false, true);
@@ -956,8 +960,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 
 			if (skipBreakpointTime > 0) {
-				jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /><br><br>" + skipBreakpointTime
-						+ "</center></html>");
+				if (Global.vmType.equals("bochs")) {
+					jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /><br><br>" + skipBreakpointTime
+							+ "</center></html>");
+				} else if (Global.vmType.equals("qemu")) {
+					jRunningLabel.setText("<html><center>Qemu is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /><br><br>" + skipBreakpointTime
+							+ "</center></html>");
+				}
 				jRunningLabel.getParent().getParent().getParent().repaint();
 				jRunningLabel.getParent().getParent().repaint();
 				jRunningLabel.getParent().repaint();
@@ -973,9 +982,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 
 			Data.memoryProfilingZone.needToTellBochsToUpdateZone = true;
-			commandReceiver.clearBuffer();
-			sendCommand("c");
-
+			if (Global.vmType.equals("bochs")) {
+				commandReceiver.clearBuffer();
+				sendCommand("c");
+			} else if (Global.vmType.equals("qemu")) {
+				libGKD._continue();
+			}
 			runBochsButton.setText(MyLanguage.getString("Pause_bochs"));
 			runBochsButton.setToolTipText("Pause emulation");
 			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
@@ -998,7 +1010,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 													// already paused
 						waitUpdateFinish();
 
-						runBochs();
+						runVM();
 					} else if (customCommandQueue.size() > 0) {
 						pauseBochs(false, false); // update register, not really
 													// want to pause because it
@@ -1015,7 +1027,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 								updateVMStatus(true);
 								waitUpdateFinish();
 							} else if (command.equals("c")) {
-								runBochs();
+								runVM();
 								return;
 							}
 						}
@@ -1414,7 +1426,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				this.jBochsEditorPane.setText("");
 			} else if (jBochsCommandTextField.getText().trim().equals("c")) {
 				commandReceiver.shouldShow = false;
-				runBochs();
+				runVM();
 			} else if (jBochsCommandTextField.getText().trim().equals("q")) {
 				stopBochs();
 			} else {
@@ -1453,7 +1465,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void runBochsMenuItemActionPerformed(ActionEvent evt) {
-		runBochs();
+		runVM();
 	}
 
 	private void pauseBochsMenuItemActionPerformed(ActionEvent evt) {
@@ -1577,7 +1589,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			cl.show(jMainPanel, "Running Label 2");
 			new Thread(untilThread, "Step until thread").start();
 		} else {
-			sendCommand("s");
+			if (Global.vmType.equals("bochs")) {
+				sendCommand("s");
+			} else {
+				libGKD.singleStep();
+			}
 			WebServiceUtil.log("gkd", "step", null, null, null);
 			updateVMStatus(true);
 		}
@@ -2025,8 +2041,14 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					if (Global.debug) {
 						System.out.println("updateHistoryTable");
 					}
-					sendCommand("disasm");
-					String result = commandReceiver.getCommandResultUntilEnd();
+
+					String result = "";
+					if (Global.vmType.equals("bochs")) {
+						sendCommand("disasm");
+						result = commandReceiver.getCommandResultUntilEnd();
+					} else if (Global.vmType.equals("qemu")) {
+						result = Disassemble.disassemble(libGKD.memory(getRealEIP().longValue(), 50), 32);
+					}
 					updateHistoryTable(result);
 				}
 
@@ -2344,22 +2366,24 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	protected void updateAddressTranslate() {
 		try {
 			jStatusLabel.setText("Updating Address translate");
-			// commandReceiver.setCommandNoOfLine(-1);
-			commandReceiver.clearBuffer();
-			commandReceiver.shouldShow = false;
-			sendCommand("info tab");
-			Thread.currentThread();
-			String result = commandReceiver.getCommandResultUntilEnd();
-			String[] lines = result.split("\n");
-			DefaultTableModel model = (DefaultTableModel) jAddressTranslateTable.getModel();
-			while (model.getRowCount() > 0) {
-				model.removeRow(0);
+			if (Global.vmType.equals("bochs")) {
+				// commandReceiver.setCommandNoOfLine(-1);
+				commandReceiver.clearBuffer();
+				commandReceiver.shouldShow = false;
+				sendCommand("info tab");
+				Thread.currentThread();
+				String result = commandReceiver.getCommandResultUntilEnd();
+				String[] lines = result.split("\n");
+				DefaultTableModel model = (DefaultTableModel) jAddressTranslateTable.getModel();
+				while (model.getRowCount() > 0) {
+					model.removeRow(0);
+				}
+				for (int x = 1; x < lines.length; x++) {
+					Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split("->")));
+					model.addRow(strs);
+				}
+				((DefaultTableModel) jAddressTranslateTable.getModel()).fireTableDataChanged();
 			}
-			for (int x = 1; x < lines.length; x++) {
-				Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split("->")));
-				model.addRow(strs);
-			}
-			((DefaultTableModel) jAddressTranslateTable.getModel()).fireTableDataChanged();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -2394,67 +2418,69 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	public void updatePageTable(BigInteger pageDirectoryBaseAddress) {
 		Vector<IA32PageDirectory> ia32_pageDirectories = new Vector<IA32PageDirectory>();
 		try {
-			commandReceiver.clearBuffer();
-			commandReceiver.shouldShow = false;
-			jStatusLabel.setText("Updating page table");
-			// commandReceiver.setCommandNoOfLine(512);
-			sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
-			float totalByte2 = 4096 - 1;
-			totalByte2 = totalByte2 / 8;
-			int totalByte3 = (int) Math.floor(totalByte2);
-			String realEndAddressStr;
-			String realStartAddressStr;
-			BigInteger realStartAddress = pageDirectoryBaseAddress;
-			realStartAddressStr = realStartAddress.toString(16);
-			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-			realEndAddressStr = String.format("%08x", realEndAddress);
-			String result = commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-			if (result != null) {
-				String[] lines = result.split("\n");
-				DefaultTableModel model = (DefaultTableModel) jPageDirectoryTable.getModel();
-				while (model.getRowCount() > 0) {
-					model.removeRow(0);
-				}
-				jStatusProgressBar.setMaximum(lines.length - 1);
-
-				for (int y = 0; y < lines.length; y++) {
-					jStatusProgressBar.setValue(y);
-					String[] b = lines[y].replaceFirst("^.*:", "").trim().split("\t");
-
-					for (int z = 0; z < 2; z++) {
-						try {
-							int bytes[] = new int[4];
-							for (int x = 0; x < 4; x++) {
-								bytes[x] = CommonLib.string2decimal(b[x + z * 4].substring(2).trim()).intValue();
-							}
-							long value = CommonLib.getInt(bytes, 0);
-							// "No.", "PT base", "AVL", "G",
-							// "D", "A", "PCD", "PWT",
-							// "U/S", "W/R", "P"
-
-							long baseL = value & 0xfffff000;
-							// if (baseL != 0) {
-							String base = "0x" + Long.toHexString(baseL);
-							String avl = String.valueOf((value >> 9) & 3);
-							String g = String.valueOf((value >> 8) & 1);
-							String d = String.valueOf((value >> 6) & 1);
-							String a = String.valueOf((value >> 5) & 1);
-							String pcd = String.valueOf((value >> 4) & 1);
-							String pwt = String.valueOf((value >> 3) & 1);
-							String us = String.valueOf((value >> 2) & 1);
-							String wr = String.valueOf((value >> 1) & 1);
-							String p = String.valueOf((value >> 0) & 1);
-
-							ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
-
-							model.addRow(new String[] { String.valueOf(y * 2 + z), base, avl, g, d, a, pcd, pwt, us, wr, p });
-							// }
-						} catch (Exception ex) {
-						}
+			if (Global.vmType.equals("boochs")) {
+				commandReceiver.clearBuffer();
+				commandReceiver.shouldShow = false;
+				jStatusLabel.setText("Updating page table");
+				// commandReceiver.setCommandNoOfLine(512);
+				sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
+				float totalByte2 = 4096 - 1;
+				totalByte2 = totalByte2 / 8;
+				int totalByte3 = (int) Math.floor(totalByte2);
+				String realEndAddressStr;
+				String realStartAddressStr;
+				BigInteger realStartAddress = pageDirectoryBaseAddress;
+				realStartAddressStr = realStartAddress.toString(16);
+				BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
+				realEndAddressStr = String.format("%08x", realEndAddress);
+				String result = commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+				if (result != null) {
+					String[] lines = result.split("\n");
+					DefaultTableModel model = (DefaultTableModel) jPageDirectoryTable.getModel();
+					while (model.getRowCount() > 0) {
+						model.removeRow(0);
 					}
-					jStatusLabel.setText("Updating page table " + (y + 1) + "/" + lines.length);
+					jStatusProgressBar.setMaximum(lines.length - 1);
+
+					for (int y = 0; y < lines.length; y++) {
+						jStatusProgressBar.setValue(y);
+						String[] b = lines[y].replaceFirst("^.*:", "").trim().split("\t");
+
+						for (int z = 0; z < 2; z++) {
+							try {
+								int bytes[] = new int[4];
+								for (int x = 0; x < 4; x++) {
+									bytes[x] = CommonLib.string2decimal(b[x + z * 4].substring(2).trim()).intValue();
+								}
+								long value = CommonLib.getInt(bytes, 0);
+								// "No.", "PT base", "AVL", "G",
+								// "D", "A", "PCD", "PWT",
+								// "U/S", "W/R", "P"
+
+								long baseL = value & 0xfffff000;
+								// if (baseL != 0) {
+								String base = "0x" + Long.toHexString(baseL);
+								String avl = String.valueOf((value >> 9) & 3);
+								String g = String.valueOf((value >> 8) & 1);
+								String d = String.valueOf((value >> 6) & 1);
+								String a = String.valueOf((value >> 5) & 1);
+								String pcd = String.valueOf((value >> 4) & 1);
+								String pwt = String.valueOf((value >> 3) & 1);
+								String us = String.valueOf((value >> 2) & 1);
+								String wr = String.valueOf((value >> 1) & 1);
+								String p = String.valueOf((value >> 0) & 1);
+
+								ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
+
+								model.addRow(new String[] { String.valueOf(y * 2 + z), base, avl, g, d, a, pcd, pwt, us, wr, p });
+								// }
+							} catch (Exception ex) {
+							}
+						}
+						jStatusLabel.setText("Updating page table " + (y + 1) + "/" + lines.length);
+					}
+					jPageDirectoryTable.setModel(model);
 				}
-				jPageDirectoryTable.setModel(model);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -2599,26 +2625,28 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void updateStack() {
 		try {
 			jStatusLabel.setText("Updating stack");
-			// commandReceiver.setCommandNoOfLine(512);
+			if (Global.vmType.equals("bochs")) {
+				// commandReceiver.setCommandNoOfLine(512);
 
-			commandReceiver.clearBuffer();
-			commandReceiver.shouldShow = false;
-			sendCommand("print-stack 40");
-			String result = commandReceiver.getCommandResultUntilHaveLines(40);
-			String[] lines = result.split("\n");
-			registerPanel.jStackList.removeAll();
-			jStatusProgressBar.setMaximum(lines.length - 1);
-			DefaultListModel model = new DefaultListModel();
-			for (int y = 1; y < lines.length; y++) {
-				try {
-					jStatusProgressBar.setValue(y);
-					String[] b = lines[y].split("[\\[\\]]");
-					model.addElement(b[1]);
-					jStatusLabel.setText("Updating stack " + y + "/" + (lines.length - 1));
-				} catch (Exception ex2) {
+				commandReceiver.clearBuffer();
+				commandReceiver.shouldShow = false;
+				sendCommand("print-stack 40");
+				String result = commandReceiver.getCommandResultUntilHaveLines(40);
+				String[] lines = result.split("\n");
+				registerPanel.jStackList.removeAll();
+				jStatusProgressBar.setMaximum(lines.length - 1);
+				DefaultListModel model = new DefaultListModel();
+				for (int y = 1; y < lines.length; y++) {
+					try {
+						jStatusProgressBar.setValue(y);
+						String[] b = lines[y].split("[\\[\\]]");
+						model.addElement(b[1]);
+						jStatusLabel.setText("Updating stack " + y + "/" + (lines.length - 1));
+					} catch (Exception ex2) {
+					}
 				}
+				registerPanel.jStackList.setModel(model);
 			}
-			registerPanel.jStackList.setModel(model);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -2956,9 +2984,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					((GDTTableModel) jGDTTable.getModel()).fireTableDataChanged();
 				}
 			} else if (Global.vmType.equals("qemu")) {
-//				GDTTableModel model = (GDTTableModel) jGDTTable.getModel();
-//				model.clear();
-//				model.addValue(v);
+				//				GDTTableModel model = (GDTTableModel) jGDTTable.getModel();
+				//				model.clear();
+				//				model.addValue(v);
 
 			}
 		} catch (Exception ex) {
@@ -2969,40 +2997,41 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void updateIDT() {
 		try {
 			jStatusLabel.setText("Updating IDT");
-
-			commandReceiver.clearBuffer();
-			commandReceiver.shouldShow = false;
-			int limit = Integer.parseInt(this.registerPanel.jIDTRLimitTextField.getText().substring(2), 16);
-			limit = (limit + 1) / 8 - 1;
-			if (limit > 200 || limit < 0) {
-				limit = 200;
-			}
-			sendCommand("info idt 0 " + limit);
-
-			String limitStr = String.format("0x%02x", limit);
-
-			String result = commandReceiver.getCommandResult("IDT[0x00]", "IDT[" + limitStr + "]", "limit=0)");
-
-			IDTTableModel model = (IDTTableModel) jIDTTable.getModel();
-			model.clear();
-			if (result == null) {
-				((IDTTableModel) jIDTTable.getModel()).fireTableDataChanged();
-				return;
-			} else {
-				String lines[] = result.split("\n");
-				jStatusProgressBar.setMaximum(lines.length - 1);
-				for (int x = 0; x < lines.length; x++) {
-					jStatusLabel.setText("Updating IDT " + x);
-					jStatusProgressBar.setValue(x);
-					try {
-						Vector<String> v = new Vector<String>();
-						v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
-						v.add(lines[x].replaceFirst("^.*]=", ""));
-						model.addValue(v);
-					} catch (Exception ex) {
-					}
+			if (Global.vmType.equals("bochs")) {
+				commandReceiver.clearBuffer();
+				commandReceiver.shouldShow = false;
+				int limit = Integer.parseInt(this.registerPanel.jIDTRLimitTextField.getText().substring(2), 16);
+				limit = (limit + 1) / 8 - 1;
+				if (limit > 200 || limit < 0) {
+					limit = 200;
 				}
-				((IDTTableModel) jIDTTable.getModel()).fireTableDataChanged();
+				sendCommand("info idt 0 " + limit);
+
+				String limitStr = String.format("0x%02x", limit);
+
+				String result = commandReceiver.getCommandResult("IDT[0x00]", "IDT[" + limitStr + "]", "limit=0)");
+
+				IDTTableModel model = (IDTTableModel) jIDTTable.getModel();
+				model.clear();
+				if (result == null) {
+					((IDTTableModel) jIDTTable.getModel()).fireTableDataChanged();
+					return;
+				} else {
+					String lines[] = result.split("\n");
+					jStatusProgressBar.setMaximum(lines.length - 1);
+					for (int x = 0; x < lines.length; x++) {
+						jStatusLabel.setText("Updating IDT " + x);
+						jStatusProgressBar.setValue(x);
+						try {
+							Vector<String> v = new Vector<String>();
+							v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
+							v.add(lines[x].replaceFirst("^.*]=", ""));
+							model.addValue(v);
+						} catch (Exception ex) {
+						}
+					}
+					((IDTTableModel) jIDTTable.getModel()).fireTableDataChanged();
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -3012,25 +3041,27 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void updateLDT() {
 		try {
 			jStatusLabel.setText("Updating LDT");
-			// commandReceiver.setCommandNoOfLine(20);
+			if (Global.vmType.equals("bochs")) {
+				// commandReceiver.setCommandNoOfLine(20);
 
-			sendCommand("info ldt 0 200");
-			String result = commandReceiver.getCommandResultUntilEnd();
-			String lines[] = result.split("\n");
-			LDTTableModel model = (LDTTableModel) jLDTTable.getModel();
-			model.clear();
-			jStatusProgressBar.setMaximum(lines.length - 1);
-			for (int x = 1; x < lines.length; x++) {
-				jStatusProgressBar.setValue(x);
-				try {
-					Vector<String> v = new Vector<String>();
-					v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
-					v.add(lines[x].replaceFirst("^.*]=", ""));
-					model.addValue(v);
-				} catch (Exception ex) {
+				sendCommand("info ldt 0 200");
+				String result = commandReceiver.getCommandResultUntilEnd();
+				String lines[] = result.split("\n");
+				LDTTableModel model = (LDTTableModel) jLDTTable.getModel();
+				model.clear();
+				jStatusProgressBar.setMaximum(lines.length - 1);
+				for (int x = 1; x < lines.length; x++) {
+					jStatusProgressBar.setValue(x);
+					try {
+						Vector<String> v = new Vector<String>();
+						v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
+						v.add(lines[x].replaceFirst("^.*]=", ""));
+						model.addValue(v);
+					} catch (Exception ex) {
+					}
 				}
+				model.fireTableDataChanged();
 			}
-			model.fireTableDataChanged();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -3674,26 +3705,30 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		disassembleCurrentIPButton.setEnabled(true);
 	}
 
-	private void jAddBreakpointButtonActionPerformed(ActionEvent evt) {
-		jAddBreakpointButton.setEnabled(false);
+	private void addBreakpointButtonActionPerformed(ActionEvent evt) {
+		addBreakpointButton.setEnabled(false);
 		String type = (String) JOptionPane.showInputDialog(this, null, "Add breakpoint", JOptionPane.QUESTION_MESSAGE, null,
 				new Object[] { MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address") },
 				MyLanguage.getString("Physical_address"));
 		if (type != null) {
 			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint", JOptionPane.QUESTION_MESSAGE);
 			if (address != null) {
-				if (type.equals(MyLanguage.getString("Physical_address"))) {
-					sendCommand("pb " + address);
-				} else if (type.equals(MyLanguage.getString("Linear_address"))) {
-					sendCommand("lb " + address);
-				} else {
-					sendCommand("vb " + address);
+				if (Global.vmType.equals("bochs")) {
+					if (type.equals(MyLanguage.getString("Physical_address"))) {
+						sendCommand("pb " + address);
+					} else if (type.equals(MyLanguage.getString("Linear_address"))) {
+						sendCommand("lb " + address);
+					} else {
+						sendCommand("vb " + address);
+					}
+				} else if (Global.vmType.equals("qemu")) {
+					libGKD.physicalBreakpoint(CommonLib.string2long(address));
 				}
 				updateBreakpoint();
 				updateBreakpointTableColor();
 			}
 		}
-		jAddBreakpointButton.setEnabled(true);
+		addBreakpointButton.setEnabled(true);
 	}
 
 	private void jSaveBreakpointButtonActionPerformed(ActionEvent evt) {
@@ -4916,12 +4951,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						jPanel12 = new JPanel();
 						jPanel4.add(jPanel12, BorderLayout.SOUTH);
 						{
-							jAddBreakpointButton = new JButton();
-							jPanel12.add(jAddBreakpointButton);
-							jAddBreakpointButton.setText(MyLanguage.getString("Add"));
-							jAddBreakpointButton.addActionListener(new ActionListener() {
+							addBreakpointButton = new JButton();
+							jPanel12.add(addBreakpointButton);
+							addBreakpointButton.setText(MyLanguage.getString("Add"));
+							addBreakpointButton.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent evt) {
-									jAddBreakpointButtonActionPerformed(evt);
+									addBreakpointButtonActionPerformed(evt);
 								}
 							});
 						}

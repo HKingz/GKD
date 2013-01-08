@@ -5,11 +5,11 @@
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
     <divX>617</divX>
-    <divY>477</divY>
+    <divY>566</divY>
     <fontFamily>DejaVu Sans</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>806</height>
+    <height>945</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -56,7 +56,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1255</width>
-    <x>100</x>
-    <y>25</y>
+    <width>1341</width>
+    <x>371</x>
+    <y>62</y>
   </Setting>
