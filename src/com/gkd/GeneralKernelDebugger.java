@@ -2047,7 +2047,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						sendCommand("disasm");
 						result = commandReceiver.getCommandResultUntilEnd();
 					} else if (Global.vmType.equals("qemu")) {
-						result = Disassemble.disassemble(libGKD.memory(getRealEIP().longValue(), 50), 32);
+						result = Disassemble.disassemble(libGKD.physicalMemory(getRealEIP().longValue(), 50), 32);
 					}
 					updateHistoryTable(result);
 				}
@@ -2674,13 +2674,14 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				address = eip;
 			}
 			jStatusLabel.setText("Updating instruction");
-			int bytes[] = libGKD.memory(address.longValue(), 50);
+			int bytes[] = libGKD.physicalMemory(address.longValue(), 50);
 			String result = Disassemble.disassemble(bytes, 32);
 			String lines[] = result.split("\n");
 			if (lines.length > 0) {
 				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 				jStatusProgressBar.setMaximum(lines.length - 1);
 				for (int x = 0; x < lines.length; x++) {
+					System.out.println(">>" + lines[x]);
 					jStatusProgressBar.setValue(x);
 					try {
 						// load cCode
@@ -2697,6 +2698,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						}
 						// end load cCode
+						System.out.println(pc.toString(16));
+						System.out.println(lines[x].substring(25).trim());
 						model.addRow(new String[] { "", "0x" + pc.toString(16), lines[x].substring(25).trim(), lines[x].substring(8, 8).trim() });
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -4795,6 +4798,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void disassembleButtonActionPerformed(ActionEvent evt) {
+		if (this.jInstructionComboBox.getSelectedItem() == null) {
+			return;
+		}
 		this.addInstructionComboBox(this.jInstructionComboBox.getSelectedItem().toString());
 		disassembleCurrentIPButton.setEnabled(false);
 		try {
@@ -6920,7 +6926,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				return null;
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			return libGKD.memory(address, totalByte);
+			if (isPhysicalAddress) {
+				return libGKD.physicalMemory(address, totalByte);
+			} else {
+				return libGKD.virtualMemory(address, totalByte);
+			}
 		} else {
 			return null;
 		}
