@@ -563,7 +563,7 @@ public class Setting {
 		try {
 			// Start by preparing the writer
 			// We'll write to a string
-			FileWriter outputWriter = new FileWriter(new File("peter-bochs.xml"));
+			FileWriter outputWriter = new FileWriter(new File("gkd.xml"));
 
 			// Betwixt just writes out the bean as a fragment
 			// So if we want well-formed xml, we need to add the prolog
@@ -582,10 +582,6 @@ public class Setting {
 			// But let's write example bean as base element 'person'
 			beanWriter.write("Setting", this);
 
-			// Write to System.out
-			// (We could have used the empty constructor for BeanWriter
-			// but this way is more instructive)
-
 			// Betwixt writes fragments not documents so does not automatically
 			// close
 			// writers or streams.
@@ -598,7 +594,7 @@ public class Setting {
 
 	private static Setting load() {
 		try {
-			File file = new File("peter-bochs.xml");
+			File file = new File("gkd.xml");
 			if (!file.exists()) {
 				Setting setting = new Setting();
 				setting.save();
@@ -617,8 +613,8 @@ public class Setting {
 			return setting;
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			JOptionPane.showMessageDialog(GeneralKernelDebugger.instance, "Loading peter-bochs.xml error.", "Error", JOptionPane.ERROR_MESSAGE);
-			new File("peter-bochs.xml").delete();
+			JOptionPane.showMessageDialog(GeneralKernelDebugger.instance, "Loading gkd.xml error.", "Error", JOptionPane.ERROR_MESSAGE);
+			new File("gkd.xml").delete();
 			return new Setting();
 		}
 	}
@@ -680,8 +676,9 @@ public class Setting {
 	}
 
 	public static void main(String args[]) {
-		// new Setting().save();
+		new Setting().save();
 		Setting setting = Setting.getInstance();
+		System.out.println(setting);
 	}
 
 	public LinkedHashSet<Long> getSbAddress() {

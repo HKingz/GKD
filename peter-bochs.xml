@@ -4,19 +4,19 @@
     <breakpoint/>
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
-    <divX>617</divX>
-    <divY>420</divY>
-    <fontFamily>DejaVu Sans</fontFamily>
+    <divX>400</divX>
+    <divY>200</divY>
+    <fontFamily>Dialog</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>755</height>
+    <height>600</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
     <jmpProfiling>false</jmpProfiling>
-    <lastElfHistoryOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
-    <lastElfHistoryOpenDir2>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
-    <lastMapOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
+    <lastElfHistoryOpenDir>/root/workspace/GKD/.</lastElfHistoryOpenDir>
+    <lastElfHistoryOpenDir2>/root/workspace/GKD/.</lastElfHistoryOpenDir2>
+    <lastMapOpenDir>/root/workspace/GKD/.</lastMapOpenDir>
     <ldt/>
     <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
     <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
@@ -56,7 +56,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1258</width>
-    <x>136</x>
-    <y>43</y>
+    <width>800</width>
+    <x>0</x>
+    <y>0</y>
   </Setting>
