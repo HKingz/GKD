@@ -173,12 +173,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JSeparator jSeparator1;
 	private JMenuItem stopBochsMenuItem;
 	private JMenuItem startBochsMenuItem;
-	private JMenu jMenu4;
+	private JMenu jBochsMenu;
 	private JMenuItem exitMenuItem;
 	private JSeparator jSeparator2;
 	public JDropDownButton runBochsButton;
-	private JButton stopBochsButton;
-	private JButton startBochsButton;
+	private JButton stopVMButton;
+	private JButton startVMButton;
 	private JToolBar jToolBar1;
 	private JPanel jPanel7;
 	private JPanel jPanel6;
@@ -647,6 +647,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 
 		Global.vmType = GKDCommonLib.readConfig(cmd, "/gkd/vmType/text()");
+		Global.stopCommand = GKDCommonLib.readConfig(cmd, "/gkd/stopCommand/text()");
 		if (!Global.vmType.equals("bochs") && !Global.vmType.equals("qemu")) {
 			System.err.println("vmtype : \"" + Global.vmType + "\" not supported");
 		}
@@ -739,6 +740,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		initGUI();
 		if (Global.debug) {
 			System.out.println("end initGUI()");
+		}
+		if (Global.vmType.equals("qemu")) {
+			jBochsMenu.setVisible(false);
 		}
 
 		if (Global.vmType.equals("bochs")) {
@@ -874,7 +878,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 	}
 
-	private void stopBochs() {
+	private void stopVM() {
 		WebServiceUtil.log("gkd", "stop", null, null, null);
 		try {
 			this.enableAllButtons(false, false);
@@ -888,12 +892,20 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				currentPanel = "jMaximizableTabbedPane_BasePanel1";
 			}
 
-			if (os == OSType.mac || os == OSType.linux) {
-				ProcessBuilder pb = new ProcessBuilder("killall", "-9", "bochs");
-				pb.start();
-			} else {
-				ProcessBuilder pb = new ProcessBuilder("StopBochs.exe");
-				pb.start();
+			if (Global.vmType.equals("bochs")) {
+				if (os == OSType.mac || os == OSType.linux) {
+					ProcessBuilder pb = new ProcessBuilder("killall", "-9", "bochs");
+					pb.start();
+				} else {
+					ProcessBuilder pb = new ProcessBuilder("StopBochs.exe");
+					pb.start();
+				}
+			} else if (Global.vmType.equals("qemu")) {
+				if (os == OSType.mac || os == OSType.linux) {
+					CommonLib.runCommand(Global.stopCommand);
+				} else {
+					JOptionPane.showMessageDialog(this, "not implement yet");
+				}
 			}
 
 			MemorySocketServerController.stop();
@@ -1103,26 +1115,24 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				jToolBar1 = new JToolBar();
 				getContentPane().add(jToolBar1, BorderLayout.NORTH);
 				{
-					startBochsButton = new JButton();
-					jToolBar1.add(startBochsButton);
-					startBochsButton.setText(MyLanguage.getString("Start_bochs"));
-					startBochsButton.setToolTipText("Launch bochs");
-					startBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/accept.png")));
-					startBochsButton.addActionListener(new ActionListener() {
+					startVMButton = new JButton();
+					jToolBar1.add(startVMButton);
+					startVMButton.setText(MyLanguage.getString("Start"));
+					startVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/accept.png")));
+					startVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							startBochsButtonActionPerformed(evt);
+							startVMButtonActionPerformed(evt);
 						}
 					});
 				}
 				{
-					stopBochsButton = new JButton();
-					jToolBar1.add(stopBochsButton);
-					stopBochsButton.setText(MyLanguage.getString("Stop_bochs"));
-					stopBochsButton.setToolTipText("Quit bochs");
-					stopBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/stop.png")));
-					stopBochsButton.addActionListener(new ActionListener() {
+					stopVMButton = new JButton();
+					jToolBar1.add(stopVMButton);
+					stopVMButton.setText(MyLanguage.getString("Stop"));
+					stopVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/stop.png")));
+					stopVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							stopBochsButtonActionPerformed(evt);
+							stopVMButtonActionPerformed(evt);
 						}
 					});
 				}
@@ -1231,16 +1241,16 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					}
 				}
 				{
-					jMenu4 = new JMenu();
-					jMenuBar1.add(jMenu4);
+					jBochsMenu = new JMenu();
+					jMenuBar1.add(jBochsMenu);
 					jMenuBar1.add(getJFontMenu());
 					jMenuBar1.add(getJMenu6());
 					jMenuBar1.add(getJSystemMenu());
-					jMenu4.setText(MyLanguage.getString("Bochs"));
+					jBochsMenu.setText(MyLanguage.getString("Bochs"));
 					{
 						startBochsMenuItem = new JMenuItem();
-						jMenu4.add(startBochsMenuItem);
-						startBochsMenuItem.setText(MyLanguage.getString("Start_bochs"));
+						jBochsMenu.add(startBochsMenuItem);
+						startBochsMenuItem.setText(MyLanguage.getString("Start"));
 						startBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
 								startBochsMenuItemActionPerformed(evt);
@@ -1249,21 +1259,21 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					}
 					{
 						stopBochsMenuItem = new JMenuItem();
-						jMenu4.add(stopBochsMenuItem);
-						stopBochsMenuItem.setText(MyLanguage.getString("Stop_bochs"));
+						jBochsMenu.add(stopBochsMenuItem);
+						stopBochsMenuItem.setText(MyLanguage.getString("Stop"));
 						stopBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								stopBochsMenuItemActionPerformed(evt);
+								stopVMMenuItemActionPerformed(evt);
 							}
 						});
 					}
 					{
 						jSeparator1 = new JSeparator();
-						jMenu4.add(jSeparator1);
+						jBochsMenu.add(jSeparator1);
 					}
 					{
 						runBochsMenuItem = new JMenuItem();
-						jMenu4.add(runBochsMenuItem);
+						jBochsMenu.add(runBochsMenuItem);
 						runBochsMenuItem.setText(MyLanguage.getString("Run_bochs"));
 						runBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
@@ -1273,7 +1283,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					}
 					{
 						pauseBochsMenuItem = new JMenuItem();
-						jMenu4.add(pauseBochsMenuItem);
+						jBochsMenu.add(pauseBochsMenuItem);
 						pauseBochsMenuItem.setText(MyLanguage.getString("Pause_bochs"));
 						pauseBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
@@ -1283,7 +1293,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					}
 					{
 						jupdateVMStatusMenuItem = new JMenuItem();
-						jMenu4.add(jupdateVMStatusMenuItem);
+						jBochsMenu.add(jupdateVMStatusMenuItem);
 						jupdateVMStatusMenuItem.setText(MyLanguage.getString("Update_bochs_status"));
 						jupdateVMStatusMenuItem.setBounds(83, 86, 79, 20);
 						jupdateVMStatusMenuItem.addActionListener(new ActionListener() {
@@ -1352,12 +1362,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						} else if (keycode == 115) {
 							jTabbedPane3.setSelectedIndex(3);
 						} else if (keycode == 116) {
-							if (startBochsButton.isEnabled()) {
-								startBochsButtonActionPerformed(null);
+							if (startVMButton.isEnabled()) {
+								startVMButtonActionPerformed(null);
 							}
 						} else if (keycode == 117) {
-							if (stopBochsButton.isEnabled()) {
-								stopBochsButtonActionPerformed(null);
+							if (stopVMButton.isEnabled()) {
+								stopVMButtonActionPerformed(null);
 							}
 						} else if (keycode == 118) {
 							if (runBochsButton.isEnabled()) {
@@ -1428,7 +1438,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				commandReceiver.shouldShow = false;
 				runVM();
 			} else if (jBochsCommandTextField.getText().trim().equals("q")) {
-				stopBochs();
+				stopVM();
 			} else {
 				try {
 					Setting.getInstance().getBochsCommandHistory().add(jBochsCommandTextField.getText());
@@ -1460,8 +1470,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		startBochs();
 	}
 
-	private void stopBochsMenuItemActionPerformed(ActionEvent evt) {
-		stopBochs();
+	private void stopVMMenuItemActionPerformed(ActionEvent evt) {
+		stopVM();
 	}
 
 	private void runBochsMenuItemActionPerformed(ActionEvent evt) {
@@ -1473,12 +1483,28 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		pauseBochs(true, true);
 	}
 
-	private void startBochsButtonActionPerformed(ActionEvent evt) {
-		startBochs();
+	private void startVMButtonActionPerformed(ActionEvent evt) {
+		if (Global.vmType.equals("bochs")) {
+			if (Global.debug) {
+				System.out.println("startBochs()");
+			}
+			startBochs();
+			if (Global.debug) {
+				System.out.println("end startBochs()");
+			}
+		} else if (Global.vmType.equals("qemu")) {
+			if (Global.debug) {
+				System.out.println("startQemu()");
+			}
+			startQemu();
+			if (Global.debug) {
+				System.out.println("end startQemu()");
+			}
+		}
 	}
 
-	private void stopBochsButtonActionPerformed(ActionEvent evt) {
-		stopBochsMenuItemActionPerformed(null);
+	private void stopVMButtonActionPerformed(ActionEvent evt) {
+		stopVMMenuItemActionPerformed(null);
 	}
 
 	private void runBochsButtonActionPerformed(ActionEvent evt) {

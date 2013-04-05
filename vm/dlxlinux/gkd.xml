@@ -5,11 +5,11 @@
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
     <divX>603</divX>
-    <divY>494</divY>
+    <divY>396</divY>
     <fontFamily>Dialog</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>836</height>
+    <height>722</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -56,7 +56,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1440</width>
-    <x>336</x>
-    <y>100</y>
+    <width>1162</width>
+    <x>242</x>
+    <y>106</y>
   </Setting>
