@@ -998,7 +998,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				commandReceiver.clearBuffer();
 				sendCommand("c");
 			} else if (Global.vmType.equals("qemu")) {
-				libGKD._continue();
+				String r = libGKD._continue();
+				System.out.println("r=" + r);
 			}
 			runBochsButton.setText(MyLanguage.getString("Pause_bochs"));
 			runBochsButton.setToolTipText("Pause emulation");
@@ -1006,12 +1007,24 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 			new Thread("runBochs() update thread") {
 				public void run() {
-					while (commandReceiver.getLinesLength() == 0) {
-						try {
-							Thread.currentThread();
-							Thread.sleep(200);
-						} catch (Exception e) {
-							e.printStackTrace();
+					if (Global.vmType.equals("bochs")) {
+						while (commandReceiver.getLinesLength() == 0) {
+							try {
+								Thread.currentThread();
+								Thread.sleep(200);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						}
+					} else if (Global.vmType.equals("qemu")) {
+						String s;
+						while ((s = libGKD.readFromQEMU()) != null && !s.equals("paused")) {
+							try {
+								Thread.currentThread();
+								Thread.sleep(200);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 
@@ -2274,7 +2287,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 			BigInteger currentIP = CommonLib.string2decimal(registerPanel.eipTextField.getText());
 			if (currentIP.equals(CommonLib.string2decimal(breakpointTable.getValueAt(x, 2).toString()))) {
-				int hit = Integer.parseInt(breakpointTable.getValueAt(x, 3).toString());
+				int hit = CommonLib.string2int(breakpointTable.getValueAt(x, 3).toString());
 				breakpointTable.setValueAt("-" + value, x, 0);
 				breakpointTable.setValueAt(hit + 1, x, 3);
 			} else {
@@ -3771,7 +3784,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			h.setType(this.breakpointTable.getValueAt(x, 0).toString());
 			h.setEnable(this.breakpointTable.getValueAt(x, 1).toString());
 			h.setAddress(this.breakpointTable.getValueAt(x, 2).toString());
-			h.setHit(Integer.parseInt(this.breakpointTable.getValueAt(x, 3).toString()));
+			h.setHit(CommonLib.string2int(this.breakpointTable.getValueAt(x, 3).toString()));
 			v.add(h);
 		}
 		Setting.getInstance().save();

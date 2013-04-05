@@ -1,15 +1,23 @@
 <?xml version='1.0' ?>
   <Setting>
     <bochsCommandHistory/>
-    <breakpoint/>
+    <breakpoint>
+      <breakpoint>
+        <address>0x7c00</address>
+        <enable>P</enable>
+        <hit>16</hit>
+        <no>0</no>
+        <type>0</type>
+      </breakpoint>
+    </breakpoint>
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
-    <divX>603</divX>
-    <divY>396</divY>
+    <divX>617</divX>
+    <divY>390</divY>
     <fontFamily>Dialog</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>722</height>
+    <height>846</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -18,7 +26,7 @@
     <lastElfHistoryOpenDir2>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
     <lastMapOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
     <ldt/>
-    <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
+    <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
     <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
     <logToPetersoftServer>false</logToPetersoftServer>
     <memoryCombo/>
@@ -56,7 +64,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1162</width>
-    <x>242</x>
-    <y>106</y>
+    <width>1233</width>
+    <x>404</x>
+    <y>39</y>
   </Setting>
