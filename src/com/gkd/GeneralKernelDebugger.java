@@ -999,7 +999,6 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				sendCommand("c");
 			} else if (Global.vmType.equals("qemu")) {
 				String r = libGKD._continue();
-				System.out.println("r=" + r);
 			}
 			runBochsButton.setText(MyLanguage.getString("Pause_bochs"));
 			runBochsButton.setToolTipText("Pause emulation");
@@ -1017,8 +1016,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						}
 					} else if (Global.vmType.equals("qemu")) {
-						String s;
-						while ((s = libGKD.readFromQEMU()) != null && !s.equals("paused")) {
+						while (libGKD.isRunning()) {
 							try {
 								Thread.currentThread();
 								Thread.sleep(200);
@@ -2720,7 +2718,6 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 				jStatusProgressBar.setMaximum(lines.length - 1);
 				for (int x = 0; x < lines.length; x++) {
-					System.out.println(">>" + lines[x]);
 					jStatusProgressBar.setValue(x);
 					try {
 						// load cCode
@@ -2737,8 +2734,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						}
 						// end load cCode
-						System.out.println(pc.toString(16));
-						System.out.println(lines[x].substring(25).trim());
+
 						model.addRow(new String[] { "", "0x" + pc.toString(16), lines[x].substring(25).trim(), lines[x].substring(8, 8).trim() });
 					} catch (Exception ex) {
 						ex.printStackTrace();

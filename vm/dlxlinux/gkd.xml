@@ -17,7 +17,7 @@
     <fontFamily>Dialog</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>846</height>
+    <height>796</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -64,7 +64,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1233</width>
-    <x>404</x>
-    <y>39</y>
+    <width>1176</width>
+    <x>483</x>
+    <y>46</y>
   </Setting>
