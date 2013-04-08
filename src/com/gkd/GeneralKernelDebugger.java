@@ -249,12 +249,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JMenuItem disasmFromEIPMinus100MenuItem;
 	private JButton nextOverButton;
 	private JButton nextButton;
-	private JMenuItem jLicenseMenuItem;
-	private JMenuItem jStepOverNTimesMenuItem;
-	private JMenuItem jStepOver100MenuItem;
+	private JMenuItem licenseMenuItem;
+	private JMenuItem stepOverNTimesMenuItem;
+	private JMenuItem stepOver100MenuItem;
 	private JMenuItem jStepOver10MenuItem;
-	private JDropDownButton jStepOverDropDownButton;
-	private JMenuItem jRunCustomCommandMenuItem;
+	private JDropDownButton stepOverDropDownButton;
+	private JMenuItem runCustomCommandMenuItem;
 	private JButton jButton4;
 	private EnhancedTextArea bochsoutTextArea;
 	private JPanel jPanel31;
@@ -264,13 +264,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JLabel jLabel9;
 	private JLabel jLabel8;
 	private JLabel jLabel7;
-	private JSpinner jShowAfterwardSpinner;
-	private JMenuItem jRunBochsAndSkipBreakpointMenuItem;
-	private JSearchTextField jFilterHistoryTableTextField;
+	private JSpinner showAfterwardSpinner;
+	private JMenuItem runBochsAndSkipBreakpointMenuItem;
+	private JSearchTextField filterHistoryTableTextField;
 	private JLabel jLabel2;
-	private JLabel jHistoryTableRepeatedLabel;
-	private JButton jClearRunningTextAreaButton;
-	private JButton jClearHistoryTableButton;
+	private JLabel historyTableRepeatedLabel;
+	private JButton clearRunningTextAreaButton;
+	private JButton clearHistoryTableButton;
 	private ButtonGroup buttonGroup4;
 	public JMenuItem clearInstructionTableMenuItem;
 	private JMenuItem jLoadElfMenuItem;
@@ -293,22 +293,22 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private EnhancedTextArea jTextArea1;
 	private JLabel jRunningLabel2;
 	private JPanel jRunningPanel;
-	private JMenuItem jStepUntilIPBigChangeMenuItem;
-	private JMenuItem jJVMMenuItem;
-	private JMenuItem jStepUntilMovMenuItem;
-	private JMenuItem jStepUntilIRetMenuItem;
-	private JMenuItem jStepUntilRetMenuItem;
-	private JMenuItem jStepUntilCallOrJumpMenuItem;
-	private JMenuItem jStepNMenuItem;
-	private JMenuItem jStep100MenuItem;
-	private JMenuItem jStep10MenuItem;
+	private JMenuItem stepUntilIPBigChangeMenuItem;
+	private JMenuItem jvmMenuItem;
+	private JMenuItem stepUntilMovMenuItem;
+	private JMenuItem stepUntilIRetMenuItem;
+	private JMenuItem stepUntilRetMenuItem;
+	private JMenuItem stepUntilCallOrJumpMenuItem;
+	private JMenuItem stepNMenuItem;
+	private JMenuItem step100MenuItem;
+	private JMenuItem step10MenuItem;
 	private JPanel jPanel30;
-	private JMenuItem jHelpRequestMenuItem;
+	private JMenuItem helpRequestMenuItem;
 	private EnhancedTextArea osLogPanel1;
-	private JToggleButton jOSLogToggleButton;
-	private JToggleButton jRegisterToggleButton;
+	private JToggleButton osLogToggleButton;
+	private JToggleButton registerToggleButton;
 	private LogPanel logPanel1;
-	private JToggleButton jLogToggleButton;
+	private JToggleButton logToggleButton;
 	private JToggleButton jProfilerToggleButton;
 	private InstrumentPanel jInstrumentPanel;
 	private JOSDebugInformationPanel jOSDebugInformationPanel1;
@@ -1520,7 +1520,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	private void runBochsButtonActionPerformed(ActionEvent evt) {
 		if (runBochsButton.getEventSource() != null) {
-			if (runBochsButton.getEventSource() == jRunBochsAndSkipBreakpointMenuItem) {
+			if (runBochsButton.getEventSource() == runBochsAndSkipBreakpointMenuItem) {
 				customCommandQueue.clear();
 				commandReceiver.shouldShow = false;
 				String s = JOptionPane.showInputDialog(this, "How many time of breakpoint you want to skip?");
@@ -1529,7 +1529,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				}
 				skipBreakpointTime = Integer.parseInt(s);
 				runBochsMenuItemActionPerformed(null);
-			} else if (runBochsButton.getEventSource() == jRunCustomCommandMenuItem) {
+			} else if (runBochsButton.getEventSource() == runCustomCommandMenuItem) {
 				CustomCommandDialog d = new CustomCommandDialog(this);
 				d.setVisible(true);
 				customCommandQueue.clear();
@@ -1608,13 +1608,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void stepBochsButtonActionPerformed(ActionEvent evt) {
 		if (stepBochsButton.getEventSource() != null) {
 			untilThread = new StepThread(stepBochsButton.getEventSource());
-			if (stepBochsButton.getEventSource() == jStepNMenuItem) {
+			if (stepBochsButton.getEventSource() == stepNMenuItem) {
 				String s = JOptionPane.showInputDialog(this, "Please input the instruction count?");
 				if (s == null) {
 					return;
 				}
 				untilThread.instructionCount = Integer.parseInt(s);
-			} else if (stepBochsButton.getEventSource() == jStepUntilIPBigChangeMenuItem) {
+			} else if (stepBochsButton.getEventSource() == stepUntilIPBigChangeMenuItem) {
 				String s = JOptionPane.showInputDialog("Please input the instruction count?");
 				if (s == null) {
 					return;
@@ -1702,7 +1702,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				out = new DataOutputStream(new FileOutputStream("run.txt", true));
 
 				if (eventSource != null) {
-					if (eventSource == jStep10MenuItem) {
+					if (eventSource == step10MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 10 && !shouldStop; x++) {
 							jStatusLabel.setText("Step " + x + " / 10");
@@ -1710,7 +1710,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							result = update(result, out);
 						}
 						updateVMStatus(false);
-					} else if (eventSource == jStep100MenuItem) {
+					} else if (eventSource == step100MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 100 && !shouldStop; x++) {
 							jStatusLabel.setText("Step " + x + " / 100");
@@ -1726,7 +1726,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							result = update(result, out);
 						}
 						updateVMStatus(false);
-					} else if (eventSource == jStepOver100MenuItem) {
+					} else if (eventSource == stepOver100MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 100 && !shouldStop; x++) {
 							jStatusLabel.setText("Step over " + x + " / 10");
@@ -1734,7 +1734,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							result = update(result, out);
 						}
 						updateVMStatus(false);
-					} else if (eventSource == jStepNMenuItem) {
+					} else if (eventSource == stepNMenuItem) {
 						String result = "";
 						jStepCountLabel.setVisible(true);
 						long lastTime = new Date().getTime();
@@ -1743,7 +1743,14 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						for (int x = 1; x <= instructionCount && !shouldStop; x++) {
 							jStatusLabel.setText("Step " + x + " / " + instructionCount);
 							jStepCountLabel.setText("Step " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
-							sendCommand("s");
+							
+
+							if (Global.vmType.equals("bochs")) {
+								sendCommand("s");
+							} else if (Global.vmType.equals("bochs")) {
+								libGKD.singleStep();
+							}
+							
 							result = update(result, out);
 							jBochsEditorPane.setText("");
 
@@ -1754,7 +1761,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						}
 						updateVMStatus(false);
-					} else if (eventSource == jStepOverNTimesMenuItem) {
+					} else if (eventSource == stepOverNTimesMenuItem) {
 						String result = "";
 						jStepCountLabel.setVisible(true);
 						long lastTime = new Date().getTime();
@@ -1763,7 +1770,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						for (int x = 1; x <= instructionCount && !shouldStop; x++) {
 							jStatusLabel.setText("Step over " + x + " / " + instructionCount);
 							jStepCountLabel.setText("Step over " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
-							sendCommand("next");
+
+							if (Global.vmType.equals("bochs")) {
+								sendCommand("next");
+							} else if (Global.vmType.equals("bochs")) {
+								libGKD.singleStep();
+							}
 							result = update(result, out);
 							jBochsEditorPane.setText("");
 
@@ -1774,7 +1786,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						}
 						updateVMStatus(false);
-					} else if (eventSource == jStepUntilCallOrJumpMenuItem) {
+					} else if (eventSource == stepUntilCallOrJumpMenuItem) {
 						boolean notMatch = true;
 						do {
 							sendCommand("s");
@@ -1787,7 +1799,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						} while (notMatch && !shouldStop);
 						updateVMStatus(true);
-					} else if (eventSource == jStepUntilRetMenuItem) {
+					} else if (eventSource == stepUntilRetMenuItem) {
 						boolean notMatch = true;
 						do {
 							sendCommand("s");
@@ -1797,7 +1809,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						} while (notMatch && !shouldStop);
 						updateVMStatus(true);
-					} else if (eventSource == jStepUntilIRetMenuItem) {
+					} else if (eventSource == stepUntilIRetMenuItem) {
 						boolean notMatch = true;
 						do {
 							sendCommand("s");
@@ -1807,7 +1819,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						} while (notMatch && !shouldStop);
 						updateVMStatus(true);
-					} else if (eventSource == jStepUntilMovMenuItem) {
+					} else if (eventSource == stepUntilMovMenuItem) {
 						boolean notMatch = true;
 						do {
 							sendCommand("s");
@@ -1817,7 +1829,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							}
 						} while (notMatch && !shouldStop);
 						updateVMStatus(true);
-					} else if (eventSource == jStepUntilIPBigChangeMenuItem) {
+					} else if (eventSource == stepUntilIPBigChangeMenuItem) {
 						boolean notMatch = true;
 						long lastIP = -1;
 						int count = 1;
@@ -2431,13 +2443,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			runBochsButton.setEnabled(b);
 		}
 		stepBochsButton.setEnabled(b);
-		jStepOverDropDownButton.setEnabled(b);
+		stepOverDropDownButton.setEnabled(b);
 		nextButton.setEnabled(b);
 		fastStepBochsButton.setEnabled(b);
 		jUpdateBochsButton.setEnabled(b);
 		jButton13.setEnabled(b);
 		jSettingButton.setEnabled(b);
-		jRegisterToggleButton.setEnabled(b);
+		registerToggleButton.setEnabled(b);
 		jSourceLevelDebuggerToggleButton.setEnabled(b);
 		jProfilerToggleButton.setEnabled(b);
 
@@ -2447,8 +2459,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		pauseBochsMenuItem.setEnabled(b);
 		runBochsMenuItem.setEnabled(b);
 		jupdateVMStatusMenuItem.setEnabled(b);
-		jRunBochsAndSkipBreakpointMenuItem.setEnabled(b);
-		jRunCustomCommandMenuItem.setEnabled(b);
+		runBochsAndSkipBreakpointMenuItem.setEnabled(b);
+		runCustomCommandMenuItem.setEnabled(b);
 		nextOverButton.setEnabled(b);
 	}
 
@@ -7144,7 +7156,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jSetPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
-		if (jRegisterToggleButton.isSelected()) {
+		if (registerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 			GeneralKernelDebugger.sendCommand("pb " + model.getMemoryAddress(instructionTable.getSelectedRow()));
 		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
@@ -7156,7 +7168,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jSetLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
-		if (jRegisterToggleButton.isSelected()) {
+		if (registerToggleButton.isSelected()) {
 			GeneralKernelDebugger.sendCommand("lb " + GeneralKernelDebugger.instructionTable.getValueAt(GeneralKernelDebugger.instructionTable.getSelectedRow(), 1));
 		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
 			GeneralKernelDebugger.sendCommand("lb " + this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1));
@@ -7962,24 +7974,24 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JToggleButton getJLogToggleButton() {
-		if (jLogToggleButton == null) {
-			jLogToggleButton = new JToggleButton();
-			jLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")));
-			jLogToggleButton.setText("Log");
-			getButtonGroup4().add(jLogToggleButton);
-			jLogToggleButton.setToolTipText("Log");
-			jLogToggleButton.addActionListener(new ActionListener() {
+		if (logToggleButton == null) {
+			logToggleButton = new JToggleButton();
+			logToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")));
+			logToggleButton.setText("Log");
+			getButtonGroup4().add(logToggleButton);
+			logToggleButton.setToolTipText("Log");
+			logToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jLogToggleButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jLogToggleButton;
+		return logToggleButton;
 	}
 
 	private void jLogToggleButtonActionPerformed(ActionEvent evt) {
 		CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-		if (jLogToggleButton.isSelected()) {
+		if (logToggleButton.isSelected()) {
 			cl.show(jMainPanel, "logPanel1");
 			currentPanel = "logPanel1";
 		} else {
@@ -7996,25 +8008,25 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JToggleButton getJRegisterToggleButton() {
-		if (jRegisterToggleButton == null) {
-			jRegisterToggleButton = new JToggleButton();
-			jRegisterToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_bar.png")));
-			getButtonGroup4().add(jRegisterToggleButton);
-			jRegisterToggleButton.setSelected(true);
-			jRegisterToggleButton.setText(MyLanguage.getString("Register"));
-			jRegisterToggleButton.setToolTipText("View all registers");
-			jRegisterToggleButton.addActionListener(new ActionListener() {
+		if (registerToggleButton == null) {
+			registerToggleButton = new JToggleButton();
+			registerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_bar.png")));
+			getButtonGroup4().add(registerToggleButton);
+			registerToggleButton.setSelected(true);
+			registerToggleButton.setText(MyLanguage.getString("Register"));
+			registerToggleButton.setToolTipText("View all registers");
+			registerToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jRegisterToggleButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jRegisterToggleButton;
+		return registerToggleButton;
 	}
 
 	private void jRegisterToggleButtonActionPerformed(ActionEvent evt) {
 		final CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-		if (jRegisterToggleButton.isSelected()) {
+		if (registerToggleButton.isSelected()) {
 			registerPanelScrollPane.setViewportView(registerPanel);
 			cl.show(jMainPanel, "jMaximizableTabbedPane_BasePanel1");
 			currentPanel = "jMaximizableTabbedPane_BasePanel1";
@@ -8035,24 +8047,24 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JToggleButton getJOSLogToggleButton() {
-		if (jOSLogToggleButton == null) {
-			jOSLogToggleButton = new JToggleButton();
-			jOSLogToggleButton.setText("os.log");
-			jOSLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_red.png")));
-			jOSLogToggleButton.setToolTipText("os.log");
-			getButtonGroup4().add(jOSLogToggleButton);
-			jOSLogToggleButton.addActionListener(new ActionListener() {
+		if (osLogToggleButton == null) {
+			osLogToggleButton = new JToggleButton();
+			osLogToggleButton.setText("os.log");
+			osLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_red.png")));
+			osLogToggleButton.setToolTipText("os.log");
+			getButtonGroup4().add(osLogToggleButton);
+			osLogToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jOSLogToggleButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jOSLogToggleButton;
+		return osLogToggleButton;
 	}
 
 	private void jOSLogToggleButtonActionPerformed(ActionEvent evt) {
 		CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-		if (jOSLogToggleButton.isSelected()) {
+		if (osLogToggleButton.isSelected()) {
 			cl.show(jMainPanel, "oSLogPanel1");
 			currentPanel = "osLogPanel1";
 		} else {
@@ -8070,16 +8082,16 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JMenuItem getJHelpRequestMenuItem() {
-		if (jHelpRequestMenuItem == null) {
-			jHelpRequestMenuItem = new JMenuItem();
-			jHelpRequestMenuItem.setText("Help request");
-			jHelpRequestMenuItem.addActionListener(new ActionListener() {
+		if (helpRequestMenuItem == null) {
+			helpRequestMenuItem = new JMenuItem();
+			helpRequestMenuItem.setText("Help request");
+			helpRequestMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jHelpRequestMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jHelpRequestMenuItem;
+		return helpRequestMenuItem;
 	}
 
 	private void jHelpRequestMenuItemActionPerformed(ActionEvent evt) {
@@ -8100,72 +8112,72 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JMenuItem getJStep10MenuItem() {
-		if (jStep10MenuItem == null) {
-			jStep10MenuItem = new JMenuItem();
-			jStep10MenuItem.setText("Step 10 Instructions");
+		if (step10MenuItem == null) {
+			step10MenuItem = new JMenuItem();
+			step10MenuItem.setText("Step 10 Instructions");
 		}
-		return jStep10MenuItem;
+		return step10MenuItem;
 	}
 
 	private JMenuItem getJStep100MenuItem() {
-		if (jStep100MenuItem == null) {
-			jStep100MenuItem = new JMenuItem();
-			jStep100MenuItem.setText("Step 100 Instructions");
+		if (step100MenuItem == null) {
+			step100MenuItem = new JMenuItem();
+			step100MenuItem.setText("Step 100 Instructions");
 		}
-		return jStep100MenuItem;
+		return step100MenuItem;
 	}
 
 	private JMenuItem getJStepNMenuItem() {
-		if (jStepNMenuItem == null) {
-			jStepNMenuItem = new JMenuItem();
-			jStepNMenuItem.setText("Step N Instructions");
+		if (stepNMenuItem == null) {
+			stepNMenuItem = new JMenuItem();
+			stepNMenuItem.setText("Step N Instructions");
 		}
-		return jStepNMenuItem;
+		return stepNMenuItem;
 	}
 
 	private JMenuItem getJStepUntilCallOrJumpMenuItem() {
-		if (jStepUntilCallOrJumpMenuItem == null) {
-			jStepUntilCallOrJumpMenuItem = new JMenuItem();
-			jStepUntilCallOrJumpMenuItem.setText("Until call or jump");
+		if (stepUntilCallOrJumpMenuItem == null) {
+			stepUntilCallOrJumpMenuItem = new JMenuItem();
+			stepUntilCallOrJumpMenuItem.setText("Until call or jump");
 		}
-		return jStepUntilCallOrJumpMenuItem;
+		return stepUntilCallOrJumpMenuItem;
 	}
 
 	private JMenuItem getJStepUntilRetMenuItem() {
-		if (jStepUntilRetMenuItem == null) {
-			jStepUntilRetMenuItem = new JMenuItem();
-			jStepUntilRetMenuItem.setText("Until ret");
+		if (stepUntilRetMenuItem == null) {
+			stepUntilRetMenuItem = new JMenuItem();
+			stepUntilRetMenuItem.setText("Until ret");
 		}
-		return jStepUntilRetMenuItem;
+		return stepUntilRetMenuItem;
 	}
 
 	private JMenuItem getJStepUntilIRetMenuItem() {
-		if (jStepUntilIRetMenuItem == null) {
-			jStepUntilIRetMenuItem = new JMenuItem();
-			jStepUntilIRetMenuItem.setText("Until iret");
+		if (stepUntilIRetMenuItem == null) {
+			stepUntilIRetMenuItem = new JMenuItem();
+			stepUntilIRetMenuItem.setText("Until iret");
 		}
-		return jStepUntilIRetMenuItem;
+		return stepUntilIRetMenuItem;
 	}
 
 	private JMenuItem getJStepUntilMovMenuItem() {
-		if (jStepUntilMovMenuItem == null) {
-			jStepUntilMovMenuItem = new JMenuItem();
-			jStepUntilMovMenuItem.setText("Until mov");
+		if (stepUntilMovMenuItem == null) {
+			stepUntilMovMenuItem = new JMenuItem();
+			stepUntilMovMenuItem.setText("Until mov");
 		}
-		return jStepUntilMovMenuItem;
+		return stepUntilMovMenuItem;
 	}
 
 	private JMenuItem getJJVMMenuItem() {
-		if (jJVMMenuItem == null) {
-			jJVMMenuItem = new JMenuItem();
-			jJVMMenuItem.setText("JVM");
-			jJVMMenuItem.addActionListener(new ActionListener() {
+		if (jvmMenuItem == null) {
+			jvmMenuItem = new JMenuItem();
+			jvmMenuItem.setText("JVM");
+			jvmMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jJVMMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jJVMMenuItem;
+		return jvmMenuItem;
 	}
 
 	private void jJVMMenuItemActionPerformed(ActionEvent evt) {
@@ -8173,11 +8185,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JMenuItem getJStepUntilIPBigChangeMenuItem() {
-		if (jStepUntilIPBigChangeMenuItem == null) {
-			jStepUntilIPBigChangeMenuItem = new JMenuItem();
-			jStepUntilIPBigChangeMenuItem.setText("Until IP big change");
+		if (stepUntilIPBigChangeMenuItem == null) {
+			stepUntilIPBigChangeMenuItem = new JMenuItem();
+			stepUntilIPBigChangeMenuItem.setText("Until IP big change");
 		}
-		return jStepUntilIPBigChangeMenuItem;
+		return stepUntilIPBigChangeMenuItem;
 	}
 
 	private JPanel getJRunningPanel() {
@@ -8621,16 +8633,16 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JButton getJClearHistoryTableButton() {
-		if (jClearHistoryTableButton == null) {
-			jClearHistoryTableButton = new JButton();
-			jClearHistoryTableButton.setText("Clear");
-			jClearHistoryTableButton.addActionListener(new ActionListener() {
+		if (clearHistoryTableButton == null) {
+			clearHistoryTableButton = new JButton();
+			clearHistoryTableButton.setText("Clear");
+			clearHistoryTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jClearHistoryTableButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jClearHistoryTableButton;
+		return clearHistoryTableButton;
 	}
 
 	private void jClearHistoryTableButtonActionPerformed(ActionEvent evt) {
@@ -8638,16 +8650,16 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JButton getJClearRunningTextAreaButton() {
-		if (jClearRunningTextAreaButton == null) {
-			jClearRunningTextAreaButton = new JButton();
-			jClearRunningTextAreaButton.setText("Clear");
-			jClearRunningTextAreaButton.addActionListener(new ActionListener() {
+		if (clearRunningTextAreaButton == null) {
+			clearRunningTextAreaButton = new JButton();
+			clearRunningTextAreaButton.setText("Clear");
+			clearRunningTextAreaButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jClearRunningTextAreaButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jClearRunningTextAreaButton;
+		return clearRunningTextAreaButton;
 	}
 
 	private void jClearRunningTextAreaButtonActionPerformed(ActionEvent evt) {
@@ -8655,10 +8667,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JLabel getJHistoryTableRepeatedLabel() {
-		if (jHistoryTableRepeatedLabel == null) {
-			jHistoryTableRepeatedLabel = new JLabel();
+		if (historyTableRepeatedLabel == null) {
+			historyTableRepeatedLabel = new JLabel();
 		}
-		return jHistoryTableRepeatedLabel;
+		return historyTableRepeatedLabel;
 	}
 
 	private void jHistoryTableMouseClicked(MouseEvent evt) {
@@ -8676,9 +8688,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				} catch (Exception ex) {
 				}
 			}
-			jHistoryTableRepeatedLabel.setText(" " + instruction + " happened " + count + " times ");
+			historyTableRepeatedLabel.setText(" " + instruction + " happened " + count + " times ");
 		} catch (Exception ex) {
-			jHistoryTableRepeatedLabel.setText("");
+			historyTableRepeatedLabel.setText("");
 		}
 	}
 
@@ -8696,47 +8708,47 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JTextField getJFilterHistoryTableTextField() {
-		if (jFilterHistoryTableTextField == null) {
-			jFilterHistoryTableTextField = new JSearchTextField();
-			jFilterHistoryTableTextField.setMaximumSize(new java.awt.Dimension(158, 26));
-			jFilterHistoryTableTextField.addKeyListener(new KeyAdapter() {
+		if (filterHistoryTableTextField == null) {
+			filterHistoryTableTextField = new JSearchTextField();
+			filterHistoryTableTextField.setMaximumSize(new java.awt.Dimension(158, 26));
+			filterHistoryTableTextField.addKeyListener(new KeyAdapter() {
 				public void keyReleased(KeyEvent evt) {
 					jFilterHistoryTableTextFieldKeyReleased(evt);
 				}
 			});
 		}
-		return jFilterHistoryTableTextField;
+		return filterHistoryTableTextField;
 	}
 
 	private void jFilterHistoryTableTextFieldKeyReleased(KeyEvent evt) {
 		MyTableRowSorter<TableModel> sorter = (MyTableRowSorter<TableModel>) jHistoryTable.getRowSorter();
-		sorter.showAfterwardCount = (Integer) jShowAfterwardSpinner.getValue();
-		sorter.setRowFilter(RowFilter.regexFilter(jFilterHistoryTableTextField.getText()));
+		sorter.showAfterwardCount = (Integer) showAfterwardSpinner.getValue();
+		sorter.setRowFilter(RowFilter.regexFilter(filterHistoryTableTextField.getText()));
 		// ((MyTableRowSorter<TableModel>)
 		// jHistoryTable.getRowSorter()).setRowFilter(genRegexFilter(jFilterHistoryTableTextField.getText()));
 	}
 
 	private JMenuItem getJRunBochsAndSkipBreakpointMenuItem() {
-		if (jRunBochsAndSkipBreakpointMenuItem == null) {
-			jRunBochsAndSkipBreakpointMenuItem = new JMenuItem();
-			jRunBochsAndSkipBreakpointMenuItem.setText("Run and skip breakpoint for N times");
+		if (runBochsAndSkipBreakpointMenuItem == null) {
+			runBochsAndSkipBreakpointMenuItem = new JMenuItem();
+			runBochsAndSkipBreakpointMenuItem.setText("Run and skip breakpoint for N times");
 		}
-		return jRunBochsAndSkipBreakpointMenuItem;
+		return runBochsAndSkipBreakpointMenuItem;
 	}
 
 	private JSpinner getJShowAfterwardSpinner() {
-		if (jShowAfterwardSpinner == null) {
+		if (showAfterwardSpinner == null) {
 			SpinnerNumberModel jShowAfterwardSpinnerModel = new SpinnerNumberModel(0, 0, 100, 1);
-			jShowAfterwardSpinner = new JSpinner();
-			jShowAfterwardSpinner.setMaximumSize(new java.awt.Dimension(50, 26));
-			jShowAfterwardSpinner.setModel(jShowAfterwardSpinnerModel);
-			jShowAfterwardSpinner.addChangeListener(new ChangeListener() {
+			showAfterwardSpinner = new JSpinner();
+			showAfterwardSpinner.setMaximumSize(new java.awt.Dimension(50, 26));
+			showAfterwardSpinner.setModel(jShowAfterwardSpinnerModel);
+			showAfterwardSpinner.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent evt) {
 					jShowAfterwardSpinnerStateChanged(evt);
 				}
 			});
 		}
-		return jShowAfterwardSpinner;
+		return showAfterwardSpinner;
 	}
 
 	private JLabel getJLabel7() {
@@ -8998,35 +9010,35 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JMenuItem getJRunCustomCommandMenuItem() {
-		if (jRunCustomCommandMenuItem == null) {
-			jRunCustomCommandMenuItem = new JMenuItem();
-			jRunCustomCommandMenuItem.setText("Run custom commands");
+		if (runCustomCommandMenuItem == null) {
+			runCustomCommandMenuItem = new JMenuItem();
+			runCustomCommandMenuItem.setText("Run custom commands");
 		}
-		return jRunCustomCommandMenuItem;
+		return runCustomCommandMenuItem;
 	}
 
 	private JDropDownButton getJStepOverDropDownButton() {
-		if (jStepOverDropDownButton == null) {
-			jStepOverDropDownButton = new JDropDownButton();
-			jStepOverDropDownButton.setText(MyLanguage.getString("Step_over"));
-			jStepOverDropDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step_over.png")));
-			jStepOverDropDownButton.setMaximumSize(new java.awt.Dimension(115, 26));
-			jStepOverDropDownButton.add(getJStepOver10MenuItem());
-			jStepOverDropDownButton.add(getJStepOver100MenuItem());
-			jStepOverDropDownButton.add(getJStepOverNTimesMenuItem());
-			jStepOverDropDownButton.addActionListener(new ActionListener() {
+		if (stepOverDropDownButton == null) {
+			stepOverDropDownButton = new JDropDownButton();
+			stepOverDropDownButton.setText(MyLanguage.getString("Step_over"));
+			stepOverDropDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step_over.png")));
+			stepOverDropDownButton.setMaximumSize(new java.awt.Dimension(115, 26));
+			stepOverDropDownButton.add(getJStepOver10MenuItem());
+			stepOverDropDownButton.add(getJStepOver100MenuItem());
+			stepOverDropDownButton.add(getJStepOverNTimesMenuItem());
+			stepOverDropDownButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jStepOverDropDownButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jStepOverDropDownButton;
+		return stepOverDropDownButton;
 	}
 
 	private void jStepOverDropDownButtonActionPerformed(ActionEvent evt) {
-		if (jStepOverDropDownButton.getEventSource() != null) {
-			untilThread = new StepThread(jStepOverDropDownButton.getEventSource());
-			if (jStepOverDropDownButton.getEventSource() == jStepOverNTimesMenuItem) {
+		if (stepOverDropDownButton.getEventSource() != null) {
+			untilThread = new StepThread(stepOverDropDownButton.getEventSource());
+			if (stepOverDropDownButton.getEventSource() == stepOverNTimesMenuItem) {
 				String s = JOptionPane.showInputDialog("Please input the instruction count?");
 				if (s == null) {
 					return;
@@ -9056,32 +9068,32 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private JMenuItem getJStepOver100MenuItem() {
-		if (jStepOver100MenuItem == null) {
-			jStepOver100MenuItem = new JMenuItem();
-			jStepOver100MenuItem.setText(MyLanguage.getString("Step_over_100_times"));
+		if (stepOver100MenuItem == null) {
+			stepOver100MenuItem = new JMenuItem();
+			stepOver100MenuItem.setText(MyLanguage.getString("Step_over_100_times"));
 		}
-		return jStepOver100MenuItem;
+		return stepOver100MenuItem;
 	}
 
 	private JMenuItem getJStepOverNTimesMenuItem() {
-		if (jStepOverNTimesMenuItem == null) {
-			jStepOverNTimesMenuItem = new JMenuItem();
-			jStepOverNTimesMenuItem.setText(MyLanguage.getString("Step_over_N_times"));
+		if (stepOverNTimesMenuItem == null) {
+			stepOverNTimesMenuItem = new JMenuItem();
+			stepOverNTimesMenuItem.setText(MyLanguage.getString("Step_over_N_times"));
 		}
-		return jStepOverNTimesMenuItem;
+		return stepOverNTimesMenuItem;
 	}
 
 	private JMenuItem getJLicenseMenuItem() {
-		if (jLicenseMenuItem == null) {
-			jLicenseMenuItem = new JMenuItem();
-			jLicenseMenuItem.setText("License");
-			jLicenseMenuItem.addActionListener(new ActionListener() {
+		if (licenseMenuItem == null) {
+			licenseMenuItem = new JMenuItem();
+			licenseMenuItem.setText("License");
+			licenseMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jLicenseMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jLicenseMenuItem;
+		return licenseMenuItem;
 	}
 
 	private void jLicenseMenuItemActionPerformed(ActionEvent evt) {
