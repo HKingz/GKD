@@ -4,20 +4,20 @@
     <breakpoint>
       <breakpoint>
         <address>0x7c00</address>
-        <enable>P</enable>
+        <enable>pbreakpoint</enable>
         <hit>16</hit>
         <no>0</no>
-        <type>0</type>
+        <type>pbreakpoint</type>
       </breakpoint>
     </breakpoint>
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
     <divX>617</divX>
-    <divY>390</divY>
+    <divY>350</divY>
     <fontFamily>Dialog</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>796</height>
+    <height>795</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -64,7 +64,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1176</width>
-    <x>483</x>
-    <y>46</y>
+    <width>1295</width>
+    <x>294</x>
+    <y>133</y>
   </Setting>

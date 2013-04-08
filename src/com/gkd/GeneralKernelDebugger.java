@@ -3723,7 +3723,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				Vector<Breakpoint> breakpoints = libGKD.listBreakpoint();
 				int x = 0;
 				for (Breakpoint bp : breakpoints) {
-					model.addRow(new String[] { String.valueOf(x++), "P", "0x" + Long.toHexString(bp.addr), "0x" + Long.toHexString(bp.flag) });
+					model.addRow(new String[] { String.valueOf(x++), "pbreakpoint", "0x" + Long.toHexString(bp.addr), "0x" + Long.toHexString(bp.flag) });
 				}
 			}
 			this.jRefreshELFBreakpointButtonActionPerformed(null);
@@ -3751,22 +3751,26 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (type != null) {
 			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint", JOptionPane.QUESTION_MESSAGE);
 			if (address != null) {
-				if (Global.vmType.equals("bochs")) {
-					if (type.equals(MyLanguage.getString("Physical_address"))) {
-						sendCommand("pb " + address);
-					} else if (type.equals(MyLanguage.getString("Linear_address"))) {
-						sendCommand("lb " + address);
-					} else {
-						sendCommand("vb " + address);
-					}
-				} else if (Global.vmType.equals("qemu")) {
-					libGKD.physicalBreakpoint(CommonLib.string2long(address));
-				}
+				addPhysicalBreakpoint(address, type);
 				updateBreakpoint();
 				updateBreakpointTableColor();
 			}
 		}
 		addBreakpointButton.setEnabled(true);
+	}
+
+	private void addPhysicalBreakpoint(String address, String type) {
+		if (Global.vmType.equals("bochs")) {
+			if (type.equals(MyLanguage.getString("Physical_address"))) {
+				sendCommand("pb " + address);
+			} else if (type.equals(MyLanguage.getString("Linear_address"))) {
+				sendCommand("lb " + address);
+			} else {
+				sendCommand("vb " + address);
+			}
+		} else if (Global.vmType.equals("qemu")) {
+			libGKD.physicalBreakpoint(CommonLib.string2long(address));
+		}
 	}
 
 	private void jSaveBreakpointButtonActionPerformed(ActionEvent evt) {
@@ -3777,7 +3781,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		for (int x = 0; x < this.breakpointTable.getRowCount(); x++) {
 			com.gkd.Breakpoint h = new com.gkd.Breakpoint();
 			h.setNo(x);
-			h.setType(this.breakpointTable.getValueAt(x, 0).toString());
+			h.setType(this.breakpointTable.getValueAt(x, 1).toString());
 			h.setEnable(this.breakpointTable.getValueAt(x, 1).toString());
 			h.setAddress(this.breakpointTable.getValueAt(x, 2).toString());
 			h.setHit(CommonLib.string2int(this.breakpointTable.getValueAt(x, 3).toString()));
@@ -3810,11 +3814,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					}
 					if (!match) {
 						if (vector.get(x).getType().contains("pbreakpoint")) {
-							sendCommand("pb " + vector.get(x).getAddress());
+							//sendCommand("pb " + vector.get(x).getAddress());
+							addPhysicalBreakpoint(vector.get(x).getAddress(), MyLanguage.getString("Physical_address"));
 						} else {
 							sendCommand("lb " + vector.get(x).getAddress());
 						}
-						if (vector.get(x).getEnable().trim().equals("keep n")) {
+						if (Global.vmType.equals("bochs") && vector.get(x).getEnable().trim().equals("keep n")) {
 							sendCommand("bpd " + (x + 1));
 						}
 					}
