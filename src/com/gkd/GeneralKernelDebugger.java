@@ -162,7 +162,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JScrollPane registerPanelScrollPane;
 	private JScrollPane jScrollPane2;
 	private JMaximizableTabbedPane jTabbedPane1;
-	private HexTable jHexTable1;
+	private HexTable hexTable;
 	private JEditorPane jBochsEditorPane;
 
 	public static CommandReceiver commandReceiver;
@@ -3543,9 +3543,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				int totalByte = 200;
 				int bytes[] = getMemory(CommonLib.string2long(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte, isPhysicalAddress);
 				jStatusLabel.setText("");
-				jHexTable1.getModel().setCurrentAddress(CommonLib.string2long(this.jMemoryAddressComboBox.getSelectedItem().toString()));
-				jHexTable1.getModel().set(bytes);
-				jHexTable1.getModel().fireTableDataChanged();
+				hexTable.getModel().setCurrentAddress(CommonLib.string2long(this.jMemoryAddressComboBox.getSelectedItem().toString()));
+				hexTable.getModel().set(bytes);
+				hexTable.getModel().fireTableDataChanged();
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -3609,7 +3609,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			if (!file.getName().toLowerCase().endsWith(".png")) {
 				file = new File(file.getAbsolutePath() + ".png");
 			}
-			if (!GKDCommonLib.saveImage(jHexTable1, file)) {
+			if (!GKDCommonLib.saveImage(hexTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -3924,23 +3924,23 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jBinaryRadioButtonItemStateChanged(ItemEvent evt) {
-		jHexTable1.getModel().setRadix(2);
-		jHexTable1.getModel().fireTableDataChanged();
+		hexTable.getModel().setRadix(2);
+		hexTable.getModel().fireTableDataChanged();
 	}
 
 	private void jOctRadioButton1ItemStateChanged(ItemEvent evt) {
-		jHexTable1.getModel().setRadix(8);
-		jHexTable1.getModel().fireTableDataChanged();
+		hexTable.getModel().setRadix(8);
+		hexTable.getModel().fireTableDataChanged();
 	}
 
 	private void jDecRadioButtonItemStateChanged(ItemEvent evt) {
-		jHexTable1.getModel().setRadix(10);
-		jHexTable1.getModel().fireTableDataChanged();
+		hexTable.getModel().setRadix(10);
+		hexTable.getModel().fireTableDataChanged();
 	}
 
 	private void jHexRadioButtonItemStateChanged(ItemEvent evt) {
-		jHexTable1.getModel().setRadix(16);
-		jHexTable1.getModel().fireTableDataChanged();
+		hexTable.getModel().setRadix(16);
+		hexTable.getModel().fireTableDataChanged();
 	}
 
 	private JScrollPane getJTableTranslateScrollPane() {
@@ -4469,7 +4469,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				if (!file.getName().toLowerCase().endsWith(".xls")) {
 					file = new File(file.getAbsolutePath() + ".xls");
 				}
-				GKDCommonLib.exportTableModelToExcel(file, jHexTable1.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
+				GKDCommonLib.exportTableModelToExcel(file, hexTable.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
 			}
 		}
 	}
@@ -4691,7 +4691,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jIDTTable.getModel(), "IDT", wb);
 					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.instructionTable.getModel(), "instruction 0x"
 							+ peterBochsDebugger.jInstructionComboBox.getSelectedItem().toString(), wb);
-					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jHexTable1.getModel(), jMemoryAddressComboBox.getSelectedItem().toString(), wb);
+					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.hexTable.getModel(), jMemoryAddressComboBox.getSelectedItem().toString(), wb);
 					FileOutputStream fileOut;
 					try {
 						fileOut = new FileOutputStream(file);
@@ -5150,18 +5150,18 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						jScrollPane2 = new JScrollPane();
 						jPanel8.add(jScrollPane2, BorderLayout.CENTER);
 						{
-							jHexTable1 = new HexTable();
-							jHexTable1.getColumnModel().getColumn(0).setPreferredWidth(30);
+							hexTable = new HexTable();
+							hexTable.getColumnModel().getColumn(0).setPreferredWidth(30);
 							for (int x = 1; x < 9; x++) {
-								jHexTable1.getColumnModel().getColumn(x).setPreferredWidth(10);
+								hexTable.getColumnModel().getColumn(x).setPreferredWidth(10);
 							}
-							jScrollPane2.setViewportView(jHexTable1);
-							jHexTable1.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-							jHexTable1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							jHexTable1.setCellSelectionEnabled(true);
-							jHexTable1.getTableHeader().setReorderingAllowed(false);
-							jHexTable1.setDefaultRenderer(String.class, new MemoryTableCellRenderer());
-							jHexTable1.addMouseListener(new MouseAdapter() {
+							jScrollPane2.setViewportView(hexTable);
+							hexTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+							hexTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							hexTable.setCellSelectionEnabled(true);
+							hexTable.getTableHeader().setReorderingAllowed(false);
+							hexTable.setDefaultRenderer(String.class, new MemoryTableCellRenderer());
+							hexTable.addMouseListener(new MouseAdapter() {
 								public void mouseClicked(MouseEvent evt) {
 									jHexTable1MouseClicked(evt);
 								}
@@ -5880,11 +5880,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (SwingUtilities.isRightMouseButton(evt)) {
 			// select
 			Point p = evt.getPoint();
-			int rowNumber = jHexTable1.rowAtPoint(p);
-			int columnNumber = jHexTable1.columnAtPoint(p);
-			ListSelectionModel model = jHexTable1.getSelectionModel();
+			int rowNumber = hexTable.rowAtPoint(p);
+			int columnNumber = hexTable.columnAtPoint(p);
+			ListSelectionModel model = hexTable.getSelectionModel();
 			model.setSelectionInterval(rowNumber, rowNumber);
-			jHexTable1.getColumnModel().getSelectionModel().setSelectionInterval(columnNumber, columnNumber);
+			hexTable.getColumnModel().getSelectionModel().setSelectionInterval(columnNumber, columnNumber);
 			// end select
 
 			getJHexTablePopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
@@ -5985,29 +5985,29 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jGDTMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(jHexTable1.getSelectedRow() * 8 + jHexTable1.getSelectedColumn() - 1)), "GDT").setVisible(true);
+		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "GDT").setVisible(true);
 	}
 
 	private void jGDTDescriptorMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(jHexTable1.getSelectedRow() * 8 + jHexTable1.getSelectedColumn() - 1)), "GDT Descriptor")
+		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "GDT Descriptor")
 				.setVisible(true);
 	}
 
 	private void jIDTMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(jHexTable1.getSelectedRow() * 8 + jHexTable1.getSelectedColumn() - 1)), "IDT").setVisible(true);
+		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "IDT").setVisible(true);
 	}
 
 	private void jIDTDescriptorMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(jHexTable1.getSelectedRow() * 8 + jHexTable1.getSelectedColumn() - 1)), "IDT Descriptor")
+		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "IDT Descriptor")
 				.setVisible(true);
 	}
 
 	private void jPDEMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(jHexTable1.getSelectedRow() * 8 + jHexTable1.getSelectedColumn() - 1)), "PDE").setVisible(true);
+		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "PDE").setVisible(true);
 	}
 
 	private void jPTEMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(jHexTable1.getSelectedRow() * 8 + jHexTable1.getSelectedColumn() - 1)), "PTE").setVisible(true);
+		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "PTE").setVisible(true);
 	}
 
 	private void jMemoryAddressComboBoxActionPerformed(ActionEvent evt) {
@@ -6030,7 +6030,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jDisassemble32MenuItemActionPerformed(ActionEvent evt) {
-		this.jInstructionComboBox.setSelectedItem(currentMemoryWindowsAddress.add(BigInteger.valueOf(jHexTable1.getSelectedRow() * 8 + jHexTable1.getSelectedColumn() - 1)));
+		this.jInstructionComboBox.setSelectedItem(currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)));
 		disassembleButtonActionPerformed(null);
 		jTabbedPane1.setSelectedIndex(0);
 	}
