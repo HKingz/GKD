@@ -513,7 +513,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		Options options = new Options();
 		try {
 			options.addOption(OptionBuilder.withDescription("specific config xml").hasArg().withArgName("file").create("f"));
-			options.addOption("v", false, "display version info");
+			options.addOption("v", "version", false, "display version info");
 			options.addOption("debug", false, "display debug info to stdout");
 			cmd = parser.parse(options, args);
 		} catch (ParseException e1) {
@@ -1743,14 +1743,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						for (int x = 1; x <= instructionCount && !shouldStop; x++) {
 							jStatusLabel.setText("Step " + x + " / " + instructionCount);
 							jStepCountLabel.setText("Step " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
-							
 
 							if (Global.vmType.equals("bochs")) {
 								sendCommand("s");
 							} else if (Global.vmType.equals("bochs")) {
 								libGKD.singleStep();
 							}
-							
+
 							result = update(result, out);
 							jBochsEditorPane.setText("");
 
