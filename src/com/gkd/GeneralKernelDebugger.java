@@ -528,7 +528,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 
 		if (cmd.hasOption("version") || cmd.hasOption("v")) {
-			System.out.println(Global.version);
+			System.out.println("version : " + Global.version);
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar GDK.jar [OPTION]", options);
 			System.exit(1);
