@@ -21,6 +21,9 @@ public class OSInfoTableModel extends DefaultTableModel {
 	}
 
 	public int getRowCount() {
+		if (data == null) {
+			return 0;
+		}
 		return data.size();
 	}
 
