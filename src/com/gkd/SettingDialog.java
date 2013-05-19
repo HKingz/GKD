@@ -568,49 +568,49 @@ public class SettingDialog extends javax.swing.JDialog {
 	}
 
 	private void initValue() {
-		jCheckBox1.setSelected(Setting.getInstance().isLoadBreakpointAtStartup());
-		jCheckBox2.setSelected(Setting.getInstance().isUpdateAfterBochsCommand());
+		jCheckBox1.setSelected(Setting.getInstance().loadBreakpointAtStartup);
+		jCheckBox2.setSelected(Setting.getInstance().updateAfterBochsCommand);
 
-		jBochsRegisterCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_register());
-		jBochsMemoryCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_memory());
-		jBochsInstructionCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_instruction());
-		jBochsBreakpointCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_breakpoint());
-		jBochsGDTCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_gdt());
-		jBochsLDTCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_ldt());
-		jBochsIDTCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_idt());
-		jBochsPageTableCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_pageTable());
-		jBochsAddressTranslateCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_addressTranslate());
-		jBochsStackCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_stack());
-		jBochsHistoryCheckBox.setSelected(Setting.getInstance().isUpdateAfterBochsCommand_history());
+		jBochsRegisterCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_register);
+		jBochsMemoryCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_memory);
+		jBochsInstructionCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_instruction);
+		jBochsBreakpointCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_breakpoint);
+		jBochsGDTCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_gdt);
+		jBochsLDTCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_ldt);
+		jBochsIDTCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_idt);
+		jBochsPageTableCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_pageTable);
+		jBochsAddressTranslateCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_addressTranslate);
+		jBochsStackCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_stack);
+		jBochsHistoryCheckBox.setSelected(Setting.getInstance().updateAfterBochsCommand_history);
 
-		jFastStepIDTCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_idt());
-		jFastStepLDTCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_ldt());
-		jFastStepGDTCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_gdt());
-		jFastStepBreakpointCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_breakpoint());
-		jFastStepInstructionCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_instruction());
-		jFastStepMemoryCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_memory());
-		jFastStepRegisterCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_register());
-		jFastStepHistoryCheckBox.setSelected(Setting.getInstance().isUpdateFastStepCommand_history());
+		jFastStepIDTCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_idt);
+		jFastStepLDTCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_ldt);
+		jFastStepGDTCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_gdt);
+		jFastStepBreakpointCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_breakpoint);
+		jFastStepInstructionCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_instruction);
+		jFastStepMemoryCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_memory);
+		jFastStepRegisterCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_register);
+		jFastStepHistoryCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_history);
 
-		jMemoryProfilingCheckBox.setSelected(Setting.getInstance().isMemoryProfiling());
-		jHitZoneCheckBox.setSelected(Setting.getInstance().isHitZone());
-		jCustomZoneCheckBox.setSelected(Setting.getInstance().isCustomZone());
-		jJmpProfilingCheckBox.setSelected(Setting.getInstance().isJmpProfiling());
-		jInterruptProfilingCheckBox.setSelected(Setting.getInstance().isInterruptProfiling());
-		jUpdateGraphCheckBox.setSelected(Setting.getInstance().isProfilingUpdateGraph());
+		jMemoryProfilingCheckBox.setSelected(Setting.getInstance().memoryProfiling);
+		jHitZoneCheckBox.setSelected(Setting.getInstance().hitZone);
+		jCustomZoneCheckBox.setSelected(Setting.getInstance().customZone);
+		jJmpProfilingCheckBox.setSelected(Setting.getInstance().jmpProfiling);
+		jInterruptProfilingCheckBox.setSelected(Setting.getInstance().interruptProfiling);
+		jUpdateGraphCheckBox.setSelected(Setting.getInstance().profilingUpdateGraph);
 
-		jLogToPetersoftServerCheckBox.setSelected(Setting.getInstance().isLogToPetersoftServer());
+		jLogToPetersoftServerCheckBox.setSelected(Setting.getInstance().logToPetersoftServer);
 
-		jObjdumpTextField.setText(Setting.getInstance().getPath_objdump());
-		jDwarfdumpTextField.setText(Setting.getInstance().getPath_dwarfdump());
+		jObjdumpTextField.setText(Setting.getInstance().path_objdump);
+		jDwarfdumpTextField.setText(Setting.getInstance().path_dwarfdump);
 	}
 
 	private void jCheckBox1ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setLoadBreakpointAtStartup(jCheckBox1.isSelected());
+		Setting.getInstance().loadBreakpointAtStartup = jCheckBox1.isSelected();
 	}
 
 	private void jCheckBox2ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand(jCheckBox2.isSelected());
+		Setting.getInstance().updateAfterBochsCommand = jCheckBox2.isSelected();
 	}
 
 	private void thisWindowClosing(WindowEvent evt) {
@@ -618,107 +618,107 @@ public class SettingDialog extends javax.swing.JDialog {
 	}
 
 	private void jInterruptProfilingCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setInterruptProfiling(jInterruptProfilingCheckBox.isSelected());
+		Setting.getInstance().interruptProfiling = jInterruptProfilingCheckBox.isSelected();
 	}
 
 	private void jCheckBox4ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_memory(jBochsMemoryCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_memory = jBochsMemoryCheckBox.isSelected();
 	}
 
 	private void jCheckBox5ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_instruction(jBochsInstructionCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_instruction = jBochsInstructionCheckBox.isSelected();
 	}
 
 	private void jCheckBox6ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_breakpoint(jBochsBreakpointCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_breakpoint = jBochsBreakpointCheckBox.isSelected();
 	}
 
 	private void jCheckBox7ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_gdt(jBochsGDTCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_gdt = jBochsGDTCheckBox.isSelected();
 	}
 
 	private void jCheckBox8ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_ldt(jBochsLDTCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_ldt = jBochsLDTCheckBox.isSelected();
 	}
 
 	private void jCheckBox9ActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_idt(jBochsIDTCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_idt = jBochsIDTCheckBox.isSelected();
 	}
 
 	private void jBochsPageTableCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_pageTable(jBochsPageTableCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_pageTable = jBochsPageTableCheckBox.isSelected();
 	}
 
 	private void jBochsStackCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_stack(jBochsStackCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_stack = jBochsStackCheckBox.isSelected();
 	}
 
 	private void jBochsAddressTranslateCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_addressTranslate(jBochsAddressTranslateCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_addressTranslate = jBochsAddressTranslateCheckBox.isSelected();
 	}
 
 	private void jBochsHistoryCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateAfterBochsCommand_history(jBochsHistoryCheckBox.isSelected());
+		Setting.getInstance().updateAfterBochsCommand_history = jBochsHistoryCheckBox.isSelected();
 	}
 
 	private void jFastStepRegisterCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_register(jFastStepRegisterCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_register = jFastStepRegisterCheckBox.isSelected();
 	}
 
 	private void jFastStepMemoryCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_memory(jFastStepMemoryCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_memory = jFastStepMemoryCheckBox.isSelected();
 	}
 
 	private void jFastStepInstructionCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_instruction(jFastStepInstructionCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_instruction = jFastStepInstructionCheckBox.isSelected();
 	}
 
 	private void jFastStepBreakpointCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_breakpoint(jFastStepBreakpointCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_breakpoint = jFastStepBreakpointCheckBox.isSelected();
 	}
 
 	private void jFastStepGDTCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_gdt(jFastStepGDTCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_gdt = jFastStepGDTCheckBox.isSelected();
 	}
 
 	private void jFastStepLDTCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_ldt(jFastStepLDTCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_ldt = jFastStepLDTCheckBox.isSelected();
 	}
 
 	private void jFastStepIDTCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_idt(jFastStepIDTCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_idt = jFastStepIDTCheckBox.isSelected();
 	}
 
 	private void jMemoryProfilingCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setMemoryProfiling(jMemoryProfilingCheckBox.isSelected());
+		Setting.getInstance().memoryProfiling = jMemoryProfilingCheckBox.isSelected();
 	}
 
 	private void jHitZoneCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setHitZone(jHitZoneCheckBox.isSelected());
+		Setting.getInstance().hitZone = jHitZoneCheckBox.isSelected();
 	}
 
 	private void jCustomZoneCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setCustomZone(jCustomZoneCheckBox.isSelected());
+		Setting.getInstance().customZone = jCustomZoneCheckBox.isSelected();
 	}
 
 	private void jJmpProfilingCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setJmpProfiling(jJmpProfilingCheckBox.isSelected());
+		Setting.getInstance().jmpProfiling = jJmpProfilingCheckBox.isSelected();
 	}
 
 	private void jUpdateGraphCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setProfilingUpdateGraph(jUpdateGraphCheckBox.isSelected());
+		Setting.getInstance().profilingUpdateGraph = jUpdateGraphCheckBox.isSelected();
 	}
 
 	private void jLogToPetersoftServerCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setLogToPetersoftServer(jLogToPetersoftServerCheckBox.isSelected());
+		Setting.getInstance().logToPetersoftServer = jLogToPetersoftServerCheckBox.isSelected();
 	}
 
 	private void jFastHistoryCheckBoxActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setUpdateFastStepCommand_history(jFastStepHistoryCheckBox.isSelected());
+		Setting.getInstance().updateFastStepCommand_history = jFastStepHistoryCheckBox.isSelected();
 	}
 
 	private void jObjdumpTextFieldKeyReleased(KeyEvent evt) {
-		Setting.getInstance().setPath_objdump(jObjdumpTextField.getText());
+		Setting.getInstance().path_objdump = jObjdumpTextField.getText();
 	}
 
 	private void jBrowseObjdumpButtonActionPerformed(ActionEvent evt) {
@@ -748,6 +748,6 @@ public class SettingDialog extends javax.swing.JDialog {
 	}
 
 	private void jDwarfdumpTextFieldKeyTyped(KeyEvent evt) {
-		Setting.getInstance().setPath_dwarfdump(jObjdumpTextField.getText());
+		Setting.getInstance().path_dwarfdump = jObjdumpTextField.getText();
 	}
 }

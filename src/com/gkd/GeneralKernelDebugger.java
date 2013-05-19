@@ -828,19 +828,19 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jBochsVersionLabel.setText(version + "     ");
 				}
 				if (line.contains("Peter-bochs instrument")) {
-					if (Setting.getInstance().isMemoryProfiling()) {
+					if (Setting.getInstance().memoryProfiling) {
 						if (Global.debug) {
 							System.out.println("Memory profiling port " + Global.profilingMemoryPort);
 						}
 						MemorySocketServerController.start(Global.profilingMemoryPort, null);
 					}
-					if (Setting.getInstance().isJmpProfiling()) {
+					if (Setting.getInstance().jmpProfiling) {
 						if (Global.debug) {
 							System.out.println("Jump profiling port " + Global.profilingJmpPort);
 						}
 						JmpSocketServerController.start(Global.profilingJmpPort, jInstrumentPanel.getJmpTableModel());
 					}
-					if (Setting.getInstance().isInterruptProfiling()) {
+					if (Setting.getInstance().interruptProfiling) {
 						if (Global.debug) {
 							System.out.println("Interrupt profiling port " + Global.profilingInterruptPort);
 						}
@@ -1080,7 +1080,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	private void initGUI() {
 		try {
-			language = Utf8ResourceBundle.getBundle("language_" + Setting.getInstance().getCurrentLanguage());
+			language = Utf8ResourceBundle.getBundle("language_" + Setting.getInstance().currentLanguage);
 
 			// $hide>>$
 			if (os == OSType.win) {
@@ -1334,26 +1334,26 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					}
 				}
 			}
-			if (Setting.getInstance().getWidth() == 0 || Setting.getInstance().getHeight() == 0) {
+			if (Setting.getInstance().width == 0 || Setting.getInstance().height == 0) {
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 				setSize(screenSize.width * 2 / 3, screenSize.height * 4 / 5);
 			} else {
-				setSize(Setting.getInstance().getWidth(), Setting.getInstance().getHeight());
+				setSize(Setting.getInstance().width, Setting.getInstance().height);
 			}
-			int x = Setting.getInstance().getX();
-			int y = Setting.getInstance().getY();
+			int x = Setting.getInstance().x;
+			int y = Setting.getInstance().y;
 			if (x <= 0 || y <= 0) {
 				this.setLocationRelativeTo(null);
 			} else {
 				setLocation(x, y);
 			}
 
-			jSplitPane1.setDividerLocation(Setting.getInstance().getDivX());
-			jSplitPane2.setDividerLocation(Setting.getInstance().getDivY());
+			jSplitPane1.setDividerLocation(Setting.getInstance().divX);
+			jSplitPane2.setDividerLocation(Setting.getInstance().divY);
 
-			jOSDebugInformationPanel1.getjMainSplitPane().setDividerLocation(Setting.getInstance().getOsDebugSplitPane_DividerLocation());
+			jOSDebugInformationPanel1.getjMainSplitPane().setDividerLocation(Setting.getInstance().osDebugSplitPane_DividerLocation);
 			// pack();
-			initGlobalFontSetting(new Font(Setting.getInstance().getFontFamily(), Font.PLAIN, Setting.getInstance().getFontsize()));
+			initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 			jInstrumentPanel.setThing(jStatusProgressBar, jStatusLabel);
 
 			// prevent null jmenuitem
@@ -1418,7 +1418,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						JMenuItem jMenuItem = new JMenuItem(allfonts[j].getFontName());
 						jMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								Setting.getInstance().setFontFamily(((JMenuItem) evt.getSource()).getText());
+								Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
 							}
 						});
 						jMenu2.add(jMenuItem);
@@ -1431,7 +1431,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 						JMenuItem jMenuItem = new JMenuItem(allfonts[j].getFontName());
 						jMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								Setting.getInstance().setFontFamily(((JMenuItem) evt.getSource()).getText());
+								Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
 							}
 						});
 						jMenu2.add(jMenuItem);
@@ -1452,7 +1452,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				stopVM();
 			} else {
 				try {
-					Setting.getInstance().getBochsCommandHistory().add(jBochsCommandTextField.getText());
+					Setting.getInstance().bochsCommandHistory.add(jBochsCommandTextField.getText());
 					Setting.getInstance().save();
 				} catch (Exception ex2) {
 				}
@@ -1460,7 +1460,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 				commandReceiver.shouldShow = true;
 
 				sendCommand(this.jBochsCommandTextField.getText());
-				if (Setting.getInstance().isUpdateAfterBochsCommand()) {
+				if (Setting.getInstance().updateAfterBochsCommand) {
 					updateVMStatusForBochsCommand(true);
 				}
 				commandHistoryIndex = 0;
@@ -1943,7 +1943,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 			addMemoryAddressComboBox(jMemoryAddressComboBox.getSelectedItem().toString());
 
-			Setting.getInstance().getMemoryCombo().add(jMemoryAddressComboBox.getSelectedItem().toString());
+			Setting.getInstance().memoryCombo.add(jMemoryAddressComboBox.getSelectedItem().toString());
 			Setting.getInstance().save();
 		} catch (Exception ex) {
 			if (Global.debug) {
@@ -2187,7 +2187,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			public void run() {
 				enableAllButtons(false, false);
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_register()) {
+				if (Setting.getInstance().updateAfterBochsCommand_register) {
 					if (Global.debug) {
 						System.out.println("updateRegister");
 					}
@@ -2198,70 +2198,70 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					updateEFlags();
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_memory()) {
+				if (Setting.getInstance().updateAfterBochsCommand_memory) {
 					if (Global.debug) {
 						System.out.println("updateMemory");
 					}
 					updateMemory(true);
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_instruction()) {
+				if (Setting.getInstance().updateAfterBochsCommand_instruction) {
 					if (Global.debug) {
 						System.out.println("updateInstruction");
 					}
 					updateInstruction(null);
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_gdt()) {
+				if (Setting.getInstance().updateAfterBochsCommand_gdt) {
 					if (Global.debug) {
 						System.out.println("updateGDT");
 					}
 					updateGDT();
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_idt()) {
+				if (Setting.getInstance().updateAfterBochsCommand_idt) {
 					if (Global.debug) {
 						System.out.println("updateIDT");
 					}
 					updateIDT();
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_ldt()) {
+				if (Setting.getInstance().updateAfterBochsCommand_ldt) {
 					if (Global.debug) {
 						System.out.println("updateLDT");
 					}
 					updateLDT();
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_pageTable()) {
+				if (Setting.getInstance().updateAfterBochsCommand_pageTable) {
 					if (Global.debug) {
 						System.out.println("updatePageTable");
 					}
 					updatePageTable(CommonLib.string2decimal(registerPanel.cr3TextField.getText()));
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_stack()) {
+				if (Setting.getInstance().updateAfterBochsCommand_stack) {
 					if (Global.debug) {
 						System.out.println("updateStack");
 					}
 					updateStack();
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_addressTranslate()) {
+				if (Setting.getInstance().updateAfterBochsCommand_addressTranslate) {
 					if (Global.debug) {
 						System.out.println("updateAddressTranslate");
 					}
 					updateAddressTranslate();
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_history()) {
+				if (Setting.getInstance().updateAfterBochsCommand_history) {
 					if (Global.debug) {
 						System.out.println("updateHistoryTable");
 					}
 					updateHistoryTable();
 				}
 
-				if (Setting.getInstance().isUpdateAfterBochsCommand_breakpoint()) {
+				if (Setting.getInstance().updateAfterBochsCommand_breakpoint) {
 					if (Global.debug) {
 						System.out.println("updateBreakpointTableColor");
 					}
@@ -3561,13 +3561,13 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			p.destroy();
 		}
 
-		Setting.getInstance().setWidth(this.getWidth());
-		Setting.getInstance().setHeight(this.getHeight());
-		Setting.getInstance().setX(this.getLocation().x);
-		Setting.getInstance().setY(this.getLocation().y);
-		Setting.getInstance().setDivX(jSplitPane1.getDividerLocation());
-		Setting.getInstance().setDivY(jSplitPane2.getDividerLocation());
-		Setting.getInstance().setOsDebugSplitPane_DividerLocation(this.jOSDebugInformationPanel1.getjMainSplitPane().getDividerLocation());
+		Setting.getInstance().width = this.getWidth();
+		Setting.getInstance().height = this.getHeight();
+		Setting.getInstance().x = this.getLocation().x;
+		Setting.getInstance().y = this.getLocation().y;
+		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
+		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
+		Setting.getInstance().osDebugSplitPane_DividerLocation = this.jOSDebugInformationPanel1.getjMainSplitPane().getDividerLocation();
 		Setting.getInstance().save();
 	}
 
@@ -3786,7 +3786,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	private void jSaveBreakpointButtonActionPerformed(ActionEvent evt) {
 		jSaveBreakpointButton.setEnabled(false);
-		LinkedList<com.gkd.Breakpoint> v = Setting.getInstance().getBreakpoint();
+		LinkedList<com.gkd.Breakpoint> v = Setting.getInstance().breakpoint;
 		v.clear();
 
 		for (int x = 0; x < this.breakpointTable.getRowCount(); x++) {
@@ -3813,7 +3813,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			}
 		} else {
 			jLoadBreakpointButton.setEnabled(false);
-			LinkedList<com.gkd.Breakpoint> vector = Setting.getInstance().getBreakpoint();
+			LinkedList<com.gkd.Breakpoint> vector = Setting.getInstance().breakpoint;
 			try {
 				for (int x = 0; x < vector.size(); x++) {
 					boolean match = false;
@@ -3885,7 +3885,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (jBochsCommandTextField.getText().equals("")) {
 			commandHistoryIndex = 0;
 		}
-		HashSet<String> vector = Setting.getInstance().getBochsCommandHistory();
+		HashSet<String> vector = Setting.getInstance().bochsCommandHistory;
 		if (evt.getKeyCode() == 38) {
 			if (commandHistoryIndex < vector.size()) {
 				commandHistoryIndex++;
@@ -4026,23 +4026,23 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jFont14MenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setFontsize(14);
-		initGlobalFontSetting(new Font(Setting.getInstance().getFontFamily(), Font.PLAIN, Setting.getInstance().getFontsize()));
+		Setting.getInstance().fontsize = 14;
+		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
 	private void jFont12MenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setFontsize(12);
-		initGlobalFontSetting(new Font(Setting.getInstance().getFontFamily(), Font.PLAIN, Setting.getInstance().getFontsize()));
+		Setting.getInstance().fontsize = 12;
+		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
 	private void jFont10MenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setFontsize(10);
-		initGlobalFontSetting(new Font(Setting.getInstance().getFontFamily(), Font.PLAIN, Setting.getInstance().getFontsize()));
+		Setting.getInstance().fontsize = 10;
+		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
 	private void jFont8MenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setFontsize(8);
-		initGlobalFontSetting(new Font(Setting.getInstance().getFontFamily(), Font.PLAIN, Setting.getInstance().getFontsize()));
+		Setting.getInstance().fontsize = 8;
+		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
 	public void initGlobalFontSetting(Font fnt) {
@@ -4106,11 +4106,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	}
 
 	private void jArialMenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setFontFamily("Arial");
+		Setting.getInstance().fontFamily = "Arial";
 	}
 
 	private void jDialogMenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().setFontFamily("Dialog");
+		Setting.getInstance().fontFamily = "Dialog";
 	}
 
 	private JMenu getJMenu6() {
@@ -4180,7 +4180,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void changeLanguage(String language) {
 		JOptionPane.showMessageDialog(this, "Please restart");
 
-		Setting.getInstance().setCurrentLanguage(language);
+		Setting.getInstance().currentLanguage = language;
 		Setting.getInstance().save();
 	}
 
@@ -5184,7 +5184,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 							});
 							new Thread("addMemoryAddressComboBox thread") {
 								public void run() {
-									TreeSet<String> vector = Setting.getInstance().getMemoryCombo();
+									TreeSet<String> vector = Setting.getInstance().memoryCombo;
 
 									Iterator<String> iterator = vector.iterator();
 									while (iterator.hasNext()) {
@@ -5430,12 +5430,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 			new Thread("JRunningLabel thread") {
 				public void run() {
-					if (Setting.getInstance().getCurrentLanguage().equals("zh_TW")) {
+					if (Setting.getInstance().currentLanguage.equals("zh_TW")) {
 						jRunningLabel
 								.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
 										+ url
 										+ "\" /><br><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????www.kingofcoders.com</a></center></html>");
-					} else if (Setting.getInstance().getCurrentLanguage().equals("zh_CN")) {
+					} else if (Setting.getInstance().currentLanguage.equals("zh_CN")) {
 						jRunningLabel
 								.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
 										+ url
@@ -6117,7 +6117,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 	private void jOpenELFButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new File(Setting.getInstance().getLastElfHistoryOpenDir()));
+		fc.setCurrentDirectory(new File(Setting.getInstance().lastElfHistoryOpenDir));
 
 		int returnVal = fc.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -6158,7 +6158,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		model.updateBreakpoint(getRealEIP());
 
 		// save history
-		Setting.getInstance().setLastElfHistoryOpenDir(file.getParentFile().getAbsolutePath());
+		Setting.getInstance().lastElfHistoryOpenDir = file.getParentFile().getAbsolutePath();
 		Setting.getInstance().save();
 		// end save history
 	}
@@ -6491,7 +6491,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private void jOpenELFDumpButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		// load history
-		fc.setCurrentDirectory(new File(Setting.getInstance().getLastElfHistoryOpenDir2()));
+		fc.setCurrentDirectory(new File(Setting.getInstance().lastElfHistoryOpenDir2));
 
 		// end load history
 		int returnVal = fc.showOpenDialog(this);
@@ -6502,7 +6502,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			parseELF(file);
 			openELF(file);
 			// save history
-			Setting.getInstance().setLastElfHistoryOpenDir2(file.getParentFile().getAbsolutePath());
+			Setting.getInstance().lastElfHistoryOpenDir2 = file.getParentFile().getAbsolutePath();
 			Setting.getInstance().save();
 			// end save history
 		}
@@ -8273,12 +8273,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		if (jRunningLabel2 == null) {
 			jRunningLabel2 = new JLabel();
 			URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader_red.gif");
-			if (Setting.getInstance().getCurrentLanguage().equals("zh_TW")) {
+			if (Setting.getInstance().currentLanguage.equals("zh_TW")) {
 				jRunningLabel2
 						.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
 								+ url
 								+ "\" /><br><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">?????????????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
-			} else if (Setting.getInstance().getCurrentLanguage().equals("zh_CN")) {
+			} else if (Setting.getInstance().currentLanguage.equals("zh_CN")) {
 				jRunningLabel2
 						.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
 								+ url

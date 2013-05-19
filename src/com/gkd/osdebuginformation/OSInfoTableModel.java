@@ -2,9 +2,9 @@ package com.gkd.osdebuginformation;
 
 import java.util.Vector;
 
-import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
 
-public class OSInfoTableModel extends AbstractTableModel {
+public class OSInfoTableModel extends DefaultTableModel {
 	String columnNames[] = { "Field", "Value" };
 	Vector<Vector<String>> data = new Vector<Vector<String>>();
 
@@ -16,23 +16,20 @@ public class OSInfoTableModel extends AbstractTableModel {
 		return columnNames[column];
 	}
 
-	@Override
 	public int getColumnCount() {
 		return columnNames.length;
 	}
 
-	@Override
 	public int getRowCount() {
 		return data.size();
 	}
 
-	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return data.get(rowIndex).get(columnIndex);
 	}
-	
-	public void addRow(String key, String field){
-		Vector<String> v=new Vector<String>();
+
+	public void addRow(String key, String field) {
+		Vector<String> v = new Vector<String>();
 		v.add(key);
 		v.add(field);
 		data.add(v);

@@ -1192,7 +1192,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 			new Thread() {
 				public void run() {
-					LinkedList<Long> vector = Setting.getInstance().getProfileMemoryFromAddress();
+					LinkedList<Long> vector = Setting.getInstance().profileMemoryFromAddress;
 					Iterator<Long> iterator = vector.iterator();
 					while (iterator.hasNext()) {
 						addProfileMemoryFromComboBox(iterator.next());
@@ -1221,7 +1221,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 			new Thread() {
 				public void run() {
-					LinkedList<Long> vector = Setting.getInstance().getProfileMemoryToAddress();
+					LinkedList<Long> vector = Setting.getInstance().profileMemoryToAddress;
 					Iterator<Long> iterator = vector.iterator();
 					while (iterator.hasNext()) {
 						addProfileMemoryToComboBox(iterator.next());
@@ -1248,8 +1248,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			Data.memoryProfilingZone = profilingTableModel;
 
 			try {
-				LinkedList<Long> fromVector = Setting.getInstance().getProfileMemoryFromAddress();
-				LinkedList<Long> toVector = Setting.getInstance().getProfileMemoryToAddress();
+				LinkedList<Long> fromVector = Setting.getInstance().profileMemoryFromAddress;
+				LinkedList<Long> toVector = Setting.getInstance().profileMemoryToAddress;
 				Iterator<Long> fromIterator = fromVector.iterator();
 				Iterator<Long> toIterator = toVector.iterator();
 				while (fromIterator.hasNext()) {
@@ -1296,8 +1296,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jProfilingFromComboBox.setSelectedItem("");
 			jProfilingToComboBox.setSelectedItem("");
 
-			Setting.getInstance().getProfileMemoryFromAddress().add(from);
-			Setting.getInstance().getProfileMemoryToAddress().add(to);
+			Setting.getInstance().profileMemoryFromAddress.add(from);
+			Setting.getInstance().profileMemoryToAddress.add(to);
 			Setting.getInstance().save();
 
 			Data.memoryProfilingZone.needToTellBochsToUpdateZone = true;
@@ -1338,13 +1338,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void jDeleteZoneButtonActionPerformed(ActionEvent evt) {
-		Setting.getInstance().getProfileMemoryToAddress().remove(jProfilingTable.getSelectedRow());
-		Setting.getInstance().getProfileMemoryFromAddress().remove(jProfilingTable.getSelectedRow());
+		Setting.getInstance().profileMemoryToAddress.remove(jProfilingTable.getSelectedRow());
+		Setting.getInstance().profileMemoryFromAddress.remove(jProfilingTable.getSelectedRow());
 
 		((ProfilingTableModel) this.jProfilingTable.getModel()).removeAll();
 
-		LinkedList<Long> fromVector = Setting.getInstance().getProfileMemoryFromAddress();
-		LinkedList<Long> toVector = Setting.getInstance().getProfileMemoryToAddress();
+		LinkedList<Long> fromVector = Setting.getInstance().profileMemoryFromAddress;
+		LinkedList<Long> toVector = Setting.getInstance().profileMemoryToAddress;
 		Iterator<Long> fromIterator = fromVector.iterator();
 		Iterator<Long> toIterator = toVector.iterator();
 		while (fromIterator.hasNext()) {
@@ -1498,7 +1498,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					c.drawVertex(state, label);
 				} else {
 					// draw edge, at least
-//					super.drawState(canvas, state, label);
+					//					super.drawState(canvas, state, label);
 					super.drawState(canvas, state, true);
 				}
 			}

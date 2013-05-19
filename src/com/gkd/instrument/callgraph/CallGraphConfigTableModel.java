@@ -6,12 +6,11 @@ import javax.swing.table.AbstractTableModel;
 
 import com.gkd.Setting;
 
-
 public class CallGraphConfigTableModel extends AbstractTableModel {
 	private String columnNames[] = { "Physical address", "TSS", "Memory start", "Memory end", "Register", "GDT", "IDT", "LDT" };
 
-	Object data[] = { Setting.getInstance().getPhysicalAddress(), Setting.getInstance().getTss(), Setting.getInstance().getMemoryStart(), Setting.getInstance().getMemoryEnd(),
-			Setting.getInstance().getRegister(), Setting.getInstance().getGdt(), Setting.getInstance().getIdt(), Setting.getInstance().getLdt() };
+	Object data[] = { Setting.getInstance().physicalAddress, Setting.getInstance().tss, Setting.getInstance().memoryStart, Setting.getInstance().memoryEnd,
+			Setting.getInstance().register, Setting.getInstance().gdt, Setting.getInstance().idt, Setting.getInstance().ldt };
 
 	public boolean needToTellBochsToUpdateZone = false;
 
@@ -29,11 +28,11 @@ public class CallGraphConfigTableModel extends AbstractTableModel {
 	}
 
 	public int getRowCount() {
-		return Setting.getInstance().getPhysicalAddress().size() + 1;
+		return Setting.getInstance().physicalAddress.size() + 1;
 	}
 
 	public void setValueAt(Object aValue, int row, int column) {
-		if (row == Setting.getInstance().getPhysicalAddress().size()) {
+		if (row == Setting.getInstance().physicalAddress.size()) {
 			long physicalAddress = 0;
 			boolean tss = false;
 			boolean memoryStart = false;
@@ -77,7 +76,7 @@ public class CallGraphConfigTableModel extends AbstractTableModel {
 	}
 
 	public Object getValueAt(int row, int column) {
-		if (row == Setting.getInstance().getPhysicalAddress().size()) {
+		if (row == Setting.getInstance().physicalAddress.size()) {
 			if (column == 0) {
 				return 0;
 			} else {
@@ -94,14 +93,14 @@ public class CallGraphConfigTableModel extends AbstractTableModel {
 	}
 
 	public void add(long physicalAddress, boolean tss, boolean memoryStart, boolean memoryEnd, boolean register, boolean gdt, boolean idt, boolean ldt) {
-		Setting.getInstance().getPhysicalAddress().add(physicalAddress);
-		Setting.getInstance().getTss().add(tss);
-		Setting.getInstance().getMemoryStart().add(memoryStart);
-		Setting.getInstance().getMemoryEnd().add(memoryEnd);
-		Setting.getInstance().getRegister().add(register);
-		Setting.getInstance().getGdt().add(gdt);
-		Setting.getInstance().getIdt().add(idt);
-		Setting.getInstance().getLdt().add(ldt);
+		Setting.getInstance().physicalAddress.add(physicalAddress);
+		Setting.getInstance().tss.add(tss);
+		Setting.getInstance().memoryStart.add(memoryStart);
+		Setting.getInstance().memoryEnd.add(memoryEnd);
+		Setting.getInstance().register.add(register);
+		Setting.getInstance().gdt.add(gdt);
+		Setting.getInstance().idt.add(idt);
+		Setting.getInstance().ldt.add(ldt);
 		this.fireTableDataChanged();
 		Setting.getInstance().save();
 	}
