@@ -875,7 +875,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 
 			Thread.sleep(200);
-			LibGKD.initVNCPanel(this, vncPanel, "127.0.0.1", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
+			TightVNC.initVNCPanel(this, vncPanel, "127.0.0.1", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_qemu") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_qemu"));
 			ex.printStackTrace();
@@ -971,10 +971,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 		WebServiceUtil.log("gkd", "run", null, null, null);
 		try {
 			enableAllButtons(false, true);
-//			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
-//				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-//				cl.show(jMainPanel, "Running Label");
-//			}
+			//			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
+			//				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
+			//				cl.show(jMainPanel, "Running Label");
+			//			}
 
 			if (skipBreakpointTime > 0) {
 				if (Global.vmType.equals("bochs")) {

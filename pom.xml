@@ -120,5 +120,10 @@
   		<artifactId>AppleJavaExtensions</artifactId>
   		<version>1.4</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.peter</groupId>
+  		<artifactId>tightvncpanel</artifactId>
+  		<version>20130520</version>
+  	</dependency>
   </dependencies>
 </project>
