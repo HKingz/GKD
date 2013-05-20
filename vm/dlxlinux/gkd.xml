@@ -7,12 +7,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>0</x>
-  <y>0</y>
-  <width>800</width>
-  <height>600</height>
-  <divX>400</divX>
-  <divY>200</divY>
+  <x>114</x>
+  <y>66</y>
+  <width>1219</width>
+  <height>758</height>
+  <divX>683</divX>
+  <divY>432</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

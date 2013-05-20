@@ -624,4 +624,8 @@ public class GKDCommonLib {
 	public static String readConfig(CommandLine cmd, String xpath) {
 		return parseXML(cmd.getOptionValue("f"), xpath);
 	}
+
+	public static int readConfigInt(CommandLine cmd, String xpath) {
+		return Integer.parseInt(readConfig(cmd, xpath));
+	}
 }

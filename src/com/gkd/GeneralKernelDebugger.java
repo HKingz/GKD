@@ -23,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -154,7 +155,7 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 @SuppressWarnings("serial")
-public class GeneralKernelDebugger extends javax.swing.JFrame {
+public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowListener {
 	private JMenuItem aboutUsMenuItem;
 	private JPanel jPanel8;
 	private JDropDownButton stepBochsButton;
@@ -872,6 +873,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 			commandReceiver = new CommandReceiver(is, this);
 			new Thread(commandReceiver, "commandReceiver thread").start();
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+
+			Thread.sleep(200);
+			LibGKD.initVNCPanel(this, vncPanel, "127.0.0.1", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_qemu") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_qemu"));
 			ex.printStackTrace();
@@ -967,10 +971,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		WebServiceUtil.log("gkd", "run", null, null, null);
 		try {
 			enableAllButtons(false, true);
-			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
-				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-				cl.show(jMainPanel, "Running Label");
-			}
+//			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
+//				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
+//				cl.show(jMainPanel, "Running Label");
+//			}
 
 			if (skipBreakpointTime > 0) {
 				if (Global.vmType.equals("bochs")) {
@@ -9232,11 +9236,53 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 
 		updateInstruction(address.subtract(BigInteger.valueOf(0x100)));
 	}
-	
+
 	private JPanel getVncPanel() {
-		if(vncPanel == null) {
+		if (vncPanel == null) {
 			vncPanel = new JPanel();
 		}
 		return vncPanel;
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 }
