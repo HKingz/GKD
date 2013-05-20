@@ -246,6 +246,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 	private JPanel jPanel22;
 	private JPanel jPanel24;
 	private JToolBar jPanel26;
+	private JPanel vncPanel;
 	private JMenuItem disasmFromEIPMinus100MenuItem;
 	private JButton nextOverButton;
 	private JButton nextButton;
@@ -5143,6 +5144,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 					jPanel8 = new JPanel();
 					BorderLayout jPanel8Layout = new BorderLayout();
 					jPanel8.setLayout(jPanel8Layout);
+					jTabbedPane3.addTab("VNC", null, getVncPanel(), null);
 					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8,
 							null);
 					{
@@ -9229,5 +9231,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame {
 		}
 
 		updateInstruction(address.subtract(BigInteger.valueOf(0x100)));
+	}
+	
+	private JPanel getVncPanel() {
+		if(vncPanel == null) {
+			vncPanel = new JPanel();
+		}
+		return vncPanel;
 	}
 }
