@@ -179,8 +179,8 @@ public class SaveMemoryToXLSDialog extends javax.swing.JDialog {
 						if (!file.getName().toLowerCase().endsWith(".xls")) {
 							file = new File(file.getAbsolutePath() + ".xls");
 						}
-						GeneralKernelDebugger.commandReceiver.shouldShow = false;
-						int bytes[] = GeneralKernelDebugger.getMemory(CommonLib.convertFilesize(jFromTextField.getText()), totalByte, true);
+						GKD.commandReceiver.shouldShow = false;
+						int bytes[] = GKD.getMemory(CommonLib.convertFilesize(jFromTextField.getText()), totalByte, true);
 						GKDCommonLib.exportTableModelToExcel(file, bytes, jFromTextField.getText(), CommonLib.convertFilesize(jFromTextField.getText()));
 					}
 				}

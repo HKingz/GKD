@@ -9,7 +9,7 @@ import java.math.BigInteger;
 
 import org.apache.commons.io.FileUtils;
 
-import com.gkd.GeneralKernelDebugger.OSType;
+import com.gkd.GKD.OSType;
 import com.peterswing.CommonLib;
 
 public class Disassemble {
@@ -18,7 +18,7 @@ public class Disassemble {
 			FileUtils.writeByteArrayToFile(new File("temp"), CommonLib.intArrayToByteArray(bytes));
 
 			ProcessBuilder pb;
-			if (GeneralKernelDebugger.os == OSType.mac || GeneralKernelDebugger.os == OSType.linux) {
+			if (GKD.os == OSType.mac || GKD.os == OSType.linux) {
 				pb = new ProcessBuilder("ndisasm", "-b " + bits, "temp");
 			} else {
 				pb = new ProcessBuilder("ndisasm.exe", "-b " + bits, "temp");

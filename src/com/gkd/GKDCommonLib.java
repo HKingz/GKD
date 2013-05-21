@@ -413,9 +413,9 @@ public class GKDCommonLib {
 
 		BigInteger pdAddr = cr3.add(pdNo);
 		System.out.println("pdAddr=" + pdAddr.toString(16));
-		GeneralKernelDebugger.commandReceiver.clearBuffer();
-		GeneralKernelDebugger.sendCommand("xp /8bx " + pdAddr);
-		String result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", pdAddr));
+		GKD.commandReceiver.clearBuffer();
+		GKD.sendCommand("xp /8bx " + pdAddr);
+		String result = GKD.commandReceiver.getCommandResult(String.format("%08x", pdAddr));
 		int bytes[] = new int[8];
 		String[] b = result.replaceFirst("^.*:", "").split("\t");
 		for (int y = 1; y <= 8; y++) {
@@ -426,9 +426,9 @@ public class GKDCommonLib {
 
 		BigInteger ptAddr = pde.shiftLeft(10).add(ptNo);
 		System.out.println("ptAddr=" + ptAddr.toString(16));
-		GeneralKernelDebugger.commandReceiver.clearBuffer();
-		GeneralKernelDebugger.sendCommand("xp /8bx " + ptAddr);
-		result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", ptAddr));
+		GKD.commandReceiver.clearBuffer();
+		GKD.sendCommand("xp /8bx " + ptAddr);
+		result = GKD.commandReceiver.getCommandResult(String.format("%08x", ptAddr));
 		bytes = new int[8];
 		b = result.replaceFirst("^.*:", "").split("\t");
 		for (int y = 1; y <= 8; y++) {
@@ -441,9 +441,9 @@ public class GKDCommonLib {
 	}
 
 	public static long getLongFromBochs(BigInteger address) {
-		GeneralKernelDebugger.commandReceiver.clearBuffer();
-		GeneralKernelDebugger.sendCommand("xp /8bx " + address);
-		String result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", address));
+		GKD.commandReceiver.clearBuffer();
+		GKD.sendCommand("xp /8bx " + address);
+		String result = GKD.commandReceiver.getCommandResult(String.format("%08x", address));
 		int bytes[] = new int[8];
 		String[] b = result.replaceFirst("^.*:", "").split("\t");
 		for (int y = 1; y <= 8; y++) {
@@ -455,8 +455,8 @@ public class GKDCommonLib {
 	public static int[] getMemoryFromBochs(BigInteger address, int totalByte) {
 		int bytes[] = new int[totalByte];
 
-		GeneralKernelDebugger.commandReceiver.clearBuffer();
-		GeneralKernelDebugger.sendCommand("xp /" + totalByte + "bx " + address);
+		GKD.commandReceiver.clearBuffer();
+		GKD.sendCommand("xp /" + totalByte + "bx " + address);
 
 		if (totalByte > 0) {
 			float totalByte2 = totalByte - 1;
@@ -470,7 +470,7 @@ public class GKDCommonLib {
 			realEndAddressStr = String.format("%08x", realEndAddress);
 			// System.out.println(realStartAddressStr);
 			// System.out.println(realEndAddressStr);
-			String result = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			// System.out.println(result);
 			if (result != null) {
 				String[] lines = result.split("\n");

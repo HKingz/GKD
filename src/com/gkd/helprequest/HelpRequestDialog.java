@@ -24,7 +24,7 @@ import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 
 import com.gkd.CommandReceiver;
-import com.gkd.GeneralKernelDebugger;
+import com.gkd.GKD;
 import com.peterswing.advancedswing.enhancedtextarea.EnhancedTextArea;
 
 /**
@@ -187,7 +187,7 @@ public class HelpRequestDialog extends javax.swing.JDialog {
 					"print-stack 40", "info tab", "info break" };
 			String result = "";
 			for (String c : commands) {
-				GeneralKernelDebugger.sendCommand(c);
+				GKD.sendCommand(c);
 				result += "\n\n" + c + "\n\n" + commandReceiver.getCommandResultUntilEnd();
 			}
 			jInfoTextArea.setText(result);

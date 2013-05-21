@@ -94,13 +94,13 @@ public class TSSPanel extends JPanel {
 	private int b[] = new int[8];
 	private long value;
 	private long bit[] = new long[64];
-	private GeneralKernelDebugger peterBochsDebugger;
+	private GKD peterBochsDebugger;
 	private int type;
 	private BigInteger gdtAddress;
 	private BigInteger ldtr;
 	private BigInteger cr3;
 
-	public TSSPanel(GeneralKernelDebugger peterBochsDebugger, int type, BigInteger gdtAddress, int gdtNo) {
+	public TSSPanel(GKD peterBochsDebugger, int type, BigInteger gdtAddress, int gdtNo) {
 		this.peterBochsDebugger = peterBochsDebugger;
 		this.type = type;
 		this.gdtAddress = gdtAddress;
@@ -360,25 +360,25 @@ public class TSSPanel extends JPanel {
 			}
 
 			String result;
-			if (GeneralKernelDebugger.commandReceiver != null) {
+			if (GKD.commandReceiver != null) {
 				if (type == 0) {
-					GeneralKernelDebugger.sendCommand("info gdt " + gdtNo);
+					GKD.sendCommand("info gdt " + gdtNo);
 					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = GeneralKernelDebugger.commandReceiver.getCommandResult("GDT[" + gdtNoHex + "]");
+					result = GKD.commandReceiver.getCommandResult("GDT[" + gdtNoHex + "]");
 				} else if (type == 1) {
-					GeneralKernelDebugger.sendCommand("info ldt " + gdtNo);
+					GKD.sendCommand("info ldt " + gdtNo);
 					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = GeneralKernelDebugger.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
+					result = GKD.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
 				} else if (type == 2) {
-					GeneralKernelDebugger.sendCommand("info idt " + gdtNo);
+					GKD.sendCommand("info idt " + gdtNo);
 					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = GeneralKernelDebugger.commandReceiver.getCommandResult("IDT[" + gdtNoHex + "]");
+					result = GKD.commandReceiver.getCommandResult("IDT[" + gdtNoHex + "]");
 					System.out.println(result);
 				}
 
-				GeneralKernelDebugger.commandReceiver.clearBuffer();
-				GeneralKernelDebugger.sendCommand("x /8bx " + String.format("0x%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
-				result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
+				GKD.commandReceiver.clearBuffer();
+				GKD.sendCommand("x /8bx " + String.format("0x%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
+				result = GKD.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
 				String lines[] = result.split("\n");
 
 				String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");
@@ -486,8 +486,8 @@ public class TSSPanel extends JPanel {
 			jTable2.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 			jTable2.setPreferredSize(new Dimension(600, 600));
 			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(20);
-			GeneralKernelDebugger.sendCommand("info ldt 0 20");
-			String result = GeneralKernelDebugger.commandReceiver.getCommandResult("XX", "XX", null);
+			GKD.sendCommand("info ldt 0 20");
+			String result = GKD.commandReceiver.getCommandResult("XX", "XX", null);
 			String lines[] = result.split("\n");
 			for (int x = 1; x < lines.length; x++) {
 				try {
@@ -525,8 +525,8 @@ public class TSSPanel extends JPanel {
 
 			// TSS
 			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
-			GeneralKernelDebugger.commandReceiver.clearBuffer();
-			GeneralKernelDebugger.sendCommand("x /" + limit + "bx " + base);
+			GKD.commandReceiver.clearBuffer();
+			GKD.sendCommand("x /" + limit + "bx " + base);
 
 			float totalByte2 = limit - 1;
 			totalByte2 = totalByte2 / 8;
@@ -538,7 +538,7 @@ public class TSSPanel extends JPanel {
 			long realEndAddress = realStartAddress + totalByte3 * 8;
 			realEndAddressStr = String.format("%08x", realEndAddress);
 
-			String result2 = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result2 = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			String[] lines2 = result2.split("\n");
 
 			int tssByte[] = new int[(int) limit];
@@ -594,7 +594,7 @@ public class TSSPanel extends JPanel {
 		Vector<IA32PageDirectory> ia32_pageDirectories = new Vector<IA32PageDirectory>();
 		try {
 			// commandReceiver.setCommandNoOfLine(512);
-			GeneralKernelDebugger.sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
+			GKD.sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
 			float totalByte2 = 4096 - 1;
 			totalByte2 = totalByte2 / 8;
 			int totalByte3 = (int) Math.floor(totalByte2);
@@ -604,7 +604,7 @@ public class TSSPanel extends JPanel {
 			realStartAddressStr = String.format("%08x", realStartAddress);
 			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
 			realEndAddressStr = String.format("%08x", realEndAddress);
-			String result = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			if (result != null) {
 				String[] lines = result.split("\n");
 				DefaultTableModel model = (DefaultTableModel) jPageDirectoryTable.getModel();
@@ -668,7 +668,7 @@ public class TSSPanel extends JPanel {
 			String pageTableAddress = jPageDirectoryTable.getValueAt(jPageDirectoryTable.getSelectedRow(), 1).toString();
 
 			// commandReceiver.setCommandNoOfLine(512);
-			GeneralKernelDebugger.sendCommand("xp /4096bx " + pageTableAddress);
+			GKD.sendCommand("xp /4096bx " + pageTableAddress);
 
 			float totalByte2 = 4096 - 1;
 			totalByte2 = totalByte2 / 8;
@@ -682,7 +682,7 @@ public class TSSPanel extends JPanel {
 			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
 			realEndAddressStr = String.format("%08x", realEndAddress);
 
-			String result = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 			String[] lines = result.split("\n");
 			DefaultTableModel model = (DefaultTableModel) jPageTableTable.getModel();
 			while (model.getRowCount() > 0) {
@@ -952,10 +952,10 @@ public class TSSPanel extends JPanel {
 
 				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(cr3, ldtr);
 				System.out.println("gdtBase=" + gdtBase.toString(16));
-				GeneralKernelDebugger.commandReceiver.clearBuffer();
+				GKD.commandReceiver.clearBuffer();
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
-				GeneralKernelDebugger.sendCommand("xp /8bx " + gdtBase);
-				String result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", gdtBase));
+				GKD.sendCommand("xp /8bx " + gdtBase);
+				String result = GKD.commandReceiver.getCommandResult(String.format("%08x", gdtBase));
 
 				int bytes[] = new int[8];
 				String[] b = result.replaceFirst("^.*:", "").split("\t");

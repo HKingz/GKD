@@ -114,10 +114,10 @@ public class InstructionTableModel extends AbstractTableModel {
 		try {
 			// commandReceiver.setCommandNoOfLine(-1);
 			if (Global.vmType.equals("bochs")) {
-				GeneralKernelDebugger.commandReceiver.clearBuffer();
-				GeneralKernelDebugger.sendCommand("info break");
+				GKD.commandReceiver.clearBuffer();
+				GKD.sendCommand("info break");
 				Thread.currentThread().sleep(100);
-				String result = GeneralKernelDebugger.commandReceiver.getCommandResultUntilEnd();
+				String result = GKD.commandReceiver.getCommandResultUntilEnd();
 				String[] lines = result.split("\n");
 
 				breakpoint.clear();

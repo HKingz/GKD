@@ -166,7 +166,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 	public JTextField ecxTextField;
 	public JTextField ebxTextField;
 	private JLabel jEBXLabel;
-	GeneralKernelDebugger peterBochsDebugger;
+	GKD peterBochsDebugger;
 	BorderLayout thisLayout = new BorderLayout();
 	FormLayout jPanel2Layout = new FormLayout(
 			"max(p;15dlu), 24dlu, max(p;15dlu), 72dlu, 5dlu, max(p;15dlu), 67dlu, 5dlu, max(p;15dlu), 68dlu, 5dlu, 28dlu, 5dlu, max(p;15dlu), 72dlu, 5dlu, 83dlu",
@@ -181,7 +181,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 		initGUI();
 	}
 
-	public RegisterPanel(GeneralKernelDebugger peterBochsDebugger) {
+	public RegisterPanel(GKD peterBochsDebugger) {
 		super();
 		this.peterBochsDebugger = peterBochsDebugger;
 		initGUI();
@@ -1260,118 +1260,118 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jCSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cs=" + csTextField.getText());
+		GKD.sendCommand("set cs=" + csTextField.getText());
 	}
 
 	private void jEIPTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set eip=" + eipTextField.getText());
+		GKD.sendCommand("set eip=" + eipTextField.getText());
 	}
 
 	private void jDSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ds=" + dsTextField.getText());
+		GKD.sendCommand("set ds=" + dsTextField.getText());
 	}
 
 	private void jESTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set es=" + esTextField.getText());
+		GKD.sendCommand("set es=" + esTextField.getText());
 	}
 
 	private void jFSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set fs=" + fsTextField.getText());
+		GKD.sendCommand("set fs=" + fsTextField.getText());
 	}
 
 	private void jGSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set gs=" + gsTextField.getText());
+		GKD.sendCommand("set gs=" + gsTextField.getText());
 	}
 
 	private void jSSTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ss=" + jSSTextField.getText());
+		GKD.sendCommand("set ss=" + jSSTextField.getText());
 	}
 
 	private void jEAXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set eax=" + eaxTextField.getText());
+		GKD.sendCommand("set eax=" + eaxTextField.getText());
 	}
 
 	private void jEBXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ebx=" + ebxTextField.getText());
+		GKD.sendCommand("set ebx=" + ebxTextField.getText());
 	}
 
 	private void jECXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ecx=" + ecxTextField.getText());
+		GKD.sendCommand("set ecx=" + ecxTextField.getText());
 	}
 
 	private void jEDXTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set edx=" + edxTextField.getText());
+		GKD.sendCommand("set edx=" + edxTextField.getText());
 	}
 
 	private void jESITextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set esi=" + esiTextField.getText());
+		GKD.sendCommand("set esi=" + esiTextField.getText());
 	}
 
 	private void jEDITextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set edi=" + ediTextField.getText());
+		GKD.sendCommand("set edi=" + ediTextField.getText());
 	}
 
 	private void jEBPTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ebp=" + ebpTextField.getText());
+		GKD.sendCommand("set ebp=" + ebpTextField.getText());
 	}
 
 	private void jESPTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set esp=" + espTextField.getText());
+		GKD.sendCommand("set esp=" + espTextField.getText());
 	}
 
 	private void jCR0TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr0=" + cr0TextField.getText());
+		GKD.sendCommand("set cr0=" + cr0TextField.getText());
 	}
 
 	private void jCR2TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr2=" + cr2TextField.getText());
+		GKD.sendCommand("set cr2=" + cr2TextField.getText());
 	}
 
 	private void jCR3TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr3=" + cr3TextField.getText());
+		GKD.sendCommand("set cr3=" + cr3TextField.getText());
 	}
 
 	private void jCR4TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set cr4=" + cr4TextField.getText());
+		GKD.sendCommand("set cr4=" + cr4TextField.getText());
 	}
 
 	private void jGDTRTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set gdtr=" + gdtrTextField.getText());
+		GKD.sendCommand("set gdtr=" + gdtrTextField.getText());
 	}
 
 	private void jLDTRTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set ldtr=" + jLDTRTextField.getText());
+		GKD.sendCommand("set ldtr=" + jLDTRTextField.getText());
 	}
 
 	private void jIDTRTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set idtr=" + jIDTRTextField.getText());
+		GKD.sendCommand("set idtr=" + jIDTRTextField.getText());
 	}
 
 	private void jTRTextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set tr=" + jTRTextField.getText());
+		GKD.sendCommand("set tr=" + jTRTextField.getText());
 	}
 
 	private void jDR0TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr0=" + dr0TextField.getText());
+		GKD.sendCommand("set dr0=" + dr0TextField.getText());
 	}
 
 	private void jDR1TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr1=" + dr1TextField.getText());
+		GKD.sendCommand("set dr1=" + dr1TextField.getText());
 	}
 
 	private void jDR2TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr2=" + dr2TextField.getText());
+		GKD.sendCommand("set dr2=" + dr2TextField.getText());
 	}
 
 	private void jDR3TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr3=" + dr3TextField.getText());
+		GKD.sendCommand("set dr3=" + dr3TextField.getText());
 	}
 
 	private void jDR6TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr6=" + dr6TextField.getText());
+		GKD.sendCommand("set dr6=" + dr6TextField.getText());
 	}
 
 	private void jDR7TextFieldKeyTyped(KeyEvent evt) {
-		GeneralKernelDebugger.sendCommand("set dr7=" + dr7TextField.getText());
+		GKD.sendCommand("set dr7=" + dr7TextField.getText());
 	}
 }

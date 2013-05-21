@@ -115,9 +115,9 @@ public class SourceCodeTableModel extends AbstractTableModel {
 		try {
 			if (Global.vmType.equals("bochs")) {
 				// commandReceiver.setCommandNoOfLine(-1);
-				GeneralKernelDebugger.commandReceiver.clearBuffer();
-				GeneralKernelDebugger.sendCommand("info break");
-				String result = GeneralKernelDebugger.commandReceiver.getCommandResultUntilEnd();
+				GKD.commandReceiver.clearBuffer();
+				GKD.sendCommand("info break");
+				String result = GKD.commandReceiver.getCommandResultUntilEnd();
 				String[] lines = result.split("\n");
 
 				breakpoint.clear();

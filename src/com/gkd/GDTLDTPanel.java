@@ -38,12 +38,12 @@ public class GDTLDTPanel extends JPanel {
 	private int b[] = new int[8];
 	private long value;
 	private long bit[] = new long[64];
-	private GeneralKernelDebugger peterBochsDebugger;
+	private GKD peterBochsDebugger;
 	private int type;
 	private BigInteger gdtAddress;
 	private JScrollPane jScrollPane2;
 
-	public GDTLDTPanel(GeneralKernelDebugger peterBochsDebugger, int type, BigInteger gdtAddress, int gdtNo) {
+	public GDTLDTPanel(GKD peterBochsDebugger, int type, BigInteger gdtAddress, int gdtNo) {
 		this.peterBochsDebugger = peterBochsDebugger;
 		this.type = type;
 		this.gdtAddress = gdtAddress;
@@ -110,18 +110,18 @@ public class GDTLDTPanel extends JPanel {
 			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
 			String result;
 			if (type == 0) {
-				GeneralKernelDebugger.sendCommand("info gdt " + gdtNo);
+				GKD.sendCommand("info gdt " + gdtNo);
 				String gdtNoHex = String.format("0x%02x", gdtNo);
-				result = GeneralKernelDebugger.commandReceiver.getCommandResult("GDT[" + gdtNoHex + "]");
+				result = GKD.commandReceiver.getCommandResult("GDT[" + gdtNoHex + "]");
 			} else {
-				GeneralKernelDebugger.sendCommand("info ldt " + gdtNo);
+				GKD.sendCommand("info ldt " + gdtNo);
 				String gdtNoHex = String.format("0x%02x", gdtNo);
-				result = GeneralKernelDebugger.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
+				result = GKD.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
 			}
 
-			GeneralKernelDebugger.commandReceiver.clearBuffer();
-			GeneralKernelDebugger.sendCommand("x /8bx " + "0x" + gdtAddress.add(BigInteger.valueOf(gdtNo * 8)).toString(16));
-			result = GeneralKernelDebugger.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
+			GKD.commandReceiver.clearBuffer();
+			GKD.sendCommand("x /8bx " + "0x" + gdtAddress.add(BigInteger.valueOf(gdtNo * 8)).toString(16));
+			result = GKD.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
 			String lines[] = result.split("\n");
 
 			String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");
@@ -244,7 +244,7 @@ public class GDTLDTPanel extends JPanel {
 			if (limit > 1000) {
 				limit = 1000;
 			}
-			int bytes[] = GeneralKernelDebugger.getLinearMemory(base, (int) (limit + 1));
+			int bytes[] = GKD.getLinearMemory(base, (int) (limit + 1));
 
 			for (int x = 0; x < limit; x += 8) {
 				long value = CommonLib.getLong(bytes, x);

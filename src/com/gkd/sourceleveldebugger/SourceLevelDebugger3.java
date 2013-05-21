@@ -53,7 +53,7 @@ import com.gkd.InstructionTableCellRenderer;
 import com.gkd.InstructionTableModel;
 import com.gkd.MyLanguage;
 import com.gkd.GKDCommonLib;
-import com.gkd.GeneralKernelDebugger;
+import com.gkd.GKD;
 import com.gkd.instrument.CallGraphComponent;
 import com.gkd.instrument.PeterSwingCanvas;
 import com.mxgraph.canvas.mxICanvas;
@@ -115,7 +115,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	private JPanel jPanel3;
 	private JMaximizableTabbedPane jTabbedPane1;
 
-	private GeneralKernelDebugger peterBochsDebugger;
+	private GKD peterBochsDebugger;
 	private File elfFile;
 	private ProjectTreeNode root;
 	private JLabel jErrorLabel;
@@ -145,7 +145,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	mxGraph graph;
 	CallGraphComponent graphComponent;
 
-	public SourceLevelDebugger3(GeneralKernelDebugger peterBochsDebugger) {
+	public SourceLevelDebugger3(GKD peterBochsDebugger) {
 		this.peterBochsDebugger = peterBochsDebugger;
 		initGUI();
 	}
@@ -227,7 +227,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 											instructionTable = new JTable();
 											instructionTableScrollPane.setViewportView(instructionTable);
 											instructionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-											instructionTable.setModel(GeneralKernelDebugger.instructionTable.getModel());
+											instructionTable.setModel(GKD.instructionTable.getModel());
 											instructionTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 											instructionTable.getTableHeader().setReorderingAllowed(false);
 											instructionTable.getColumnModel().getColumn(0).setMaxWidth(20);
@@ -338,7 +338,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 												onOffButton.setSelected(true);
 												onOffButton.addItemListener(new ItemListener() {
 													public void itemStateChanged(ItemEvent e) {
-														InstructionTableModel model = (InstructionTableModel) GeneralKernelDebugger.instructionTable.getModel();
+														InstructionTableModel model = (InstructionTableModel) GKD.instructionTable.getModel();
 														if (e.getStateChange() == ItemEvent.SELECTED) {
 															model.showAsmLevel = true;
 														} else {

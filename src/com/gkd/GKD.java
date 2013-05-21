@@ -156,7 +156,7 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 @SuppressWarnings("serial")
-public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowListener {
+public class GKD extends javax.swing.JFrame implements WindowListener {
 	private JMenuItem aboutUsMenuItem;
 	private JPanel jPanel8;
 	private JDropDownButton stepBochsButton;
@@ -500,7 +500,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 	private boolean isupdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
-	public static GeneralKernelDebugger instance;
+	public static GKD instance;
 	private static LibGKD libGKD;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
@@ -569,7 +569,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 		if (os == OSType.mac) {
 			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
 			// System.setProperty("dock:name", "Your Application Name");
-			macApp.setDockIconImage(new ImageIcon(GeneralKernelDebugger.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
+			macApp.setDockIconImage(new ImageIcon(GKD.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
 			// java.awt.PopupMenu menu = new java.awt.PopupMenu();
 			// menu.add(new MenuItem("test"));
 			// macApp.setDockMenu(menu);
@@ -578,8 +578,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 		}
 
 		try {
-			if (GeneralKernelDebugger.class.getProtectionDomain().getCodeSource().getLocation().getFile().endsWith(".jar")) {
-				JarFile jarFile = new JarFile(GeneralKernelDebugger.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+			if (GKD.class.getProtectionDomain().getCodeSource().getLocation().getFile().endsWith(".jar")) {
+				JarFile jarFile = new JarFile(GKD.class.getProtectionDomain().getCodeSource().getLocation().getFile());
 				if (System.getProperty("os.name").toLowerCase().contains("linux")) {
 					if (System.getProperty("os.arch").contains("64")) {
 						if (Global.debug) {
@@ -700,8 +700,8 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				GeneralKernelDebugger inst = new GeneralKernelDebugger();
-				GeneralKernelDebugger.instance = inst;
+				GKD inst = new GKD();
+				GKD.instance = inst;
 
 				new Thread("preventSetVisibleHang thread") {
 					public void run() {
@@ -730,7 +730,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 		});
 	}
 
-	public GeneralKernelDebugger() {
+	public GKD() {
 		super();
 
 		if (Global.debug) {
@@ -4652,7 +4652,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			GKDCommonLib
-					.exportTableModelToExcel(file, GeneralKernelDebugger.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
+					.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -4681,9 +4681,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 
 			class MyThread extends Thread {
 				File file;
-				GeneralKernelDebugger peterBochsDebugger;
+				GKD peterBochsDebugger;
 
-				public MyThread(GeneralKernelDebugger peterBochsDebugger, File file) {
+				public MyThread(GKD peterBochsDebugger, File file) {
 					this.peterBochsDebugger = peterBochsDebugger;
 					this.file = file;
 				}
@@ -7164,10 +7164,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 	private void jSetPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (registerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-			GeneralKernelDebugger.sendCommand("pb " + model.getMemoryAddress(instructionTable.getSelectedRow()));
+			GKD.sendCommand("pb " + model.getMemoryAddress(instructionTable.getSelectedRow()));
 		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) sourceLevelDebugger.instructionTable.getModel();
-			GeneralKernelDebugger.sendCommand("pb " + model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow()));
+			GKD.sendCommand("pb " + model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow()));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
@@ -7175,9 +7175,9 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 
 	private void jSetLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (registerToggleButton.isSelected()) {
-			GeneralKernelDebugger.sendCommand("lb " + GeneralKernelDebugger.instructionTable.getValueAt(GeneralKernelDebugger.instructionTable.getSelectedRow(), 1));
+			GKD.sendCommand("lb " + GKD.instructionTable.getValueAt(GKD.instructionTable.getSelectedRow(), 1));
 		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
-			GeneralKernelDebugger.sendCommand("lb " + this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1));
+			GKD.sendCommand("lb " + this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
@@ -7301,12 +7301,12 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 
 	private void jMenuItem8ActionPerformed(ActionEvent evt) {
 		System.out.println(this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
-		GeneralKernelDebugger.sendCommand("pb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
+		GKD.sendCommand("pb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
 		this.updateBreakpoint();
 	}
 
 	private void jMenuItem9ActionPerformed(ActionEvent evt) {
-		GeneralKernelDebugger.sendCommand("lb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
+		GKD.sendCommand("lb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
 		this.updateBreakpoint();
 	}
 
@@ -7341,11 +7341,11 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 	}
 
 	public void jInstructionUpButtonActionPerformed(ActionEvent evt) {
-		if (GeneralKernelDebugger.instructionTable.getRowCount() > 0) {
+		if (GKD.instructionTable.getRowCount() > 0) {
 			String firstAddress = "";
 			int x = 0;
 			do {
-				firstAddress = GeneralKernelDebugger.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
+				firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
 				x++;
 			} while (!CommonLib.isNumber(firstAddress));
 			firstAddress = CommonLib.string2decimal(firstAddress).subtract(BigInteger.valueOf(1)).toString(16);
@@ -7358,10 +7358,10 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 
 	public void jInstructionDownButtonActionPerformed(ActionEvent evt) {
 		try {
-			if (GeneralKernelDebugger.instructionTable.getRowCount() > 10) {
+			if (GKD.instructionTable.getRowCount() > 10) {
 				String firstAddress = "";
-				for (int x = 0, count = 0; count < 10 && x < GeneralKernelDebugger.instructionTable.getRowCount(); x++) {
-					firstAddress = GeneralKernelDebugger.instructionTable.getValueAt(x, 1).toString().split(":")[0];
+				for (int x = 0, count = 0; count < 10 && x < GKD.instructionTable.getRowCount(); x++) {
+					firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().split(":")[0];
 					if (CommonLib.isNumber(firstAddress)) {
 						count++;
 					}
@@ -7393,7 +7393,7 @@ public class GeneralKernelDebugger extends javax.swing.JFrame implements WindowL
 		String firstAddress = "";
 		int x = 0;
 		do {
-			firstAddress = GeneralKernelDebugger.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
+			firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
 			x++;
 		} while (!CommonLib.isNumber(firstAddress));
 		firstAddress = CommonLib.string2decimal(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);

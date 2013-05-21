@@ -152,7 +152,7 @@ public class HelperDialog extends javax.swing.JDialog {
 
 				// TSS
 				// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
-				GeneralKernelDebugger.sendCommand("x /" + limit + "bx " + base);
+				GKD.sendCommand("x /" + limit + "bx " + base);
 
 				float totalByte2 = limit - 1;
 				totalByte2 = totalByte2 / 8;
@@ -169,7 +169,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				int realEndAddress = realStartAddress + totalByte3 * 8;
 				realEndAddressStr = String.format("%08x", realEndAddress);
 
-				String result2 = GeneralKernelDebugger.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+				String result2 = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 				String[] lines2 = result2.split("\n");
 
 				byte tssByte[] = new byte[(int) limit];
