@@ -1,7 +1,7 @@
 package com.gkd;
 
 public class Global {
-	public static String version = "20121222";
+	public static String version = "20130520";
 	public static boolean debug = true;
 	public static long osDebug = -1;
 	public static String jmpLog = "jmp.log";

@@ -1,4 +1,4 @@
-<Server>
+<Setting>
   <bochsCommandHistory/>
   <memoryCombo/>
   <breakpoint/>
@@ -7,12 +7,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>114</x>
-  <y>66</y>
-  <width>1219</width>
-  <height>758</height>
-  <divX>683</divX>
-  <divY>432</divY>
+  <x>200</x>
+  <y>53</y>
+  <width>1120</width>
+  <height>757</height>
+  <divX>603</divX>
+  <divY>431</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
@@ -56,4 +56,4 @@
   <lastElfHistoryOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
   <lastElfHistoryOpenDir2>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
   <lastMapOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
-</Server>
+</Setting>

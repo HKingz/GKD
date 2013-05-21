@@ -13,7 +13,7 @@ import org.apache.commons.io.IOUtils;
 import com.thoughtworks.xstream.XStream;
 
 public class Setting {
-	public static Setting setting = null;
+	private static Setting setting = null;
 
 	public LinkedHashSet<String> bochsCommandHistory = new LinkedHashSet<String>();
 	public TreeSet<String> memoryCombo = new TreeSet<String>();
@@ -111,7 +111,7 @@ public class Setting {
 
 	public void save() {
 		XStream xstream = new XStream();
-		xstream.alias("Server", Setting.class);
+		xstream.alias("Setting", Setting.class);
 		String xml = xstream.toXML(this);
 		try {
 			IOUtils.write(xml, new FileOutputStream(new File("gkd.xml")));
@@ -127,7 +127,6 @@ public class Setting {
 			Setting setting = (Setting) xstream.fromXML(new FileInputStream(new File("gkd.xml")));
 			return setting;
 		} catch (Exception ex) {
-			//JOptionPane.showMessageDialog(null, "Loading -server.xml error.", "Error", JOptionPane.ERROR_MESSAGE);
 			new File("gkd.xml").delete();
 			Setting Setting = new Setting();
 			Setting.save();
@@ -136,8 +135,7 @@ public class Setting {
 	}
 
 	public static void main(String args[]) {
-		new Setting().save();
 		Setting setting = Setting.getInstance();
-		System.out.println(setting);
+		System.out.println(setting.width);
 	}
 }

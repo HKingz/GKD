@@ -67,6 +67,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -116,6 +117,8 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.apple.eawt.ApplicationEvent;
+import com.apple.eawt.ApplicationListener;
 import com.gkd.architecture.IA32PageDirectory;
 import com.gkd.elf.ElfUtil;
 import com.gkd.helprequest.HelpRequestDialog;
@@ -156,7 +159,7 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 @SuppressWarnings("serial")
-public class GKD extends javax.swing.JFrame implements WindowListener {
+public class GKD extends JFrame implements WindowListener, ApplicationListener {
 	private JMenuItem aboutUsMenuItem;
 	private JPanel jPanel8;
 	private JDropDownButton stepBochsButton;
@@ -500,7 +503,6 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 	private boolean isupdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
-	public static GKD instance;
 	private static LibGKD libGKD;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
@@ -565,16 +567,6 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 			os = OSType.mac;
 		} else {
 			os = OSType.linux;
-		}
-		if (os == OSType.mac) {
-			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
-			// System.setProperty("dock:name", "Your Application Name");
-			macApp.setDockIconImage(new ImageIcon(GKD.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
-			// java.awt.PopupMenu menu = new java.awt.PopupMenu();
-			// menu.add(new MenuItem("test"));
-			// macApp.setDockMenu(menu);
-
-			macApp.addApplicationListener(new MacAboutBoxHandler());
 		}
 
 		try {
@@ -700,8 +692,15 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				GKD inst = new GKD();
-				GKD.instance = inst;
+				GKD gkd = new GKD();
+
+				if (os == OSType.mac) {
+					com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
+					macApp.setDockIconImage(new ImageIcon(GKD.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
+					macApp.addApplicationListener(gkd);
+				}
+
+				gkd.init();
 
 				new Thread("preventSetVisibleHang thread") {
 					public void run() {
@@ -720,7 +719,7 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 				if (Global.debug) {
 					System.out.println("setVisible(true)");
 				}
-				inst.setVisible(true);
+				gkd.setVisible(true);
 
 				preventSetVisibleHang = false;
 				if (Global.debug) {
@@ -732,7 +731,9 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 
 	public GKD() {
 		super();
+	}
 
+	public void init() {
 		if (Global.debug) {
 			System.out.println(new Date());
 		}
@@ -799,9 +800,7 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 			runBochsButton.setToolTipText("Start emulation");
 			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 
-			if (p != null) {
-				p.destroy();
-			}
+			killVM();
 
 			ProcessBuilder pb = new ProcessBuilder(
 					(GKDCommonLib.readConfig(cmd, "/gkd/bochs/text()") + " " + GKDCommonLib.readConfig(cmd, "/gkd/bochsArguments/text()")).split(" "));
@@ -865,9 +864,7 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 			runBochsButton.setToolTipText("Start emulation");
 			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 
-			if (p != null) {
-				p.destroy();
-			}
+			killVM();
 
 			p = Runtime.getRuntime().exec(GKDCommonLib.readConfig(cmd, "/gkd/vmArguments/text()"));
 			InputStream is = p.getInputStream();
@@ -3563,9 +3560,7 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 	}
 
 	private void thisWindowClosing(WindowEvent evt) {
-		if (p != null) {
-			p.destroy();
-		}
+		killVM();
 
 		Setting.getInstance().width = this.getWidth();
 		Setting.getInstance().height = this.getHeight();
@@ -4651,8 +4646,7 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib
-					.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -9285,5 +9279,53 @@ public class GKD extends javax.swing.JFrame implements WindowListener {
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void handleAbout(ApplicationEvent event) {
+		event.setHandled(true);
+		new AboutUsDialog(null).setVisible(true);
+	}
+
+	@Override
+	public void handleOpenApplication(ApplicationEvent arg0) {
+	}
+
+	@Override
+	public void handleOpenFile(ApplicationEvent arg0) {
+	}
+
+	@Override
+	public void handlePreferences(ApplicationEvent arg0) {
+	}
+
+	@Override
+	public void handlePrintFile(ApplicationEvent arg0) {
+	}
+
+	@Override
+	public void handleQuit(ApplicationEvent arg0) {
+		Setting.getInstance().width = this.getWidth();
+		Setting.getInstance().height = this.getHeight();
+		Setting.getInstance().x = this.getLocation().x;
+		Setting.getInstance().y = this.getLocation().y;
+		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
+		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
+		Setting.getInstance().osDebugSplitPane_DividerLocation = this.jOSDebugInformationPanel1.getjMainSplitPane().getDividerLocation();
+		Setting.getInstance().save();
+
+		killVM();
+		System.exit(0);
+	}
+
+	@Override
+	public void handleReOpenApplication(ApplicationEvent arg0) {
+
+	}
+
+	void killVM() {
+		if (p != null) {
+			p.destroy();
+		}
 	}
 }
