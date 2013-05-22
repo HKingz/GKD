@@ -659,6 +659,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			libGKD = new LibGKD("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
 		}
 
+		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
+
 		/*
 		 * if (ArrayUtils.contains(args, "-loadBreakpoint")) {
 		 * Setting.getInstance().setLoadBreakpointAtStartup(true); args =
@@ -5375,7 +5377,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jTabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7, null);
 					jTabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
 							getJPanel17(), null);
-					jTabbedPane3.addTab("bochsout.txt", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
+					jTabbedPane3.addTab(Global.vmType.equals("bochs") ? "bochsout.txt" : "qemu log",
+							new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
 					{
 						jScrollPane11 = new JScrollPane();
 						jPanel7.add(jScrollPane11, BorderLayout.CENTER);

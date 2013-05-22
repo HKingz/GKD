@@ -3,14 +3,29 @@
   <memoryCombo>
     <string>0x00000000</string>
   </memoryCombo>
-  <breakpoint/>
+  <breakpoint>
+    <com.gkd.Breakpoint>
+      <no>0</no>
+      <type>pbreakpoint</type>
+      <address>0x7c10</address>
+      <enable>pbreakpoint</enable>
+      <hit>16</hit>
+    </com.gkd.Breakpoint>
+    <com.gkd.Breakpoint>
+      <no>1</no>
+      <type>pbreakpoint</type>
+      <address>0x7c00</address>
+      <enable>pbreakpoint</enable>
+      <hit>16</hit>
+    </com.gkd.Breakpoint>
+  </breakpoint>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>200</x>
-  <y>53</y>
+  <x>282</x>
+  <y>22</y>
   <width>1120</width>
   <height>757</height>
   <divX>603</divX>
@@ -27,7 +42,7 @@
   <idt/>
   <ldt/>
   <logToPetersoftServer>false</logToPetersoftServer>
-  <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
+  <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
   <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
   <updateAfterBochsCommand>false</updateAfterBochsCommand>
   <updateAfterBochsCommand__register>false</updateAfterBochsCommand__register>

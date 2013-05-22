@@ -6,4 +6,5 @@
 	<hd>hd10meg.img</hd>
 	<stopCommand>killall -9 qemu-system-x86_64</stopCommand>
 	<vncPort>5909</vncPort>
+	<loadBreakpoint>true</loadBreakpoint>
 </gkd>
