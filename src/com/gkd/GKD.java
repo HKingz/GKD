@@ -145,6 +145,7 @@ import com.peterswing.advancedswing.jdropdownbutton.JDropDownButton;
 import com.peterswing.advancedswing.jmaximizabletabbedpane.JMaximizableTabbedPane;
 import com.peterswing.advancedswing.jmaximizabletabbedpane.JMaximizableTabbedPane_BasePanel;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
+import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialogEventListener;
 import com.peterswing.advancedswing.jvmdialog.JVMInfoDialog;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
@@ -159,7 +160,7 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
  * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 @SuppressWarnings("serial")
-public class GKD extends JFrame implements WindowListener, ApplicationListener {
+public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
 	private JMenuItem aboutUsMenuItem;
 	private JPanel jPanel8;
 	private JDropDownButton stepBochsButton;
@@ -504,6 +505,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
 	private static LibGKD libGKD;
+	private JProgressBarDialog progressBarDialog;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
 			"Disp Enb Address", MyLanguage.getString("Hit") }) {
@@ -692,7 +694,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				GKD gkd = new GKD();
+
+				JProgressBarDialog progressBarDialog = new JProgressBarDialog();
+				final GKD gkd = new GKD(progressBarDialog);
 
 				if (os == OSType.mac) {
 					com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
@@ -700,7 +704,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 					macApp.addApplicationListener(gkd);
 				}
 
-				gkd.init();
+				Thread loadThread = new Thread() {
+					public void run() {
+						gkd.init();
+						if (Global.debug) {
+							System.out.println("setVisible(true)");
+						}
+						gkd.setVisible(true);
+
+						preventSetVisibleHang = false;
+						if (Global.debug) {
+							System.out.println("end setVisible(true)");
+						}
+					}
+				};
+				progressBarDialog.jProgressBar.setMinimum(0);
+				progressBarDialog.jProgressBar.setMaximum(100);
+				progressBarDialog.jProgressBar.setStringPainted(true);
+				progressBarDialog.thread = loadThread;
+				progressBarDialog.addCancelEventListener(gkd);
+				progressBarDialog.setVisible(true);
 
 				new Thread("preventSetVisibleHang thread") {
 					public void run() {
@@ -716,24 +739,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 					}
 				}.start();
 
-				if (Global.debug) {
-					System.out.println("setVisible(true)");
-				}
-				gkd.setVisible(true);
-
-				preventSetVisibleHang = false;
-				if (Global.debug) {
-					System.out.println("end setVisible(true)");
-				}
 			}
 		});
 	}
 
-	public GKD() {
+	public GKD(JProgressBarDialog progressBarDialog) {
 		super();
+		this.progressBarDialog = progressBarDialog;
 	}
 
 	public void init() {
+		progressBarDialog.jProgressBar.setValue(0);
+		progressBarDialog.jProgressBar.setString("Loading GUI");
 		if (Global.debug) {
 			System.out.println(new Date());
 		}
@@ -741,6 +758,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 		if (Global.debug) {
 			System.out.println("initGUI()");
 		}
+
+		progressBarDialog.jProgressBar.setValue(10);
+		progressBarDialog.jProgressBar.setString("Init GUI");
 		initGUI();
 		if (Global.debug) {
 			System.out.println("end initGUI()");
@@ -748,6 +768,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 		if (Global.vmType.equals("qemu")) {
 			jBochsMenu.setVisible(false);
 		}
+
+		progressBarDialog.jProgressBar.setValue(80);
+		progressBarDialog.jProgressBar.setString("Starting VM");
 
 		if (Global.vmType.equals("bochs")) {
 			if (Global.debug) {
@@ -767,6 +790,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 			}
 		}
 
+		progressBarDialog.jProgressBar.setValue(90);
+		progressBarDialog.jProgressBar.setString("Init font");
 		initChineseFont();
 		new Thread("checkLatestVersion thread") {
 			public void run() {
@@ -787,6 +812,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 				}
 			}
 		}.start();
+		
+		progressBarDialog.jProgressBar.setValue(100);
+		progressBarDialog.jProgressBar.setString("Fnished");
 
 		if (Global.debug) {
 			System.out.println(new Date());
@@ -1102,6 +1130,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 		}
 
 		try {
+			progressBarDialog.jProgressBar.setValue(30);
+			progressBarDialog.jProgressBar.setString("Init GUI - 1");
 			{
 				this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				if (Global.isBeta) {
@@ -1125,6 +1155,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 					}
 				});
 			}
+			progressBarDialog.jProgressBar.setValue(40);
+			progressBarDialog.jProgressBar.setString("Init GUI - 2");
 			{
 				jToolBar1 = new JToolBar();
 				getContentPane().add(jToolBar1, BorderLayout.NORTH);
@@ -1220,6 +1252,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 					});
 				}
 			}
+			progressBarDialog.jProgressBar.setValue(50);
+			progressBarDialog.jProgressBar.setString("Init GUI - 3");
 			{
 				jStatusPanel = new JPanel();
 				BorderLayout jStatusPanelLayout = new BorderLayout();
@@ -1232,6 +1266,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 					jStatusPanel.add(getJPanel25(), BorderLayout.CENTER);
 				}
 			}
+			progressBarDialog.jProgressBar.setValue(60);
+			progressBarDialog.jProgressBar.setString("Init GUI - 4");
 			{
 				jMenuBar1 = new JMenuBar();
 				setJMenuBar(jMenuBar1);
@@ -1337,6 +1373,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 					}
 				}
 			}
+			progressBarDialog.jProgressBar.setValue(70);
+			progressBarDialog.jProgressBar.setString("Init GUI - 5");
 			if (Setting.getInstance().width == 0 || Setting.getInstance().height == 0) {
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 				setSize(screenSize.width * 2 / 3, screenSize.height * 4 / 5);
@@ -9327,5 +9365,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener {
 		if (p != null) {
 			p.destroy();
 		}
+	}
+
+	@Override
+	public void cancelled() {
+		System.exit(0);
 	}
 }

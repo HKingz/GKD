@@ -408,7 +408,6 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	}
 
 	private void projectTreeMouseClicked(MouseEvent evt) {
-
 		//				* handleProjectTreeClick(jFileTree.getSelectionPath());
 	}
 

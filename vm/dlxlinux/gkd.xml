@@ -1,6 +1,8 @@
 <Setting>
   <bochsCommandHistory/>
-  <memoryCombo/>
+  <memoryCombo>
+    <string>0x00000000</string>
+  </memoryCombo>
   <breakpoint/>
   <sbAddress/>
   <sbaAddress/>
