@@ -499,7 +499,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem loadElfMenuItem = new JMenuItem("Load ELF");
 	private String latestVersionURL;
 	private boolean saveToRunDotTxt;
-	private boolean processPauseBoch;
+	private boolean processPauseBochs;
 	private int skipBreakpointTime;
 	private boolean isupdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
@@ -951,8 +951,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private synchronized void pauseBochs(boolean pauseBochsManually, boolean resumeMainPanel) {
-		if (!processPauseBoch) {
-			processPauseBoch = true;
+		if (!processPauseBochs) {
+			processPauseBochs = true;
 			try {
 				if (runBochsButton.getText().equals(MyLanguage.getString("Pause_bochs"))) {
 					WebServiceUtil.log("gkd", "pause", null, null, null);
@@ -992,7 +992,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			processPauseBoch = false;
+			processPauseBochs = false;
 		}
 	}
 
