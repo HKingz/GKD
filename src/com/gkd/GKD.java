@@ -696,6 +696,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			public void run() {
 
 				JProgressBarDialog progressBarDialog = new JProgressBarDialog();
+				progressBarDialog.setTitle("Starting GKD");
 				final GKD gkd = new GKD(progressBarDialog);
 
 				if (os == OSType.mac) {
@@ -812,7 +813,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 		}.start();
-		
+
 		progressBarDialog.jProgressBar.setValue(100);
 		progressBarDialog.jProgressBar.setString("Fnished");
 
