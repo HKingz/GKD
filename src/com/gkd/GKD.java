@@ -713,6 +713,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						if (Global.debug) {
 							System.out.println("setVisible(true)");
 						}
+
+						//new Thread(new BochsoutTimer()).start();
+
 						gkd.setVisible(true);
 
 						preventSetVisibleHang = false;
@@ -731,7 +734,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				new Thread("preventSetVisibleHang thread") {
 					public void run() {
 						try {
-							Thread.sleep(10000);
+							Thread.sleep(1000000);
 							if (preventSetVisibleHang) {
 								System.out.println("setVisible(true) cause system hang, this probably a swing bug, so force exit, please restart");
 								System.exit(-1);
@@ -815,6 +818,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 		}.start();
+
+		bochsoutTextArea.addTrailListener(new File("bochsout.txt"), 0, true);
 
 		progressBarDialog.jProgressBar.setValue(100);
 		progressBarDialog.jProgressBar.setString("Fnished");
@@ -8963,43 +8968,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private EnhancedTextArea getBochsoutTextArea() {
 		if (bochsoutTextArea == null) {
 			bochsoutTextArea = new EnhancedTextArea();
-			// bochsoutTextArea.setMaxRow(20);
-			// bochsoutTextArea.addTrailListener(new File("bochsout.txt"), 0,
-			// false);
-
-			new Thread(new BochsoutTimer()).start();
 			getBochsoutTextArea().jToolBar.add(getJButton4(), -1);
 		}
 		return bochsoutTextArea;
-	}
-
-	class BochsoutTimer implements Runnable {
-		long originalLengeh;
-
-		int x = 0;
-
-		@Override
-		public void run() {
-			while (true) {
-				try {
-					File file = new File("bochsout.txt");
-					long newLength = file.length();
-					if (originalLengeh != newLength) {
-						bochsoutTextArea.setText(tail2(file, 80));
-						bochsoutTextArea.jTextArea.setCaretPosition(bochsoutTextArea.jTextArea.getDocument().getLength());
-						originalLengeh = newLength;
-					}
-				} catch (Exception e1) {
-					e1.printStackTrace();
-				}
-				try {
-					Thread.currentThread();
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-		}
 	}
 
 	public String tail2(File file, int lines) {

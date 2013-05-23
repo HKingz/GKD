@@ -24,12 +24,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>68</x>
+  <x>229</x>
   <y>22</y>
-  <width>1334</width>
-  <height>757</height>
+  <width>1120</width>
+  <height>656</height>
   <divX>603</divX>
-  <divY>431</divY>
+  <divY>330</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
