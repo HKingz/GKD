@@ -14,7 +14,7 @@ import javax.swing.JEditorPane;
 import javax.swing.SwingUtilities;
 
 public class CommandReceiver implements Runnable {
-	GKD peterBochsDebugger;
+	GKD gkd;
 	private final InputStream is;
 	// private int threadID = 0;
 	public boolean shouldShow;
@@ -26,7 +26,7 @@ public class CommandReceiver implements Runnable {
 
 	public CommandReceiver(InputStream is, GKD peterBochsDebugger) {
 		this.is = is;
-		this.peterBochsDebugger = peterBochsDebugger;
+		this.gkd = peterBochsDebugger;
 	}
 
 	public void clearBuffer() {
@@ -179,7 +179,7 @@ public class CommandReceiver implements Runnable {
 		try {
 			final BufferedReader br = new BufferedReader(new InputStreamReader(is), 1024);
 			String line;
-			final JEditorPane bochsEditorPane = peterBochsDebugger.getjBochsEditorPane();
+			final JEditorPane bochsEditorPane = gkd.getjBochsEditorPane();
 			while ((line = br.readLine()) != null) {
 				if (shouldShow) {
 					bochsEditorPane.setText(bochsEditorPane.getText() + "\n" + line);

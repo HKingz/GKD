@@ -7,7 +7,7 @@
     <com.gkd.Breakpoint>
       <no>0</no>
       <type>pbreakpoint</type>
-      <address>0x7c10</address>
+      <address>0x7c01</address>
       <enable>pbreakpoint</enable>
       <hit>16</hit>
     </com.gkd.Breakpoint>
@@ -18,18 +18,25 @@
       <enable>pbreakpoint</enable>
       <hit>16</hit>
     </com.gkd.Breakpoint>
+    <com.gkd.Breakpoint>
+      <no>2</no>
+      <type>pbreakpoint</type>
+      <address>0x7c10</address>
+      <enable>pbreakpoint</enable>
+      <hit>16</hit>
+    </com.gkd.Breakpoint>
   </breakpoint>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>92</x>
+  <x>167</x>
   <y>22</y>
-  <width>1277</width>
-  <height>667</height>
+  <width>1221</width>
+  <height>717</height>
   <divX>603</divX>
-  <divY>330</divY>
+  <divY>391</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

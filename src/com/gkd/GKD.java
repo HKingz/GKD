@@ -134,6 +134,7 @@ import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
 import com.gkd.webservice.WebServiceUtil;
 import com.libgkd.Breakpoint;
 import com.libgkd.LibGKD;
+import com.libgkd.TestLibGKD;
 import com.peter.tightvncpanel.TightVNC;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
@@ -182,7 +183,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenu jBochsMenu;
 	private JMenuItem exitMenuItem;
 	private JSeparator jSeparator2;
-	public JDropDownButton runBochsButton;
+	public JDropDownButton runVMButton;
 	private JButton stopVMButton;
 	private JButton startVMButton;
 	private JToolBar jToolBar1;
@@ -696,7 +697,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-
 				JProgressBarDialog progressBarDialog = new JProgressBarDialog();
 				progressBarDialog.setTitle("Starting GKD");
 				final GKD gkd = new GKD(progressBarDialog);
@@ -819,7 +819,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		}.start();
 
-		bochsoutTextArea.addTrailListener(new File("bochsout.txt"), 0, true);
+		if (Global.vmType.equals("bochs")) {
+			bochsoutTextArea.addTrailListener(new File("bochsout.txt"), 0, true);
+		}
 
 		progressBarDialog.jProgressBar.setValue(100);
 		progressBarDialog.jProgressBar.setString("Fnished");
@@ -832,9 +834,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void startBochs() {
 		try {
 			this.enableAllButtons(true, false);
-			runBochsButton.setText(MyLanguage.getString("Run_bochs"));
-			runBochsButton.setToolTipText("Start emulation");
-			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+			runVMButton.setText(MyLanguage.getString("Run_bochs"));
+			runVMButton.setToolTipText("Start emulation");
+			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 
 			killVM();
 
@@ -896,17 +898,32 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void startQemu() {
 		try {
 			this.enableAllButtons(true, false);
-			runBochsButton.setText(MyLanguage.getString("Run_bochs"));
-			runBochsButton.setToolTipText("Start emulation");
-			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+			runVMButton.setText(MyLanguage.getString("Run_bochs"));
+			runVMButton.setToolTipText("Start emulation");
+			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 
 			killVM();
 
 			p = Runtime.getRuntime().exec(GKDCommonLib.readConfig(cmd, "/gkd/vmArguments/text()"));
-			InputStream is = p.getInputStream();
-			commandReceiver = new CommandReceiver(is, this);
-			new Thread(commandReceiver, "commandReceiver thread").start();
-			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+			final InputStream is = p.getInputStream();
+
+			new Thread() {
+				public void run() {
+					try {
+						int x;
+						String s = "";
+						while ((x = is.read()) != -1) {
+							s += (char) x;
+							if ((char) x == '\n') {
+								bochsoutTextArea.setText(bochsoutTextArea.getText() + s);
+								s = "";
+							}
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
+			}.start();
 
 			Thread.sleep(200);
 			TightVNC.initVNCPanel(this, vncPanel, "127.0.0.1", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
@@ -921,9 +938,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		WebServiceUtil.log("gkd", "stop", null, null, null);
 		try {
 			this.enableAllButtons(false, false);
-			runBochsButton.setText(MyLanguage.getString("Run_bochs"));
-			runBochsButton.setToolTipText("Start emulation");
-			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+			runVMButton.setText(MyLanguage.getString("Run_bochs"));
+			runVMButton.setToolTipText("Start emulation");
+			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 
 			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
 				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
@@ -959,11 +976,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (!processPauseBochs) {
 			processPauseBochs = true;
 			try {
-				if (runBochsButton.getText().equals(MyLanguage.getString("Pause_bochs"))) {
+				if (runVMButton.getText().equals(MyLanguage.getString("Pause_bochs"))) {
 					WebServiceUtil.log("gkd", "pause", null, null, null);
-
-					commandReceiver.clearBuffer();
-					commandReceiver.waitUntilNoInput();
+					if (Global.vmType.equals("bochs")) {
+						commandReceiver.clearBuffer();
+						commandReceiver.waitUntilNoInput();
+					}
 
 					if (pauseBochsManually) {
 						if (os == OSType.mac || os == OSType.linux) {
@@ -980,8 +998,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					if (resumeMainPanel) {
 						SwingUtilities.invokeLater(new Runnable() {
 							// this invokeLater prevent openJDK hang my program,
-							// I
-							// am using FC15
+							// I am using FC15
 							public void run() {
 								CardLayout cl = (CardLayout) (jMainPanel.getLayout());
 								cl.show(jMainPanel, currentPanel);
@@ -989,9 +1006,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						});
 					}
 					if (skipBreakpointTime <= 0 && customCommandQueue.size() <= 0) {
-						runBochsButton.setText(MyLanguage.getString("Run_bochs"));
-						runBochsButton.setToolTipText("Start emulation");
-						runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+						runVMButton.setText(MyLanguage.getString("Run_bochs"));
+						runVMButton.setToolTipText("Start emulation");
+						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 					}
 				}
 			} catch (Exception ex) {
@@ -1023,10 +1040,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				jRunningLabel.getParent().repaint();
 				jRunningLabel.repaint();
 			} else if (customCommandQueue.size() > 0) {
-				String nextCommands = "";
-				for (int x = 0; x < customCommandQueue.size() && x < 10; x++) {
-					nextCommands += customCommandQueue.get(x);
-				}
+				//				String nextCommands = "";
+				//				for (int x = 0; x < customCommandQueue.size() && x < 10; x++) {
+				//					nextCommands += customCommandQueue.get(x);
+				//				}
 				jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /><br><br>"
 						+ customCommandQueue.size() + "</center></html>");
 				jRunningLabel.getParent().repaint();
@@ -1039,9 +1056,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			} else if (Global.vmType.equals("qemu")) {
 				String r = libGKD._continue();
 			}
-			runBochsButton.setText(MyLanguage.getString("Pause_bochs"));
-			runBochsButton.setToolTipText("Pause emulation");
-			runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
+			runVMButton.setText(MyLanguage.getString("Pause_bochs"));
+			runVMButton.setToolTipText("Pause emulation");
+			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
 
 			new Thread("runBochs() update thread") {
 				public void run() {
@@ -1191,17 +1208,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					});
 				}
 				{
-					runBochsButton = new JDropDownButton();
-					jToolBar1.add(runBochsButton);
-					runBochsButton.setText(MyLanguage.getString("Run_bochs"));
-					runBochsButton.setToolTipText("Start emulation");
-					runBochsButton.setMaximumSize(new java.awt.Dimension(85, 26));
-					runBochsButton.add(getJRunBochsAndSkipBreakpointMenuItem());
-					runBochsButton.add(getJRunCustomCommandMenuItem());
-					runBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
-					runBochsButton.addActionListener(new ActionListener() {
+					runVMButton = new JDropDownButton();
+					jToolBar1.add(runVMButton);
+					runVMButton.setText(MyLanguage.getString("Run_bochs"));
+					runVMButton.setToolTipText("Start emulation");
+					runVMButton.setMaximumSize(new java.awt.Dimension(85, 26));
+					runVMButton.add(getJRunBochsAndSkipBreakpointMenuItem());
+					runVMButton.add(getJRunCustomCommandMenuItem());
+					runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+					runVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							runBochsButtonActionPerformed(evt);
+							runVMButtonActionPerformed(evt);
 						}
 					});
 				}
@@ -1335,7 +1352,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						runBochsMenuItem.setText(MyLanguage.getString("Run_bochs"));
 						runBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								runBochsMenuItemActionPerformed(evt);
+								runVM();
 							}
 						});
 					}
@@ -1430,8 +1447,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								stopVMButtonActionPerformed(null);
 							}
 						} else if (keycode == 118) {
-							if (runBochsButton.isEnabled()) {
-								runBochsButtonActionPerformed(null);
+							if (runVMButton.isEnabled()) {
+								runVMButtonActionPerformed(null);
 							}
 						} else if (keycode == 119) {
 							if (stepBochsButton.isEnabled()) {
@@ -1534,10 +1551,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		stopVM();
 	}
 
-	private void runBochsMenuItemActionPerformed(ActionEvent evt) {
-		runVM();
-	}
-
 	private void pauseBochsMenuItemActionPerformed(ActionEvent evt) {
 		skipBreakpointTime = 0;
 		pauseBochs(true, true);
@@ -1567,9 +1580,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		stopVMMenuItemActionPerformed(null);
 	}
 
-	private void runBochsButtonActionPerformed(ActionEvent evt) {
-		if (runBochsButton.getEventSource() != null) {
-			if (runBochsButton.getEventSource() == runBochsAndSkipBreakpointMenuItem) {
+	private void runVMButtonActionPerformed(ActionEvent evt) {
+		if (runVMButton.getEventSource() != null) {
+			if (runVMButton.getEventSource() == runBochsAndSkipBreakpointMenuItem) {
 				customCommandQueue.clear();
 				commandReceiver.shouldShow = false;
 				String s = JOptionPane.showInputDialog(this, "How many time of breakpoint you want to skip?");
@@ -1577,8 +1590,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					return;
 				}
 				skipBreakpointTime = Integer.parseInt(s);
-				runBochsMenuItemActionPerformed(null);
-			} else if (runBochsButton.getEventSource() == runCustomCommandMenuItem) {
+				runVM();
+			} else if (runVMButton.getEventSource() == runCustomCommandMenuItem) {
 				CustomCommandDialog d = new CustomCommandDialog(this);
 				d.setVisible(true);
 				customCommandQueue.clear();
@@ -1618,14 +1631,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 					skipBreakpointTime = 0;
 					commandReceiver.shouldShow = false;
-					runBochsMenuItemActionPerformed(null);
+					runVM();
 				}
 			}
 		} else {
 			customCommandQueue.clear();
-			commandReceiver.shouldShow = false;
-			if (runBochsButton.getText().equals(MyLanguage.getString("Run_bochs"))) {
-				runBochsMenuItemActionPerformed(null);
+			if (Global.vmType.equals("bochs")) {
+				commandReceiver.shouldShow = false;
+			}
+			if (runVMButton.getText().equals(MyLanguage.getString("Run_bochs"))) {
+				runVM();
 			} else {
 				pauseBochsMenuItemActionPerformed(null);
 			}
@@ -2488,7 +2503,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public void enableAllButtons(boolean b, boolean exceptRunButton) {
 		if (!exceptRunButton) {
-			runBochsButton.setEnabled(b);
+			runVMButton.setEnabled(b);
 		}
 		stepBochsButton.setEnabled(b);
 		stepOverDropDownButton.setEnabled(b);
@@ -3585,7 +3600,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void updateMemory(boolean isPhysicalAddress) {
 		try {
 			if (this.jMemoryAddressComboBox.getSelectedItem() != null) {
-				commandReceiver.shouldShow = false;
+				if (Global.vmType.equals("bochs")) {
+					commandReceiver.shouldShow = false;
+				}
 				currentMemoryWindowsAddress = CommonLib.string2decimal(this.jMemoryAddressComboBox.getSelectedItem().toString());
 				jStatusLabel.setText("Updating memory");
 				int totalByte = 200;
@@ -4934,12 +4951,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			CardLayout jMainPanelLayout = new CardLayout();
 			jMainPanel.setLayout(jMainPanelLayout);
 			{
+				progressBarDialog.jProgressBar.setValue(51);
+				progressBarDialog.jProgressBar.setString("Init GUI - 3.1");
+				
 				jMainPanel.add(getJMaximizableTabbedPane_BasePanel1(), "jMaximizableTabbedPane_BasePanel1");
+				
+				progressBarDialog.jProgressBar.setValue(52);
+				progressBarDialog.jProgressBar.setString("Init GUI - 3.2");
+				
 				jMainPanel.add(getJInstrumentPanel(), "jInstrumentPanel");
+				
+				progressBarDialog.jProgressBar.setValue(53);
+				progressBarDialog.jProgressBar.setString("Init GUI - 3.3");
+				
 				jMainPanel.add(getJRunningLabel(), "Running Label");
 				jMainPanel.add(getLogPanel1(), "logPanel1");
 				jMainPanel.add(getOsLogPanel1(), "oSLogPanel1");
 				jMainPanel.add(getJRunningPanel(), "Running Label 2");
+				
+				progressBarDialog.jProgressBar.setValue(56);
+				progressBarDialog.jProgressBar.setString("Init GUI - 3.4");
 				jMainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
 			}
 		}
@@ -9344,6 +9375,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	@Override
 	public void cancelled() {
+		killVM();
 		System.exit(0);
 	}
 }
