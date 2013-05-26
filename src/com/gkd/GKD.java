@@ -1072,7 +1072,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							}
 						}
 					} else if (Global.vmType.equals("qemu")) {
-						while (libGKD.isRunning()) {
+						while (libGKD.isRunning() || true) {
 							try {
 								Thread.currentThread();
 								Thread.sleep(200);
