@@ -3913,7 +3913,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jDeleteBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			sendCommand("del " + breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]);
+			if (Global.vmType.equals("bochs")) {
+				sendCommand("del " + breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]);
+			} else if (Global.vmType.equals("qemu")) {
+				libGKD.deletePhysicalBreakpoint(CommonLib.string2long(breakpointTable.getValueAt(rows[x], 2).toString()));
+			}
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
@@ -4952,22 +4956,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			{
 				progressBarDialog.jProgressBar.setValue(51);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.1");
-				
+
 				jMainPanel.add(getJMaximizableTabbedPane_BasePanel1(), "jMaximizableTabbedPane_BasePanel1");
-				
+
 				progressBarDialog.jProgressBar.setValue(52);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.2");
-				
+
 				jMainPanel.add(getJInstrumentPanel(), "jInstrumentPanel");
-				
+
 				progressBarDialog.jProgressBar.setValue(53);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.3");
-				
+
 				jMainPanel.add(getJRunningLabel(), "Running Label");
 				jMainPanel.add(getLogPanel1(), "logPanel1");
 				jMainPanel.add(getOsLogPanel1(), "oSLogPanel1");
 				jMainPanel.add(getJRunningPanel(), "Running Label 2");
-				
+
 				progressBarDialog.jProgressBar.setValue(56);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.4");
 				jMainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
