@@ -706,7 +706,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					macApp.addApplicationListener(gkd);
 				}
 
-				Thread loadThread = new Thread() {
+				Thread loadThread = new Thread("gkd.init()") {
 					public void run() {
 						gkd.init();
 						if (Global.debug) {
