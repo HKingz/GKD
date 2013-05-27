@@ -33,10 +33,10 @@
   <fontFamily>Dialog</fontFamily>
   <x>167</x>
   <y>22</y>
-  <width>1221</width>
-  <height>717</height>
+  <width>1200</width>
+  <height>775</height>
   <divX>603</divX>
-  <divY>391</divY>
+  <divY>449</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
