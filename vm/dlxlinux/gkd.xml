@@ -6,24 +6,10 @@
   <breakpoint>
     <com.gkd.Breakpoint>
       <no>0</no>
-      <type>pbreakpoint</type>
-      <address>0x7c01</address>
-      <enable>pbreakpoint</enable>
-      <hit>16</hit>
-    </com.gkd.Breakpoint>
-    <com.gkd.Breakpoint>
-      <no>1</no>
-      <type>pbreakpoint</type>
-      <address>0x7c00</address>
-      <enable>pbreakpoint</enable>
-      <hit>16</hit>
-    </com.gkd.Breakpoint>
-    <com.gkd.Breakpoint>
-      <no>2</no>
-      <type>pbreakpoint</type>
-      <address>0x7c10</address>
-      <enable>pbreakpoint</enable>
-      <hit>16</hit>
+      <type>keep y</type>
+      <address> 0x000000007c00</address>
+      <enable>keep y</enable>
+      <hit>0</hit>
     </com.gkd.Breakpoint>
   </breakpoint>
   <sbAddress/>
@@ -31,12 +17,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>58</x>
+  <x>120</x>
   <y>29</y>
-  <width>1341</width>
-  <height>795</height>
-  <divX>824</divX>
-  <divY>469</divY>
+  <width>1279</width>
+  <height>728</height>
+  <divX>668</divX>
+  <divY>330</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
@@ -49,7 +35,7 @@
   <idt/>
   <ldt/>
   <logToPetersoftServer>false</logToPetersoftServer>
-  <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
+  <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
   <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
   <updateAfterBochsCommand>false</updateAfterBochsCommand>
   <updateAfterBochsCommand__register>false</updateAfterBochsCommand__register>
