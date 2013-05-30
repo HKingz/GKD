@@ -1064,16 +1064,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					if (Global.vmType.equals("bochs")) {
 						while (commandReceiver.getLinesLength() == 0) {
 							try {
-								Thread.currentThread();
 								Thread.sleep(200);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
 					} else if (Global.vmType.equals("qemu")) {
-						while (libGKD.isRunning() || true) {
+						while (libGKD.isRunning()) {
 							try {
-								Thread.currentThread();
 								Thread.sleep(200);
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -5223,7 +5221,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jPanel8 = new JPanel();
 					BorderLayout jPanel8Layout = new BorderLayout();
 					jPanel8.setLayout(jPanel8Layout);
-					jTabbedPane3.addTab("VNC", null, getVncPanel(), null);
+					if (Global.vmType.equals("qemu")) {
+						jTabbedPane3.addTab("VNC", null, getVncPanel(), null);
+					}
 					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8,
 							null);
 					{
