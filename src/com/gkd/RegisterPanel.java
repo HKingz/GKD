@@ -348,7 +348,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 				}
 				{
 					jEFlagLabel = new JLabel();
-					jPanel99.add(jEFlagLabel, new CellConstraints("2, 9, 5, 1, default, default"));
+					jPanel99.add(jEFlagLabel, new CellConstraints("2, 9, 3, 1, default, default"));
 				}
 				{
 					jEFlagLabel2 = new JLabel();
@@ -1009,12 +1009,12 @@ public class RegisterPanel extends javax.swing.JPanel {
 				}
 				{
 					jPTimeLabel = new JLabel();
-					jPanel99.add(jPTimeLabel, new CellConstraints("6, 9, 1, 1, default, default"));
+					jPanel99.add(jPTimeLabel, new CellConstraints("9, 8, 1, 1, default, default"));
 					jPTimeLabel.setText("ptime");
 				}
 				{
 					jPTimeTextField = new JTextField();
-					jPanel99.add(jPTimeTextField, new CellConstraints("7, 9, 1, 1, default, default"));
+					jPanel99.add(jPTimeTextField, new CellConstraints("10, 8, 1, 1, default, default"));
 				}
 				{
 					jFIPLabel = new JLabel();
