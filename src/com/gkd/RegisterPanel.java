@@ -139,8 +139,8 @@ public class RegisterPanel extends javax.swing.JPanel {
 	public JTextField jST2TextField;
 	public JTextField jST1TextField;
 	public JTextField jST0TextField;
-	public JLabel jCR0DetailLabel2;
-	public JLabel jCR0DetailLabel;
+	public JLabel cr0DetailLabel2;
+	public JLabel cr0DetailLabel;
 	public JLabel jEFlagLabel2;
 	public JLabel jEFlagLabel;
 	public JTextField jIDTRLimitTextField;
@@ -672,12 +672,12 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jCR0DetailLabel = new JLabel();
-					jPanel99.add(jCR0DetailLabel, new CellConstraints("9, 2, 4, 1, default, default"));
+					cr0DetailLabel = new JLabel();
+					jPanel99.add(cr0DetailLabel, new CellConstraints("9, 2, 4, 1, default, default"));
 				}
 				{
-					jCR0DetailLabel2 = new JLabel();
-					jPanel99.add(jCR0DetailLabel2, new CellConstraints("9, 3, 4, 1, default, default"));
+					cr0DetailLabel2 = new JLabel();
+					jPanel99.add(cr0DetailLabel2, new CellConstraints("9, 3, 4, 1, default, default"));
 				}
 				{
 					jDR0Label = new JLabel();
@@ -1056,7 +1056,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 				{
 					jStackList = new JList();
 					jPanel99.add(jStackList, new CellConstraints("22, 2, 1, 26, default, default"));
-//					jStackList.setBorder(new LineBorder(new java.awt.Color(200,200,200), 1, false));
+					jStackList.setBorder(new LineBorder(new java.awt.Color(200,200,200), 1, false));
 				}
 			}
 
