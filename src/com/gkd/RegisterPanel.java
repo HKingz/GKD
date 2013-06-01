@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
+import javax.swing.border.LineBorder;
 
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
@@ -170,7 +171,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 	BorderLayout thisLayout = new BorderLayout();
 	FormLayout jPanel2Layout = new FormLayout(
 			"max(p;15dlu), 24dlu, max(p;15dlu), 72dlu, 5dlu, max(p;15dlu), 67dlu, 5dlu, max(p;15dlu), 68dlu, 5dlu, 28dlu, 5dlu, max(p;15dlu), 72dlu, 5dlu, 32dlu, 5dlu, max(p;15dlu), 69dlu, 5dlu, 64dlu", 
-			"max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu)");
+			"max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu), max(p;15dlu)");
 
 	/**
 	 * Auto-generated main method to display this JPanel inside a new JFrame.
@@ -1054,7 +1055,8 @@ public class RegisterPanel extends javax.swing.JPanel {
 				}
 				{
 					jStackList = new JList();
-					jPanel99.add(jStackList, new CellConstraints("22, 2, 1, 30, default, default"));
+					jPanel99.add(jStackList, new CellConstraints("22, 2, 1, 26, default, default"));
+					jStackList.setBorder(new LineBorder(new java.awt.Color(200,200,200), 1, false));
 				}
 			}
 
