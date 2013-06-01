@@ -1056,7 +1056,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 				{
 					jStackList = new JList();
 					jPanel99.add(jStackList, new CellConstraints("22, 2, 1, 26, default, default"));
-					jStackList.setBorder(new LineBorder(new java.awt.Color(200,200,200), 1, false));
+//					jStackList.setBorder(new LineBorder(new java.awt.Color(200,200,200), 1, false));
 				}
 			}
 
