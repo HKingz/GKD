@@ -194,12 +194,12 @@ public class RegisterPanel extends javax.swing.JPanel {
 			BoxLayout thisLayout = new BoxLayout(this, javax.swing.BoxLayout.X_AXIS);
 			this.setLayout(thisLayout);
 			this.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
-			this.setPreferredSize(new java.awt.Dimension(1522, 770));
+			this.setPreferredSize(new java.awt.Dimension(1265, 683));
 			{
 				jPanel99 = new JPanel();
 				this.add(jPanel99, BorderLayout.CENTER);
 				jPanel99.setLayout(jPanel2Layout);
-				jPanel99.setPreferredSize(new java.awt.Dimension(914, 694));
+				jPanel99.setPreferredSize(new java.awt.Dimension(1482, 663));
 				{
 					jCSLabel = new JLabel();
 					jPanel99.add(jCSLabel, new CellConstraints("2, 1, 1, 1, default, default"));
