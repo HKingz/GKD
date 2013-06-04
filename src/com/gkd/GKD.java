@@ -1021,10 +1021,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		WebServiceUtil.log("gkd", "run", null, null, null);
 		try {
 			enableAllButtons(false, true);
-			//			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
-			//				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-			//				cl.show(jMainPanel, "Running Label");
-			//			}
+			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
+				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
+				cl.show(jMainPanel, "Running Label");
+			}
 
 			if (skipBreakpointTime > 0) {
 				if (Global.vmType.equals("bochs")) {
