@@ -887,6 +887,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				}
 			}
+
+			int vncPort = GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()");
+			if (vncPort != -1) {
+				TightVNC.initVNCPanel(this, vncPanel, "127.0.0.1", vncPort, null);
+			}
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_bochs") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_bochs"));
 			ex.printStackTrace();
@@ -3612,7 +3617,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				cr0Detail1 += " ne";
 			}
 			this.registerPanel.cr0DetailLabel.setText(cr0Detail1);
-			
+
 			if (CommonLib.getBit(cr0, 4) == 1) {
 				cr0Detail2 = "ET";
 			} else {
@@ -5285,7 +5290,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jPanel8 = new JPanel();
 					BorderLayout jPanel8Layout = new BorderLayout();
 					jPanel8.setLayout(jPanel8Layout);
-					if (Global.vmType.equals("qemu")) {
+					if (Global.vmType.equals("qemu") || GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
 						jTabbedPane3.addTab("VNC", null, getVncPanel(), null);
 					}
 					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8,
