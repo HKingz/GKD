@@ -1,14 +1,6 @@
 <Setting>
-  <bochsCommandHistory>
-    <string>info r</string>
-    <string>r</string>
-    <string>cregs</string>
-    <string>creg</string>
-  </bochsCommandHistory>
-  <memoryCombo>
-    <string>0x00000000</string>
-    <string>0x7c00</string>
-  </memoryCombo>
+  <bochsCommandHistory/>
+  <memoryCombo/>
   <breakpoint>
     <com.gkd.Breakpoint>
       <no>0</no>
@@ -30,12 +22,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>152</x>
-  <y>22</y>
-  <width>1280</width>
-  <height>788</height>
-  <divX>668</divX>
-  <divY>362</divY>
+  <x>0</x>
+  <y>24</y>
+  <width>1440</width>
+  <height>852</height>
+  <divX>617</divX>
+  <divY>454</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
@@ -76,7 +68,7 @@
   <jmpProfiling>false</jmpProfiling>
   <interruptProfiling>false</interruptProfiling>
   <profilingUpdateGraph>false</profilingUpdateGraph>
-  <lastElfHistoryOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
-  <lastElfHistoryOpenDir2>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
-  <lastMapOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
+  <lastElfHistoryOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
+  <lastElfHistoryOpenDir2>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
+  <lastMapOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
 </Setting>
