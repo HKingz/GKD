@@ -1,0 +1,1 @@
+ mvn install:install-file -Dfile=lib/jzy3d-0.8.4/org.jzy3d-0.8.4.jar -DgroupId=org.jzy3d -DartifactId=jzy3d  -Dversion=0.8.4 -Dpackaging=jar
