@@ -111,10 +111,10 @@ public class OSDebugInfoHelper {
 	public static String getXPath(String xml, String xpathStr) {
 		String str = null;
 		ByteArrayInputStream is;
-		if (xml.toLowerCase().startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
+		if (xml.toLowerCase().startsWith("<?xml version=\"1.0\" encoding=\"utf-8\"?>")) {
 			is = new ByteArrayInputStream(xml.getBytes());
 		} else {
-			is = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xml).getBytes());
+			is = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + xml).getBytes());
 		}
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -136,12 +136,11 @@ public class OSDebugInfoHelper {
 	}
 
 	public static NodeList getXPathNodeList(String xml, String xpathStr) {
-		String str = null;
 		ByteArrayInputStream is;
-		if (xml.toLowerCase().startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")) {
+		if (xml.toLowerCase().startsWith("<?xml version=\"1.0\" encoding=\"utf-8\"?>")) {
 			is = new ByteArrayInputStream(xml.getBytes());
 		} else {
-			is = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + xml).getBytes());
+			is = new ByteArrayInputStream(("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + xml).getBytes());
 		}
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
