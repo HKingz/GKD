@@ -1,6 +1,10 @@
 00000000000i[     ] Bochs x86 Emulator 2.6.2
 00000000000i[     ]   Built from SVN snapshot on May 26, 2013
+<<<<<<< .mine
+00000000000i[     ] Compiled on May 29 2013 at 20:53:36
+=======
 00000000000i[     ] Compiled on Jun  9 2013 at 11:39:22
+>>>>>>> .r5570
 00000000000i[     ] System configuration
 00000000000i[     ]   processors: 1 (cores=1, HT threads=1)
 00000000000i[     ]   A20 line support: yes
@@ -30,7 +34,11 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe
+<<<<<<< .mine
+00000000000i[MEM0 ] allocated memory at 0x7f16840c9010. after alignment, vector=0x7f16840ca000
+=======
 00000000000i[MEM0 ] allocated memory at 0x112db0000. after alignment, vector=0x112db0000
+>>>>>>> .r5570
 00000000000i[MEM0 ] 32.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/Users/peter/install/share/bochs/BIOS-bochs-latest')
@@ -40,7 +48,11 @@
 00000000000i[DEV  ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[     ] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS ] Using local time for initial clock
+<<<<<<< .mine
+00000000000i[CMOS ] Setting initial clock to: Sun Jun  9 21:08:06 2013 (time0=1370783286)
+=======
 00000000000i[CMOS ] Setting initial clock to: Sun Jun  9 20:56:52 2013 (time0=1370782612)
+>>>>>>> .r5570
 00000000000i[     ] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[     ] init_dev of 'pic' plugin device by virtual method
@@ -139,6 +151,7 @@
 00000000000i[     ] reset of 'unmapped' plugin device by virtual method
 00000000000i[     ] reset of 'biosdev' plugin device by virtual method
 00000000000i[     ] reset of 'speaker' plugin device by virtual method
+00000000000i[SPEAK] Using /dev/console for output
 00000000000i[     ] reset of 'extfpuirq' plugin device by virtual method
 00000000000i[     ] reset of 'parallel' plugin device by virtual method
 00000000000i[     ] reset of 'serial' plugin device by virtual method
@@ -167,3 +180,61 @@
 00000000000i[XGUI ] Mouse capture off
 00000000000i[XGUI ] Mouse capture off
 00000000000i[XGUI ] Mouse capture off
+<<<<<<< .mine
+00000004661i[BIOS ] $Revision: 11545 $ $Date: 2012-11-11 09:11:17 +0100 (So, 11. Nov 2012) $
+00000318067i[KBD  ] reset-disable command received
+00000320801i[BIOS ] Starting rombios32
+00000321235i[BIOS ] Shutdown flag 0
+00000321830i[BIOS ] ram_size=0x02000000
+00000322251i[BIOS ] ram_end=32MB
+00000362768i[BIOS ] Found 1 cpu(s)
+00000376955i[BIOS ] bios_table_addr: 0x000fa448 end=0x000fcc00
+00000704752i[PCI  ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001032679i[P2I  ] PCI IRQ routing: PIRQA# set to 0x0b
+00001032698i[P2I  ] PCI IRQ routing: PIRQB# set to 0x09
+00001032717i[P2I  ] PCI IRQ routing: PIRQC# set to 0x0b
+00001032736i[P2I  ] PCI IRQ routing: PIRQD# set to 0x09
+00001032746i[P2I  ] write: ELCR2 = 0x0a
+00001033512i[BIOS ] PIIX3/PIIX4 init: elcr=00 0a
+00001041185i[BIOS ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001043455i[BIOS ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001045564i[BIOS ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001045793i[PIDE ] new BM-DMA address: 0xc000
+00001046410i[BIOS ] region 4: 0x0000c000
+00001048435i[BIOS ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001048668i[ACPI ] new irq line = 11
+00001048680i[ACPI ] new irq line = 9
+00001048709i[ACPI ] new PM base address: 0xb000
+00001048723i[ACPI ] new SM base address: 0xb100
+00001048751i[PCI  ] setting SMRAM control register to 0x4a
+00001212842i[CPU0 ] Enter to System Management Mode
+00001212853i[CPU0 ] RSM: Resuming from System Management Mode
+00001376871i[PCI  ] setting SMRAM control register to 0x0a
+00001391764i[BIOS ] MP table addr=0x000fa520 MPC table addr=0x000fa450 size=0xc8
+00001393520i[BIOS ] SMBIOS table addr=0x000fa530
+00001393578i[MEM0 ] allocate_block: block=0x1f used 0x3 of 0x20
+00001395715i[BIOS ] ACPI tables: RSDP addr=0x000fa650 ACPI DATA addr=0x01ff0000 size=0xf72
+00001398912i[BIOS ] Firmware waking vector 0x1ff00cc
+00001400710i[PCI  ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001401438i[BIOS ] bios_table_cur_addr: 0x000fa674
+00001529055i[VBIOS] VGABios $Id: vgabios.c,v 1.75 2011/10/15 14:07:21 vruppert Exp $
+00001529126i[BXVGA] VBE known Display Interface b0c0
+00001529158i[BXVGA] VBE known Display Interface b0c5
+00001532083i[VBIOS] VBE Bios $Id: vbe.c,v 1.64 2011/07/19 18:25:05 vruppert Exp $
+00001600000i[XGUI ] charmap update. Font Height is 16
+00001871545i[BIOS ] ata0-0: PCHS=306/4/17 translation=none LCHS=306/4/17
+00005748751i[BIOS ] IDE time out
+00017824339i[BIOS ] Booting from 0000:7c00
+00038237295i[BIOS ] int13_harddisk: function 15, unmapped device for ELDL=81
+00038239710i[BIOS ] KBD: unsupported int 16h function 03
+00038243729i[BIOS ] int13_harddisk: function 15, unmapped device for ELDL=81
+00066095252i[MEM0 ] allocate_block: block=0x2 used 0x4 of 0x20
+00070076089i[SER  ] com1: FIFO enabled
+00071589757i[FDD  ] controller reset in software
+00071620608i[FDD  ] controller reset in software
+00071740610i[FDD  ] controller reset in software
+00075126184i[MEM0 ] allocate_block: block=0x1e used 0x5 of 0x20
+00082623607i[MEM0 ] allocate_block: block=0x1d used 0x6 of 0x20
+00082781902i[SER  ] com1: FIFO enabled
+=======
+>>>>>>> .r5570
