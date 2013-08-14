@@ -1,6 +1,8 @@
 <Setting>
   <bochsCommandHistory/>
-  <memoryCombo/>
+  <memoryCombo>
+    <string>0x00000000</string>
+  </memoryCombo>
   <breakpoint>
     <com.gkd.Breakpoint>
       <no>0</no>
@@ -22,10 +24,10 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>0</x>
+  <x>282</x>
   <y>22</y>
-  <width>1440</width>
-  <height>836</height>
+  <width>1489</width>
+  <height>924</height>
   <divX>617</divX>
   <divY>454</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
@@ -40,7 +42,7 @@
   <idt/>
   <ldt/>
   <logToPetersoftServer>false</logToPetersoftServer>
-  <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
+  <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
   <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
   <updateAfterBochsCommand>false</updateAfterBochsCommand>
   <updateAfterBochsCommand__register>false</updateAfterBochsCommand__register>
