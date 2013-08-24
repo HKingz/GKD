@@ -115,6 +115,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.apple.eawt.ApplicationEvent;
@@ -2404,17 +2405,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			AllRegisters.cr4.add(CommonLib.string2BigInteger(registerPanel.cr4TextField.getText()));
 
 			AllRegisters.gdtr.add(CommonLib.string2BigInteger(registerPanel.gdtrTextField.getText()));
-			AllRegisters.idtr.add(CommonLib.string2BigInteger(registerPanel.jIDTRTextField.getText()));
-			AllRegisters.ldtr.add(CommonLib.string2BigInteger(registerPanel.jLDTRTextField.getText()));
+			AllRegisters.idtr.add(CommonLib.string2BigInteger(registerPanel.idtrTextField.getText()));
+			AllRegisters.ldtr.add(CommonLib.string2BigInteger(registerPanel.ldtrTextField.getText()));
 
-			AllRegisters.tr.add(CommonLib.string2BigInteger(registerPanel.jTRTextField.getText()));
+			AllRegisters.tr.add(CommonLib.string2BigInteger(registerPanel.trTextField.getText()));
 
 			AllRegisters.instructions.add(instruction.trim());
 			AllRegisters.cCode.add(getCCodeStr(CommonLib.string2BigInteger(registerPanel.eipTextField.getText())));
 
 			Vector<BigInteger> stack = new Vector<BigInteger>();
-			for (int x = 0; x < registerPanel.jStackList.getModel().getSize(); x++) {
-				stack.add(CommonLib.string2BigInteger(registerPanel.jStackList.getModel().getElementAt(x).toString()));
+			for (int x = 0; x < registerPanel.stackList.getModel().getSize(); x++) {
+				stack.add(CommonLib.string2BigInteger(registerPanel.stackList.getModel().getElementAt(x).toString()));
 			}
 			AllRegisters.stack.add(stack);
 
@@ -2748,7 +2749,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				sendCommand("print-stack 40");
 				String result = commandReceiver.getCommandResultUntilHaveLines(40);
 				String[] lines = result.split("\n");
-				registerPanel.jStackList.removeAll();
+				registerPanel.stackList.removeAll();
 				jStatusProgressBar.setMaximum(lines.length - 1);
 				DefaultListModel model = new DefaultListModel();
 				for (int y = 1; y < lines.length; y++) {
@@ -2760,7 +2761,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} catch (Exception ex2) {
 					}
 				}
-				registerPanel.jStackList.setModel(model);
+				registerPanel.stackList.setModel(model);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -2799,6 +2800,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jStatusProgressBar.setValue(x);
 					try {
 						// load cCode
+						System.out.println(" lines[x]=" + lines[x]);
 						String pcStr = lines[x].substring(0, 8).trim();
 						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
 						if (pc == null) {
@@ -2808,12 +2810,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						String lineNo[] = getCCode(pc, true);
 						if (s != null && lineNo != null) {
 							for (int index = 0; index < s.length; index++) {
-								model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
+								model.addRow(new String[] { "", "cCode : 0x" + StringUtils.leftPad(pc.toString(16), 16, "0") + " : " + lineNo[index], s[index], "" });
 							}
 						}
 						// end load cCode
 
-						model.addRow(new String[] { "", "0x" + pc.toString(16), lines[x].substring(25).trim(), lines[x].substring(8, 8).trim() });
+						model.addRow(new String[] { "", "0x" + StringUtils.leftPad(pc.toString(16), 16, "0"), lines[x].substring(25).trim(), lines[x].substring(8, 8).trim() });
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -3116,7 +3118,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (Global.vmType.equals("bochs")) {
 				commandReceiver.clearBuffer();
 				commandReceiver.shouldShow = false;
-				int limit = Integer.parseInt(this.registerPanel.jIDTRLimitTextField.getText().substring(2), 16);
+				int limit = Integer.parseInt(this.registerPanel.idtrLimitTextField.getText().substring(2), 16);
 				limit = (limit + 1) / 8 - 1;
 				if (limit > 200 || limit < 0) {
 					limit = 200;
@@ -3312,12 +3314,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							changeText(this.registerPanel.gdtrTextField, line.split("=")[1].split(",")[0]);
 							changeText(this.registerPanel.gdtrLimitTextField, str[1].split("=")[1]);
 						} else if (line.matches(".*ldtr.*")) {
-							changeText(this.registerPanel.jLDTRTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.ldtrTextField, line.split("=")[1].split(",")[0]);
 						} else if (line.matches(".*idtr:.*")) {
-							changeText(this.registerPanel.jIDTRTextField, line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.jIDTRLimitTextField, str[1].split("=")[1]);
+							changeText(this.registerPanel.idtrTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.idtrLimitTextField, str[1].split("=")[1]);
 						} else if (line.matches(".*tr:.*")) {
-							changeText(this.registerPanel.jTRTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.trTextField, line.split("=")[1].split(",")[0]);
 						}
 					}
 				} catch (Exception ex) {
@@ -3366,12 +3368,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							changeText(this.registerPanel.gdtrTextField, line.split("=")[1].split(",")[0]);
 							changeText(this.registerPanel.gdtrLimitTextField, str[1].split("=")[1]);
 						} else if (line.matches(".*ldtr.*")) {
-							changeText(this.registerPanel.jLDTRTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.ldtrTextField, line.split("=")[1].split(",")[0]);
 						} else if (line.matches(".*idtr:.*")) {
-							changeText(this.registerPanel.jIDTRTextField, line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.jIDTRLimitTextField, str[1].split("=")[1]);
+							changeText(this.registerPanel.idtrTextField, line.split("=")[1].split(",")[0]);
+							changeText(this.registerPanel.idtrLimitTextField, str[1].split("=")[1]);
 						} else if (line.matches(".*tr:.*")) {
-							changeText(this.registerPanel.jTRTextField, line.split(":")[1].split(",")[0]);
+							changeText(this.registerPanel.trTextField, line.split(":")[1].split(",")[0]);
 						}
 					}
 				} catch (Exception ex) {
@@ -3668,6 +3670,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				changeText(this.registerPanel.gdtrTextField, ht.get("gdtr"));
 				changeText(this.registerPanel.gdtrLimitTextField, ht.get("gdtr_limit"));
+				changeText(this.registerPanel.ldtrTextField, ht.get("ldtr"));
+				changeText(this.registerPanel.idtrTextField, ht.get("idtr"));
+				changeText(this.registerPanel.idtrLimitTextField, ht.get("idtr_limit"));
+
+				changeText(this.registerPanel.trTextField, ht.get("tr"));
 
 				System.out.println(ht);
 			}
@@ -3735,7 +3742,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			JScrollPane temp = new JScrollPane();
-			temp.setViewportView(new GDTLDTPanel(this, 1, CommonLib.string2BigInteger(this.registerPanel.jLDTRTextField.getText()), jLDTTable.getSelectedRow() + 1));
+			temp.setViewportView(new GDTLDTPanel(this, 1, CommonLib.string2BigInteger(this.registerPanel.ldtrTextField.getText()), jLDTTable.getSelectedRow() + 1));
 			jTabbedPane2.addTabWithCloseButton("LDT " + jLDTTable.getSelectedRow(), null, temp, null);
 			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
 		}
@@ -7602,7 +7609,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			jTabbedPane2.addTabWithCloseButton("IDT " + String.format("0x%02x", jIDTTable.getSelectedRow()), null,
-					new IDTDescriptorPanel(this, CommonLib.string2BigInteger(this.registerPanel.jIDTRTextField.getText()), jIDTTable.getSelectedRow()), null);
+					new IDTDescriptorPanel(this, CommonLib.string2BigInteger(this.registerPanel.idtrTextField.getText()), jIDTTable.getSelectedRow()), null);
 			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
 		}
 	}

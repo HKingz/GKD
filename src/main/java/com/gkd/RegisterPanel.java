@@ -72,9 +72,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 	public JTextField dr0TextField;
 	private JLabel jDR0Label;
 	private JLabel jLabel25;
-	public JTextField jTRTextField;
-	public JTextField jIDTRTextField;
-	public JTextField jLDTRTextField;
+	public JTextField trTextField;
+	public JTextField idtrTextField;
+	public JTextField ldtrTextField;
 	public JTextField gdtrTextField;
 	private JLabel jTRLabel;
 	private JLabel jIDTRLabel;
@@ -124,7 +124,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 	private JPanel jPanel1;
 	private JButton jExportExcelButton;
 	private JButton jButton1;
-	public JList jStackList;
+	public JList stackList;
 	public JTextField gdtrLimitTextField;
 	public JTextField cr2TextField;
 	private JLabel jMM3Label;
@@ -143,7 +143,7 @@ public class RegisterPanel extends javax.swing.JPanel {
 	public JLabel cr0DetailLabel;
 	public JLabel jEFlagLabel2;
 	public JLabel jEFlagLabel;
-	public JTextField jIDTRLimitTextField;
+	public JTextField idtrLimitTextField;
 	private JLabel jCR4Label;
 	private JLabel jCR3Label;
 	private JLabel jCR2Label;
@@ -621,9 +621,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jLDTRTextField = new JTextField();
-					jPanel99.add(jLDTRTextField, new CellConstraints("15, 2, 1, 1, default, default"));
-					jLDTRTextField.addKeyListener(new KeyAdapter() {
+					ldtrTextField = new JTextField();
+					jPanel99.add(ldtrTextField, new CellConstraints("15, 2, 1, 1, default, default"));
+					ldtrTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jLDTRTextFieldKeyTyped(evt);
 						}
@@ -640,17 +640,17 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jIDTRTextField = new JTextField();
-					jPanel99.add(jIDTRTextField, new CellConstraints("15, 3, 1, 1, default, default"));
-					jIDTRTextField.addKeyListener(new KeyAdapter() {
+					idtrTextField = new JTextField();
+					jPanel99.add(idtrTextField, new CellConstraints("15, 3, 1, 1, default, default"));
+					idtrTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jIDTRTextFieldKeyTyped(evt);
 						}
 					});
 				}
 				{
-					jIDTRLimitTextField = new JTextField();
-					jPanel99.add(jIDTRLimitTextField, new CellConstraints("17, 3, 1, 1, default, default"));
+					idtrLimitTextField = new JTextField();
+					jPanel99.add(idtrLimitTextField, new CellConstraints("17, 3, 1, 1, default, default"));
 				}
 				{
 					jTRLabel = new JLabel();
@@ -663,9 +663,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					});
 				}
 				{
-					jTRTextField = new JTextField();
-					jPanel99.add(jTRTextField, new CellConstraints("15, 4, 3, 1, default, default"));
-					jTRTextField.addKeyListener(new KeyAdapter() {
+					trTextField = new JTextField();
+					jPanel99.add(trTextField, new CellConstraints("15, 4, 3, 1, default, default"));
+					trTextField.addKeyListener(new KeyAdapter() {
 						public void keyTyped(KeyEvent evt) {
 							jTRTextFieldKeyTyped(evt);
 						}
@@ -1054,9 +1054,9 @@ public class RegisterPanel extends javax.swing.JPanel {
 					jPanel99.add(jFDSTextField, new CellConstraints("4, 27, 1, 1, default, default"));
 				}
 				{
-					jStackList = new JList();
-					jPanel99.add(jStackList, new CellConstraints("22, 2, 1, 26, default, default"));
-					jStackList.setBorder(new LineBorder(new java.awt.Color(200,200,200), 1, false));
+					stackList = new JList();
+					jPanel99.add(stackList, new CellConstraints("22, 2, 1, 26, default, default"));
+					stackList.setBorder(new LineBorder(new java.awt.Color(200,200,200), 1, false));
 				}
 			}
 
@@ -1195,15 +1195,15 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jLDTRLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jLDTRTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.ldtrTextField.getText());
 	}
 
 	private void jIDTRLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jIDTRTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.idtrTextField.getText());
 	}
 
 	private void jTRLabelMouseClicked(MouseEvent evt) {
-		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.jTRTextField.getText());
+		peterBochsDebugger.jMemoryAddressComboBox.setSelectedItem(this.trTextField.getText());
 	}
 
 	private void jCR0LabelMouseClicked(MouseEvent evt) {
@@ -1342,15 +1342,15 @@ public class RegisterPanel extends javax.swing.JPanel {
 	}
 
 	private void jLDTRTextFieldKeyTyped(KeyEvent evt) {
-		GKD.sendCommand("set ldtr=" + jLDTRTextField.getText());
+		GKD.sendCommand("set ldtr=" + ldtrTextField.getText());
 	}
 
 	private void jIDTRTextFieldKeyTyped(KeyEvent evt) {
-		GKD.sendCommand("set idtr=" + jIDTRTextField.getText());
+		GKD.sendCommand("set idtr=" + idtrTextField.getText());
 	}
 
 	private void jTRTextFieldKeyTyped(KeyEvent evt) {
-		GKD.sendCommand("set tr=" + jTRTextField.getText());
+		GKD.sendCommand("set tr=" + trTextField.getText());
 	}
 
 	private void jDR0TextFieldKeyTyped(KeyEvent evt) {

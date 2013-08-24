@@ -13,15 +13,15 @@ import com.gkd.GKD.OSType;
 import com.peterswing.CommonLib;
 
 public class Disassemble {
-	public static String disassemble(int bytes[] , int bits) {
+	public static String disassemble(int bytes[], int bits) {
 		try {
 			FileUtils.writeByteArrayToFile(new File("temp"), CommonLib.intArrayToByteArray(bytes));
 
 			ProcessBuilder pb;
 			if (GKD.os == OSType.mac || GKD.os == OSType.linux) {
-				pb = new ProcessBuilder("ndisasm", "-b " + bits, "temp");
+				pb = new ProcessBuilder("ndisasm", "-b", String.valueOf(bits), "temp");
 			} else {
-				pb = new ProcessBuilder("ndisasm.exe", "-b " + bits, "temp");
+				pb = new ProcessBuilder("ndisasm.exe", "-b", String.valueOf(bits), "temp");
 			}
 
 			pb.redirectErrorStream(true);
