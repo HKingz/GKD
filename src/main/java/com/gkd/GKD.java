@@ -3563,102 +3563,104 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		} else if (Global.vmType.equals("qemu")) {
 			Hashtable<String, Long> ht = libGDB.register();
 
-			changeText(this.registerPanel.csTextField, ht.get("cs"));
-			changeText(this.registerPanel.dsTextField, ht.get("ds"));
-			changeText(this.registerPanel.esTextField, ht.get("es"));
-			changeText(this.registerPanel.fsTextField, ht.get("fs"));
-			changeText(this.registerPanel.gsTextField, ht.get("gs"));
-			changeText(this.registerPanel.jSSTextField, ht.get("ss"));
-			changeText(this.registerPanel.eipTextField, ht.get("eip"));
-			changeText(this.registerPanel.eflagsTextField, ht.get("eflags"));
+			if (ht != null) {
+				changeText(this.registerPanel.csTextField, ht.get("cs"));
+				changeText(this.registerPanel.dsTextField, ht.get("ds"));
+				changeText(this.registerPanel.esTextField, ht.get("es"));
+				changeText(this.registerPanel.fsTextField, ht.get("fs"));
+				changeText(this.registerPanel.gsTextField, ht.get("gs"));
+				changeText(this.registerPanel.jSSTextField, ht.get("ss"));
+				changeText(this.registerPanel.eipTextField, ht.get("eip"));
+				changeText(this.registerPanel.eflagsTextField, ht.get("eflags"));
 
-			changeText(this.registerPanel.eaxTextField, ht.get("eax"));
-			changeText(this.registerPanel.ebxTextField, ht.get("ebx"));
-			changeText(this.registerPanel.ecxTextField, ht.get("ecx"));
-			changeText(this.registerPanel.edxTextField, ht.get("edx"));
-			changeText(this.registerPanel.esiTextField, ht.get("esi"));
-			changeText(this.registerPanel.ediTextField, ht.get("edi"));
-			changeText(this.registerPanel.ebpTextField, ht.get("ebp"));
-			changeText(this.registerPanel.espTextField, ht.get("esp"));
+				changeText(this.registerPanel.eaxTextField, ht.get("eax"));
+				changeText(this.registerPanel.ebxTextField, ht.get("ebx"));
+				changeText(this.registerPanel.ecxTextField, ht.get("ecx"));
+				changeText(this.registerPanel.edxTextField, ht.get("edx"));
+				changeText(this.registerPanel.esiTextField, ht.get("esi"));
+				changeText(this.registerPanel.ediTextField, ht.get("edi"));
+				changeText(this.registerPanel.ebpTextField, ht.get("ebp"));
+				changeText(this.registerPanel.espTextField, ht.get("esp"));
 
-			changeText(this.registerPanel.cr0TextField, ht.get("cr0"));
-			String cr0Detail1 = "";
-			String cr0Detail2 = "";
-			long cr0 = ht.get("cr0");
-			if (CommonLib.getBit(cr0, 31) == 1) {
-				cr0Detail1 = "PG";
-			} else {
-				cr0Detail1 = "pg";
-			}
-			if (CommonLib.getBit(cr0, 30) == 1) {
-				cr0Detail1 += " CD";
-			} else {
-				cr0Detail1 += " cd";
-			}
-			if (CommonLib.getBit(cr0, 29) == 1) {
-				cr0Detail1 += " NW";
-			} else {
-				cr0Detail1 += " nw";
-			}
-			if (CommonLib.getBit(cr0, 18) == 1) {
-				cr0Detail1 += " AM";
-			} else {
-				cr0Detail1 += " am";
-			}
-			if (CommonLib.getBit(cr0, 16) == 1) {
-				cr0Detail1 += " WP";
-			} else {
-				cr0Detail1 += " wp";
-			}
-			if (CommonLib.getBit(cr0, 5) == 1) {
-				cr0Detail1 += " NE";
-			} else {
-				cr0Detail1 += " ne";
-			}
-			this.registerPanel.cr0DetailLabel.setText(cr0Detail1);
+				changeText(this.registerPanel.cr0TextField, ht.get("cr0"));
+				String cr0Detail1 = "";
+				String cr0Detail2 = "";
+				long cr0 = ht.get("cr0");
+				if (CommonLib.getBit(cr0, 31) == 1) {
+					cr0Detail1 = "PG";
+				} else {
+					cr0Detail1 = "pg";
+				}
+				if (CommonLib.getBit(cr0, 30) == 1) {
+					cr0Detail1 += " CD";
+				} else {
+					cr0Detail1 += " cd";
+				}
+				if (CommonLib.getBit(cr0, 29) == 1) {
+					cr0Detail1 += " NW";
+				} else {
+					cr0Detail1 += " nw";
+				}
+				if (CommonLib.getBit(cr0, 18) == 1) {
+					cr0Detail1 += " AM";
+				} else {
+					cr0Detail1 += " am";
+				}
+				if (CommonLib.getBit(cr0, 16) == 1) {
+					cr0Detail1 += " WP";
+				} else {
+					cr0Detail1 += " wp";
+				}
+				if (CommonLib.getBit(cr0, 5) == 1) {
+					cr0Detail1 += " NE";
+				} else {
+					cr0Detail1 += " ne";
+				}
+				this.registerPanel.cr0DetailLabel.setText(cr0Detail1);
 
-			if (CommonLib.getBit(cr0, 4) == 1) {
-				cr0Detail2 = "ET";
-			} else {
-				cr0Detail2 = "et";
-			}
-			if (CommonLib.getBit(cr0, 3) == 1) {
-				cr0Detail2 += " TS";
-			} else {
-				cr0Detail2 += " ts";
-			}
-			if (CommonLib.getBit(cr0, 2) == 1) {
-				cr0Detail2 += " EM";
-			} else {
-				cr0Detail2 += " em";
-			}
-			if (CommonLib.getBit(cr0, 1) == 1) {
-				cr0Detail2 += " MP";
-			} else {
-				cr0Detail2 += " mp";
-			}
-			if (CommonLib.getBit(cr0, 0) == 1) {
-				cr0Detail2 += " PE";
-			} else {
-				cr0Detail2 += " pe";
-			}
-			this.registerPanel.cr0DetailLabel2.setText(cr0Detail2);
+				if (CommonLib.getBit(cr0, 4) == 1) {
+					cr0Detail2 = "ET";
+				} else {
+					cr0Detail2 = "et";
+				}
+				if (CommonLib.getBit(cr0, 3) == 1) {
+					cr0Detail2 += " TS";
+				} else {
+					cr0Detail2 += " ts";
+				}
+				if (CommonLib.getBit(cr0, 2) == 1) {
+					cr0Detail2 += " EM";
+				} else {
+					cr0Detail2 += " em";
+				}
+				if (CommonLib.getBit(cr0, 1) == 1) {
+					cr0Detail2 += " MP";
+				} else {
+					cr0Detail2 += " mp";
+				}
+				if (CommonLib.getBit(cr0, 0) == 1) {
+					cr0Detail2 += " PE";
+				} else {
+					cr0Detail2 += " pe";
+				}
+				this.registerPanel.cr0DetailLabel2.setText(cr0Detail2);
 
-			changeText(this.registerPanel.cr2TextField, ht.get("cr2"));
-			changeText(this.registerPanel.cr3TextField, ht.get("cr3"));
-			changeText(this.registerPanel.cr4TextField, ht.get("cr4"));
+				changeText(this.registerPanel.cr2TextField, ht.get("cr2"));
+				changeText(this.registerPanel.cr3TextField, ht.get("cr3"));
+				changeText(this.registerPanel.cr4TextField, ht.get("cr4"));
 
-			changeText(this.registerPanel.dr0TextField, ht.get("dr0"));
-			changeText(this.registerPanel.dr1TextField, ht.get("dr1"));
-			changeText(this.registerPanel.dr2TextField, ht.get("dr2"));
-			changeText(this.registerPanel.dr3TextField, ht.get("dr3"));
-			changeText(this.registerPanel.dr6TextField, ht.get("dr6"));
-			changeText(this.registerPanel.dr7TextField, ht.get("dr7"));
+				changeText(this.registerPanel.dr0TextField, ht.get("dr0"));
+				changeText(this.registerPanel.dr1TextField, ht.get("dr1"));
+				changeText(this.registerPanel.dr2TextField, ht.get("dr2"));
+				changeText(this.registerPanel.dr3TextField, ht.get("dr3"));
+				changeText(this.registerPanel.dr6TextField, ht.get("dr6"));
+				changeText(this.registerPanel.dr7TextField, ht.get("dr7"));
 
-			changeText(this.registerPanel.gdtrTextField, ht.get("gdtr"));
-			changeText(this.registerPanel.gdtrLimitTextField, ht.get("gdtr_limit"));
+				changeText(this.registerPanel.gdtrTextField, ht.get("gdtr"));
+				changeText(this.registerPanel.gdtrLimitTextField, ht.get("gdtr_limit"));
 
-			System.out.println(ht);
+				System.out.println(ht);
+			}
 		}
 	}
 
@@ -3909,7 +3911,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				sendCommand("vb " + address);
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			libGDB.physicalBreakpoint(CommonLib.string2long(address));
+			libGDB.physicalBreakpoint(CommonLib.string2BigInteger(address));
 		}
 	}
 
@@ -3982,7 +3984,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (Global.vmType.equals("bochs")) {
 				sendCommand("del " + breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]);
 			} else if (Global.vmType.equals("qemu")) {
-				libGDB.deletePhysicalBreakpoint(CommonLib.string2long(breakpointTable.getValueAt(rows[x], 2).toString()));
+				libGDB.deletePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 2).toString()));
 			}
 		}
 		updateBreakpoint();

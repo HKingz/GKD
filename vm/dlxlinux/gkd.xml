@@ -24,10 +24,10 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>186</x>
-  <y>92</y>
-  <width>1191</width>
-  <height>692</height>
+  <x>264</x>
+  <y>70</y>
+  <width>1357</width>
+  <height>775</height>
   <divX>617</divX>
   <divY>365</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
@@ -42,7 +42,7 @@
   <idt/>
   <ldt/>
   <logToPetersoftServer>false</logToPetersoftServer>
-  <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
+  <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
   <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
   <updateAfterBochsCommand>false</updateAfterBochsCommand>
   <updateAfterBochsCommand__register>false</updateAfterBochsCommand__register>
