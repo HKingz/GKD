@@ -3193,6 +3193,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jTextField.setText(newValue);
 	}
 
+	private void changeText(JTextField jTextField, BigInteger value) {
+		String newValue = "0x" + value.toString(16);
+		if (jTextField.getText().equals(newValue)) {
+			jTextField.setForeground(Color.black);
+		} else {
+			jTextField.setForeground(Color.red);
+		}
+		jTextField.setText(newValue);
+	}
+
 	private void changeText(JTextField jTextField, String value) {
 		if (jTextField.getText().equals(value)) {
 			jTextField.setForeground(Color.black);
@@ -3561,7 +3571,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				ex.printStackTrace();
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			Hashtable<String, Long> ht = libGDB.register();
+			Hashtable<String, BigInteger> ht = libGDB.register();
 
 			if (ht != null) {
 				changeText(this.registerPanel.csTextField, ht.get("cs"));
@@ -3585,7 +3595,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				changeText(this.registerPanel.cr0TextField, ht.get("cr0"));
 				String cr0Detail1 = "";
 				String cr0Detail2 = "";
-				long cr0 = ht.get("cr0");
+				BigInteger cr0 = ht.get("cr0");
 				if (CommonLib.getBit(cr0, 31) == 1) {
 					cr0Detail1 = "PG";
 				} else {
@@ -5895,7 +5905,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			int descriptor[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))),
+					8);
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
