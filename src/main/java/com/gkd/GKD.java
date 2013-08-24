@@ -2103,7 +2103,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (Global.debug) {
 					System.out.println("updatePageTable");
 				}
-				updatePageTable(CommonLib.string2decimal(registerPanel.cr3TextField.getText()));
+				updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
 
 				d.jProgressBar.setString("updateStack");
 				if (Global.debug) {
@@ -2302,7 +2302,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					if (Global.debug) {
 						System.out.println("updatePageTable");
 					}
-					updatePageTable(CommonLib.string2decimal(registerPanel.cr3TextField.getText()));
+					updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
 				}
 
 				if (Setting.getInstance().updateAfterBochsCommand_stack) {
@@ -2359,8 +2359,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		for (int x = 0; x < breakpointTable.getRowCount(); x++) {
 			String value = breakpointTable.getValueAt(x, 0).toString();
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-			BigInteger currentIP = CommonLib.string2decimal(registerPanel.eipTextField.getText());
-			if (currentIP.equals(CommonLib.string2decimal(breakpointTable.getValueAt(x, 2).toString()))) {
+			BigInteger currentIP = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+			if (currentIP.equals(CommonLib.string2BigInteger(breakpointTable.getValueAt(x, 2).toString()))) {
 				int hit = CommonLib.string2int(breakpointTable.getValueAt(x, 3).toString());
 				breakpointTable.setValueAt("-" + value, x, 0);
 				breakpointTable.setValueAt(hit + 1, x, 3);
@@ -2380,41 +2380,41 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		try {
 			AllRegisters.time.add(new Date());
 			AllRegisters.ptime.add(registerPanel.jPTimeTextField.getText());
-			AllRegisters.eax.add(CommonLib.string2decimal(registerPanel.eaxTextField.getText()));
-			AllRegisters.ebx.add(CommonLib.string2decimal(registerPanel.ebxTextField.getText()));
-			AllRegisters.ecx.add(CommonLib.string2decimal(registerPanel.ecxTextField.getText()));
-			AllRegisters.edx.add(CommonLib.string2decimal(registerPanel.edxTextField.getText()));
-			AllRegisters.esi.add(CommonLib.string2decimal(registerPanel.esiTextField.getText()));
-			AllRegisters.edi.add(CommonLib.string2decimal(registerPanel.ediTextField.getText()));
-			AllRegisters.ebp.add(CommonLib.string2decimal(registerPanel.ebpTextField.getText()));
-			AllRegisters.esp.add(CommonLib.string2decimal(registerPanel.espTextField.getText()));
+			AllRegisters.eax.add(CommonLib.string2BigInteger(registerPanel.eaxTextField.getText()));
+			AllRegisters.ebx.add(CommonLib.string2BigInteger(registerPanel.ebxTextField.getText()));
+			AllRegisters.ecx.add(CommonLib.string2BigInteger(registerPanel.ecxTextField.getText()));
+			AllRegisters.edx.add(CommonLib.string2BigInteger(registerPanel.edxTextField.getText()));
+			AllRegisters.esi.add(CommonLib.string2BigInteger(registerPanel.esiTextField.getText()));
+			AllRegisters.edi.add(CommonLib.string2BigInteger(registerPanel.ediTextField.getText()));
+			AllRegisters.ebp.add(CommonLib.string2BigInteger(registerPanel.ebpTextField.getText()));
+			AllRegisters.esp.add(CommonLib.string2BigInteger(registerPanel.espTextField.getText()));
 
-			AllRegisters.cs.add(CommonLib.string2decimal(registerPanel.csTextField.getText()));
-			AllRegisters.eip.add(CommonLib.string2decimal(registerPanel.eipTextField.getText()));
-			AllRegisters.ds.add(CommonLib.string2decimal(registerPanel.dsTextField.getText()));
-			AllRegisters.es.add(CommonLib.string2decimal(registerPanel.esTextField.getText()));
-			AllRegisters.fs.add(CommonLib.string2decimal(registerPanel.fsTextField.getText()));
-			AllRegisters.gs.add(CommonLib.string2decimal(registerPanel.gsTextField.getText()));
-			AllRegisters.ss.add(CommonLib.string2decimal(registerPanel.jSSTextField.getText()));
+			AllRegisters.cs.add(CommonLib.string2BigInteger(registerPanel.csTextField.getText()));
+			AllRegisters.eip.add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
+			AllRegisters.ds.add(CommonLib.string2BigInteger(registerPanel.dsTextField.getText()));
+			AllRegisters.es.add(CommonLib.string2BigInteger(registerPanel.esTextField.getText()));
+			AllRegisters.fs.add(CommonLib.string2BigInteger(registerPanel.fsTextField.getText()));
+			AllRegisters.gs.add(CommonLib.string2BigInteger(registerPanel.gsTextField.getText()));
+			AllRegisters.ss.add(CommonLib.string2BigInteger(registerPanel.jSSTextField.getText()));
 			AllRegisters.eflags.add(registerPanel.jEFlagLabel.getText().trim() + registerPanel.jEFlagLabel2.getText().trim());
 
-			AllRegisters.cr0.add(CommonLib.string2decimal(registerPanel.cr0TextField.getText()));
-			AllRegisters.cr2.add(CommonLib.string2decimal(registerPanel.cr2TextField.getText()));
-			AllRegisters.cr3.add(CommonLib.string2decimal(registerPanel.cr3TextField.getText()));
-			AllRegisters.cr4.add(CommonLib.string2decimal(registerPanel.cr4TextField.getText()));
+			AllRegisters.cr0.add(CommonLib.string2BigInteger(registerPanel.cr0TextField.getText()));
+			AllRegisters.cr2.add(CommonLib.string2BigInteger(registerPanel.cr2TextField.getText()));
+			AllRegisters.cr3.add(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
+			AllRegisters.cr4.add(CommonLib.string2BigInteger(registerPanel.cr4TextField.getText()));
 
-			AllRegisters.gdtr.add(CommonLib.string2decimal(registerPanel.gdtrTextField.getText()));
-			AllRegisters.idtr.add(CommonLib.string2decimal(registerPanel.jIDTRTextField.getText()));
-			AllRegisters.ldtr.add(CommonLib.string2decimal(registerPanel.jLDTRTextField.getText()));
+			AllRegisters.gdtr.add(CommonLib.string2BigInteger(registerPanel.gdtrTextField.getText()));
+			AllRegisters.idtr.add(CommonLib.string2BigInteger(registerPanel.jIDTRTextField.getText()));
+			AllRegisters.ldtr.add(CommonLib.string2BigInteger(registerPanel.jLDTRTextField.getText()));
 
-			AllRegisters.tr.add(CommonLib.string2decimal(registerPanel.jTRTextField.getText()));
+			AllRegisters.tr.add(CommonLib.string2BigInteger(registerPanel.jTRTextField.getText()));
 
 			AllRegisters.instructions.add(instruction.trim());
-			AllRegisters.cCode.add(getCCodeStr(CommonLib.string2decimal(registerPanel.eipTextField.getText())));
+			AllRegisters.cCode.add(getCCodeStr(CommonLib.string2BigInteger(registerPanel.eipTextField.getText())));
 
 			Vector<BigInteger> stack = new Vector<BigInteger>();
 			for (int x = 0; x < registerPanel.jStackList.getModel().getSize(); x++) {
-				stack.add(CommonLib.string2decimal(registerPanel.jStackList.getModel().getElementAt(x).toString()));
+				stack.add(CommonLib.string2BigInteger(registerPanel.jStackList.getModel().getElementAt(x).toString()));
 			}
 			AllRegisters.stack.add(stack);
 
@@ -2565,7 +2565,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							try {
 								int bytes[] = new int[4];
 								for (int x = 0; x < 4; x++) {
-									bytes[x] = CommonLib.string2decimal(b[x + z * 4].substring(2).trim()).intValue();
+									bytes[x] = CommonLib.string2BigInteger(b[x + z * 4].substring(2).trim()).intValue();
 								}
 								long value = CommonLib.getInt(bytes, 0);
 								// "No.", "PT base", "AVL", "G",
@@ -2645,7 +2645,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		 * float totalByte2 = 4096 - 1; totalByte2 = totalByte2 / 8; int
 		 * totalByte3 = (int) Math.floor(totalByte2); String realEndAddressStr;
 		 * String realStartAddressStr; String baseAddress = pageTableAddress;
-		 * long realStartAddress = CommonLib.string2decimal(baseAddress);
+		 * long realStartAddress = CommonLib.string2BigInteger(baseAddress);
 		 * 
 		 * realStartAddressStr = String.format("%08x", realStartAddress); long
 		 * realEndAddress = realStartAddress + totalByte3 * 8; realEndAddressStr
@@ -2661,7 +2661,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		 * 
 		 * for (int z = 0; z < 2; z++) { try { int bytes[] = new int[4]; for
 		 * (int x2 = 0; x2 < 4; x2++) { bytes[x2] =
-		 * CommonLib.string2decimal(b[x2 + z *
+		 * CommonLib.string2BigInteger(b[x2 + z *
 		 * 4].substring(2).trim()).intValue(); } long value =
 		 * CommonLib.getInt(bytes, 0);
 		 * 
@@ -2783,9 +2783,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void updateInstructionUsingNasm(BigInteger address) {
 		try {
 			if (address == null) {
-				BigInteger cs = CommonLib.string2decimal(this.registerPanel.csTextField.getText());
-				BigInteger eip = CommonLib.string2decimal(this.registerPanel.eipTextField.getText());
-				eip = eip.and(CommonLib.string2decimal("0xffffffffffffffff"));
+				BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
+				BigInteger eip = CommonLib.string2BigInteger(this.registerPanel.eipTextField.getText());
+				eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 				address = eip;
 			}
 			jStatusLabel.setText("Updating instruction");
@@ -2800,7 +2800,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					try {
 						// load cCode
 						String pcStr = lines[x].substring(0, 8).trim();
-						BigInteger pc = CommonLib.string2decimal("0x" + pcStr);
+						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
 						if (pc == null) {
 							continue;
 						}
@@ -2833,9 +2833,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			String command;
 			jStatusLabel.setText("Updating instruction");
 			if (address == null) {
-				BigInteger cs = CommonLib.string2decimal(this.registerPanel.csTextField.getText());
-				BigInteger eip = CommonLib.string2decimal(this.registerPanel.eipTextField.getText());
-				eip = eip.and(CommonLib.string2decimal("0xffffffffffffffff"));
+				BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
+				BigInteger eip = CommonLib.string2BigInteger(this.registerPanel.eipTextField.getText());
+				eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 				command = "disasm cs:0x" + eip.toString(16) + " 0x" + cs.toString(16) + ":0x" + eip.add(BigInteger.valueOf(0x400)).toString(16);
 			} else {
 				command = "disasm " + address + " " + address.add(BigInteger.valueOf(0x400));
@@ -2858,7 +2858,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 						// load cCode
 						String pcStr = strs[0].trim();
-						BigInteger pc = CommonLib.string2decimal("0x" + pcStr);
+						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
 						if (pc == null) {
 							continue;
 						}
@@ -2889,9 +2889,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			final int maxNoOfByte = 400;
 			jStatusLabel.setText("Updating instruction");
 			if (address == null) {
-				BigInteger cs = CommonLib.string2decimal(this.registerPanel.csTextField.getText());
-				BigInteger eip = CommonLib.string2decimal(this.registerPanel.eipTextField.getText());
-				eip = eip.and(CommonLib.string2decimal("0xffffffffffffffff"));
+				BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
+				BigInteger eip = CommonLib.string2BigInteger(this.registerPanel.eipTextField.getText());
+				eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 				address = eip;
 			}
 			String lines[] = libGDB.disassemble(address, maxNoOfByte);
@@ -2907,7 +2907,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 						// load cCode
 						String pcStr = lines[x].replaceFirst(" *", "");
-						BigInteger pc = CommonLib.string2decimal("0x" + pcStr);
+						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
 						if (pc == null) {
 							continue;
 						}
@@ -2948,7 +2948,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (col1.startsWith("cCode")) {
 				continue;
 			}
-			BigInteger address = CommonLib.string2decimal(col1.toString());
+			BigInteger address = CommonLib.string2BigInteger(col1.toString());
 			if (pc.equals(address)) {
 				return instructionTable.getValueAt(x, 2).toString();
 			}
@@ -3670,7 +3670,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (Global.vmType.equals("bochs")) {
 					commandReceiver.shouldShow = false;
 				}
-				currentMemoryWindowsAddress = CommonLib.string2decimal(this.jMemoryAddressComboBox.getSelectedItem().toString());
+				currentMemoryWindowsAddress = CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString());
 				jStatusLabel.setText("Updating memory");
 				int totalByte = 200;
 				int bytes[] = getMemory(CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte, isPhysicalAddress);
@@ -3711,7 +3711,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			jTabbedPane2.addTabWithCloseButton("GDT " + String.format("0x%02x", jGDTTable.getSelectedRow() + 1), null,
-					new GDTLDTPanel(this, 0, CommonLib.string2decimal(this.registerPanel.gdtrTextField.getText()), jGDTTable.getSelectedRow() + 1), null);
+					new GDTLDTPanel(this, 0, CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()), jGDTTable.getSelectedRow() + 1), null);
 			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
 		}
 	}
@@ -3725,7 +3725,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			JScrollPane temp = new JScrollPane();
-			temp.setViewportView(new GDTLDTPanel(this, 1, CommonLib.string2decimal(this.registerPanel.jLDTRTextField.getText()), jLDTTable.getSelectedRow() + 1));
+			temp.setViewportView(new GDTLDTPanel(this, 1, CommonLib.string2BigInteger(this.registerPanel.jLDTRTextField.getText()), jLDTTable.getSelectedRow() + 1));
 			jTabbedPane2.addTabWithCloseButton("LDT " + jLDTTable.getSelectedRow(), null, temp, null);
 			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
 		}
@@ -3766,7 +3766,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			String realEndAddressStr;
 			String realStartAddressStr;
 			String baseAddress = pageTableAddress;
-			BigInteger realStartAddress = CommonLib.string2decimal(baseAddress);
+			BigInteger realStartAddress = CommonLib.string2BigInteger(baseAddress);
 
 			realStartAddressStr = String.format("%08x", realStartAddress);
 			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
@@ -3787,7 +3787,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					try {
 						int bytes[] = new int[4];
 						for (int x = 0; x < 4; x++) {
-							bytes[x] = CommonLib.string2decimal(b[x + z * 4].substring(2).trim()).intValue();
+							bytes[x] = CommonLib.string2BigInteger(b[x + z * 4].substring(2).trim()).intValue();
 						}
 						long value = CommonLib.getInt(bytes, 0);
 						// "No.", "PT base", "AVL", "G",
@@ -4991,7 +4991,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		try {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 			model.clearData();
-			updateInstruction(CommonLib.string2decimal(this.jInstructionComboBox.getSelectedItem().toString()));
+			updateInstruction(CommonLib.string2BigInteger(this.jInstructionComboBox.getSelectedItem().toString()));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -5875,8 +5875,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				JOptionPane.showMessageDialog(this, "Error, please input <segment selector>:<offset>\n\ne.g. : 0x10:0x12345678", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			BigInteger segSelector = CommonLib.string2decimal(this.jAddressTextField.getText().split(":")[0]);
-			BigInteger address = CommonLib.string2decimal(this.jAddressTextField.getText().split(":")[1]);
+			BigInteger segSelector = CommonLib.string2BigInteger(this.jAddressTextField.getText().split(":")[0]);
+			BigInteger address = CommonLib.string2BigInteger(this.jAddressTextField.getText().split(":")[1]);
 
 			// for (int x = 0; x < model.getRowCount(); x++) {
 			// if (model.searchType.get(x).equals(1) &&
@@ -5895,7 +5895,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			int descriptor[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
@@ -5903,16 +5903,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
-			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2decimal("0xfffff000"));
+			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
 			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
-			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2decimal("0xfffff000"));
+			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
@@ -5929,7 +5929,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// return;
 			// }
 			// }
-			BigInteger address = CommonLib.string2decimal(this.jAddressTextField.getText());
+			BigInteger address = CommonLib.string2BigInteger(this.jAddressTextField.getText());
 
 			model.searchType.add(2);
 			model.searchAddress.add(address);
@@ -5941,16 +5941,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2decimal(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
-			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2decimal("0xfffff000"));
+			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
 			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
-			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2decimal("0xfffff000"));
+			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
@@ -5965,7 +5965,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					return;
 				}
 			}
-			BigInteger addr = CommonLib.string2decimal(this.jAddressTextField.getText());
+			BigInteger addr = CommonLib.string2BigInteger(this.jAddressTextField.getText());
 			model.searchType.add(3);
 			model.searchSegSelector.add(BigInteger.ZERO);
 			model.searchAddress.add(addr);
@@ -6003,8 +6003,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
-				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(CommonLib.string2decimal(this.registerPanel.cr3TextField.getText()),
-						CommonLib.string2decimal(this.registerPanel.gdtrTextField.getText()));
+				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()),
+						CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()));
 				commandReceiver.clearBuffer();
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
 				sendCommand("xp /8bx " + gdtBase);
@@ -6409,10 +6409,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		try {
 			BigInteger eip;
 			if (CommonLib.getBit(CommonLib.string2long(registerPanel.cr0TextField.getText()), 0) == 1) {
-				eip = CommonLib.string2decimal(registerPanel.eipTextField.getText());
+				eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 			} else {
-				eip = CommonLib.string2decimal(registerPanel.csTextField.getText()).multiply(BigInteger.valueOf(16))
-						.add(CommonLib.string2decimal(registerPanel.eipTextField.getText()));
+				eip = CommonLib.string2BigInteger(registerPanel.csTextField.getText()).multiply(BigInteger.valueOf(16))
+						.add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
 			}
 			return eip;
 		} catch (Exception ex) {
@@ -6425,7 +6425,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		BigInteger address = model.getDebugLineInfo().get(model.getCurrentFile()).get(this.elfTable.getSelectedRow());
 
 		for (int x = 0; x < breakpointTable.getRowCount(); x++) {
-			BigInteger addr = CommonLib.string2decimal(breakpointTable.getValueAt(x, 2).toString());
+			BigInteger addr = CommonLib.string2BigInteger(breakpointTable.getValueAt(x, 2).toString());
 			if (addr == address) {
 				String breakpointNo = breakpointTable.getValueAt(x, 0).toString().trim().split(" ")[0];
 				sendCommand("bpe " + breakpointNo);
@@ -6442,7 +6442,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		BigInteger address = model.getDebugLineInfo().get(model.getCurrentFile()).get(this.elfTable.getSelectedRow());
 
 		for (int x = 0; x < breakpointTable.getRowCount(); x++) {
-			BigInteger addr = CommonLib.string2decimal(breakpointTable.getValueAt(x, 2).toString());
+			BigInteger addr = CommonLib.string2BigInteger(breakpointTable.getValueAt(x, 2).toString());
 			if (addr == address) {
 				String breakpointNo = breakpointTable.getValueAt(x, 0).toString().trim().split(" ")[0];
 				sendCommand("bpd " + breakpointNo);
@@ -6986,11 +6986,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jDumpCR3ButtonActionPerformed(ActionEvent evt) {
-		updatePageTable(CommonLib.string2decimal(registerPanel.cr3TextField.getText()));
+		updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
 	}
 
 	private void jDumpPageTableAtAddressButtonActionPerformed(ActionEvent evt) {
-		updatePageTable(CommonLib.string2decimal(jDumpPageDirectoryAddressTextField.getText()));
+		updatePageTable(CommonLib.string2BigInteger(jDumpPageDirectoryAddressTextField.getText()));
 	}
 
 	private JButton getJButton21x() {
@@ -7493,10 +7493,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
 				x++;
 			} while (!CommonLib.isNumber(firstAddress));
-			firstAddress = CommonLib.string2decimal(firstAddress).subtract(BigInteger.valueOf(1)).toString(16);
+			firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(1)).toString(16);
 
 			jInstructionComboBox.setSelectedItem("0x" + firstAddress);
-			updateInstruction(CommonLib.string2decimal("0x" + firstAddress));
+			updateInstruction(CommonLib.string2BigInteger("0x" + firstAddress));
 			updateBreakpointTableColor();
 		}
 	}
@@ -7513,7 +7513,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 
 				jInstructionComboBox.setSelectedItem(firstAddress);
-				updateInstruction(CommonLib.string2decimal(firstAddress));
+				updateInstruction(CommonLib.string2BigInteger(firstAddress));
 				updateBreakpointTableColor();
 			}
 		} catch (Exception ex) {
@@ -7541,10 +7541,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
 			x++;
 		} while (!CommonLib.isNumber(firstAddress));
-		firstAddress = CommonLib.string2decimal(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);
+		firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);
 
 		this.jInstructionComboBox.setSelectedItem("0x" + firstAddress);
-		updateInstruction(CommonLib.string2decimal("0x" + firstAddress));
+		updateInstruction(CommonLib.string2BigInteger("0x" + firstAddress));
 		updateBreakpointTableColor();
 	}
 
@@ -7591,7 +7591,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			jTabbedPane2.addTabWithCloseButton("IDT " + String.format("0x%02x", jIDTTable.getSelectedRow()), null,
-					new IDTDescriptorPanel(this, CommonLib.string2decimal(this.registerPanel.jIDTRTextField.getText()), jIDTTable.getSelectedRow()), null);
+					new IDTDescriptorPanel(this, CommonLib.string2BigInteger(this.registerPanel.jIDTRTextField.getText()), jIDTTable.getSelectedRow()), null);
 			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
 		}
 	}
@@ -9218,16 +9218,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void nextButtonActionPerformed(ActionEvent evt) {
-		BigInteger currentIP = CommonLib.string2decimal(registerPanel.eipTextField.getText());
+		BigInteger currentIP = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 		String nextCCode = null;
 		boolean bingo = false;
 		BigInteger addr = null;
 		for (int x = 0; x < instructionTable.getRowCount() - 1; x++) {
 			String addressColumn = (String) instructionTable.getValueAt(x, 1);
 			if (addressColumn.startsWith("cCode")) {
-				addr = CommonLib.string2decimal(addressColumn.split(":")[1]);
+				addr = CommonLib.string2BigInteger(addressColumn.split(":")[1]);
 			} else {
-				addr = CommonLib.string2decimal(addressColumn);
+				addr = CommonLib.string2BigInteger(addressColumn);
 			}
 			if (bingo && addressColumn.startsWith("cCode") && !addr.equals(currentIP)) {
 				nextCCode = addressColumn;
@@ -9291,16 +9291,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void nextOverButtonActionPerformed(ActionEvent evt) {
-		BigInteger currentIP = CommonLib.string2decimal(registerPanel.eipTextField.getText());
+		BigInteger currentIP = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 		String nextCCode = null;
 		boolean bingo = false;
 		BigInteger addr = null;
 		for (int x = 0; x < instructionTable.getRowCount() - 1; x++) {
 			String addressColumn = (String) instructionTable.getValueAt(x, 1);
 			if (addressColumn.startsWith("cCode")) {
-				addr = CommonLib.string2decimal(addressColumn.split(":")[1]);
+				addr = CommonLib.string2BigInteger(addressColumn.split(":")[1]);
 			} else {
-				addr = CommonLib.string2decimal(addressColumn);
+				addr = CommonLib.string2BigInteger(addressColumn);
 			}
 			if (bingo && addressColumn.startsWith("cCode") && !addr.equals(currentIP)) {
 				nextCCode = addressColumn;
