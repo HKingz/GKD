@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.peter</groupId>
 	<artifactId>GKD</artifactId>
-	<version>20130717</version>
+	<version>20130818</version>
 	<build>
 		<plugins>
 			<plugin>
@@ -119,11 +119,6 @@
 			<version>20130520</version>
 		</dependency>
 		<dependency>
-			<groupId>com.peter</groupId>
-			<artifactId>libgkd</artifactId>
-			<version>20130717</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.4</version>
@@ -142,6 +137,11 @@
 			<groupId>com.peter</groupId>
 			<artifactId>tightvncpanel</artifactId>
 			<version>20130717</version>
+		</dependency>
+		<dependency>
+			<groupId>com.peter</groupId>
+			<artifactId>JLibGDB</artifactId>
+			<version>20130818</version>
 		</dependency>
 	</dependencies>
 </project>

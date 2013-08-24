@@ -132,8 +132,7 @@ import com.gkd.osdebuginformation.JOSDebugInformationPanel;
 import com.gkd.osdebuginformation.OSDebugInfoHelper;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
 import com.gkd.webservice.WebServiceUtil;
-import com.libgkd.Breakpoint;
-import com.libgkd.LibGKD;
+import com.jlibgdb.JLibGDB;
 import com.peter.tightvncpanel.TightVNC;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
@@ -504,7 +503,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private boolean isupdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
-	private static LibGKD libGKD;
+	private static JLibGDB libGDB;
 	private JProgressBarDialog progressBarDialog;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
@@ -656,7 +655,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			System.err.println("<vmType> only supports qemu and bochs");
 		}
 		if (Global.vmType.equals("qemu")) {
-			libGKD = new LibGKD("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
+			libGDB = new JLibGDB("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
 		}
 
 		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
@@ -1058,7 +1057,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				commandReceiver.clearBuffer();
 				sendCommand("c");
 			} else if (Global.vmType.equals("qemu")) {
-				String r = libGKD._continue();
+				String r = libGDB._continue();
 			}
 			runVMButton.setText(MyLanguage.getString("Pause_bochs"));
 			runVMButton.setToolTipText("Pause emulation");
@@ -1075,7 +1074,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							}
 						}
 					} else if (Global.vmType.equals("qemu")) {
-						while (libGKD.isRunning()) {
+						while (libGDB.isRunning()) {
 							try {
 								Thread.sleep(200);
 							} catch (Exception e) {
@@ -1695,7 +1694,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (Global.vmType.equals("bochs")) {
 				sendCommand("s");
 			} else {
-				libGKD.singleStep();
+				libGDB.singleStep();
 			}
 			WebServiceUtil.log("gkd", "step", null, null, null);
 			updateVMStatus(true);
@@ -1813,7 +1812,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							if (Global.vmType.equals("bochs")) {
 								sendCommand("s");
 							} else if (Global.vmType.equals("bochs")) {
-								libGKD.singleStep();
+								libGDB.singleStep();
 							}
 
 							result = update(result, out);
@@ -1839,7 +1838,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							if (Global.vmType.equals("bochs")) {
 								sendCommand("next");
 							} else if (Global.vmType.equals("bochs")) {
-								libGKD.singleStep();
+								libGDB.singleStep();
 							}
 							result = update(result, out);
 							jBochsEditorPane.setText("");
@@ -2130,7 +2129,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 				updateBreakpointTableColor();
 
-				if (Global.osDebug != -1) {
+				if (Global.osDebug.compareTo(BigInteger.valueOf(-1)) != 0) {
 					d.jProgressBar.setString("update OS debug informations");
 					if (Global.debug) {
 						System.out.println("update OS debug informations");
@@ -2161,7 +2160,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						sendCommand("disasm");
 						result = commandReceiver.getCommandResultUntilEnd();
 					} else if (Global.vmType.equals("qemu")) {
-						result = Disassemble.disassemble(libGKD.physicalMemory(getRealEIP().longValue(), 50), 32);
+						result = Disassemble.disassemble(libGDB.physicalMemory(getRealEIP(), 50), 32);
 					}
 					updateHistoryTable(result);
 				}
@@ -2231,8 +2230,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			String magicByte = getMemoryStr(Global.osDebug, 8, true);
 			CardLayout cl = (CardLayout) (jOSDebugStandardPanel.getLayout());
 			if (magicByte.equals("PETER---")) {
-				size = CommonLib.getInt(getMemory(Global.osDebug + 8, 4, true), 0);
-				String xml = getMemoryStr(Global.osDebug + 12, (int) size, true).trim();
+				size = CommonLib.getInt(getMemory(Global.osDebug.add(BigInteger.valueOf(8)), 4, true), 0);
+				String xml = getMemoryStr(Global.osDebug.add(BigInteger.valueOf(12)), (int) size, true).trim();
 				OSDebugInfoHelper.jOSDebugInformationPanel = jOSDebugInformationPanel1;
 
 				OSDebugInfoHelper.addData(magicByte, size, xml);
@@ -2790,7 +2789,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				address = eip;
 			}
 			jStatusLabel.setText("Updating instruction");
-			int bytes[] = libGKD.physicalMemory(address.longValue(), 50);
+			int bytes[] = libGDB.physicalMemory(address, 50);
 			String result = Disassemble.disassemble(bytes, 32);
 			String lines[] = result.split("\n");
 			if (lines.length > 0) {
@@ -2895,7 +2894,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				eip = eip.and(CommonLib.string2decimal("0xffffffffffffffff"));
 				address = eip;
 			}
-			String lines[] = libGKD.disassemble(address, maxNoOfByte);
+			String lines[] = libGDB.disassemble(address, maxNoOfByte);
 			if (lines.length > 0) {
 				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 				jStatusProgressBar.setMaximum(lines.length - 1);
@@ -3562,7 +3561,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				ex.printStackTrace();
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			Hashtable<String, Long> ht = libGKD.register();
+			Hashtable<String, Long> ht = libGDB.register();
 
 			changeText(this.registerPanel.csTextField, ht.get("cs"));
 			changeText(this.registerPanel.dsTextField, ht.get("ds"));
@@ -3672,7 +3671,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				currentMemoryWindowsAddress = CommonLib.string2decimal(this.jMemoryAddressComboBox.getSelectedItem().toString());
 				jStatusLabel.setText("Updating memory");
 				int totalByte = 200;
-				int bytes[] = getMemory(CommonLib.string2long(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte, isPhysicalAddress);
+				int bytes[] = getMemory(CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte, isPhysicalAddress);
 				jStatusLabel.setText("");
 				hexTable.getModel().setCurrentAddress(CommonLib.string2long(this.jMemoryAddressComboBox.getSelectedItem().toString()));
 				hexTable.getModel().set(bytes);
@@ -3861,9 +3860,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				while (model.getRowCount() > 0) {
 					model.removeRow(0);
 				}
-				Vector<Breakpoint> breakpoints = libGKD.listBreakpoint();
+				Vector<com.jlibgdb.Breakpoint> breakpoints = libGDB.listBreakpoint();
 				int x = 0;
-				for (Breakpoint bp : breakpoints) {
+				for (com.jlibgdb.Breakpoint bp : breakpoints) {
 					model.addRow(new String[] { String.valueOf(x++), "pbreakpoint", "0x" + Long.toHexString(bp.addr), "0x" + Long.toHexString(bp.flag) });
 				}
 			}
@@ -3910,7 +3909,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				sendCommand("vb " + address);
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			libGKD.physicalBreakpoint(CommonLib.string2long(address));
+			libGDB.physicalBreakpoint(CommonLib.string2long(address));
 		}
 	}
 
@@ -3983,7 +3982,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (Global.vmType.equals("bochs")) {
 				sendCommand("del " + breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]);
 			} else if (Global.vmType.equals("qemu")) {
-				libGKD.deletePhysicalBreakpoint(CommonLib.string2long(breakpointTable.getValueAt(rows[x], 2).toString()));
+				libGDB.deletePhysicalBreakpoint(CommonLib.string2long(breakpointTable.getValueAt(rows[x], 2).toString()));
 			}
 		}
 		updateBreakpoint();
@@ -7074,15 +7073,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		this.jBochsEditorPane.setText("");
 	}
 
-	public static int[] getPhysicalMemory(long address, int totalByte) {
+	public static int[] getPhysicalMemory(BigInteger address, int totalByte) {
 		return getMemory(address, totalByte, true);
 	}
 
-	public static int[] getLinearMemory(long address, int totalByte) {
+	public static int[] getLinearMemory(BigInteger address, int totalByte) {
 		return getMemory(address, totalByte, false);
 	}
 
-	public static int[] getMemory(long address, int totalByte, boolean isPhysicalAddress) {
+	public static int[] getMemory(BigInteger address, int totalByte, boolean isPhysicalAddress) {
 		if (Global.vmType.equals("bochs")) {
 			try {
 				commandReceiver.clearBuffer();
@@ -7100,9 +7099,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					int totalByte3 = (int) Math.floor(totalByte2);
 					String realEndAddressStr;
 					String realStartAddressStr;
-					long realStartAddress = address;
+					BigInteger realStartAddress = address;
 					realStartAddressStr = String.format("%08x", realStartAddress);
-					long realEndAddress = realStartAddress + totalByte3 * 8;
+					BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
 					realEndAddressStr = String.format("%08x", realEndAddress);
 					String result = commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
 					if (result != null) {
@@ -7129,16 +7128,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		} else if (Global.vmType.equals("qemu")) {
 			if (isPhysicalAddress) {
-				return libGKD.physicalMemory(address, totalByte);
+				return libGDB.physicalMemory(address, totalByte);
 			} else {
-				return libGKD.virtualMemory(address, totalByte);
+				return libGDB.virtualMemory(address, totalByte);
 			}
 		} else {
 			return null;
 		}
 	}
 
-	private static String getMemoryStr(long address, int totalByte, boolean isPhysicalAddress) {
+	private static String getMemoryStr(BigInteger address, int totalByte, boolean isPhysicalAddress) {
 		int bytes[] = getMemory(address, totalByte, isPhysicalAddress);
 		String str = "";
 		for (int x = 0; x < bytes.length; x++) {
@@ -8067,7 +8066,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JLabel getJOSDebugInfoErrorLabel() {
 		if (jOSDebugInfoErrorLabel == null) {
 			jOSDebugInfoErrorLabel = new JLabel();
-			if (Global.osDebug == -1) {
+			if (Global.osDebug.compareTo(BigInteger.valueOf(-1)) == 0) {
 				jOSDebugInfoErrorLabel.setText("Parameter -osdebug is not specified.");
 			} else {
 				jOSDebugInfoErrorLabel.setText("OS debug information not found - wrong magic bytes.");

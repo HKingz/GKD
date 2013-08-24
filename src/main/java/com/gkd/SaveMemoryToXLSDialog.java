@@ -25,10 +25,14 @@ import javax.swing.UIManager;
 import com.peterswing.CommonLib;
 
 /**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI Builder, which is free for non-commercial use. If Jigloo is being used commercially (ie, by a
- * corporation, company or business for any purpose whatever) then you should purchase a license for each developer using Jigloo. Please visit www.cloudgarden.com for details. Use
- * of Jigloo implies acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR ANY
- * CORPORATE OR COMMERCIAL PURPOSE.
+ * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
+ * Builder, which is free for non-commercial use. If Jigloo is being used
+ * commercially (ie, by a corporation, company or business for any purpose
+ * whatever) then you should purchase a license for each developer using Jigloo.
+ * Please visit www.cloudgarden.com for details. Use of Jigloo implies
+ * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
+ * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
+ * ANY CORPORATE OR COMMERCIAL PURPOSE.
  */
 public class SaveMemoryToXLSDialog extends javax.swing.JDialog {
 	public JRadioButton jCurrentWindowRadioButton;
@@ -180,7 +184,7 @@ public class SaveMemoryToXLSDialog extends javax.swing.JDialog {
 							file = new File(file.getAbsolutePath() + ".xls");
 						}
 						GKD.commandReceiver.shouldShow = false;
-						int bytes[] = GKD.getMemory(CommonLib.convertFilesize(jFromTextField.getText()), totalByte, true);
+						int bytes[] = GKD.getMemory(CommonLib.string2BigInteger(jFromTextField.getText()), totalByte, true);
 						GKDCommonLib.exportTableModelToExcel(file, bytes, jFromTextField.getText(), CommonLib.convertFilesize(jFromTextField.getText()));
 					}
 				}

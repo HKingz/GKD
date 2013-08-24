@@ -114,7 +114,7 @@ public class IDTDescriptorPanel extends JPanel {
 			GKD.commandReceiver.clearBuffer();
 			GKD.sendCommand("x /8bx " + String.format("0x%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
 			result = GKD.commandReceiver.getCommandResult(String.format("%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
-			System.out.println("idtNo=" + idtNo + " , idtAddress+" + idtAddress + " , " + (idtAddress.add (BigInteger.valueOf(idtNo * 8))));
+			System.out.println("idtNo=" + idtNo + " , idtAddress+" + idtAddress + " , " + (idtAddress.add(BigInteger.valueOf(idtNo * 8))));
 			System.out.println(result);
 			String lines[] = result.split("\n");
 
@@ -198,9 +198,9 @@ public class IDTDescriptorPanel extends JPanel {
 		try {
 			DefaultTableModel model = (DefaultTableModel) jFieldTable.getModel();
 
-			long base = CommonLib.getInt(b[2], b[3], b[4], b[7]);
+			BigInteger base = BigInteger.valueOf(CommonLib.getInt(b[2], b[3], b[4], b[7]));
 			long limit = CommonLib.getShort(b[0], b[1]);
-			model.addRow(new String[] { "base", "0x" + Long.toHexString(base) });
+			model.addRow(new String[] { "base", "0x" + base.toString(16) });
 			model.addRow(new String[] { "limit", "0x" + Long.toHexString(limit) });
 			model.addRow(new String[] { "dpl", "0x" + Long.toHexString(bit[46] << 1 + bit[45]) });
 			model.addRow(new String[] { "p", "0x" + Long.toHexString(bit[47]) });
