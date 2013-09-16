@@ -2790,7 +2790,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				address = eip;
 			}
 			jStatusLabel.setText("Updating instruction");
-			int bytes[] = libGDB.physicalMemory(address, 50);
+			int bytes[] = libGDB.physicalMemory(address, 200);
 			String result = Disassemble.disassemble(bytes, 32);
 			String lines[] = result.split("\n");
 			if (lines.length > 0) {
@@ -2800,7 +2800,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jStatusProgressBar.setValue(x);
 					try {
 						// load cCode
-						System.out.println(" lines[x]=" + lines[x]);
 						String pcStr = lines[x].substring(0, 8).trim();
 						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
 						if (pc == null) {
@@ -2810,12 +2809,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						String lineNo[] = getCCode(pc, true);
 						if (s != null && lineNo != null) {
 							for (int index = 0; index < s.length; index++) {
-								model.addRow(new String[] { "", "cCode : 0x" + StringUtils.leftPad(pc.toString(16), 16, "0") + " : " + lineNo[index], s[index], "" });
+								model.addRow(new String[] { "", "cCode : 0x" + StringUtils.leftPad(address.add(pc).toString(16), 16, "0") + " : " + lineNo[index], s[index], "" });
 							}
 						}
 						// end load cCode
 
-						model.addRow(new String[] { "", "0x" + StringUtils.leftPad(pc.toString(16), 16, "0"), lines[x].substring(25).trim(), lines[x].substring(8, 8).trim() });
+						model.addRow(new String[] { "", "0x" + StringUtils.leftPad(address.add(pc).toString(16), 16, "0"), lines[x].substring(25).trim(),
+								lines[x].substring(8, 8).trim() });
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
