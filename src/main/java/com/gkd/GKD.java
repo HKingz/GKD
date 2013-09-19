@@ -1564,13 +1564,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void pauseVMMenuItemActionPerformed(ActionEvent evt) {
-		skipBreakpointTime = 0;
-		pauseBochs(true, true);
+		if (Global.vmType.equals("bochs")) {
+			pauseBochsMenuItemActionPerformed(evt);
+		} else if (Global.vmType.equals("qemu")) {
+			pauseQemuMenuItemActionPerformed(evt);
+		}
 	}
-	
+
 	private void pauseBochsMenuItemActionPerformed(ActionEvent evt) {
 		skipBreakpointTime = 0;
 		pauseBochs(true, true);
+	}
+
+	private void pauseQemuMenuItemActionPerformed(ActionEvent evt) {
+		skipBreakpointTime = 0;
+		//pauseBochs(true, true);
+		System.out.println("pauseQemuMenuItemActionPerformed");
 	}
 
 	private void startVMButtonActionPerformed(ActionEvent evt) {
@@ -1659,7 +1668,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (runVMButton.getText().equals(MyLanguage.getString("run"))) {
 				runVM();
 			} else {
-				pauseBochsMenuItemActionPerformed(null);
+				pauseVMMenuItemActionPerformed(null);
 			}
 		}
 	}
