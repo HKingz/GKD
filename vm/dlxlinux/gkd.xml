@@ -24,8 +24,15 @@
     <string>getfd</string>
     <string></string>
     <string>query-target</string>
+    <string>query-machines</string>
+    <string>human-monitor-command</string>
+    <string>human-monitor-command info registers</string>
   </vmCommandHistory>
-  <memoryCombo/>
+  <memoryCombo>
+    <string>0x600004a8</string>
+    <string>0x7bcc</string>
+    <string>0x7f1c</string>
+  </memoryCombo>
   <breakpoint/>
   <sbAddress/>
   <sbaAddress/>

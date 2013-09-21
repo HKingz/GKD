@@ -1575,7 +1575,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				} else {
 					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
-					qmpCommand += "{ \"execute\": \"" + command + "\" }";
+					if (qmpCommand.contains(" ")) {
+						qmpCommand += "{ \"execute\": \"" + command.split(" ")[0] + "\", \"arguments\": { \"command-line\": \"" + command.replaceFirst("^[^ ]*", "") + "\" }}";
+					} else {
+						qmpCommand += "{ \"execute\": \"" + command + "\" }";
+					}
 					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
 				}
 				if (r != null) {
