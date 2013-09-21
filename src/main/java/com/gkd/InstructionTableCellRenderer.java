@@ -2,6 +2,7 @@ package com.gkd;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -10,6 +11,7 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
 import com.gkd.syntaxhighlight.Keywords;
+import com.peterswing.CommonLib;
 
 public class InstructionTableCellRenderer extends JLabel implements TableCellRenderer {
 	ImageIcon hereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red.png"));
@@ -21,6 +23,7 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 	Color alterRow = new Color(0xf8f8f8);
 
 	public InstructionTableCellRenderer() {
+		this.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		this.setOpaque(true);
 		this.setHorizontalAlignment(SwingConstants.LEFT);
 	}
@@ -49,9 +52,7 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 					this.setIcon(null);
 				}
 				this.setText(null);
-				return this;
-			}
-			if (table.getValueAt(row, 1).toString().startsWith("cCode")) {
+			} else if (table.getValueAt(row, 1).toString().startsWith("cCode")) {
 				if (column == 1) {
 					String str = ((String) table.getValueAt(row, 1)).replaceAll("cCode : ", "");
 					this.setText(String.format("%40s", str));
@@ -71,7 +72,10 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 				if (column == 2) {
 					String asmCode = (String) value;
 					asmCode = asmCode.replaceAll(Keywords.asmKeywords.toLowerCase(), "<font color=red>$0&nbsp;</font>");
-					this.setText("<html>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + asmCode + "</html>");
+					this.setText("<html><body>&nbsp;" + asmCode + "</body></html>");
+					this.setIcon(null);
+				} else if (column == 3) {
+					this.setText((String) value);
 					this.setIcon(null);
 				} else {
 					String s = (String) value;
@@ -83,10 +87,16 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 							this.setText(s);
 						}
 					} else {
-						this.setText(s);
+						this.setText("0x" + CommonLib.string2BigInteger(s).toString(16));
 					}
 					this.setIcon(null);
 				}
+			}
+
+			if (column == 1) {
+				this.setHorizontalAlignment(JLabel.RIGHT);
+			} else {
+				this.setHorizontalAlignment(JLabel.LEFT);
 			}
 		} catch (Exception ex) {
 

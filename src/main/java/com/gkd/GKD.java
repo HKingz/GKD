@@ -115,7 +115,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.apple.eawt.ApplicationEvent;
@@ -499,7 +498,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem loadElfMenuItem = new JMenuItem("Load ELF");
 	private String latestVersionURL;
 	private boolean saveToRunDotTxt;
-	private boolean processPauseBochs;
+	private boolean processPauseVM;
 	private int skipBreakpointTime;
 	private boolean isupdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
@@ -930,7 +929,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}.start();
 
 			Thread.sleep(200);
-			TightVNC.initVNCPanel(this, vncPanel, "127.0.0.1", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
+			if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
+				TightVNC.initVNCPanel(this, vncPanel, "127.0.0.1", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
+			}
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_qemu") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_qemu"));
 			ex.printStackTrace();
@@ -976,9 +977,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private synchronized void pauseBochs(boolean pauseBochsManually, boolean resumeMainPanel) {
-		if (!processPauseBochs) {
-			processPauseBochs = true;
+	private synchronized void pauseVM(boolean pauseVMManually, boolean resumeMainPanel) {
+		if (!processPauseVM) {
+			processPauseVM = true;
 			try {
 				if (runVMButton.getText().equals(MyLanguage.getString("pause"))) {
 					WebServiceUtil.log("gkd", "pause", null, null, null);
@@ -987,13 +988,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						commandReceiver.waitUntilNoInput();
 					}
 
-					if (pauseBochsManually) {
-						if (os == OSType.mac || os == OSType.linux) {
-							ProcessBuilder pb = new ProcessBuilder("killall", "-2", "bochs");
-							pb.start();
-						} else {
-							ProcessBuilder pb = new ProcessBuilder("PauseBochs.exe");
-							pb.start();
+					if (pauseVMManually) {
+						if (Global.vmType.equals("bochs")) {
+							if (os == OSType.mac || os == OSType.linux) {
+								ProcessBuilder pb = new ProcessBuilder("killall", "-2", "bochs");
+								pb.start();
+							} else {
+								ProcessBuilder pb = new ProcessBuilder("PauseBochs.exe");
+								pb.start();
+							}
+						} else if (Global.vmType.equals("qemu")) {
+							libGDB.ctrlC();
 						}
 					}
 
@@ -1018,7 +1023,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
-			processPauseBochs = false;
+			processPauseVM = false;
 		}
 	}
 
@@ -1090,18 +1095,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					skipBreakpointTime--;
 					if (skipBreakpointTime > 0) {
 						if (Global.vmType.equals("bochs")) {
-							pauseBochs(false, false); // update register, not really
-														// want to pause because it
-														// already paused
+							pauseVM(false, false); // update register, not really
+													// want to pause because it
+													// already paused
 						}
 						waitUpdateFinish();
 
 						runVM();
 					} else if (customCommandQueue.size() > 0) {
 						if (Global.vmType.equals("bochs")) {
-							pauseBochs(false, false); // update register, not really
-														// want to pause because it
-														// already paused
+							pauseVM(false, false); // update register, not really
+													// want to pause because it
+													// already paused
 
 							waitUpdateFinish();
 
@@ -1124,7 +1129,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						// waitUpdateFinish();
 					} else {
 						if (Global.vmType.equals("bochs")) {
-							pauseBochs(false, true);
+							pauseVM(false, true);
 						}
 						waitUpdateFinish();
 					}
@@ -1564,22 +1569,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void pauseVMMenuItemActionPerformed(ActionEvent evt) {
-		if (Global.vmType.equals("bochs")) {
-			pauseBochsMenuItemActionPerformed(evt);
-		} else if (Global.vmType.equals("qemu")) {
-			pauseQemuMenuItemActionPerformed(evt);
-		}
-	}
-
-	private void pauseBochsMenuItemActionPerformed(ActionEvent evt) {
 		skipBreakpointTime = 0;
-		pauseBochs(true, true);
-	}
-
-	private void pauseQemuMenuItemActionPerformed(ActionEvent evt) {
-		skipBreakpointTime = 0;
-		//pauseBochs(true, true);
-		System.out.println("pauseQemuMenuItemActionPerformed");
+		pauseVM(true, true);
 	}
 
 	private void startVMButtonActionPerformed(ActionEvent evt) {
@@ -2069,12 +2060,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		isupdateVMStatusEnd = false;
 		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);
 		final JProgressBarDialog d = new JProgressBarDialog(this, true);
+		enableAllButtons(false, skipBreakpointTime > 0);
 		Thread updateThread = new Thread("updateVMStatus thread") {
 			public void run() {
 				if (Global.debug) {
 					System.out.println("updateVMStatus thread start");
 				}
-				enableAllButtons(false, skipBreakpointTime > 0);
 
 				d.jProgressBar.setString("update ptime");
 				if (Global.debug) {
@@ -2185,7 +2176,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						sendCommand("disasm");
 						result = commandReceiver.getCommandResultUntilEnd();
 					} else if (Global.vmType.equals("qemu")) {
-						result = Disassemble.disassemble(libGDB.physicalMemory(getRealEIP(), 50), 32);
+						result = Disassemble.disassemble(libGDB.physicalMemory(getRealEIP(), 50), 32, getRealEIP());
 					}
 					updateHistoryTable(result);
 				}
@@ -2204,9 +2195,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 													// load once
 					}
 				}
-
 				jumpToRowInstructionTable(getRealEIP());
-
 				d.jProgressBar.setString("updateVMStatus end");
 				d.setVisible(false);
 
@@ -2499,7 +2488,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				ex.printStackTrace();
 			}
 		} else if (Global.vmType.equals("qemu")) {
-			//fuck
+
 		}
 	}
 
@@ -2815,7 +2804,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			jStatusLabel.setText("Updating instruction");
 			int bytes[] = libGDB.physicalMemory(address, 200);
-			String result = Disassemble.disassemble(bytes, 32);
+			String result = Disassemble.disassemble(bytes, 32, address);
 			String lines[] = result.split("\n");
 			if (lines.length > 0) {
 				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
@@ -2824,22 +2813,35 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jStatusProgressBar.setValue(x);
 					try {
 						// load cCode
-						String pcStr = lines[x].substring(0, 8).trim();
-						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
-						if (pc == null) {
-							continue;
-						}
-						String s[] = getCCode(pc, false);
-						String lineNo[] = getCCode(pc, true);
-						if (s != null && lineNo != null) {
-							for (int index = 0; index < s.length; index++) {
-								model.addRow(new String[] { "", "cCode : 0x" + StringUtils.leftPad(address.add(pc).toString(16), 16, "0") + " : " + lineNo[index], s[index], "" });
-							}
-						}
-						// end load cCode
 
-						model.addRow(new String[] { "", "0x" + StringUtils.leftPad(address.add(pc).toString(16), 16, "0"), lines[x].substring(25).trim(),
-								lines[x].substring(8, 8).trim() });
+						//						System.out.println("pcStr=" + pcStr);
+						//						if (!pcStr.matches("^[0-9a-fA-F].*")) {
+						//							System.out.println("fuck ar=" + pcStr);
+						//							System.exit(1);
+						//						}
+						String temp[] = lines[x].split("  +");
+						if (temp.length == 3) {
+							String pcStr = temp[0].substring(0, 8).trim();
+							String decodedBytes = temp[1].trim();
+							String instruction = temp[2].trim();
+							BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
+							if (pc == null) {
+								continue;
+							}
+							String s[] = getCCode(pc, false);
+							String lineNo[] = getCCode(pc, true);
+							if (s != null && lineNo != null) {
+								for (int index = 0; index < s.length; index++) {
+									model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
+								}
+							}
+							// end load cCode
+							model.addRow(new String[] { "", pc.toString(), instruction, decodedBytes });
+
+							//model.addRow(new String[] { "", "0x" + StringUtils.leftPad(address.add(pc).toString(16), 16, "0"), lines[x].substring(25).trim(),lines[x].substring(8, 8).trim() });
+						} else {
+							model.replace(model.getRowCount() - 1, 3, model.getRow(model.getRowCount() - 1)[3] + temp[1].trim().replaceAll("-", ""));
+						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
 					}
@@ -3708,13 +3710,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void updateMemory(boolean isPhysicalAddress) {
 		try {
 			if (this.jMemoryAddressComboBox.getSelectedItem() != null) {
+				int totalByte = 200;
+				int bytes[] = new int[0];
 				if (Global.vmType.equals("bochs")) {
 					commandReceiver.shouldShow = false;
+
+					currentMemoryWindowsAddress = CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString());
+					jStatusLabel.setText("Updating memory");
+
+					bytes = getMemory(CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte, isPhysicalAddress);
+				} else if (Global.vmType.equals("qemu")) {
+					bytes = libGDB.physicalMemory(CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte);
+					System.out.println("bytes=" + bytes.length);
 				}
-				currentMemoryWindowsAddress = CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString());
-				jStatusLabel.setText("Updating memory");
-				int totalByte = 200;
-				int bytes[] = getMemory(CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte, isPhysicalAddress);
 				jStatusLabel.setText("");
 				hexTable.getModel().setCurrentAddress(CommonLib.string2long(this.jMemoryAddressComboBox.getSelectedItem().toString()));
 				hexTable.getModel().set(bytes);
@@ -5153,12 +5161,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							instructionTableScrollPane.setViewportView(instructionTable);
 							instructionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 							instructionTable.setModel(new InstructionTableModel());
-							instructionTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+							instructionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 							instructionTable.getTableHeader().setReorderingAllowed(false);
 							instructionTable.getColumnModel().getColumn(0).setMaxWidth(20);
-							instructionTable.getColumnModel().getColumn(1).setPreferredWidth(40);
-							instructionTable.getColumnModel().getColumn(2).setPreferredWidth(200);
-							instructionTable.getColumnModel().getColumn(3).setPreferredWidth(40);
+							instructionTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+							instructionTable.getColumnModel().getColumn(2).setPreferredWidth(400);
+							instructionTable.getColumnModel().getColumn(3).setPreferredWidth(400);
 							instructionTable.setDefaultRenderer(String.class, new InstructionTableCellRenderer());
 							instructionTable.addMouseListener(new MouseAdapter() {
 								public void mouseClicked(MouseEvent evt) {
@@ -5332,7 +5340,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jPanel8 = new JPanel();
 					BorderLayout jPanel8Layout = new BorderLayout();
 					jPanel8.setLayout(jPanel8Layout);
-					if (Global.vmType.equals("qemu") || GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
+					if (Global.vmType.equals("qemu") && GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
 						jTabbedPane3.addTab("VNC", null, getVncPanel(), null);
 					}
 					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8,

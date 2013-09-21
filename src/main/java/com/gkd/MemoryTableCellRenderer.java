@@ -28,7 +28,9 @@ public class MemoryTableCellRenderer extends JLabel implements TableCellRenderer
 				this.setHorizontalAlignment(SwingConstants.LEFT);
 			}
 		}
-		this.setText(value.toString());
+		if (value != null) {
+			this.setText(value.toString());
+		}
 		return this;
 	}
 }

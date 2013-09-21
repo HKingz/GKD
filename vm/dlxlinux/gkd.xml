@@ -2,18 +2,21 @@
   <bochsCommandHistory/>
   <memoryCombo>
     <string>0x00000000</string>
+    <string>0x1087671</string>
+    <string>0x1098b7</string>
+    <string>0x7c00</string>
   </memoryCombo>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>247</x>
-  <y>72</y>
-  <width>1120</width>
-  <height>656</height>
+  <x>526</x>
+  <y>192</y>
+  <width>1274</width>
+  <height>784</height>
   <divX>603</divX>
-  <divY>330</divY>
+  <divY>329</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

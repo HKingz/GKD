@@ -97,6 +97,10 @@ public class InstructionTableModel extends AbstractTableModel {
 		}
 	}
 
+	public String[] getRow(int rowNo) {
+		return data.get(rowNo);
+	}
+
 	public String getColumnName(int col) {
 		return columnNames[col];
 	}
@@ -212,5 +216,9 @@ public class InstructionTableModel extends AbstractTableModel {
 			}
 		}
 		return 0;
+	}
+
+	public void replace(int rowNo, int columnNo, String str) {
+		data.get(rowNo)[columnNo] = str;
 	}
 }

@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.peter</groupId>
 	<artifactId>GKD</artifactId>
-	<version>20130818</version>
+	<version>20130821</version>
 	<build>
 		<plugins>
 			<plugin>
@@ -141,7 +141,17 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>JLibGDB</artifactId>
-			<version>20130818</version>
+			<version>20130821</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-discovery</groupId>
+			<artifactId>commons-discovery</artifactId>
+			<version>0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>axis</groupId>
+			<artifactId>axis-wsdl4j</artifactId>
+			<version>1.5.1</version>
 		</dependency>
 	</dependencies>
 </project>
