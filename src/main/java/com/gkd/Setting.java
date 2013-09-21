@@ -15,7 +15,7 @@ import com.thoughtworks.xstream.XStream;
 public class Setting {
 	private static Setting setting = null;
 
-	public LinkedHashSet<String> bochsCommandHistory = new LinkedHashSet<String>();
+	public LinkedHashSet<String> vmCommandHistory = new LinkedHashSet<String>();
 	public TreeSet<String> memoryCombo = new TreeSet<String>();
 	public LinkedList<Breakpoint> breakpoint = new LinkedList<Breakpoint>();
 

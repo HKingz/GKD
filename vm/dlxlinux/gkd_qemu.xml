@@ -7,4 +7,6 @@
 	<stopCommand>killall -9 qemu-system-x86_64</stopCommand>
 	<!-- <vncPort>5909</vncPort> -->
 	<loadBreakpoint>true</loadBreakpoint>
+	<qmpHost>localhost</qmpHost>
+	<qmpPort>4444</qmpPort>
 </gkd>

@@ -35,8 +35,10 @@ import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -133,6 +135,7 @@ import com.gkd.osdebuginformation.OSDebugInfoHelper;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
 import com.gkd.webservice.WebServiceUtil;
 import com.jlibgdb.JLibGDB;
+import com.jlibgdb.QemuMonitor;
 import com.peter.tightvncpanel.TightVNC;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
@@ -168,7 +171,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JScrollPane jScrollPane2;
 	private JMaximizableTabbedPane jTabbedPane1;
 	private HexTable hexTable;
-	private JEditorPane jBochsEditorPane;
+	private JEditorPane vmCommandEditorPane;
 
 	public static CommandReceiver commandReceiver;
 
@@ -192,10 +195,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem pauseVMMenuItem;
 	private JPanel jPanel3;
 	public JMaximizableTabbedPane jTabbedPane2;
-	private JButton jBochsCommandButton;
-	private JTextField jBochsCommandTextField;
+	private JButton vmCommandButton;
+	private JTextField vmCommandTextField;
 	private JPanel jPanel2;
-	private JPanel jPanel1;
+	private JPanel vmPanel;
 	public static JTable instructionTable;
 	private JScrollPane instructionTableScrollPane;
 	private JScrollPane jScrollPane4;
@@ -1524,39 +1527,70 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}.start();
 	}
 
-	private void jBochsCommandButtonActionPerformed(ActionEvent evt) {
+	private void vmCommandButtonActionPerformed(ActionEvent evt) {
 		try {
-			if (jBochsCommandTextField.getText().trim().equals("clear")) {
-				this.jBochsEditorPane.setText("");
-			} else if (jBochsCommandTextField.getText().trim().equals("c")) {
-				commandReceiver.shouldShow = false;
-				runVM();
-			} else if (jBochsCommandTextField.getText().trim().equals("q")) {
-				stopVM();
-			} else {
-				try {
-					Setting.getInstance().bochsCommandHistory.add(jBochsCommandTextField.getText());
+			String command = vmCommandTextField.getText().trim();
+			if (Global.vmType.equals("bochs")) {
+				if (command.equals("clear")) {
+					this.vmCommandEditorPane.setText("");
+				} else if (command.equals("c")) {
+					commandReceiver.shouldShow = false;
+					runVM();
+				} else if (command.equals("q")) {
+					stopVM();
+				} else {
+					Setting.getInstance().vmCommandHistory.add(command);
 					Setting.getInstance().save();
-				} catch (Exception ex2) {
-				}
 
-				commandReceiver.shouldShow = true;
+					commandReceiver.shouldShow = true;
 
-				sendCommand(this.jBochsCommandTextField.getText());
-				if (Setting.getInstance().updateAfterBochsCommand) {
-					updateVMStatusForBochsCommand(true);
+					sendCommand(command);
+					if (Setting.getInstance().updateAfterBochsCommand) {
+						updateVMStatusForBochsCommand(true);
+					}
+					commandHistoryIndex = 0;
 				}
-				commandHistoryIndex = 0;
+			} else if (Global.vmType.equals("qemu")) {
+				String qmpHost = GKDCommonLib.readConfig(cmd, "/gkd/qmpHost/text()");
+				int qmpPort = GKDCommonLib.readConfigInt(cmd, "/gkd/qmpPort/text()");
+				if (qmpHost == null || qmpPort == -1) {
+					return;
+				}
+				Setting.getInstance().vmCommandHistory.add(command);
+				Setting.getInstance().save();
+				String r = null;
+				if (command.equals("?")) {
+					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
+					qmpCommand += "{ \"execute\": \"query-commands\" }";
+					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
+					r = r.replaceAll("[,\\[\\]]", "\n");
+					r = r.replaceFirst("^.*\n", "");
+					List<String> list = Arrays.asList(r.split("\n"));
+					Collections.sort(list);
+					r = "";
+					for (String temp : list) {
+						if (temp.split(":").length > 1) {
+							r += temp.split(":")[1].replaceAll("\"", "").replaceAll("}", "").trim() + "\n";
+						}
+					}
+				} else {
+					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
+					qmpCommand += "{ \"execute\": \"" + command + "\" }";
+					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
+				}
+				if (r != null) {
+					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + "\n" + r);
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	private void jBochsCommandTextFieldKeyTyped(KeyEvent evt) {
+	private void vmCommandTextFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
-			jBochsCommandButtonActionPerformed(null);
-			jBochsCommandTextField.setText("");
+			vmCommandButtonActionPerformed(null);
+			vmCommandTextField.setText("");
 		}
 	}
 
@@ -1759,7 +1793,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 				if (jAutoUpdateEvery20LinesCheckBox.isSelected()) {
 					if (noOfLine >= 20) {
-						jBochsEditorPane.setText(jBochsEditorPane.getText() + result);
+						vmCommandEditorPane.setText(vmCommandEditorPane.getText() + result);
 						jTextArea1.newLogFileLine(result);
 						result = "";
 						noOfLine = 1;
@@ -1767,7 +1801,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						noOfLine++;
 					}
 				} else {
-					jBochsEditorPane.setText(jBochsEditorPane.getText() + result);
+					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + result);
 					jTextArea1.newLogFileLine(result);
 					result = "";
 				}
@@ -1832,7 +1866,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							}
 
 							result = update(result, out);
-							jBochsEditorPane.setText("");
+							vmCommandEditorPane.setText("");
 
 							if (new Date().getTime() - lastTime >= 1000) {
 								speed = x - lastCount;
@@ -1857,7 +1891,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								libGDB.singleStep();
 							}
 							result = update(result, out);
-							jBochsEditorPane.setText("");
+							vmCommandEditorPane.setText("");
 
 							if (new Date().getTime() - lastTime >= 1000) {
 								speed = x - lastCount;
@@ -1951,7 +1985,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								}
 								if (jAutoUpdateEvery20LinesCheckBox.isSelected()) {
 									if (noOfLine >= 20) {
-										jBochsEditorPane.setText(jBochsEditorPane.getText() + result);
+										vmCommandEditorPane.setText(vmCommandEditorPane.getText() + result);
 										jTextArea1.newLogFileLine(result);
 										result = "";
 										noOfLine = 1;
@@ -1962,7 +1996,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 										noOfLine++;
 									}
 								} else {
-									jBochsEditorPane.setText(jBochsEditorPane.getText() + result);
+									vmCommandEditorPane.setText(vmCommandEditorPane.getText() + result);
 									jTextArea1.newLogFileLine(result);
 									result = "";
 
@@ -4065,20 +4099,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateInstruction(null);
 	}
 
-	private void jBochsCommandTextFieldKeyPressed(KeyEvent evt) {
-		if (jBochsCommandTextField.getText().equals("")) {
+	private void vmCommandTextFieldKeyPressed(KeyEvent evt) {
+		if (vmCommandTextField.getText().equals("")) {
 			commandHistoryIndex = 0;
 		}
-		HashSet<String> vector = Setting.getInstance().bochsCommandHistory;
+		HashSet<String> vector = Setting.getInstance().vmCommandHistory;
 		if (evt.getKeyCode() == 38) {
 			if (commandHistoryIndex < vector.size()) {
 				commandHistoryIndex++;
-				this.jBochsCommandTextField.setText(vector.toArray()[vector.size() - commandHistoryIndex].toString());
+				this.vmCommandTextField.setText(vector.toArray()[vector.size() - commandHistoryIndex].toString());
 			}
 		} else if (evt.getKeyCode() == 40) {
 			if (commandHistoryIndex > 1) {
 				commandHistoryIndex--;
-				this.jBochsCommandTextField.setText(vector.toArray()[vector.size() - commandHistoryIndex].toString());
+				this.vmCommandTextField.setText(vector.toArray()[vector.size() - commandHistoryIndex].toString());
 			}
 		}
 	}
@@ -5165,7 +5199,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							instructionTable.getTableHeader().setReorderingAllowed(false);
 							instructionTable.getColumnModel().getColumn(0).setMaxWidth(20);
 							instructionTable.getColumnModel().getColumn(1).setPreferredWidth(200);
-							instructionTable.getColumnModel().getColumn(2).setPreferredWidth(400);
+							instructionTable.getColumnModel().getColumn(2).setPreferredWidth(300);
 							instructionTable.getColumnModel().getColumn(3).setPreferredWidth(400);
 							instructionTable.setDefaultRenderer(String.class, new InstructionTableCellRenderer());
 							instructionTable.addMouseListener(new MouseAdapter() {
@@ -5280,9 +5314,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				}
 				{
-					jPanel1 = new JPanel();
-					jTabbedPane1.addTab(MyLanguage.getString("Bochs"),
-							new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), jPanel1, null);
+					vmPanel = new JPanel();
+					if (Global.vmType.equals("bochs")) {
+						jTabbedPane1.addTab(MyLanguage.getString("Bochs"),
+								new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
+					} else if (Global.vmType.equals("qemu")) {
+						jTabbedPane1.addTab(MyLanguage.getString("Qemu"),
+								new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
+					}
 					jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
 					DiskPanel diskPanel = getDiskPanel();
 					if (diskPanel.getFile() != null) {
@@ -5290,13 +5329,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								diskPanel, null);
 					}
 					BorderLayout jPanel1Layout = new BorderLayout();
-					jPanel1.setLayout(jPanel1Layout);
+					vmPanel.setLayout(jPanel1Layout);
 					{
 						jScrollPane4 = new JScrollPane();
-						jPanel1.add(jScrollPane4, BorderLayout.CENTER);
+						vmPanel.add(jScrollPane4, BorderLayout.CENTER);
 						{
-							jBochsEditorPane = new JEditorPane();
-							jScrollPane4.setViewportView(jBochsEditorPane);
+							vmCommandEditorPane = new JEditorPane();
+							jScrollPane4.setViewportView(vmCommandEditorPane);
 						}
 					}
 					{
@@ -5305,28 +5344,28 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						jPanel2Layout.setHGap(5);
 						jPanel2Layout.setVGap(5);
 						jPanel2.setLayout(jPanel2Layout);
-						jPanel1.add(jPanel2, BorderLayout.SOUTH);
+						vmPanel.add(jPanel2, BorderLayout.SOUTH);
 						{
-							jBochsCommandTextField = new JTextField();
-							jPanel2.add(jBochsCommandTextField, "0, 0, 1, 0");
-							jBochsCommandTextField.addKeyListener(new KeyAdapter() {
+							vmCommandTextField = new JTextField();
+							jPanel2.add(vmCommandTextField, "0, 0, 1, 0");
+							vmCommandTextField.addKeyListener(new KeyAdapter() {
 								public void keyPressed(KeyEvent evt) {
-									jBochsCommandTextFieldKeyPressed(evt);
+									vmCommandTextFieldKeyPressed(evt);
 								}
 
 								public void keyTyped(KeyEvent evt) {
-									jBochsCommandTextFieldKeyTyped(evt);
+									vmCommandTextFieldKeyTyped(evt);
 								}
 							});
 						}
 						{
-							jBochsCommandButton = new JButton();
-							jPanel2.add(jBochsCommandButton, "2, 0");
+							vmCommandButton = new JButton();
+							jPanel2.add(vmCommandButton, "2, 0");
 							jPanel2.add(getJClearBochsButton(), "3, 0");
-							jBochsCommandButton.setText("Run");
-							jBochsCommandButton.addActionListener(new ActionListener() {
+							vmCommandButton.setText("Run");
+							vmCommandButton.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent evt) {
-									jBochsCommandButtonActionPerformed(evt);
+									vmCommandButtonActionPerformed(evt);
 								}
 							});
 						}
@@ -7122,7 +7161,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jClearBochsButtonActionPerformed(ActionEvent evt) {
-		this.jBochsEditorPane.setText("");
+		this.vmCommandEditorPane.setText("");
 	}
 
 	public static int[] getPhysicalMemory(BigInteger address, int totalByte) {
@@ -7532,7 +7571,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public JEditorPane getjBochsEditorPane() {
-		return jBochsEditorPane;
+		return vmCommandEditorPane;
 	}
 
 	public void jInstructionUpButtonActionPerformed(ActionEvent evt) {
@@ -8691,7 +8730,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		JTabbedPane pane = (JTabbedPane) evt.getSource();
 		int sel = pane.getSelectedIndex();
 		if (sel == 2) {
-			jBochsCommandTextField.requestFocus();
+			vmCommandTextField.requestFocus();
 		}
 	}
 

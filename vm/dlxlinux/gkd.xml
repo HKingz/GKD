@@ -1,22 +1,43 @@
 <Setting>
-  <bochsCommandHistory/>
-  <memoryCombo>
-    <string>0x00000000</string>
-    <string>0x1087671</string>
-    <string>0x1098b7</string>
-    <string>0x7c00</string>
-  </memoryCombo>
+  <vmCommandHistory>
+    <string>?</string>
+    <string>start</string>
+    <string>cont</string>
+    <string>stop</string>
+    <string>timestamp</string>
+    <string>status</string>
+    <string>query-status</string>
+    <string>temp.split(&quot;:&quot;)</string>
+    <string>query-machine</string>
+    <string>query-cpus</string>
+    <string>quwey-events</string>
+    <string>query-tpm</string>
+    <string>cpu-add</string>
+    <string>cpu</string>
+    <string>query-misc</string>
+    <string>query-mice</string>
+    <string>query-cpu</string>
+    <string>query-name</string>
+    <string>ballon</string>
+    <string>balloon</string>
+    <string>query-command-line-options</string>
+    <string>getfd</string>
+    <string></string>
+    <string>query-target</string>
+  </vmCommandHistory>
+  <memoryCombo/>
+  <breakpoint/>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>526</x>
-  <y>192</y>
-  <width>1274</width>
-  <height>784</height>
+  <x>418</x>
+  <y>189</y>
+  <width>1304</width>
+  <height>719</height>
   <divX>603</divX>
-  <divY>329</divY>
+  <divY>393</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
@@ -57,7 +78,7 @@
   <jmpProfiling>false</jmpProfiling>
   <interruptProfiling>false</interruptProfiling>
   <profilingUpdateGraph>false</profilingUpdateGraph>
-  <lastElfHistoryOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
-  <lastElfHistoryOpenDir2>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
-  <lastMapOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
+  <lastElfHistoryOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
+  <lastElfHistoryOpenDir2>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
+  <lastMapOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
 </Setting>
