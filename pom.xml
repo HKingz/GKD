@@ -141,7 +141,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>JLibGDB</artifactId>
-			<version>20130821</version>
+			<version>20131001</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-discovery</groupId>
