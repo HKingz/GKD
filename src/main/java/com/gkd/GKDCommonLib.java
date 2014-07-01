@@ -362,7 +362,7 @@ public class GKDCommonLib {
 	}
 
 	public static void exportTableModelToExcel(File file, TableModel model1, TableModel model2, String sheetName, Workbook wb) {
-		CreationHelper createHelper = wb.getCreationHelper();
+		//		CreationHelper createHelper = wb.getCreationHelper();
 		Sheet sheet = wb.createSheet(sheetName);
 
 		// column header
