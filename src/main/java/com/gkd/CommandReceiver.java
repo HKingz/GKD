@@ -7,26 +7,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JEditorPane;
-import javax.swing.SwingUtilities;
 
 public class CommandReceiver implements Runnable {
 	GKD gkd;
 	private final InputStream is;
-	// private int threadID = 0;
+	BufferedReader br;
+	//	public boolean parseEnd = false;
 	public boolean shouldShow;
-
 	int timeoutSecond = 5;
-
 	boolean readCommandFinish;
 	Vector<String> lines = new Vector<String>();
 
-	public CommandReceiver(InputStream is, GKD peterBochsDebugger) {
+	public CommandReceiver(InputStream is, GKD gkd) {
 		this.is = is;
-		this.gkd = peterBochsDebugger;
+		this.gkd = gkd;
 	}
 
 	public void clearBuffer() {
@@ -40,98 +36,44 @@ public class CommandReceiver implements Runnable {
 	}
 
 	public void waitUntilNoInput() {
+		int count = lines.size();
 		while (true) {
 			synchronized (lines) {
-				if (lines.size() == 0) {
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				if (count == 0 || count == lines.size()) {
 					return;
 				}
+				count = lines.size();
 			}
 		}
 	}
 
-	public void waitUntilHaveInput() {
-		while (true) {
-			synchronized (lines) {
-				if (lines.size() > 0) {
-					return;
-				}
+	public String getCommandAllResult() {
+		String str = "";
+		synchronized (lines) {
+			for (String s : lines) {
+				str += s + "\n";
 			}
 		}
+		return str;
 	}
 
 	public String getCommandResultUntilEnd() {
-		long startTime = new Date().getTime();
-
 		String str = "";
 
-		while (true) {
-			synchronized (lines) {
-				if (lines.size() > 0) {
-					str += lines.get(0) + "\n";
-					lines.remove(0);
-					startTime = new Date().getTime();
-				} else {
-					return str;
-				}
-				long diff = new Date().getTime() - startTime;
-				if (diff / 1000 >= timeoutSecond) {
-					return str;
-				}
+		synchronized (lines) {
+			for (String s : lines) {
+				str += s + "\n";
 			}
 		}
+		return str;
 	}
 
-	public String getCommandResultUntilHaveLines(int noOfLine) {
-		long startTime = new Date().getTime();
-
-		String str = "";
-
-		while (true) {
-			synchronized (lines) {
-				if (lines.size() > 0) {
-					str += lines.get(0) + "\n";
-					lines.remove(0);
-					startTime = new Date().getTime();
-				} else {
-					if (str.split("\n").length >= noOfLine) {
-						return str;
-					}
-				}
-				long diff = new Date().getTime() - startTime;
-				if (diff / 1000 >= timeoutSecond) {
-					return null;
-				}
-			}
-		}
-	}
-
-	public String getCommandResult(String pattern) {
-		long startTime = new Date().getTime();
-
-		String str = "";
-
-		while (true) {
-			synchronized (lines) {
-				if (lines.size() > 0) {
-					// System.out.println(lines.get(0));
-					if (lines.get(0).contains(pattern)) {
-						str += lines.get(0) + "\n";
-						lines.remove(0);
-						return str;
-					} else {
-						lines.remove(0);
-					}
-					startTime = new Date().getTime();
-				}
-			}
-			long diff = new Date().getTime() - startTime;
-			if (diff / 1000 >= timeoutSecond) {
-				return null;
-			}
-		}
-	}
-
-	public String getCommandResult(String startPattern, String endPattern, String exitPattern) {
+	public String getCommandResult(String startPattern, String endPattern) {
 		long startTime = new Date().getTime();
 
 		String str = "";
@@ -139,10 +81,8 @@ public class CommandReceiver implements Runnable {
 
 		while (true) {
 			synchronized (lines) {
+				//System.out.println(" >>>" + lines.size());
 				if (lines.size() > 0) {
-					if (exitPattern != null && lines.get(0).contains(exitPattern)) {
-						return str;
-					}
 					if (startCapture) {
 						if (lines.get(0).contains(endPattern)) {
 							str += lines.get(0) + "\n";
@@ -177,27 +117,20 @@ public class CommandReceiver implements Runnable {
 
 	public void run() {
 		try {
-			final BufferedReader br = new BufferedReader(new InputStreamReader(is), 1024);
+			br = new BufferedReader(new InputStreamReader(is), 1024);
 			String line;
-			final JEditorPane bochsEditorPane = gkd.getjBochsEditorPane();
+			JEditorPane bochsEditorPane = null;
+			if (gkd != null) {
+				bochsEditorPane = gkd.getBochsEditorPane();
+			}
 			while ((line = br.readLine()) != null) {
-				if (shouldShow) {
+				if (shouldShow && bochsEditorPane != null) {
 					bochsEditorPane.setText(bochsEditorPane.getText() + "\n" + line);
-					SwingUtilities.invokeLater(new Runnable() {
-						public void run() {
-							bochsEditorPane.scrollRectToVisible(new Rectangle(0, bochsEditorPane.getHeight() - 1, 1, bochsEditorPane.getHeight() - 1));
-						}
-					});
+					bochsEditorPane.scrollRectToVisible(new Rectangle(0, bochsEditorPane.getHeight() - 1, 1, bochsEditorPane.getHeight() - 1));
 				}
-				synchronized (lines) {
-					Matcher matcher = Pattern.compile("^.*<bochs[^>]*.*" + Global.lastCommand).matcher(line);
-					if (matcher.matches()) {
-						continue;
-					}
-					line = line.replaceAll("^<bochs[^>]* ", "");
-					if (!line.equals("")) {
-						lines.add(line);
-					}
+				if (!line.equals("")) {
+					//System.out.println(line);
+					lines.add(line);
 				}
 			}
 		} catch (IOException e) {

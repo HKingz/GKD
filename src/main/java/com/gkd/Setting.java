@@ -54,18 +54,18 @@ public class Setting {
 
 	public boolean loadBreakpointAtStartup;
 	public boolean loadSystemMapAtStartup;
-	public boolean updateAfterBochsCommand;
-	public boolean updateAfterBochsCommand_register;
-	public boolean updateAfterBochsCommand_memory;
-	public boolean updateAfterBochsCommand_instruction;
-	public boolean updateAfterBochsCommand_breakpoint;
-	public boolean updateAfterBochsCommand_gdt;
-	public boolean updateAfterBochsCommand_ldt;
-	public boolean updateAfterBochsCommand_idt;
-	public boolean updateAfterBochsCommand_pageTable;
-	public boolean updateAfterBochsCommand_stack;
-	public boolean updateAfterBochsCommand_addressTranslate;
-	public boolean updateAfterBochsCommand_history;
+	public boolean updateAfterGKDCommand;
+	public boolean updateAfterGKDCommand_register;
+	public boolean updateAfterGKDCommand_memory;
+	public boolean updateAfterGKDCommand_instruction;
+	public boolean updateAfterGKDCommand_breakpoint;
+	public boolean updateAfterGKDCommand_gdt;
+	public boolean updateAfterGKDCommand_ldt;
+	public boolean updateAfterGKDCommand_idt;
+	public boolean updateAfterGKDCommand_pageTable;
+	public boolean updateAfterGKDCommand_stack;
+	public boolean updateAfterGKDCommand_addressTranslate;
+	public boolean updateAfterGKDCommand_history;
 
 	public boolean updateFastStepCommand_register;
 	public boolean updateFastStepCommand_memory;

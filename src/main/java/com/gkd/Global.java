@@ -3,7 +3,7 @@ package com.gkd;
 import java.math.BigInteger;
 
 public class Global {
-	public static String version = "20130821";
+	public static String version = "20140414";
 	public static boolean debug = true;
 	public static BigInteger osDebug = BigInteger.valueOf(-1);
 	public static String jmpLog = "jmp.log";
@@ -19,6 +19,6 @@ public class Global {
 	public static boolean isBeta = false;
 	public static String lastCommand;
 	public static int MAX_NEXTI_INSTRUCTION_COUNT = 10;
-	public static String vmType = null;
 	public static String stopCommand;
+	public static String ndisasmPath;
 }

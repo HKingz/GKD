@@ -1,51 +1,35 @@
 <Setting>
-  <vmCommandHistory>
-    <string>?</string>
-    <string>start</string>
-    <string>cont</string>
-    <string>stop</string>
-    <string>timestamp</string>
-    <string>status</string>
-    <string>query-status</string>
-    <string>temp.split(&quot;:&quot;)</string>
-    <string>query-machine</string>
-    <string>query-cpus</string>
-    <string>quwey-events</string>
-    <string>query-tpm</string>
-    <string>cpu-add</string>
-    <string>cpu</string>
-    <string>query-misc</string>
-    <string>query-mice</string>
-    <string>query-cpu</string>
-    <string>query-name</string>
-    <string>ballon</string>
-    <string>balloon</string>
-    <string>query-command-line-options</string>
-    <string>getfd</string>
-    <string></string>
-    <string>query-target</string>
-    <string>query-machines</string>
-    <string>human-monitor-command</string>
-    <string>human-monitor-command info registers</string>
-  </vmCommandHistory>
+  <vmCommandHistory/>
   <memoryCombo>
-    <string>0x600004a8</string>
-    <string>0x7bcc</string>
-    <string>0x7f1c</string>
+    <string>0x0</string>
+    <string>0x10992c</string>
+    <string>0x10f558</string>
+    <string>0x12</string>
+    <string>0x18</string>
+    <string>0x60000010</string>
+    <string>0x8b00</string>
+    <string>0x92d</string>
+    <string>0xc0106870</string>
+    <string>0xc0197770</string>
+    <string>0xf000</string>
+    <string>0xffff0000</string>
+    <string>0xfffff</string>
+    <string>0xfffffff0</string>
+    <string>0xfffffff000</string>
   </memoryCombo>
   <breakpoint/>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
-  <fontsize>12</fontsize>
-  <fontFamily>Dialog</fontFamily>
-  <x>418</x>
-  <y>189</y>
-  <width>1304</width>
-  <height>719</height>
-  <divX>603</divX>
-  <divY>393</divY>
-  <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
+  <fontsize>14</fontsize>
+  <fontFamily>Serif</fontFamily>
+  <x>18</x>
+  <y>44</y>
+  <width>974</width>
+  <height>744</height>
+  <divX>630</divX>
+  <divY>409</divY>
+  <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
   <physicalAddress/>
@@ -59,18 +43,18 @@
   <logToPetersoftServer>false</logToPetersoftServer>
   <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
   <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
-  <updateAfterBochsCommand>false</updateAfterBochsCommand>
-  <updateAfterBochsCommand__register>false</updateAfterBochsCommand__register>
-  <updateAfterBochsCommand__memory>false</updateAfterBochsCommand__memory>
-  <updateAfterBochsCommand__instruction>false</updateAfterBochsCommand__instruction>
-  <updateAfterBochsCommand__breakpoint>false</updateAfterBochsCommand__breakpoint>
-  <updateAfterBochsCommand__gdt>false</updateAfterBochsCommand__gdt>
-  <updateAfterBochsCommand__ldt>false</updateAfterBochsCommand__ldt>
-  <updateAfterBochsCommand__idt>false</updateAfterBochsCommand__idt>
-  <updateAfterBochsCommand__pageTable>false</updateAfterBochsCommand__pageTable>
-  <updateAfterBochsCommand__stack>false</updateAfterBochsCommand__stack>
-  <updateAfterBochsCommand__addressTranslate>false</updateAfterBochsCommand__addressTranslate>
-  <updateAfterBochsCommand__history>false</updateAfterBochsCommand__history>
+  <updateAfterGKDCommand>false</updateAfterGKDCommand>
+  <updateAfterGKDCommand__register>false</updateAfterGKDCommand__register>
+  <updateAfterGKDCommand__memory>false</updateAfterGKDCommand__memory>
+  <updateAfterGKDCommand__instruction>false</updateAfterGKDCommand__instruction>
+  <updateAfterGKDCommand__breakpoint>false</updateAfterGKDCommand__breakpoint>
+  <updateAfterGKDCommand__gdt>false</updateAfterGKDCommand__gdt>
+  <updateAfterGKDCommand__ldt>false</updateAfterGKDCommand__ldt>
+  <updateAfterGKDCommand__idt>false</updateAfterGKDCommand__idt>
+  <updateAfterGKDCommand__pageTable>false</updateAfterGKDCommand__pageTable>
+  <updateAfterGKDCommand__stack>false</updateAfterGKDCommand__stack>
+  <updateAfterGKDCommand__addressTranslate>false</updateAfterGKDCommand__addressTranslate>
+  <updateAfterGKDCommand__history>false</updateAfterGKDCommand__history>
   <updateFastStepCommand__register>true</updateFastStepCommand__register>
   <updateFastStepCommand__memory>true</updateFastStepCommand__memory>
   <updateFastStepCommand__instruction>true</updateFastStepCommand__instruction>
@@ -85,7 +69,7 @@
   <jmpProfiling>false</jmpProfiling>
   <interruptProfiling>false</interruptProfiling>
   <profilingUpdateGraph>false</profilingUpdateGraph>
-  <lastElfHistoryOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
-  <lastElfHistoryOpenDir2>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
-  <lastMapOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
+  <lastElfHistoryOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
+  <lastElfHistoryOpenDir2>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
+  <lastMapOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
 </Setting>

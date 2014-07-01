@@ -33,8 +33,8 @@ public class MyGlassPane extends JComponent implements ItemListener {
 		jLabel1.setBackground(new Color(0, 0, 0, 180));
 		jLabel1.setOpaque(true);
 		CBListener listener = new CBListener(menuBar, this, contentPane);
-//		 addMouseListener(listener);
-//		 addMouseMotionListener(listener);
+		//		 addMouseListener(listener);
+		//		 addMouseMotionListener(listener);
 	}
 
 	// React to change button clicks.
@@ -118,9 +118,9 @@ class CBListener extends MouseInputAdapter {
 			if (component != null) {
 				if (component.equals(liveButton) || component.equals(menuBar)) {
 					// Forward events over the check box.
-//					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
-//					component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-//							.isPopupTrigger()));
+					//					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
+					//					component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
+					//							.isPopupTrigger()));
 				}
 			}
 		}

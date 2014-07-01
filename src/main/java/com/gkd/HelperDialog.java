@@ -11,41 +11,58 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 
-/**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
- */
 public class HelperDialog extends javax.swing.JDialog {
 	BigInteger address;
-	private JTable jTable1;
-	private JScrollPane jScrollPane1;
-	private JLabel jBytesLabel;
+	private JTable table1;
+	private JScrollPane scrollPane1;
+	private JLabel bytesLabel;
 	String type;
 
 	public HelperDialog(JFrame frame, BigInteger address, String type) {
 		super(frame);
 		this.address = address;
 		this.type = type;
-		initGUI();
+
+		try {
+			TableLayout thisLayout = new TableLayout(new double[][] { { TableLayout.FILL, TableLayout.FILL }, { 26.0, TableLayout.FILL, TableLayout.FILL } });
+			thisLayout.setHGap(5);
+			thisLayout.setVGap(5);
+			getContentPane().setLayout(thisLayout);
+			this.setTitle("Helper, address : 0x" + address.toString(16));
+			{
+				bytesLabel = new JLabel();
+				getContentPane().add(bytesLabel, "0, 0, 1, 0");
+			}
+			{
+				scrollPane1 = new JScrollPane();
+				getContentPane().add(scrollPane1, "0, 1, 1, 2");
+				{
+					TableModel jTable1Model = new DefaultTableModel(new String[][] {}, new String[] { "Field", "Value" });
+					table1 = new JTable();
+					scrollPane1.setViewportView(table1);
+					table1.setModel(jTable1Model);
+				}
+			}
+			setSize(600, 300);
+			CommonLib.centerDialog(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		initData();
 	}
 
 	private void initData() {
-		long bytes = GKDCommonLib.getLongFromBochs(address);
-		jBytesLabel.setText("0x" + address.toString(16) + " : 0x" + Long.toHexString(bytes));
+		long bytes = CommonLib.getInt(VMController.getVM().physicalMemory(address, 8), 0);
+		bytesLabel.setText("0x" + address.toString(16) + " : 0x" + Long.toHexString(bytes));
 
-		DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+		DefaultTableModel model = (DefaultTableModel) table1.getModel();
 		if (type.equals("GDT")) {
 			int totalGDT = 40;
-			int b[] = GKDCommonLib.getMemoryFromBochs(address, totalGDT * 8);
+			int b[] = VMController.getVM().physicalMemory(address, totalGDT * 8);
 			for (int x = 0; x < totalGDT * 8; x += 8) {
 				long value = CommonLib.getLong(b, x);
 				long bit[] = new long[64];
@@ -76,7 +93,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				// end parse descriptor
 			}
 		} else if (type.equals("GDT Descriptor")) {
-			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = VMController.getVM().physicalMemory(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 
@@ -151,8 +168,8 @@ public class HelperDialog extends javax.swing.JDialog {
 				model.addRow(new String[] { "V", String.valueOf(bit[40]) });
 
 				// TSS
-				// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
-				GKD.sendCommand("x /" + limit + "bx " + base);
+				// GKD.commandReceiver.setCommandNoOfLine(2);
+				//				GKD.sendBochsCommand("x /" + limit + "bx " + base);
 
 				float totalByte2 = limit - 1;
 				totalByte2 = totalByte2 / 8;
@@ -169,16 +186,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				int realEndAddress = realStartAddress + totalByte3 * 8;
 				realEndAddressStr = String.format("%08x", realEndAddress);
 
-				String result2 = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-				String[] lines2 = result2.split("\n");
-
-				byte tssByte[] = new byte[(int) limit];
-				for (int y = 1; y < lines2.length; y++) {
-					String byteStr[] = lines2[y].replaceFirst("^.*>:\t", "").split("\t");
-					for (int x = 0; x < 8; x++) {
-						tssByte[x + ((y - 1) * 8)] = (byte) Long.parseLong(byteStr[x].substring(2), 16);
-					}
-				}
+				int tssByte[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(realStartAddressStr), (int) limit);
 
 				long tssValue = CommonLib.getLong(b, 0);
 
@@ -215,7 +223,7 @@ public class HelperDialog extends javax.swing.JDialog {
 			}
 		} else if (type.equals("IDT")) {
 			int totalGDT = 40;
-			int b[] = GKDCommonLib.getMemoryFromBochs(address, totalGDT * 8);
+			int b[] = VMController.getVM().physicalMemory(address, totalGDT * 8);
 			for (int x = 0; x < totalGDT * 8; x += 8) {
 				long value = CommonLib.getLong(b, x);
 				long bit[] = new long[64];
@@ -240,7 +248,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				// end parse descriptor
 			}
 		} else if (type.equals("IDT Descriptor")) {
-			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = VMController.getVM().physicalMemory(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 
@@ -268,7 +276,7 @@ public class HelperDialog extends javax.swing.JDialog {
 				model.addRow(new String[] { "type", "wrong descriptor, value=0x" + Long.toHexString(value) });
 			}
 		} else if (type.equals("PDE")) {
-			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = VMController.getVM().physicalMemory(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 
@@ -290,7 +298,7 @@ public class HelperDialog extends javax.swing.JDialog {
 			model.addRow(new String[] { "avl", String.valueOf(avl) });
 			model.addRow(new String[] { "page table address", "0x" + Long.toHexString(pageTableAddress) });
 		} else if (type.equals("PTE")) {
-			int b[] = GKDCommonLib.getMemoryFromBochs(address, 8);
+			int b[] = VMController.getVM().physicalMemory(address, 8);
 			long value = CommonLib.getLong(b, 0);
 			long bit[] = new long[64];
 
@@ -314,36 +322,8 @@ public class HelperDialog extends javax.swing.JDialog {
 			model.addRow(new String[] { "page table address", "0x" + Long.toHexString(pageTableAddress) });
 		}
 
-		jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		jTable1.getColumnModel().getColumn(0).setPreferredWidth(40);
-		jTable1.getColumnModel().getColumn(1).setPreferredWidth(500);
-	}
-
-	private void initGUI() {
-		try {
-			TableLayout thisLayout = new TableLayout(new double[][] { { TableLayout.FILL, TableLayout.FILL }, { 26.0, TableLayout.FILL, TableLayout.FILL } });
-			thisLayout.setHGap(5);
-			thisLayout.setVGap(5);
-			getContentPane().setLayout(thisLayout);
-			this.setTitle("Helper, address : 0x" + address.toString(16));
-			{
-				jBytesLabel = new JLabel();
-				getContentPane().add(jBytesLabel, "0, 0, 1, 0");
-			}
-			{
-				jScrollPane1 = new JScrollPane();
-				getContentPane().add(jScrollPane1, "0, 1, 1, 2");
-				{
-					TableModel jTable1Model = new DefaultTableModel(new String[][] {}, new String[] { "Field", "Value" });
-					jTable1 = new JTable();
-					jScrollPane1.setViewportView(jTable1);
-					jTable1.setModel(jTable1Model);
-				}
-			}
-			setSize(600, 300);
-			CommonLib.centerDialog(this);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		table1.getColumnModel().getColumn(0).setPreferredWidth(40);
+		table1.getColumnModel().getColumn(1).setPreferredWidth(500);
 	}
 }

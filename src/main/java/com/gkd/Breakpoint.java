@@ -1,9 +1,12 @@
 package com.gkd;
 
+import java.math.BigInteger;
+
 public class Breakpoint {
 	int no;
 	String type;
-	String address;
+	BigInteger segment;
+	BigInteger address;
 	String enable;
 	int hit;
 
@@ -31,11 +34,19 @@ public class Breakpoint {
 		this.enable = enable;
 	}
 
-	public String getAddress() {
+	public BigInteger getSegment() {
+		return segment;
+	}
+
+	public void setSegment(BigInteger segment) {
+		this.segment = segment;
+	}
+
+	public BigInteger getAddress() {
 		return address;
 	}
 
-	public void setAddress(String address) {
+	public void setAddress(BigInteger address) {
 		this.address = address;
 	}
 

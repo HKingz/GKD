@@ -2,13 +2,13 @@ package com.gkd;
 
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Font;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.gkd.syntaxhighlight.Keywords;
 import com.peterswing.CommonLib;
@@ -23,9 +23,7 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 	Color alterRow = new Color(0xf8f8f8);
 
 	public InstructionTableCellRenderer() {
-		this.setFont(new Font("Monospaced", Font.PLAIN, 12));
 		this.setOpaque(true);
-		this.setHorizontalAlignment(SwingConstants.LEFT);
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -71,7 +69,8 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 				this.setForeground(Color.black);
 				if (column == 2) {
 					String asmCode = (String) value;
-					asmCode = asmCode.replaceAll(Keywords.asmKeywords.toLowerCase(), "<font color=red>$0&nbsp;</font>");
+					asmCode = asmCode.replaceAll(Keywords.asmKeywords.toLowerCase(), "<font color=blue>$0</font>");
+					asmCode = asmCode.replaceAll(Keywords.registers.toLowerCase(), "<font color=green>$0</font>");
 					this.setText("<html><body>&nbsp;" + asmCode + "</body></html>");
 					this.setIcon(null);
 				} else if (column == 3) {
@@ -87,19 +86,19 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 							this.setText(s);
 						}
 					} else {
-						this.setText("0x" + CommonLib.string2BigInteger(s).toString(16));
+						this.setText("0x" + StringUtils.leftPad(CommonLib.string2BigInteger(s).toString(16), 16, '0'));
 					}
 					this.setIcon(null);
 				}
 			}
 
 			if (column == 1) {
-				this.setHorizontalAlignment(JLabel.RIGHT);
+				this.setHorizontalAlignment(JLabel.CENTER);
 			} else {
 				this.setHorizontalAlignment(JLabel.LEFT);
 			}
 		} catch (Exception ex) {
-
+			setText(ex.getMessage());
 		}
 		return this;
 	}

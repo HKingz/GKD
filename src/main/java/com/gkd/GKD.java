@@ -24,23 +24,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.BufferedWriter;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -99,7 +95,6 @@ import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.FontUIResource;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
@@ -117,25 +112,23 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.ApplicationListener;
-import com.gkd.architecture.IA32PageDirectory;
+import com.gkd.components.segmentregister.SegmentRegister;
 import com.gkd.elf.ElfUtil;
 import com.gkd.helprequest.HelpRequestDialog;
-import com.gkd.instrument.Data;
 import com.gkd.instrument.InstrumentPanel;
-import com.gkd.instrument.InterruptSocketServerController;
-import com.gkd.instrument.JmpSocketServerController;
-import com.gkd.instrument.MemorySocketServerController;
 import com.gkd.logpanel.LogPanel;
 import com.gkd.osdebuginformation.JOSDebugInformationPanel;
 import com.gkd.osdebuginformation.OSDebugInfoHelper;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
+import com.gkd.stub.VMController;
+import com.gkd.stub.VMType;
 import com.gkd.webservice.WebServiceUtil;
-import com.jlibgdb.JLibGDB;
-import com.jlibgdb.QemuMonitor;
 import com.peter.tightvncpanel.TightVNC;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
@@ -151,16 +144,6 @@ import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialogEventLi
 import com.peterswing.advancedswing.jvmdialog.JVMInfoDialog;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
-/**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
- */
 @SuppressWarnings("serial")
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
 	private JMenuItem aboutUsMenuItem;
@@ -172,16 +155,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMaximizableTabbedPane jTabbedPane1;
 	private HexTable hexTable;
 	private JEditorPane vmCommandEditorPane;
-
-	public static CommandReceiver commandReceiver;
-
 	private JSplitPane jSplitPane1;
 	private RegisterPanel registerPanel;
 	private JMenuItem runBochsMenuItem;
 	private JSeparator jSeparator1;
 	private JMenuItem stopBochsMenuItem;
-	private JMenuItem startBochsMenuItem;
-	private JMenu jBochsMenu;
+	private JMenuItem startVMMenuItem;
+	private JMenu bochsMenu;
 	private JMenuItem exitMenuItem;
 	private JSeparator jSeparator2;
 	public JDropDownButton runVMButton;
@@ -191,24 +171,24 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel jPanel7;
 	private JPanel jPanel6;
 	private JPanel jPanel5;
-	private JMaximizableTabbedPane jTabbedPane3;
+	private JMaximizableTabbedPane tabbedPane3;
 	private JMenuItem pauseVMMenuItem;
 	private JPanel jPanel3;
-	public JMaximizableTabbedPane jTabbedPane2;
+	public JMaximizableTabbedPane bottomTabbedPane;
 	private JButton vmCommandButton;
 	private JTextField vmCommandTextField;
 	private JPanel jPanel2;
 	private JPanel vmPanel;
 	public static JTable instructionTable;
 	private JScrollPane instructionTableScrollPane;
-	private JScrollPane jScrollPane4;
-	public JComboBox jMemoryAddressComboBox;
-	private JButton jDeleteBreakpointButton;
+	private JScrollPane vmCommandScrollPane4;
+	public JComboBox<String> memoryAddressComboBox;
+	private JButton deleteBreakpointButton;
 	private JPanel jPanel12;
 	private JTable breakpointTable;
-	private JButton jDisableBreakpointButton;
-	private JButton jEnableBreakpointButton;
-	private JButton jSaveBreakpointButton;
+	private JButton disableBreakpointButton;
+	private JButton enableBreakpointButton;
+	private JButton saveBreakpointButton;
 	private JButton addBreakpointButton;
 	private JButton jRefreshBreakpointButton;
 	private JScrollPane jScrollPane9;
@@ -217,40 +197,39 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JLabel jLabel3;
 	private JScrollPane jScrollPane8;
 	private JScrollPane jScrollPane7;
-	private JTable jPageTableTable;
-	private JTable jPageDirectoryTable;
+	private JTable pageTableTable;
+	private JTable pageDirectoryTable;
 	private JPanel jPanel11;
-	private JTable jGDTTable;
+	private JTable gdtTable;
 	private JScrollPane jScrollPane3;
 	private JMenuItem jupdateVMStatusMenuItem;
-	private JButton jGOMemoryButton;
+	private JButton goMemoryButton;
 	private JPanel jPanel9;
 	private JMenu jMenu3;
 	private JMenuBar jMenuBar1;
-	private static BufferedWriter commandOutputStream;
-	private Process p;
+	//	private static BufferedWriter commandOutputStream;
 	private JSplitPane jSplitPane2;
-	private JProgressBar jStatusProgressBar;
-	private JPanel jStatusPanel;
-	private JButton jUpdateBochsButton;
-	private JLabel jStatusLabel;
+	private JProgressBar statusProgressBar;
+	private JPanel statusPanel;
+	private JButton updateBochsButton;
+	private JLabel statusLabel;
 	private JButton disassembleCurrentIPButton;
-	private JComboBox jInstructionComboBox;
-	private JPanel jInstructionControlPanel;
+	private JComboBox<String> instructionComboBox;
+	private JToolBar instructionControlPanel;
 	private JPanel jPanel10;
-	private JDropDownButton jLoadBreakpointButton;
+	private JDropDownButton loadBreakpointButton;
 	private int commandHistoryIndex;
-	private JScrollPane jScrollPane10;
+	private JScrollPane scrollPane10;
 	private ButtonGroup buttonGroup1;
-	private JRadioButton jHexRadioButton;
-	private JRadioButton jDecRadioButton;
-	private JRadioButton jOctRadioButton1;
-	private JRadioButton jBinaryRadioButton;
-	private JTable jLDTTable;
+	private JRadioButton hexRadioButton;
+	private JRadioButton decRadioButton;
+	private JRadioButton octRadioButton1;
+	private JRadioButton binaryRadioButton;
+	private JTable ldtTable;
 	private JScrollPane jScrollPane11;
-	private JTable jIDTTable;
-	private JTable jAddressTranslateTable;
-	private JTable jAddressTranslateTable2;
+	private JTable idtTable;
+	private JTable addressTranslateTable;
+	private JTable addressTranslateTable2;
 	private JPanel jPanel22;
 	private JPanel jPanel24;
 	private JToolBar jPanel26;
@@ -261,15 +240,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem licenseMenuItem;
 	private JMenuItem stepOverNTimesMenuItem;
 	private JMenuItem stepOver100MenuItem;
-	private JMenuItem jStepOver10MenuItem;
+	private JMenuItem stepOver10MenuItem;
 	private JDropDownButton stepOverDropDownButton;
 	private JMenuItem runCustomCommandMenuItem;
-	private JButton jButton4;
+	private JButton helpButton;
 	private EnhancedTextArea bochsoutTextArea;
 	private JPanel jPanel31;
 	private JMenuItem shortcutHelpMenuItem;
-	private JDropDownButton jSBAButton;
-	private JDropDownButton jSBButton;
+	private JDropDownButton sbaButton;
+	private JDropDownButton sbButton;
 	private JLabel jLabel9;
 	private JLabel jLabel8;
 	private JLabel jLabel7;
@@ -282,26 +261,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton clearHistoryTableButton;
 	private ButtonGroup buttonGroup4;
 	public JMenuItem clearInstructionTableMenuItem;
-	private JMenuItem jLoadElfMenuItem;
-	private JMenu jSystemMenu;
-	private JToggleButton jSourceLevelDebuggerToggleButton;
+	private JMenuItem loadSystemMapMenuItem;
+	private JMenu systemMenu;
+	private JToggleButton sourceLevelDebuggerToggleButton;
 	private SourceLevelDebugger3 sourceLevelDebugger;
-	public JMenuItem jDisasmHereMenuItem;
+	public JMenuItem disasmHereMenuItem;
 	private JSeparator jSeparator3;
-	private JRadioButton jMMXRadioButton;
-	private JRadioButton jFPURadioButton;
-	private JButton jPreviousMemoryButton;
-	private JButton jNextMemoryPageButton;
-	private JComboBox jMaxRowComboBox;
-	private JLabel jLabel1;
-	private JCheckBox jSaveToRunDotTxtCheckBox;
-	private JCheckBox jAutoUpdateEvery20LinesCheckBox;
+	private JRadioButton mmxRadioButton;
+	private JRadioButton fpuRadioButton;
+	private JButton previousMemoryButton;
+	private JButton nextMemoryPageButton;
+	private JComboBox<String> maxRowComboBox;
+	private JLabel maximumRowLabel;
+	private JCheckBox saveToRunDotTxtCheckBox;
+	private JCheckBox autoUpdateEvery20LinesCheckBox;
 	private JCheckBox jDisableAutoUpdateCheckBox;
-	private JLabel jStepCountLabel;
-	private JButton jButton16;
+	private JLabel stepCountLabel;
+	private JButton pauseButton;
 	private EnhancedTextArea jTextArea1;
-	private JLabel jRunningLabel2;
-	private JPanel jRunningPanel;
+	private JLabel runningLabel;
+	private JPanel runningPanel;
 	private JMenuItem stepUntilIPBigChangeMenuItem;
 	private JMenuItem jvmMenuItem;
 	private JMenuItem stepUntilMovMenuItem;
@@ -313,154 +292,154 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem step10MenuItem;
 	private JPanel jPanel30;
 	private JMenuItem helpRequestMenuItem;
-	private EnhancedTextArea osLogPanel1;
+	private EnhancedTextArea osLogPanel;
 	private JToggleButton osLogToggleButton;
 	private JToggleButton registerToggleButton;
-	private LogPanel logPanel1;
-	private JToggleButton logToggleButton;
-	private JToggleButton jProfilerToggleButton;
-	private InstrumentPanel jInstrumentPanel;
-	private JOSDebugInformationPanel jOSDebugInformationPanel1;
-	private JLabel jOSDebugInfoErrorLabel;
-	private JTabbedPane jTabbedPane5;
-	private JPanel jOSDebugStandardPanel;
-	private JButton jSettingButton;
-	private JMenuItem jMenuItem2;
-	private JMenuItem jMenuItem1;
-	private JPopupMenu jELFTablePopupMenu;
+	private LogPanel logPanel;
+	private JToggleButton profilerToggleButton;
+	public static InstrumentPanel instrumentPanel;
+	private JOSDebugInformationPanel osDebugInformationPanel1;
+	private JLabel osDebugInfoErrorLabel;
+	private JTabbedPane tabbedPane5;
+	private JPanel osDebugStandardPanel;
+	private JButton settingButton;
+	private JMenuItem setELFPhysicalBreakpointMenuItem;
+	private JMenuItem setELFLinearBreakpointMenuItem;
+	private JPopupMenu elfTablePopupMenu;
 	public JButton fastStepBochsButton;
-	private JMenuItem jJPMenuItem;
-	private JMenuItem jKRMenuItem;
-	private JButton jInstructionUpTenButton;
-	private JButton jInstructionDownButton;
-	private JButton jInstructionUpButton;
-	private JMenuItem jMenuItem9;
-	private JMenuItem jMenuItem8;
-	private JPopupMenu jSearchMemoryTablePopupMenu;
-	private JMenuItem jMenuItem7;
-	private JMenuItem jMenuItem6;
-	private JPopupMenu jBreakpointPopupMenu;
-	private JMenuItem jSetLinearBreakpointMenuItem;
-	private JMenuItem jSetPhysicalBreakpointMenuItem;
-	private JPopupMenu jInstructionPanelPopupMenu;
-	private JCheckBox jHideIfAddressIsZeroCheckBox;
-	private JMaximizableTabbedPane_BasePanel jMaximizableTabbedPane_BasePanel1;
+	private JMenuItem japaneseMenuItem;
+	private JMenuItem koreanMenuItem;
+	private JButton instructionUpTenButton;
+	private JButton instructionDownButton;
+	private JButton instructionUpButton;
+	private JMenuItem setLinerBreakpointHereMenuItem;
+	private JMenuItem setPhysicalBreakpointHereMenuItem;
+	private JPopupMenu searchMemoryTablePopupMenu;
+	private JMenuItem disassembleMenuItem;
+	private JMenuItem dumpHereMenuItem;
+	private JPopupMenu breakpointPopupMenu;
+	private JMenuItem setLinearBreakpointMenuItem;
+	private JMenuItem setPhysicalBreakpointMenuItem;
+	private JPopupMenu instructionPanelPopupMenu;
+	private JCheckBox hideIfAddressIsZeroCheckBox;
+	private JMaximizableTabbedPane_BasePanel maximizableTabbedPane_BasePanel1;
 	private DiskPanel diskPanel;
-	private JButton jGoLinearButton;
-	private JButton jClearBochsButton;
-	public JTextField jDumpPageDirectoryAddressTextField;
-	private JButton jDumpPageTableAtAddressButton;
-	private JButton jButton20;
+	private JButton goLinearButton;
+	private JButton clearBochsButton;
+	public JTextField dumpPageDirectoryAddressTextField;
+	private JButton dumpPageTableAtAddressButton;
+	private JButton dumpCR3Button;
 	private JButton jButton19;
-	private JTable jProgramHeaderTable;
+	private JTable programHeaderTable;
 	private JScrollPane jScrollPane16;
-	private JTable jELFSectionTable;
+	private JTable elfSectionTable;
 	private JScrollPane jScrollPane15;
-	private JTable jELFHeaderTable;
-	private JScrollPane jELFHeaderScrollPane;
-	private JMaximizableTabbedPane jTabbedPane4;
-	private JButton jOpenELFDumpButton;
-	private JComboBox jELFComboBox;
-	private JPanel jELFDumpPanel;
-	private JLabel jLatestVersionLabel;
-	private JLabel jBochsVersionLabel;
-	private JCheckBox jShowELFByteCheckBox;
-	private JLabel jCPUModeLabel;
+	private JTable elfHeaderTable;
+	private JScrollPane elfHeaderScrollPane;
+	private JMaximizableTabbedPane tabbedPane4;
+	private JButton openELFDumpButton;
+	private JComboBox<File> elfComboBox;
+	private JPanel elfDumpPanel;
+	private JLabel latestVersionLabel;
+	private JLabel bochsVersionLabel;
+	private JCheckBox showELFByteCheckBox;
+	private JLabel cpuModeLabel;
 	private JPanel jPanel25;
-	private JButton jLoadELFBreakpointButton;
-	private JButton jSaveELFBreakpointButton;
-	private JButton jDisableELFBreakpointButton;
-	private JButton jEnableELFBreakpointButton;
-	private JButton jRefreshELFBreakpointButton;
+	private JButton loadELFBreakpointButton;
+	private JButton saveELFBreakpointButton;
+	private JButton disableELFBreakpointButton;
+	private JButton enableELFBreakpointButton;
+	private JButton refreshELFBreakpointButton;
 	private JTable elfTable;
 	private JScrollPane jScrollPane14;
-	private JComboBox jELFFileComboBox;
-	private JButton jOpenELFButton;
-	private JPanel jPanel23;
-	private JPanel jELFBreakpointPanel;
-	private JMenuItem jDisassemble32MenuItem;
-	private JMenuItem jPTEMenuItem;
-	private JMenuItem jPDEMenuItem;
-	private JMenuItem jIDTDescriptorMenuItem;
-	private JMenuItem jIDTMenuItem;
-	private JMenuItem jGDTDescriptorMenuItem;
-	private JMenuItem jGDTMenuItem;
-	private JPopupMenu jHexTablePopupMenu;
-	private JTextField jAddressTextField;
+	private JComboBox<String> elfFileComboBox;
+	private JButton openELFButton;
+	private JToolBar elfToolbar;
+	private JPanel elfBreakpointPanel;
+	private JMenuItem disassemble32MenuItem;
+	private JMenuItem pteMenuItem;
+	private JMenuItem pdeMenuItem;
+	private JMenuItem idtDescriptorMenuItem;
+	private JMenuItem idtMenuItem;
+	private JMenuItem gdtDescriptorMenuItem;
+	private JMenuItem gdtMenuItem;
+	private JPopupMenu hexTablePopupMenu;
+	private JTextField addressTextField;
 	private JPanel jPanel21;
 	private ButtonGroup buttonGroup3;
 	private JButton jButton18;
 	private JButton jButton17;
 	private JToolBar jToolBar3;
 	private JScrollPane jScrollPane13;
-	private JButton jRefreshAddressTranslateButton;
+	private JButton refreshAddressTranslateButton;
 	private JPanel jPanel20;
-	private JRadioButton jSearchAddressRadioButton3;
-	private JRadioButton jSearchAddressRadioButton2;
-	private JRadioButton jSearchAddressRadioButton1;
-	private JPanel jAddressTranslatePanel;
-	private JButton jRefreshPageTableGraphButton;
-	private JCheckBox jAutoRefreshPageTableGraphCheckBox;
+	private JRadioButton searchAddressRadioButton3;
+	private JRadioButton searchAddressRadioButton2;
+	private JRadioButton searchAddressRadioButton1;
+	private JPanel addressTranslatePanel;
+	private JButton refreshPageTableGraphButton;
+	private JCheckBox autoRefreshPageTableGraphCheckBox;
 	private JToolBar jToolBar2;
-	private JPanel jPageTableGraphPanel;
-	private JButton jPagingGraphButton;
-	private JToolBar jPanel19;
-	private JButton jGDTGraphButton;
+	private JPanel pageTableGraphPanel;
+	private JButton pagingGraphButton;
+	private JToolBar panel19;
+	private JButton gdtGraphButton;
 	private JLabel jRunningLabel;
-	public JPanel jMainPanel;
+	public JPanel mainPanel;
 	private JButton jButton15;
-	private JButton jButton11;
-	private JButton jButton10;
-	private JButton jButton9;
-	private JButton jButton8;
+	private JButton diskButton;
+	private JButton excelButton2;
+	private JButton saveImageButton;
+	private JButton excelIDTButton;
 	private JPanel jPanel16;
 	private JPanel jPanel15;
-	private JButton jButton7;
-	private JButton jButton6;
+	private JButton excelGDTButton;
+	private JButton saveGDTImageButton;
 	private JPanel jPanel14;
-	private JRadioButton jTblRadioButton;
+	private JRadioButton tblRadioButton;
 	private JToolBar jPanel13;
-	private JRadioButton jRegRadioButton;
-	private JTable jHistoryTable;
-	private JMenuItem jDialogMenuItem;
-	private JMenuItem jArialMenuItem;
-	private JMenu jMenu2;
-	private JMenu jMenu1;
-	private JScrollPane jTableTranslateScrollPane;
-	private static CommandLine cmd;
-	private JMenuItem jFont14MenuItem;
-	private JMenuItem jFont12MenuItem;
-	private JMenuItem jFont10MenuItem;
-	private JMenuItem jFont8MenuItem;
-	private JMenu jFontMenu;
-	private JMenuItem jSCMenuItem;
-	private JMenuItem jHKMenuItem;
-	private JMenuItem jEnglishMenuItem;
-	private JMenu jMenu6;
+	private JRadioButton regRadioButton;
+	private JTable historyTable;
+	private JMenuItem dialogMenuItem;
+	private JMenuItem arialMenuItem;
+	private JMenu fontMenu;
+	private JMenu sizeMenu;
+	private JScrollPane tableTranslateScrollPane;
+	public static CommandLine cmd;
+	private JMenuItem font14MenuItem;
+	private JMenuItem font12MenuItem;
+	private JMenuItem font10MenuItem;
+	private JMenuItem font8MenuItem;
+	private JMenu topFontMenu;
+	private JMenuItem simplifiedChineseMenuItem;
+	private JMenuItem traditionalChineseMenuItem;
+	private JMenuItem englishMenuItem;
+	private JMenu languageMenu;
 	private JSplitPane jSplitPane3;
-	private JButton jButton1;
-	private JButton jButton2;
-	private JButton jButton3;
-	private JButton jExportHistoryToExcelButton;
-	private JButton jButton5;
-	private JButton jButton12;
-	private JButton jButton13;
+	private JButton saveHistoryTableImageButton;
+	private JButton saveHexTableImageButton;
+	private JButton saveInstructionTableImageButton;
+	private JButton exportHistoryToExcelButton;
+	private JButton excelMemoryButton;
+	private JButton excelButton;
+	private JButton exportToExcelButton;
 	private JPanel jPanel17;
-	private JTable jSearchMemoryTable;
+	private JTable searchMemoryTable;
 	private JScrollPane jScrollPane12;
 	private JPanel jPanel18;
-	private JButton jSearchMemoryButton;
-	private JComboBox jSearchMemoryToComboBox;
-	private JLabel jLabel6;
-	private JComboBox jSearchMemoryFromComboBox;
-	private JLabel jLabel5;
-	private JTextField jSearchMemoryTextField;
-	private JLabel jLabel4;
+	private JButton searchMemoryButton;
+	private JComboBox<String> searchMemoryToComboBox;
+	private JLabel toLabel;
+	private JComboBox<String> searchMemoryFromComboBox;
+	private JLabel fromLabel;
+	private JTextField searchMemoryTextField;
+	private JLabel hexDecStringLabel;
 	private JButton disassembleButton;
 	public static ResourceBundle language;
-	private JButton jRefreshAddressTranslateTableButton;
+	private JButton refreshAddressTranslateTableButton;
 
 	private BigInteger currentMemoryWindowsAddress;
+	public static Logger logger = Logger.getLogger(GKD.class);
 
 	public enum OSType {
 		mac, win, linux
@@ -477,21 +456,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	boolean systemMapLoadedOnce = false;
 	private JScrollPane jScrollPane17;
 	private JEditorPane jEditorPane1;
-	private JButton jSearchObjdumpButton;
-	private JTextField jTextField1;
+	private JButton searchObjdumpButton;
+	private JTextField searchObjdumpTextField;
 	private JToolBar jPanel27;
 	private JPanel objdumpPanel;
-	private JButton jSearchRelPltButton;
-	private JTextField jSearchRelPltTextField;
+	private JButton searchRelPltButton;
+	private JTextField searchRelPltTextField;
 	private JToolBar jToolBar4;
 	private JEditorPane jSearchRelPltEditorPane;
 	private JScrollPane jScrollPane18;
 	private JPanel jPanel28;
 
-	private JEditorPane jSearchDynamicEditorPane;
+	private JEditorPane searchDynamicEditorPane;
 	private JScrollPane jScrollPane19;
-	private JButton jSearchDynamicButton;
-	private JTextField jSearchDynamicTextField;
+	private JButton searchDynamicButton;
+	private JTextField searchDynamicTextField;
 	private JToolBar jToolBar5;
 	private JPanel jPanel29;
 
@@ -501,13 +480,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem loadElfMenuItem = new JMenuItem("Load ELF");
 	private String latestVersionURL;
 	private boolean saveToRunDotTxt;
-	private boolean processPauseVM;
 	private int skipBreakpointTime;
 	private boolean isupdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
-	private static JLibGDB libGDB;
-	private JProgressBarDialog progressBarDialog;
+	private JProgressBarDialog progressBarDialog = new JProgressBarDialog();
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
 			"Disp Enb Address", MyLanguage.getString("Hit") }) {
@@ -516,8 +493,66 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	};
 
+	public GKD() {
+		super();
+		progressBarDialog.setTitle("Starting GKD");
+
+		if (os == OSType.mac) {
+			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
+			macApp.setDockIconImage(new ImageIcon(GKD.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
+			macApp.addApplicationListener(this);
+		}
+		// $hide>>$
+		Thread loadThread = new Thread("gkd.init()") {
+			public void run() {
+				// $hide<<$
+				init();
+				//$hide>>$
+				if (Global.debug) {
+					logger.debug("setVisible(true)");
+				}
+
+				//new Thread(new BochsoutTimer()).start();
+
+				setVisible(true);
+
+				preventSetVisibleHang = false;
+				if (Global.debug) {
+					logger.debug("end setVisible(true)");
+				}
+			}
+		};
+		progressBarDialog.jProgressBar.setMinimum(0);
+		progressBarDialog.jProgressBar.setMaximum(100);
+		progressBarDialog.jProgressBar.setStringPainted(true);
+		progressBarDialog.thread = loadThread;
+		progressBarDialog.addCancelEventListener(this);
+		progressBarDialog.setVisible(true);
+		//$hide<<$
+		//		new Thread("preventSetVisibleHang thread") {
+		//			public void run() {
+		//				try {
+		//					Thread.sleep(1000000);
+		//					if (preventSetVisibleHang) {
+		//						logger.debug("setVisible(true) cause system hang, this probably a swing bug, so force exit, please restart");
+		//						System.exit(-1);
+		//					}
+		//				} catch (InterruptedException e) {
+		//					e.printStackTrace();
+		//				}
+		//			}
+		//		}.start();
+	}
+
 	public static void main(String[] args) {
 		WebServiceUtil.log("gkd", "start", null, null, null);
+
+		try {
+			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingWhiteLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		CommandLineParser parser = new PosixParser();
 		Options options = new Options();
 		try {
@@ -530,14 +565,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			System.exit(1);
 		}
 
-		try {
-			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingWhiteLookAndFeel");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		if (cmd.hasOption("version") || cmd.hasOption("v")) {
-			System.out.println("version : " + Global.version);
+			logger.debug("version : " + Global.version);
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar GDK.jar [OPTION]", options);
 			System.exit(1);
@@ -548,13 +577,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			System.err.println(errorMessage);
 			JOptionPane.showMessageDialog(null, errorMessage);
 			System.exit(1);
-		}
-
-		for (String str : GKDCommonLib.readConfig(cmd, "/gkd/bochsArguments/text()").split(" ")) {
-			if (str.contains("bochsrc") || str.contains(".bxrc")) {
-				bochsrc = str;
-				break;
-			}
 		}
 
 		if (ArrayUtils.contains(args, "-debug")) {
@@ -579,7 +601,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (System.getProperty("os.name").toLowerCase().contains("linux")) {
 					if (System.getProperty("os.arch").contains("64")) {
 						if (Global.debug) {
-							System.out.println("Loading linux 64 bits jogl");
+							logger.debug("Loading linux 64 bits jogl");
 						}
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libgluegen-rt.so")), new File("libgluegen-rt.so"));
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl_awt.so")), new File("libjogl_awt.so"));
@@ -587,7 +609,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl.so")), new File("libjogl.so"));
 					} else {
 						if (Global.debug) {
-							System.out.println("Loading linux 32 bits jogl");
+							logger.debug("Loading linux 32 bits jogl");
 						}
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libgluegen-rt.so")), new File("libgluegen-rt.so"));
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl_awt.so")), new File("libjogl_awt.so"));
@@ -597,7 +619,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					try {
 						File f = new File(".");
 						Runtime.getRuntime().load(f.getAbsolutePath() + File.separator + "libjogl.so");
-						System.out.println("Loading " + f.getAbsolutePath() + File.separator + "libjogl.so");
+						logger.debug("Loading " + f.getAbsolutePath() + File.separator + "libjogl.so");
 						Runtime.getRuntime().load(f.getAbsolutePath() + File.separator + "libjogl_awt.so");
 						Runtime.getRuntime().load(f.getAbsolutePath() + File.separator + "libjogl_cg.so");
 						Runtime.getRuntime().load(f.getAbsolutePath() + File.separator + "libgluegen-rt.so");
@@ -613,7 +635,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 					if (System.getProperty("os.arch").contains("64")) {
 						if (Global.debug) {
-							System.out.println("Loading windows 64 bits jogl");
+							logger.debug("Loading windows 64 bits jogl");
 						}
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl.dll")), new File("jogl.dll"));
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl_awt.dll")), new File("jogl_awt.dll"));
@@ -621,7 +643,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/gluegen-rt.dll")), new File("gluegen-rt.dll"));
 					} else {
 						if (Global.debug) {
-							System.out.println("Loading windows 32 bits jogl");
+							logger.debug("Loading windows 32 bits jogl");
 						}
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl.dll")), new File("jogl.dll"));
 						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl_awt.dll")), new File("jogl_awt.dll"));
@@ -640,162 +662,80 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						System.err.println("Solution : Please add \"-Djava.library.path=.\" to start peter-bochs\n" + e);
 					}
 				}
+				jarFile.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		Global.vmType = GKDCommonLib.readConfig(cmd, "/gkd/vmType/text()");
+		String temp = GKDCommonLib.readConfig(cmd, "/gkd/vmType/text()");
+		if (temp.equals("bochs")) {
+			VMController.vmType = VMType.Bochs;
+		} else if (temp.equals("qemu")) {
+			VMController.vmType = VMType.Qemu;
+		}
+
+		if (VMController.vmType == VMType.Bochs) {
+			for (String str : GKDCommonLib.readConfig(cmd, "/gkd/vmArguments/text()").split(" ")) {
+				if (str.contains("bochsrc") || str.contains(".bxrc")) {
+					bochsrc = str;
+					break;
+				}
+			}
+		}
+		Global.ndisasmPath = GKDCommonLib.readConfig(cmd, "/gkd/ndisasm/text()");
+
 		Global.stopCommand = GKDCommonLib.readConfig(cmd, "/gkd/stopCommand/text()");
-		if (!Global.vmType.equals("bochs") && !Global.vmType.equals("qemu")) {
-			System.err.println("vmtype : \"" + Global.vmType + "\" not supported");
+		if (VMController.vmType != VMType.Bochs && VMController.vmType != VMType.Qemu) {
+			System.err.println("vmtype : \"" + VMController.vmType + "\" not supported");
 		}
 		if (!new File(cmd.getOptionValue("f")).exists()) {
 			System.err.println(cmd.getOptionValue("f") + " not exist");
 			System.exit(-1);
 		}
-		if (!Global.vmType.equals("bochs") && !Global.vmType.equals("qemu")) {
+		if (VMController.vmType != VMType.Bochs && VMController.vmType != VMType.Qemu) {
 			System.err.println("<vmType> only supports qemu and bochs");
 		}
-		if (Global.vmType.equals("qemu")) {
-			libGDB = new JLibGDB("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
+		if (VMController.vmType == VMType.Qemu) {
+			//libGDB = new JLibGDB("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
+			VMController.getVM().initStub(new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
 		}
 
 		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
 
-		/*
-		 * if (ArrayUtils.contains(args, "-loadBreakpoint")) {
-		 * Setting.getInstance().setLoadBreakpointAtStartup(true); args =
-		 * (String[]) ArrayUtils.removeElement(args, "-loadBreakpoint"); } else
-		 * if (ArrayUtils.contains(args, "-loadbreakpoint")) {
-		 * Setting.getInstance().setLoadBreakpointAtStartup(true); args =
-		 * (String[]) ArrayUtils.removeElement(args, "-loadbreakpoint"); }
-		 * 
-		 * for (int x = 0; x < args.length; x++) { if
-		 * (args[x].toLowerCase().startsWith("-osdebug")) { Global.osDebug =
-		 * CommonLib.string2long(args[x].replaceAll("-.*=", "")); args =
-		 * (String[]) ArrayUtils.removeElement(args, args[x]); x = -1; } else if
-		 * (args[x].toLowerCase().startsWith("-profilingmemoryport")) {
-		 * Global.profilingMemoryPort = (int)
-		 * CommonLib.string2long(args[x].replaceAll("-.*=", "")); args =
-		 * (String[]) ArrayUtils.removeElement(args, args[x]); x = -1; } else if
-		 * (args[x].toLowerCase().startsWith("-profilingjmpport")) {
-		 * Global.profilingJmpPort = (int)
-		 * CommonLib.string2long(args[x].replaceAll("-.*=", "")); args =
-		 * (String[]) ArrayUtils.removeElement(args, args[x]); x = -1; } else if
-		 * (args[x].toLowerCase().startsWith("-loadelf")) { Global.elfPaths =
-		 * args[x].replaceAll("-loadelf=", "").split(",");
-		 * Setting.getInstance().setLoadSystemMapAtStartup(true); args =
-		 * (String[]) ArrayUtils.removeElement(args, args[x]); x = -1; } else if
-		 * (args[x].toLowerCase().startsWith("-loadmap")) {
-		 * System.out.println("-loadmap is not deprecated, please use -loadelf."
-		 * ); } }
-		 * 
-		 * arguments = args;
-		 */
-
 		Global.elfPaths = GKDCommonLib.readConfig(cmd, "/gkd/elf/text()").split(",");
 
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JProgressBarDialog progressBarDialog = new JProgressBarDialog();
-				progressBarDialog.setTitle("Starting GKD");
-				final GKD gkd = new GKD(progressBarDialog);
-
-				if (os == OSType.mac) {
-					com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
-					macApp.setDockIconImage(new ImageIcon(GKD.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
-					macApp.addApplicationListener(gkd);
-				}
-
-				Thread loadThread = new Thread("gkd.init()") {
-					public void run() {
-						gkd.init();
-						if (Global.debug) {
-							System.out.println("setVisible(true)");
-						}
-
-						//new Thread(new BochsoutTimer()).start();
-
-						gkd.setVisible(true);
-
-						preventSetVisibleHang = false;
-						if (Global.debug) {
-							System.out.println("end setVisible(true)");
-						}
-					}
-				};
-				progressBarDialog.jProgressBar.setMinimum(0);
-				progressBarDialog.jProgressBar.setMaximum(100);
-				progressBarDialog.jProgressBar.setStringPainted(true);
-				progressBarDialog.thread = loadThread;
-				progressBarDialog.addCancelEventListener(gkd);
-				progressBarDialog.setVisible(true);
-
-				new Thread("preventSetVisibleHang thread") {
-					public void run() {
-						try {
-							Thread.sleep(1000000);
-							if (preventSetVisibleHang) {
-								System.out.println("setVisible(true) cause system hang, this probably a swing bug, so force exit, please restart");
-								System.exit(-1);
-							}
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				}.start();
-
-			}
-		});
-	}
-
-	public GKD(JProgressBarDialog progressBarDialog) {
-		super();
-		this.progressBarDialog = progressBarDialog;
+		final GKD gkd = new GKD();
+		VMController.getVM().setGKDInstance(gkd);
+		VMController.getVM().setVMPath(GKDCommonLib.readConfig(cmd, "/gkd/vm/text()"));
+		VMController.getVM().setVMArguments(GKDCommonLib.readConfig(cmd, "/gkd/vmArguments/text()"));
 	}
 
 	public void init() {
 		progressBarDialog.jProgressBar.setValue(0);
 		progressBarDialog.jProgressBar.setString("Loading GUI");
 		if (Global.debug) {
-			System.out.println(new Date());
+			logger.debug(new Date());
 		}
 
 		if (Global.debug) {
-			System.out.println("initGUI()");
+			logger.debug("initGUI()");
 		}
 
 		progressBarDialog.jProgressBar.setValue(10);
 		progressBarDialog.jProgressBar.setString("Init GUI");
 		initGUI();
 		if (Global.debug) {
-			System.out.println("end initGUI()");
+			logger.debug("end initGUI()");
 		}
-		if (Global.vmType.equals("qemu")) {
-			jBochsMenu.setVisible(false);
+		if (VMController.vmType == VMType.Qemu) {
+			bochsMenu.setVisible(false);
 		}
 
 		progressBarDialog.jProgressBar.setValue(80);
 		progressBarDialog.jProgressBar.setString("Starting VM");
 
-		if (Global.vmType.equals("bochs")) {
-			if (Global.debug) {
-				System.out.println("startBochs()");
-			}
-			startBochs();
-			if (Global.debug) {
-				System.out.println("end startBochs()");
-			}
-		} else if (Global.vmType.equals("qemu")) {
-			if (Global.debug) {
-				System.out.println("startQemu()");
-			}
-			startQemu();
-			if (Global.debug) {
-				System.out.println("end startQemu()");
-			}
-		}
+		VMController.getVM().startVM();
 
 		progressBarDialog.jProgressBar.setValue(90);
 		progressBarDialog.jProgressBar.setString("Init font");
@@ -804,342 +744,31 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			public void run() {
 				HashMap<String, String> map = GKDCommonLib.checkLatestVersion();
 				if (Global.debug) {
-					System.out.println("finished checkLatestVersion()");
-					System.out.println("checkLatestVersion()=" + map.get("latestVersion"));
+					logger.debug("finished checkLatestVersion()");
+					logger.debug("checkLatestVersion()=" + map.get("latestVersion"));
 				}
 				if (map != null) {
 					if (map.get("latestVersion") != null && map.get("latestVersion").compareTo(Global.version) > 0) {
-						jLatestVersionLabel.setText(MyLanguage.getString("Latest_version_available") + " : " + map.get("latestVersion"));
+						latestVersionLabel.setText(MyLanguage.getString("Latest_version_available") + " : " + map.get("latestVersion"));
 						latestVersionURL = map.get("downloadURL");
 					} else {
-						jLatestVersionLabel.setText("");
+						latestVersionLabel.setText("");
 					}
 				} else {
-					jLatestVersionLabel.setText("");
+					latestVersionLabel.setText("");
 				}
 			}
 		}.start();
 
-		if (Global.vmType.equals("bochs")) {
-			bochsoutTextArea.addTrailListener(new File("bochsout.txt"), 0, true);
+		if (VMController.vmType == VMType.Bochs) {
+			bochsoutTextArea.addTrailListener(new File("."), new File("bochsout.txt"), 0, true);
 		}
 
 		progressBarDialog.jProgressBar.setValue(100);
 		progressBarDialog.jProgressBar.setString("Fnished");
 
 		if (Global.debug) {
-			System.out.println(new Date());
-		}
-	}
-
-	private void startBochs() {
-		try {
-			this.enableAllButtons(true, false);
-			runVMButton.setText(MyLanguage.getString("run"));
-			runVMButton.setToolTipText("Start emulation");
-			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
-
-			killVM();
-
-			ProcessBuilder pb = new ProcessBuilder(
-					(GKDCommonLib.readConfig(cmd, "/gkd/bochs/text()") + " " + GKDCommonLib.readConfig(cmd, "/gkd/bochsArguments/text()")).split(" "));
-			pb.redirectErrorStream(true);
-			p = pb.start();
-			InputStream is = p.getInputStream();
-			commandReceiver = new CommandReceiver(is, this);
-			new Thread(commandReceiver, "commandReceiver thread").start();
-			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-
-			// if (isLinux) {
-			// sendCommand("6");
-			// }
-
-			Date date1 = new Date();
-			while (commandReceiver.getLinesLength() < 9) {
-				Thread.currentThread();
-				Thread.sleep(100);
-				if (new Date().getTime() - date1.getTime() > 4000) {
-					break;
-				}
-			}
-			String versionLines[] = commandReceiver.getCommandResultUntilEnd().split("\n");
-			for (String line : versionLines) {
-				if (line.contains("Bochs x86 Emulator")) {
-					version = line.trim();
-					jBochsVersionLabel.setText(version + "     ");
-				}
-				if (line.contains("Peter-bochs instrument")) {
-					if (Setting.getInstance().memoryProfiling) {
-						if (Global.debug) {
-							System.out.println("Memory profiling port " + Global.profilingMemoryPort);
-						}
-						MemorySocketServerController.start(Global.profilingMemoryPort, null);
-					}
-					if (Setting.getInstance().jmpProfiling) {
-						if (Global.debug) {
-							System.out.println("Jump profiling port " + Global.profilingJmpPort);
-						}
-						JmpSocketServerController.start(Global.profilingJmpPort, jInstrumentPanel.getJmpTableModel());
-					}
-					if (Setting.getInstance().interruptProfiling) {
-						if (Global.debug) {
-							System.out.println("Interrupt profiling port " + Global.profilingInterruptPort);
-						}
-						InterruptSocketServerController.start(Global.profilingInterruptPort);
-					}
-				}
-			}
-
-			int vncPort = GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()");
-			if (vncPort != -1) {
-				TightVNC.initVNCPanel(this, vncPanel, "127.0.0.1", vncPort, null);
-			}
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_bochs") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_bochs"));
-			ex.printStackTrace();
-			System.exit(1);
-		}
-	}
-
-	private void startQemu() {
-		try {
-			this.enableAllButtons(true, false);
-			runVMButton.setText(MyLanguage.getString("run"));
-			runVMButton.setToolTipText("Start emulation");
-			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
-
-			killVM();
-
-			p = Runtime.getRuntime().exec(GKDCommonLib.readConfig(cmd, "/gkd/vmArguments/text()"));
-			final InputStream is = p.getInputStream();
-
-			new Thread() {
-				public void run() {
-					try {
-						int x;
-						String s = "";
-						while ((x = is.read()) != -1) {
-							s += (char) x;
-							if ((char) x == '\n') {
-								bochsoutTextArea.setText(bochsoutTextArea.getText() + s);
-								s = "";
-							}
-						}
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-			}.start();
-
-			Thread.sleep(200);
-			if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
-				TightVNC.initVNCPanel(this, vncPanel, "127.0.0.1", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
-			}
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, MyLanguage.getString("Unable_to_start_qemu") + "\n" + MyLanguage.getString("Tips_you_specified_a_wrong_path_of_qemu"));
-			ex.printStackTrace();
-			System.exit(1);
-		}
-	}
-
-	private void stopVM() {
-		WebServiceUtil.log("gkd", "stop", null, null, null);
-		try {
-			this.enableAllButtons(false, false);
-			runVMButton.setText(MyLanguage.getString("run"));
-			runVMButton.setToolTipText("Start emulation");
-			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
-
-			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
-				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-				cl.show(jMainPanel, "jMaximizableTabbedPane_BasePanel1");
-				currentPanel = "jMaximizableTabbedPane_BasePanel1";
-			}
-
-			if (Global.vmType.equals("bochs")) {
-				if (os == OSType.mac || os == OSType.linux) {
-					ProcessBuilder pb = new ProcessBuilder("killall", "-9", "bochs");
-					pb.start();
-				} else {
-					ProcessBuilder pb = new ProcessBuilder("StopBochs.exe");
-					pb.start();
-				}
-			} else if (Global.vmType.equals("qemu")) {
-				if (os == OSType.mac || os == OSType.linux) {
-					CommonLib.runCommand(Global.stopCommand);
-				} else {
-					JOptionPane.showMessageDialog(this, "not implement yet");
-				}
-			}
-
-			MemorySocketServerController.stop();
-			JmpSocketServerController.stop();
-			InterruptSocketServerController.stop();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private synchronized void pauseVM(boolean pauseVMManually, boolean resumeMainPanel) {
-		if (!processPauseVM) {
-			processPauseVM = true;
-			try {
-				if (runVMButton.getText().equals(MyLanguage.getString("pause"))) {
-					WebServiceUtil.log("gkd", "pause", null, null, null);
-					if (Global.vmType.equals("bochs")) {
-						commandReceiver.clearBuffer();
-						commandReceiver.waitUntilNoInput();
-					}
-
-					if (pauseVMManually) {
-						if (Global.vmType.equals("bochs")) {
-							if (os == OSType.mac || os == OSType.linux) {
-								ProcessBuilder pb = new ProcessBuilder("killall", "-2", "bochs");
-								pb.start();
-							} else {
-								ProcessBuilder pb = new ProcessBuilder("PauseBochs.exe");
-								pb.start();
-							}
-						} else if (Global.vmType.equals("qemu")) {
-							libGDB.ctrlC();
-						}
-					}
-
-					updateVMStatus(true);
-
-					if (resumeMainPanel) {
-						SwingUtilities.invokeLater(new Runnable() {
-							// this invokeLater prevent openJDK hang my program,
-							// I am using FC15
-							public void run() {
-								CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-								cl.show(jMainPanel, currentPanel);
-							}
-						});
-					}
-					if (skipBreakpointTime <= 0 && customCommandQueue.size() <= 0) {
-						runVMButton.setText(MyLanguage.getString("run"));
-						runVMButton.setToolTipText("Start emulation");
-						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-			processPauseVM = false;
-		}
-	}
-
-	private void runVM() {
-		System.out.println("runVM");
-		WebServiceUtil.log("gkd", "run", null, null, null);
-		try {
-			enableAllButtons(false, true);
-			if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
-				CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-				cl.show(jMainPanel, "Running Label");
-			}
-
-			if (skipBreakpointTime > 0) {
-				if (Global.vmType.equals("bochs")) {
-					jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /><br><br>" + skipBreakpointTime
-							+ "</center></html>");
-				} else if (Global.vmType.equals("qemu")) {
-					jRunningLabel.setText("<html><center>Qemu is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /><br><br>" + skipBreakpointTime
-							+ "</center></html>");
-				}
-				jRunningLabel.getParent().getParent().getParent().repaint();
-				jRunningLabel.getParent().getParent().repaint();
-				jRunningLabel.getParent().repaint();
-				jRunningLabel.repaint();
-			} else if (customCommandQueue.size() > 0) {
-				//				String nextCommands = "";
-				//				for (int x = 0; x < customCommandQueue.size() && x < 10; x++) {
-				//					nextCommands += customCommandQueue.get(x);
-				//				}
-				jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /><br><br>"
-						+ customCommandQueue.size() + "</center></html>");
-				jRunningLabel.getParent().repaint();
-			}
-
-			Data.memoryProfilingZone.needToTellBochsToUpdateZone = true;
-			if (Global.vmType.equals("bochs")) {
-				commandReceiver.clearBuffer();
-				sendCommand("c");
-			} else if (Global.vmType.equals("qemu")) {
-				System.out.println("libGDB._continue();");
-				String r = libGDB._continue();
-				System.out.println("libGDB._continue(); end");
-			}
-			runVMButton.setText(MyLanguage.getString("pause"));
-			runVMButton.setToolTipText("Pause emulation");
-			runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
-
-			new Thread("runVM() update thread") {
-				public void run() {
-					if (Global.vmType.equals("bochs")) {
-						while (commandReceiver.getLinesLength() == 0) {
-							try {
-								Thread.sleep(200);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					} else if (Global.vmType.equals("qemu")) {
-						while (libGDB.isRunning()) {
-							try {
-								Thread.sleep(200);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					}
-
-					skipBreakpointTime--;
-					if (skipBreakpointTime > 0) {
-						if (Global.vmType.equals("bochs")) {
-							pauseVM(false, false); // update register, not really
-													// want to pause because it
-													// already paused
-						}
-						waitUpdateFinish();
-
-						runVM();
-					} else if (customCommandQueue.size() > 0) {
-						if (Global.vmType.equals("bochs")) {
-							pauseVM(false, false); // update register, not really
-													// want to pause because it
-													// already paused
-
-							waitUpdateFinish();
-
-							while (customCommandQueue.size() > 0) {
-								String command = customCommandQueue.get(0).command;
-								customCommandQueue.remove(0);
-
-								commandReceiver.clearBuffer();
-								if (command.equals("s")) {
-									sendCommand("s");
-									updateVMStatus(true);
-									waitUpdateFinish();
-								} else if (command.equals("c")) {
-									runVM();
-									return;
-								}
-							}
-						}
-						// pauseBochs(false, true);
-						// waitUpdateFinish();
-					} else {
-						if (Global.vmType.equals("bochs")) {
-							pauseVM(false, true);
-						}
-						waitUpdateFinish();
-					}
-				}
-			}.start();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.debug(new Date());
 		}
 	}
 
@@ -1155,6 +784,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void initGUI() {
+		Date startDate = new Date();
+		System.out.println("starting GKD " + new SimpleDateFormat("m:s S").format(startDate));
 		try {
 			language = Utf8ResourceBundle.getBundle("language_" + Setting.getInstance().currentLanguage);
 
@@ -1233,8 +864,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					runVMButton.setText(MyLanguage.getString("run"));
 					runVMButton.setToolTipText("Start emulation");
 					runVMButton.setMaximumSize(new java.awt.Dimension(85, 26));
-					runVMButton.add(getJRunBochsAndSkipBreakpointMenuItem());
-					runVMButton.add(getJRunCustomCommandMenuItem());
+					runVMButton.add(getRunBochsAndSkipBreakpointMenuItem());
+					runVMButton.add(getRunCustomCommandMenuItem());
 					runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 					runVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
@@ -1245,19 +876,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				{
 					stepBochsButton = new JDropDownButton();
 					jToolBar1.add(stepBochsButton);
-					jToolBar1.add(getJStepOverDropDownButton());
-					jToolBar1.add(getJFastStepBochsButton());
+					jToolBar1.add(getStepOverDropDownButton());
+					jToolBar1.add(getFastStepBochsButton());
 					stepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 					stepBochsButton.setText(MyLanguage.getString("Step"));
 					stepBochsButton.setMaximumSize(new java.awt.Dimension(85, 26));
-					stepBochsButton.add(getJStep10MenuItem());
-					stepBochsButton.add(getJStep100MenuItem());
-					stepBochsButton.add(getJStepNMenuItem());
-					stepBochsButton.add(getJStepUntilCallOrJumpMenuItem());
-					stepBochsButton.add(getJStepUntilRetMenuItem());
-					stepBochsButton.add(getJStepUntilIRetMenuItem());
-					stepBochsButton.add(getJStepUntilMovMenuItem());
-					stepBochsButton.add(getJStepUntilIPBigChangeMenuItem());
+					stepBochsButton.add(getStep10MenuItem());
+					stepBochsButton.add(getStep100MenuItem());
+					stepBochsButton.add(getStepNMenuItem());
+					stepBochsButton.add(getStepUntilCallOrJumpMenuItem());
+					stepBochsButton.add(getStepUntilRetMenuItem());
+					stepBochsButton.add(getStepUntilIRetMenuItem());
+					stepBochsButton.add(getStepUntilMovMenuItem());
+					stepBochsButton.add(getStepUntilIPBigChangeMenuItem());
 					stepBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							stepBochsButtonActionPerformed(evt);
@@ -1278,19 +909,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					});
 				}
 				{
-					jUpdateBochsButton = new JButton();
-					jToolBar1.add(jUpdateBochsButton);
-					jToolBar1.add(getJExportToExcelButton());
-					jToolBar1.add(getJSettingButton());
-					jToolBar1.add(getJRegisterToggleButton());
-					jToolBar1.add(getJSourceLevelDebuggerButton());
-					jToolBar1.add(getJProfilerToggleButton());
-					jToolBar1.add(getJLogToggleButton());
+					updateBochsButton = new JButton();
+					jToolBar1.add(updateBochsButton);
+					jToolBar1.add(getExportToExcelButton());
+					jToolBar1.add(getSettingButton());
+					jToolBar1.add(getRegisterToggleButton());
+					jToolBar1.add(getSourceLevelDebuggerButton());
+					jToolBar1.add(getProfilerToggleButton());
 					jToolBar1.add(getJOSLogToggleButton());
-					jUpdateBochsButton.setEnabled(true);
-					jUpdateBochsButton.setText(MyLanguage.getString("Update"));
-					jUpdateBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
-					jUpdateBochsButton.addActionListener(new ActionListener() {
+					updateBochsButton.setEnabled(true);
+					updateBochsButton.setText(MyLanguage.getString("Update"));
+					updateBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
+					updateBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							jUpdateBochsButtonActionPerformed(evt);
 						}
@@ -1300,15 +930,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			progressBarDialog.jProgressBar.setValue(50);
 			progressBarDialog.jProgressBar.setString("Init GUI - 3");
 			{
-				jStatusPanel = new JPanel();
+				statusPanel = new JPanel();
 				BorderLayout jStatusPanelLayout = new BorderLayout();
-				jStatusPanel.setLayout(jStatusPanelLayout);
-				getContentPane().add(jStatusPanel, BorderLayout.SOUTH);
-				getContentPane().add(getJMainPanel());
+				statusPanel.setLayout(jStatusPanelLayout);
+				getContentPane().add(statusPanel, BorderLayout.SOUTH);
+				getContentPane().add(getMainPanel());
 				{
-					jStatusProgressBar = new JProgressBar();
-					jStatusPanel.add(jStatusProgressBar, BorderLayout.WEST);
-					jStatusPanel.add(getJPanel25(), BorderLayout.CENTER);
+					statusProgressBar = new JProgressBar();
+					statusProgressBar.setStringPainted(true);
+					statusPanel.add(statusProgressBar, BorderLayout.WEST);
+					statusPanel.add(getJPanel25(), BorderLayout.CENTER);
 				}
 			}
 			progressBarDialog.jProgressBar.setValue(60);
@@ -1335,26 +966,27 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						});
 					}
 				}
+
 				{
-					jBochsMenu = new JMenu();
-					jMenuBar1.add(jBochsMenu);
-					jMenuBar1.add(getJFontMenu());
-					jMenuBar1.add(getJMenu6());
-					jMenuBar1.add(getJSystemMenu());
-					jBochsMenu.setText(MyLanguage.getString("Bochs"));
+					bochsMenu = new JMenu();
+					jMenuBar1.add(bochsMenu);
+					jMenuBar1.add(getTopFontMenu());
+					jMenuBar1.add(getLanguageMenu());
+					jMenuBar1.add(getSystemMenu());
+					bochsMenu.setText(MyLanguage.getString("Bochs"));
 					{
-						startBochsMenuItem = new JMenuItem();
-						jBochsMenu.add(startBochsMenuItem);
-						startBochsMenuItem.setText(MyLanguage.getString("Start"));
-						startBochsMenuItem.addActionListener(new ActionListener() {
+						startVMMenuItem = new JMenuItem();
+						bochsMenu.add(startVMMenuItem);
+						startVMMenuItem.setText(MyLanguage.getString("Start"));
+						startVMMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								startBochsMenuItemActionPerformed(evt);
+								startVMMenuItemActionPerformed(evt);
 							}
 						});
 					}
 					{
 						stopBochsMenuItem = new JMenuItem();
-						jBochsMenu.add(stopBochsMenuItem);
+						bochsMenu.add(stopBochsMenuItem);
 						stopBochsMenuItem.setText(MyLanguage.getString("Stop"));
 						stopBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
@@ -1364,21 +996,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 					{
 						jSeparator1 = new JSeparator();
-						jBochsMenu.add(jSeparator1);
+						bochsMenu.add(jSeparator1);
 					}
 					{
 						runBochsMenuItem = new JMenuItem();
-						jBochsMenu.add(runBochsMenuItem);
+						bochsMenu.add(runBochsMenuItem);
 						runBochsMenuItem.setText(MyLanguage.getString("run"));
 						runBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								runVM();
+								VMController.getVM().runVM();
 							}
 						});
 					}
 					{
 						pauseVMMenuItem = new JMenuItem();
-						jBochsMenu.add(pauseVMMenuItem);
+						bochsMenu.add(pauseVMMenuItem);
 						pauseVMMenuItem.setText(MyLanguage.getString("pause"));
 						pauseVMMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
@@ -1388,7 +1020,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 					{
 						jupdateVMStatusMenuItem = new JMenuItem();
-						jBochsMenu.add(jupdateVMStatusMenuItem);
+						bochsMenu.add(jupdateVMStatusMenuItem);
 						jupdateVMStatusMenuItem.setText(MyLanguage.getString("update_status"));
 						jupdateVMStatusMenuItem.setBounds(83, 86, 79, 20);
 						jupdateVMStatusMenuItem.addActionListener(new ActionListener() {
@@ -1405,10 +1037,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					{
 						aboutUsMenuItem = new JMenuItem();
 						jMenu5.add(aboutUsMenuItem);
-						jMenu5.add(getJHelpRequestMenuItem());
-						jMenu5.add(getJJVMMenuItem());
+						jMenu5.add(getHelpRequestMenuItem());
+						jMenu5.add(getJVMMenuItem());
 						jMenu5.add(getShortcutHelpMenuItem());
-						jMenu5.add(getJLicenseMenuItem());
+						jMenu5.add(getLicenseMenuItem());
 						aboutUsMenuItem.setText(MyLanguage.getString("About_us"));
 						aboutUsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
@@ -1434,30 +1066,38 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				setLocation(x, y);
 			}
 
+			progressBarDialog.jProgressBar.setValue(71);
+			progressBarDialog.jProgressBar.setString("Init GUI - 5.1");
+
 			jSplitPane1.setDividerLocation(Setting.getInstance().divX);
 			jSplitPane2.setDividerLocation(Setting.getInstance().divY);
 
-			jOSDebugInformationPanel1.getjMainSplitPane().setDividerLocation(Setting.getInstance().osDebugSplitPane_DividerLocation);
-			// pack();
+			osDebugInformationPanel1.getMainSplitPane().setDividerLocation(Setting.getInstance().osDebugSplitPane_DividerLocation);
 			initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
-			jInstrumentPanel.setThing(jStatusProgressBar, jStatusLabel);
+			instrumentPanel.setThing(statusProgressBar, statusLabel);
+
+			progressBarDialog.jProgressBar.setValue(72);
+			progressBarDialog.jProgressBar.setString("Init GUI - 5.2");
 
 			// prevent null jmenuitem
-			getJInstructionPanelPopupMenu();
+			getInstructionPanelPopupMenu();
 			// end prevent null jmenuitem
+
+			progressBarDialog.jProgressBar.setValue(73);
+			progressBarDialog.jProgressBar.setString("Init GUI - 5.3");
 
 			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 				public boolean dispatchKeyEvent(KeyEvent e) {
 					if (e.getID() == KeyEvent.KEY_RELEASED) {
 						int keycode = e.getKeyCode();
 						if (keycode == 112) {
-							jTabbedPane3.setSelectedIndex(0);
+							tabbedPane3.setSelectedIndex(0);
 						} else if (keycode == 113) {
-							jTabbedPane3.setSelectedIndex(1);
+							tabbedPane3.setSelectedIndex(1);
 						} else if (keycode == 114) {
-							jTabbedPane3.setSelectedIndex(2);
+							tabbedPane3.setSelectedIndex(2);
 						} else if (keycode == 115) {
-							jTabbedPane3.setSelectedIndex(3);
+							tabbedPane3.setSelectedIndex(3);
 						} else if (keycode == 116) {
 							if (startVMButton.isEnabled()) {
 								startVMButtonActionPerformed(null);
@@ -1487,6 +1127,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					return discardEvent;
 				}
 			});
+			System.out.println("started GKD " + new SimpleDateFormat("m:s S").format(new Date()));
+			System.out.println("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(ERROR);
@@ -1496,31 +1138,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void initChineseFont() {
 		new Thread("initChineseFont thread") {
 			public void run() {
+				fontMenu.removeAll();
+
 				Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 				String chinesesample = "\u4e00";
-				for (int j = 0; j < allfonts.length; j++) {
+				for (int j = 0; j < allfonts.length && j < 40; j++) {
 					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
-						// System.out.println(allfonts[j].getFontName());
-						JMenuItem jMenuItem = new JMenuItem(allfonts[j].getFontName());
-						jMenuItem.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent evt) {
-								Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
-							}
-						});
-						jMenu2.add(jMenuItem);
-					}
-				}
-
-				for (int j = 0; j < allfonts.length; j++) {
-					if (allfonts[j].canDisplayUpTo(chinesesample) != -1) {
-						// System.out.println(allfonts[j].getFontName());
-						JMenuItem jMenuItem = new JMenuItem(allfonts[j].getFontName());
-						jMenuItem.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent evt) {
-								Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
-							}
-						});
-						jMenu2.add(jMenuItem);
+						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
+							JMenuItem jMenuItem = new JMenuItem(allfonts[j].getFontName());
+							jMenuItem.addActionListener(new ActionListener() {
+								public void actionPerformed(ActionEvent evt) {
+									Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
+									initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
+								}
+							});
+							fontMenu.add(jMenuItem);
+						}
 					}
 				}
 			}
@@ -1530,62 +1163,81 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void vmCommandButtonActionPerformed(ActionEvent evt) {
 		try {
 			String command = vmCommandTextField.getText().trim();
-			if (Global.vmType.equals("bochs")) {
-				if (command.equals("clear")) {
-					this.vmCommandEditorPane.setText("");
-				} else if (command.equals("c")) {
-					commandReceiver.shouldShow = false;
-					runVM();
-				} else if (command.equals("q")) {
-					stopVM();
-				} else {
-					Setting.getInstance().vmCommandHistory.add(command);
-					Setting.getInstance().save();
+			Global.lastCommand = command;
+			Setting.getInstance().vmCommandHistory.add(command);
+			Setting.getInstance().save();
 
-					commandReceiver.shouldShow = true;
-
-					sendCommand(command);
-					if (Setting.getInstance().updateAfterBochsCommand) {
-						updateVMStatusForBochsCommand(true);
-					}
-					commandHistoryIndex = 0;
-				}
-			} else if (Global.vmType.equals("qemu")) {
-				String qmpHost = GKDCommonLib.readConfig(cmd, "/gkd/qmpHost/text()");
-				int qmpPort = GKDCommonLib.readConfigInt(cmd, "/gkd/qmpPort/text()");
-				if (qmpHost == null || qmpPort == -1) {
-					return;
-				}
-				Setting.getInstance().vmCommandHistory.add(command);
-				Setting.getInstance().save();
-				String r = null;
-				if (command.equals("?")) {
-					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
-					qmpCommand += "{ \"execute\": \"query-commands\" }";
-					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
-					r = r.replaceAll("[,\\[\\]]", "\n");
-					r = r.replaceFirst("^.*\n", "");
-					List<String> list = Arrays.asList(r.split("\n"));
-					Collections.sort(list);
-					r = "";
-					for (String temp : list) {
-						if (temp.split(":").length > 1) {
-							r += temp.split(":")[1].replaceAll("\"", "").replaceAll("}", "").trim() + "\n";
-						}
-					}
-				} else {
-					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
-					if (qmpCommand.contains(" ")) {
-						qmpCommand += "{ \"execute\": \"" + command.split(" ")[0] + "\", \"arguments\": { \"command-line\": \"" + command.replaceFirst("^[^ ]*", "") + "\" }}";
-					} else {
-						qmpCommand += "{ \"execute\": \"" + command + "\" }";
-					}
-					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
-				}
+			if (command.equals("clear")) {
+				this.vmCommandEditorPane.setText("");
+			} else if (command.equals("c") && VMController.vmType == VMType.Bochs) {
+				VMController.getVM().runVM();
+			} else if (command.equals("q") && VMController.vmType == VMType.Bochs) {
+				VMController.getVM().stopVM();
+			} else {
+				String r = VMController.getVM().sendVMCommand(command);
 				if (r != null) {
 					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + "\n" + r);
 				}
 			}
+
+			//			if (VMController.vmType == VMType.Bochs) {
+			//				if (command.equals("clear")) {
+			//					this.vmCommandEditorPane.setText("");
+			//				} else if (command.equals("c")) {
+			//					runVM();
+			//				} else if (command.equals("q")) {
+			//					VMController.getVM().stopVM();
+			//				} else {
+			//					Setting.getInstance().vmCommandHistory.add(command);
+			//					Setting.getInstance().save();
+			//
+			//
+			//					sendBochsCommand(command);
+			//					if (Setting.getInstance().updateAfterGKDCommand) {
+			//						updateVMStatusForBochsCommand(true);
+			//					}
+			//					commandHistoryIndex = 0;
+			//				}
+			//			} else if (VMController.vmType == VMType.Qemu) {
+			//				String qmpHost = GKDCommonLib.readConfig(cmd, "/gkd/qmpHost/text()");
+			//				int qmpPort = GKDCommonLib.readConfigInt(cmd, "/gkd/qmpPort/text()");
+			//				if (qmpHost == null || qmpPort == -1) {
+			//					return;
+			//				}
+			//				Setting.getInstance().vmCommandHistory.add(command);
+			//				Setting.getInstance().save();
+			//				String r = null;
+			//				if (command.equals("?")) {
+			//					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
+			//					qmpCommand += "{ \"execute\": \"query-commands\" }";
+			//					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
+			//					r = r.replaceAll("[,\\[\\]]", "\n");
+			//					r = r.replaceFirst("^.*\n", "");
+			//					List<String> list = Arrays.asList(r.split("\n"));
+			//					Collections.sort(list);
+			//					r = "";
+			//					for (String temp : list) {
+			//						if (temp.split(":").length > 1) {
+			//							r += temp.split(":")[1].replaceAll("\"", "").replaceAll("}", "").trim() + "\n";
+			//						}
+			//					}
+			//				} else if (command.equals("gkd g")) {
+			//					r = libGDB.sendSocketCommand("g");
+			//				} else {
+			//					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
+			//					if (command.contains(" ")) {
+			//						qmpCommand += "{ \"execute\": \"" + command.split(" ")[0] + "\", \"arguments\": { \"command-line\": \"" + command.replaceFirst("^[^ ]*", "") + "\" }}";
+			//					} else {
+			//						qmpCommand += "{ \"execute\": \"" + command + "\" }";
+			//					}
+			//					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
+			//					r = r.replaceAll("\\\\r\\\\n", "\n");
+			//				}
+			//				if (r != null) {
+			//					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + "\n" + r);
+			//				}
+			//			}
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -1598,37 +1250,40 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void startBochsMenuItemActionPerformed(ActionEvent evt) {
-		startBochs();
+	private void startVMMenuItemActionPerformed(ActionEvent evt) {
+		VMController.getVM().startVM();
 	}
 
 	private void stopVMMenuItemActionPerformed(ActionEvent evt) {
-		stopVM();
+		VMController.getVM().stopVM();
+		runVMButton.setText(MyLanguage.getString("run"));
 	}
 
 	private void pauseVMMenuItemActionPerformed(ActionEvent evt) {
 		skipBreakpointTime = 0;
-		pauseVM(true, true);
+		//		pauseVM(true, true);
+		VMController.getVM().pauseVM();
 	}
 
 	private void startVMButtonActionPerformed(ActionEvent evt) {
-		if (Global.vmType.equals("bochs")) {
-			if (Global.debug) {
-				System.out.println("startBochs()");
-			}
-			startBochs();
-			if (Global.debug) {
-				System.out.println("end startBochs()");
-			}
-		} else if (Global.vmType.equals("qemu")) {
-			if (Global.debug) {
-				System.out.println("startQemu()");
-			}
-			startQemu();
-			if (Global.debug) {
-				System.out.println("end startQemu()");
-			}
-		}
+		VMController.getVM().startVM();
+		//		if (GKDVMStubController.vmType == VMType.Bochs) {
+		//			if (Global.debug) {
+		//				logger.debug("startBochs()");
+		//			}
+		//			startBochs();
+		//			if (Global.debug) {
+		//				logger.debug("end startBochs()");
+		//			}
+		//		} else if (GKDVMStubController.vmType == VMType.Qemu) {
+		//			if (Global.debug) {
+		//				logger.debug("startQemu()");
+		//			}
+		//			startQemu();
+		//			if (Global.debug) {
+		//				logger.debug("end startQemu()");
+		//			}
+		//		}
 	}
 
 	private void stopVMButtonActionPerformed(ActionEvent evt) {
@@ -1639,84 +1294,102 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (runVMButton.getEventSource() != null) {
 			if (runVMButton.getEventSource() == runBochsAndSkipBreakpointMenuItem) {
 				customCommandQueue.clear();
-				commandReceiver.shouldShow = false;
-				String s = JOptionPane.showInputDialog(this, "How many time of breakpoint you want to skip?");
+				String s = JOptionPane.showInputDialog(this, "How many breakpoint you want to skip?");
 				if (s == null) {
 					return;
 				}
 				skipBreakpointTime = Integer.parseInt(s);
-				runVM();
+				VMController.getVM().runVM();
+
+				runVMButton.setText(MyLanguage.getString("pause"));
+				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 			} else if (runVMButton.getEventSource() == runCustomCommandMenuItem) {
-				CustomCommandDialog d = new CustomCommandDialog(this);
-				d.setVisible(true);
+				CustomCommandDialog customCommandDialog = new CustomCommandDialog(this);
+				customCommandDialog.setVisible(true);
 				customCommandQueue.clear();
-				if (d.ok) {
-					for (int z = 0; z < (Integer) d.jRepeatSpinner.getValue(); z++) {
-						if (!d.jComboBox1.getSelectedItem().toString().equals("")) {
-							for (int x = 0; x < (Integer) d.jSpinner1.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(d.jComboBox1.getSelectedItem().toString()));
+				if (customCommandDialog.ok) {
+					for (int z = 0; z < (Integer) customCommandDialog.repeatSpinner.getValue(); z++) {
+						if (!customCommandDialog.comboBox1.getSelectedItem().toString().equals("")) {
+							for (int x = 0; x < (Integer) customCommandDialog.spinner1.getValue(); x++) {
+								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox1.getSelectedItem().toString()));
 							}
 						}
-						if (!d.jComboBox2.getSelectedItem().toString().equals("")) {
-							for (int x = 0; x < (Integer) d.jSpinner2.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(d.jComboBox2.getSelectedItem().toString()));
+						if (!customCommandDialog.comboBox2.getSelectedItem().toString().equals("")) {
+							for (int x = 0; x < (Integer) customCommandDialog.spinner2.getValue(); x++) {
+								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox2.getSelectedItem().toString()));
 							}
 						}
-						if (!d.jComboBox3.getSelectedItem().toString().equals("")) {
-							for (int x = 0; x < (Integer) d.jSpinner3.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(d.jComboBox3.getSelectedItem().toString()));
+						if (!customCommandDialog.comboBox3.getSelectedItem().toString().equals("")) {
+							for (int x = 0; x < (Integer) customCommandDialog.spinner3.getValue(); x++) {
+								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox3.getSelectedItem().toString()));
 							}
 						}
-						if (!d.jComboBox4.getSelectedItem().toString().equals("")) {
-							for (int x = 0; x < (Integer) d.jSpinner4.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(d.jComboBox4.getSelectedItem().toString()));
+						if (!customCommandDialog.comboBox4.getSelectedItem().toString().equals("")) {
+							for (int x = 0; x < (Integer) customCommandDialog.spinner4.getValue(); x++) {
+								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox4.getSelectedItem().toString()));
 							}
 						}
-						if (!d.jComboBox5.getSelectedItem().toString().equals("")) {
-							for (int x = 0; x < (Integer) d.jSpinner5.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(d.jComboBox5.getSelectedItem().toString()));
+						if (!customCommandDialog.comboBox5.getSelectedItem().toString().equals("")) {
+							for (int x = 0; x < (Integer) customCommandDialog.spinner5.getValue(); x++) {
+								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox5.getSelectedItem().toString()));
 							}
 						}
-						if (!d.jComboBox6.getSelectedItem().toString().equals("")) {
-							for (int x = 0; x < (Integer) d.jSpinner6.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(d.jComboBox6.getSelectedItem().toString()));
+						if (!customCommandDialog.comboBox6.getSelectedItem().toString().equals("")) {
+							for (int x = 0; x < (Integer) customCommandDialog.spinner6.getValue(); x++) {
+								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox6.getSelectedItem().toString()));
 							}
 						}
 					}
 
 					skipBreakpointTime = 0;
-					commandReceiver.shouldShow = false;
-					runVM();
+					//					commandReceiver.shouldShow = false;
+					//					runVM();
+					VMController.getVM().runVM();
+
+					runVMButton.setText(MyLanguage.getString("pause"));
+					runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 				}
 			}
 		} else {
 			customCommandQueue.clear();
-			if (Global.vmType.equals("bochs")) {
-				commandReceiver.shouldShow = false;
-			}
 			if (runVMButton.getText().equals(MyLanguage.getString("run"))) {
-				runVM();
+				enableAllButtons(false, true);
+				VMController.getVM().runVM();
+
+				runVMButton.setText(MyLanguage.getString("pause"));
+				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
+				new Thread() {
+					public void run() {
+						VMController.getVM().waitVMStop();
+						updateVMStatus(true);
+					}
+				}.start();
 			} else {
-				pauseVMMenuItemActionPerformed(null);
+				VMController.getVM().pauseVM();
+				updateVMStatus(true);
+				waitUpdateFinish();
+
+				runVMButton.setText(MyLanguage.getString("run"));
+				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 			}
 		}
 	}
 
-	public static void sendCommand(String command) {
-		try {
-			command = command.toLowerCase().trim();
-			commandReceiver.clearBuffer();
-			Global.lastCommand = command;
-			commandOutputStream.write(command + "\n");
-			commandOutputStream.flush();
-			if (!command.equals("6") && !command.equals("c") && !command.startsWith("pb") && !command.startsWith("vb") && !command.startsWith("lb") && !command.startsWith("bpd")
-					&& !command.startsWith("bpe") && !command.startsWith("del") && !command.startsWith("set")) {
-				commandReceiver.waitUntilHaveInput();
-				return;
-			}
-		} catch (IOException e) {
-		}
-	}
+	//	public static void sendBochsCommand(String command) {
+	//		try {
+	//			command = command.toLowerCase().trim();
+	//			commandReceiver.clearBuffer();
+	//			Global.lastCommand = command;
+	//			commandOutputStream.write(command + "\n");
+	//			commandOutputStream.flush();
+	//			if (!command.equals("6") && !command.equals("c") && !command.startsWith("pb") && !command.startsWith("vb") && !command.startsWith("lb") && !command.startsWith("bpd")
+	//					&& !command.startsWith("bpe") && !command.startsWith("del") && !command.startsWith("set")) {
+	//				commandReceiver.waitUntilHaveInput();
+	//				return;
+	//			}
+	//		} catch (IOException e) {
+	//		}
+	//	}
 
 	private void aboutUsMenuItemActionPerformed(ActionEvent evt) {
 		new AboutUsDialog(this).setVisible(true);
@@ -1741,15 +1414,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				untilThread.ipDelta = CommonLib.string2long(s);
 			}
 
-			CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-			cl.show(jMainPanel, "Running Label 2");
+			CardLayout cl = (CardLayout) (mainPanel.getLayout());
+			cl.show(mainPanel, "Running Label 2");
 			new Thread(untilThread, "Step until thread").start();
 		} else {
-			if (Global.vmType.equals("bochs")) {
-				sendCommand("s");
-			} else {
-				libGDB.singleStep();
-			}
+			VMController.getVM().singleStep();
 			WebServiceUtil.log("gkd", "step", null, null, null);
 			updateVMStatus(true);
 		}
@@ -1767,20 +1436,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		private String update(String result, DataOutputStream out) {
-			String re = commandReceiver.getCommandResult("(").toLowerCase();
+			String instruction = VMController.getVM().getCurrentInstruction();
 			if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
-				if (re.endsWith("\n")) {
-					re = re.substring(0, re.length() - 1);
+				if (instruction.endsWith("\n")) {
+					instruction = instruction.substring(0, instruction.length() - 1);
 				}
-				if (jAutoUpdateEvery20LinesCheckBox.isSelected()) {
-					result += re + "\n";
+				if (autoUpdateEvery20LinesCheckBox.isSelected()) {
+					result += instruction + "\n";
 				} else {
-					result = re;
+					result = instruction;
 				}
 			}
 			updatePTime(false);
 			updateRegister(false);
-			updateHistoryTable(re);
+			updateHistoryTable(instruction);
 			if (saveToRunDotTxt) {
 				try {
 					out.writeBytes(result + "\n");
@@ -1790,12 +1459,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			if (!jDisableAutoUpdateCheckBox.isSelected()) {
-				if (jMaxRowComboBox.getSelectedItem().equals("infinite")) {
+				if (maxRowComboBox.getSelectedItem().equals("infinite")) {
 					jTextArea1.setMaxRow(-1);
 				} else {
-					jTextArea1.setMaxRow(Integer.parseInt(jMaxRowComboBox.getSelectedItem().toString()));
+					jTextArea1.setMaxRow(Integer.parseInt(maxRowComboBox.getSelectedItem().toString()));
 				}
-				if (jAutoUpdateEvery20LinesCheckBox.isSelected()) {
+				if (autoUpdateEvery20LinesCheckBox.isSelected()) {
 					if (noOfLine >= 20) {
 						vmCommandEditorPane.setText(vmCommandEditorPane.getText() + result);
 						jTextArea1.newLogFileLine(result);
@@ -1817,57 +1486,57 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			DataOutputStream out = null;
 			try {
 				enableAllButtons(false, false);
-				jStepCountLabel.setVisible(false);
+				stepCountLabel.setVisible(false);
 				out = new DataOutputStream(new FileOutputStream("run.txt", true));
 
 				if (eventSource != null) {
 					if (eventSource == step10MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 10 && !shouldStop; x++) {
-							jStatusLabel.setText("Step " + x + " / 10");
-							sendCommand("s");
+							statusLabel.setText("Step " + x + " / 10");
+							VMController.getVM().singleStep();
 							result = update(result, out);
 						}
 						updateVMStatus(false);
 					} else if (eventSource == step100MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 100 && !shouldStop; x++) {
-							jStatusLabel.setText("Step " + x + " / 100");
-							sendCommand("s");
+							statusLabel.setText("Step " + x + " / 100");
+							VMController.getVM().singleStep();
 							result = update(result, out);
 						}
 						updateVMStatus(false);
-					} else if (eventSource == jStepOver10MenuItem) {
+					} else if (eventSource == stepOver10MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 10 && !shouldStop; x++) {
-							jStatusLabel.setText("Step over " + x + " / 10");
-							sendCommand("next");
+							statusLabel.setText("Step over " + x + " / 10");
+							VMController.getVM().stepOver();
 							result = update(result, out);
 						}
 						updateVMStatus(false);
 					} else if (eventSource == stepOver100MenuItem) {
 						String result = "";
 						for (int x = 1; x <= 100 && !shouldStop; x++) {
-							jStatusLabel.setText("Step over " + x + " / 10");
-							sendCommand("next");
+							statusLabel.setText("Step over " + x + " / 100");
+							VMController.getVM().stepOver();
 							result = update(result, out);
 						}
 						updateVMStatus(false);
 					} else if (eventSource == stepNMenuItem) {
 						String result = "";
-						jStepCountLabel.setVisible(true);
+						stepCountLabel.setVisible(true);
 						long lastTime = new Date().getTime();
 						int lastCount = 1;
 						int speed = 0;
 						for (int x = 1; x <= instructionCount && !shouldStop; x++) {
-							jStatusLabel.setText("Step " + x + " / " + instructionCount);
-							jStepCountLabel.setText("Step " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
+							statusLabel.setText("Step " + x + " / " + instructionCount);
+							stepCountLabel.setText("Step " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
 
-							if (Global.vmType.equals("bochs")) {
-								sendCommand("s");
-							} else if (Global.vmType.equals("bochs")) {
-								libGDB.singleStep();
-							}
+							//							if (VMController.vmType == VMType.Bochs) {
+							VMController.getVM().singleStep();
+							//							} else if (VMController.vmType == VMType.Bochs) {
+							//								libGDB.singleStep();
+							//							}
 
 							result = update(result, out);
 							vmCommandEditorPane.setText("");
@@ -1881,19 +1550,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						updateVMStatus(false);
 					} else if (eventSource == stepOverNTimesMenuItem) {
 						String result = "";
-						jStepCountLabel.setVisible(true);
+						stepCountLabel.setVisible(true);
 						long lastTime = new Date().getTime();
 						int lastCount = 1;
 						int speed = 0;
 						for (int x = 1; x <= instructionCount && !shouldStop; x++) {
-							jStatusLabel.setText("Step over " + x + " / " + instructionCount);
-							jStepCountLabel.setText("Step over " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
+							statusLabel.setText("Step over " + x + " / " + instructionCount);
+							stepCountLabel.setText("Step over " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
 
-							if (Global.vmType.equals("bochs")) {
-								sendCommand("next");
-							} else if (Global.vmType.equals("bochs")) {
-								libGDB.singleStep();
-							}
+							//							if (VMController.vmType == VMType.Bochs) {
+							VMController.getVM().stepOver();
+							//							} else if (VMController.vmType == VMType.Bochs) {
+							//								libGDB.singleStep();
+							//							}
 							result = update(result, out);
 							vmCommandEditorPane.setText("");
 
@@ -1907,8 +1576,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else if (eventSource == stepUntilCallOrJumpMenuItem) {
 						boolean notMatch = true;
 						do {
-							sendCommand("s");
-							String result = commandReceiver.getCommandResult("(").toLowerCase();
+							//							sendBochsCommand("s");
+							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
+
+							VMController.getVM().singleStep();
+							String result = VMController.getVM().getCurrentInstruction();
 							if (result.contains("jmp") || result.contains("je") || result.contains("jne") || result.contains("jg") || result.contains("jge")
 									|| result.contains("ja") || result.contains("jae") || result.contains("jl") || result.contains("jle") || result.contains("jb")
 									|| result.contains("jbe") || result.contains("jo") || result.contains("jno") || result.contains("jz") || result.contains("jnz")
@@ -1920,8 +1592,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else if (eventSource == stepUntilRetMenuItem) {
 						boolean notMatch = true;
 						do {
-							sendCommand("s");
-							String result = commandReceiver.getCommandResult("(").toLowerCase();
+							//							sendBochsCommand("s");
+							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
+							VMController.getVM().singleStep();
+							String result = VMController.getVM().getCurrentInstruction();
 							if (result.contains("ret")) {
 								notMatch = false;
 							}
@@ -1930,8 +1604,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else if (eventSource == stepUntilIRetMenuItem) {
 						boolean notMatch = true;
 						do {
-							sendCommand("s");
-							String result = commandReceiver.getCommandResult("(").toLowerCase();
+							//							sendBochsCommand("s");
+							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
+							VMController.getVM().singleStep();
+							String result = VMController.getVM().getCurrentInstruction();
 							if (result.contains("iret")) {
 								notMatch = false;
 							}
@@ -1940,8 +1616,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else if (eventSource == stepUntilMovMenuItem) {
 						boolean notMatch = true;
 						do {
-							sendCommand("s");
-							String result = commandReceiver.getCommandResult("(").toLowerCase();
+							//							sendBochsCommand("s");
+							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
+							VMController.getVM().singleStep();
+							String result = VMController.getVM().getCurrentInstruction();
 							if (result.contains("mov")) {
 								notMatch = false;
 							}
@@ -1952,23 +1630,23 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						long lastIP = -1;
 						int count = 1;
 						Date lastTime = new Date();
-						jStepCountLabel.setVisible(true);
+						stepCountLabel.setVisible(true);
 
 						int noOfLine = 1;
 						String result = "";
 
 						do {
 							double secondDiff = 0;
-							sendCommand("s");
+							VMController.getVM().singleStep();
 
-							String re = commandReceiver.getCommandResult("(").toLowerCase();
+							String re = VMController.getVM().getCurrentInstruction();
 							long ip = CommonLib.string2long(re.replaceAll("\\].*$", "").replaceAll("^.*\\[", ""));
 
 							if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
 								if (re.endsWith("\n")) {
 									re = re.substring(0, re.length() - 1);
 								}
-								if (jAutoUpdateEvery20LinesCheckBox.isSelected()) {
+								if (autoUpdateEvery20LinesCheckBox.isSelected()) {
 									result += re + "\n";
 								} else {
 									result = re;
@@ -1982,12 +1660,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								out.flush();
 							}
 							if (!jDisableAutoUpdateCheckBox.isSelected()) {
-								if (jMaxRowComboBox.getSelectedItem().equals("infinite")) {
+								if (maxRowComboBox.getSelectedItem().equals("infinite")) {
 									jTextArea1.setMaxRow(-1);
 								} else {
-									jTextArea1.setMaxRow(Integer.parseInt(jMaxRowComboBox.getSelectedItem().toString()));
+									jTextArea1.setMaxRow(Integer.parseInt(maxRowComboBox.getSelectedItem().toString()));
 								}
-								if (jAutoUpdateEvery20LinesCheckBox.isSelected()) {
+								if (autoUpdateEvery20LinesCheckBox.isSelected()) {
 									if (noOfLine >= 20) {
 										vmCommandEditorPane.setText(vmCommandEditorPane.getText() + result);
 										jTextArea1.newLogFileLine(result);
@@ -2019,16 +1697,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 							if (secondDiff > 0) {
 								if (!jDisableAutoUpdateCheckBox.isSelected()) {
-									if (jAutoUpdateEvery20LinesCheckBox.isSelected()) {
-										jStepCountLabel.setText(String.valueOf(count) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
+									if (autoUpdateEvery20LinesCheckBox.isSelected()) {
+										stepCountLabel.setText(String.valueOf(count) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
 												+ Math.round(20 / secondDiff) + " instructions executed per second");
 										count += 20;
 									} else {
-										jStepCountLabel.setText(String.valueOf(count++) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
+										stepCountLabel.setText(String.valueOf(count++) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
 												+ Math.round(1 / secondDiff) + " instructions executed per second");
 									}
 								} else {
-									jStepCountLabel.setText(String.valueOf(count++) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
+									stepCountLabel.setText(String.valueOf(count++) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
 											+ Math.round(1 / secondDiff) + " instructions executed per second");
 								}
 							}
@@ -2041,8 +1719,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				ex.printStackTrace();
 			} finally {
 				if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
-					CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-					cl.show(jMainPanel, currentPanel);
+					CardLayout cl = (CardLayout) (mainPanel.getLayout());
+					cl.show(mainPanel, currentPanel);
 				}
 
 				enableAllButtons(true, false);
@@ -2056,13 +1734,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void jGOMemoryButtonActionPerformed(ActionEvent evt) {
+	private void goMemoryButtonActionPerformed(ActionEvent evt) {
 		try {
 			updateMemory(true);
 
-			addMemoryAddressComboBox(jMemoryAddressComboBox.getSelectedItem().toString());
+			addMemoryAddressComboBox(memoryAddressComboBox.getSelectedItem().toString());
 
-			Setting.getInstance().memoryCombo.add(jMemoryAddressComboBox.getSelectedItem().toString());
+			Setting.getInstance().memoryCombo.add(memoryAddressComboBox.getSelectedItem().toString());
 			Setting.getInstance().save();
 		} catch (Exception ex) {
 			if (Global.debug) {
@@ -2072,22 +1750,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void addMemoryAddressComboBox(String str) {
-		for (int x = 0; x < jMemoryAddressComboBox.getItemCount(); x++) {
-			if (jMemoryAddressComboBox.getItemAt(x).toString().trim().equals(str.trim())) {
+		for (int x = 0; x < memoryAddressComboBox.getItemCount(); x++) {
+			if (memoryAddressComboBox.getItemAt(x).toString().trim().equals(str.trim())) {
 				return;
 			}
 		}
-		jMemoryAddressComboBox.addItem(str.trim());
+		memoryAddressComboBox.addItem(str.trim());
 	}
 
 	private void addInstructionComboBox(String str) {
-		for (int x = 0; x < jInstructionComboBox.getItemCount(); x++) {
-			if (this.jInstructionComboBox.getItemAt(x).toString().trim().equals(str.trim())) {
+		for (int x = 0; x < instructionComboBox.getItemCount(); x++) {
+			if (this.instructionComboBox.getItemAt(x).toString().trim().equals(str.trim())) {
 				return;
 			}
 		}
 
-		jInstructionComboBox.addItem(str.trim());
+		instructionComboBox.addItem(str.trim());
 	}
 
 	private void jupdateVMStatusMenuItemActionPerformed(ActionEvent evt) {
@@ -2095,6 +1773,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void updateVMStatus(final boolean updateHistoryTable) {
+		System.out.println("updateVMStatus");
 		isupdateVMStatusEnd = false;
 		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);
 		final JProgressBarDialog d = new JProgressBarDialog(this, true);
@@ -2102,135 +1781,131 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Thread updateThread = new Thread("updateVMStatus thread") {
 			public void run() {
 				if (Global.debug) {
-					System.out.println("updateVMStatus thread start");
+					logger.debug("updateVMStatus thread start");
 				}
 
 				d.jProgressBar.setString("update ptime");
 				if (Global.debug) {
-					System.out.println("update ptime");
+					logger.debug("update ptime");
 				}
 				updatePTime(true);
 
 				d.jProgressBar.setString("updateRegister");
 				if (Global.debug) {
-					System.out.println("updateRegister");
+					logger.debug("updateRegister");
 				}
 				updateRegister(true);
 
 				d.jProgressBar.setString("updateEFlag");
 				if (Global.debug) {
-					System.out.println("updateEFlag");
+					logger.debug("updateEFlag");
 				}
 				updateEFlags();
 
 				d.jProgressBar.setString("updateMemory");
 				if (Global.debug) {
-					System.out.println("updateMemory");
+					logger.debug("updateMemory");
 				}
 				updateMemory(true);
 
 				d.jProgressBar.setString("updateInstruction");
 				if (Global.debug) {
-					System.out.println("updateInstruction");
+					logger.debug("updateInstruction");
 				}
 				updateInstruction(null);
 
 				d.jProgressBar.setString("updateGDT");
 				if (Global.debug) {
-					System.out.println("updateGDT");
+					logger.debug("updateGDT");
 				}
 				updateGDT();
 
-				d.jProgressBar.setString("updateIDT");
-				if (Global.debug) {
-					System.out.println("updateIDT");
-				}
-				updateIDT();
+				String cr0 = registerPanel.cr0TextField.getText();
+				int cr0Byte0 = CommonLib.string2int(cr0.substring(cr0.length() - 1));
+				if ((cr0Byte0 & 1) == 1) {
+					d.jProgressBar.setString("updateIDT");
+					if (Global.debug) {
+						logger.debug("updateIDT");
+					}
+					updateIDT();
 
-				d.jProgressBar.setString("updateLDT");
-				if (Global.debug) {
-					System.out.println("updateLDT");
-				}
-				updateLDT();
+					d.jProgressBar.setString("updateLDT");
+					if (Global.debug) {
+						logger.debug("updateLDT");
+					}
+					updateLDT();
 
-				d.jProgressBar.setString("updatePageTable");
-				if (Global.debug) {
-					System.out.println("updatePageTable");
-				}
-				updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
+					d.jProgressBar.setString("updatePageTable");
+					if (Global.debug) {
+						logger.debug("updatePageTable");
+					}
+					updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
 
-				d.jProgressBar.setString("updateStack");
-				if (Global.debug) {
-					System.out.println("updateStack");
-				}
-				updateStack();
+					d.jProgressBar.setString("updateStack");
+					if (Global.debug) {
+						logger.debug("updateStack");
+					}
+					updateStack();
 
-				d.jProgressBar.setString("updateAddressTranslate");
-				if (Global.debug) {
-					System.out.println("updateAddressTranslate");
+					d.jProgressBar.setString("updateAddressTranslate");
+					if (Global.debug) {
+						logger.debug("updateAddressTranslate");
+					}
+					updateAddressTranslate();
 				}
-				updateAddressTranslate();
 
 				d.jProgressBar.setString("updateBreakpoint");
 				if (Global.debug) {
-					System.out.println("updateBreakpoint");
+					logger.debug("updateBreakpoint");
 				}
 				updateBreakpoint();
 
 				d.jProgressBar.setString("updateBreakpointTableColor");
 				if (Global.debug) {
-					System.out.println("updateBreakpointTableColor");
+					logger.debug("updateBreakpointTableColor");
 				}
 				updateBreakpointTableColor();
 
 				if (Global.osDebug.compareTo(BigInteger.valueOf(-1)) != 0) {
 					d.jProgressBar.setString("update OS debug informations");
 					if (Global.debug) {
-						System.out.println("update OS debug informations");
+						logger.debug("update OS debug informations");
 					}
 					updateOSDebugInfo();
 				}
 
 				d.jProgressBar.setString("update instrument chart");
 				if (Global.debug) {
-					System.out.println("update instrument chart");
+					logger.debug("update instrument chart");
 				}
-				jInstrumentPanel.updateChart();
+				instrumentPanel.updateChart();
 
 				d.jProgressBar.setString("update call graph");
 				if (Global.debug) {
-					System.out.println("update call graph");
+					logger.debug("update call graph");
 				}
-				jInstrumentPanel.updateCallGraph();
+				instrumentPanel.updateCallGraph();
 
 				if (updateHistoryTable) {
 					d.jProgressBar.setString("updateHistoryTable");
 					if (Global.debug) {
-						System.out.println("updateHistoryTable");
+						logger.debug("updateHistoryTable");
 					}
 
-					String result = "";
-					if (Global.vmType.equals("bochs")) {
-						sendCommand("disasm");
-						result = commandReceiver.getCommandResultUntilEnd();
-					} else if (Global.vmType.equals("qemu")) {
-						result = Disassemble.disassemble(libGDB.physicalMemory(getRealEIP(), 50), 32, getRealEIP());
-					}
+					String result = VMController.getVM().disasm(getRealEIP());
 					updateHistoryTable(result);
 				}
 
-				jStatusLabel.setText("");
+				statusLabel.setText("");
 
 				if (breakpointLoadedOnce == false && Setting.getInstance().loadBreakpointAtStartup) {
-					jLoadBreakpointButtonActionPerformed(null);
-					breakpointLoadedOnce = true; // since we only have to load
-													// once
+					loadBreakpointButtonActionPerformed(null);
+					breakpointLoadedOnce = true; // since we only have to load once
 				}
 				if (systemMapLoadedOnce == false && Setting.getInstance().loadSystemMapAtStartup) {
 					if (Global.elfPaths != null) {
 						sourceLevelDebugger.loadELF(Global.elfPaths);
-						systemMapLoadedOnce = true; // since we only have to
-													// load once
+						systemMapLoadedOnce = true; // since we only have to load once
 					}
 				}
 				jumpToRowInstructionTable(getRealEIP());
@@ -2240,61 +1915,62 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				enableAllButtons(true, skipBreakpointTime > 0 || customCommandQueue.size() > 0);
 				isupdateVMStatusEnd = true;
 				if (Global.debug) {
-					System.out.println("updateVMStatus thread end");
+					logger.debug("updateVMStatus thread end");
 				}
 			}
 		};
 
-		// d.thread = updateThread;
-		// updateThread.setDaemon(true);
-		// d.setTitle("Updating peter-bochs status");
-		// d.jProgressBar.setIndeterminate(true);
-		// d.jCancelButton.setVisible(false);
-		// d.setVisible(true);
-		updateThread.start();
+		d.thread = updateThread;
+		//updateThread.setDaemon(true);
+		d.setTitle("Updating gkd status");
+		d.jProgressBar.setIndeterminate(true);
+		d.jProgressBar.setStringPainted(true);
+		d.jCancelButton.setVisible(false);
+		d.setVisible(true);
+		//updateThread.start();
 
 		if (Global.debug) {
-			System.out.println("updateVMStatus() end");
+			logger.debug("updateVMStatus() end");
 		}
 	}
 
 	protected void updatePTime(boolean updateGUI) {
-		if (Global.vmType.equals("bochs")) {
-			try {
-				if (updateGUI) {
-					jStatusLabel.setText("Updating ptime");
-				}
-				commandReceiver.shouldShow = false;
-				sendCommand("ptime");
-				String result = commandReceiver.getCommandResultUntilEnd();
-				if (result.contains(":") && result.contains("ptime")) {
-					registerPanel.jPTimeTextField.setText(result.replaceAll("<.*>", "").split(":")[1].trim());
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		}
+		//		if (GKDVMStubController.vmType == VMType.Bochs) {
+		//			try {
+		//				if (updateGUI) {
+		//					jStatusLabel.setText("Updating ptime");
+		//				}
+		//				commandReceiver.shouldShow = false;
+		//				sendBochsCommand("ptime");
+		//				String result = commandReceiver.getCommandResultUntilEnd();
+		//				if (result.contains(":") && result.contains("ptime")) {
+		//					registerPanel.jPTimeTextField.setText(result.replaceAll("<.*>", "").split(":")[1].trim());
+		//				}
+		//			} catch (Exception ex) {
+		//				ex.printStackTrace();
+		//			}
+		//		}
 	}
 
 	protected void updateOSDebugInfo() {
 		long size = 0;
 		try {
 			String magicByte = getMemoryStr(Global.osDebug, 8, true);
-			CardLayout cl = (CardLayout) (jOSDebugStandardPanel.getLayout());
+			CardLayout cl = (CardLayout) (osDebugStandardPanel.getLayout());
 			if (magicByte.equals("PETER---")) {
-				size = CommonLib.getInt(getMemory(Global.osDebug.add(BigInteger.valueOf(8)), 4, true), 0);
+				size = CommonLib.getInt(VMController.getVM().physicalMemory(Global.osDebug.add(BigInteger.valueOf(8)), 4), 0);
 				String xml = getMemoryStr(Global.osDebug.add(BigInteger.valueOf(12)), (int) size, true).trim();
-				OSDebugInfoHelper.jOSDebugInformationPanel = jOSDebugInformationPanel1;
+				OSDebugInfoHelper.jOSDebugInformationPanel = osDebugInformationPanel1;
 
 				OSDebugInfoHelper.addData(magicByte, size, xml);
-				this.jOSDebugInformationPanel1.jXMLEditorPane.setText(xml);
-				cl.show(jOSDebugStandardPanel, "jOSDebugInformationPanel1");
+				this.osDebugInformationPanel1.xmlEditorPane.setText(xml);
+				cl.show(osDebugStandardPanel, "jOSDebugInformationPanel1");
 			} else {
-				cl.show(jOSDebugStandardPanel, "OS debug error label");
+				cl.show(osDebugStandardPanel, "OS debug error label");
 			}
 		} catch (OutOfMemoryError ex) {
 			System.gc();
-			System.out.println("Size probably too large? size=" + size);
+			logger.debug("Size probably too large? size=" + size);
 			ex.printStackTrace();
 		}
 	}
@@ -2304,94 +1980,94 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			public void run() {
 				enableAllButtons(false, false);
 
-				if (Setting.getInstance().updateAfterBochsCommand_register) {
+				if (Setting.getInstance().updateAfterGKDCommand_register) {
 					if (Global.debug) {
-						System.out.println("updateRegister");
+						logger.debug("updateRegister");
 					}
 					updateRegister(true);
 					if (Global.debug) {
-						System.out.println("updateEFlag");
+						logger.debug("updateEFlag");
 					}
 					updateEFlags();
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_memory) {
+				if (Setting.getInstance().updateAfterGKDCommand_memory) {
 					if (Global.debug) {
-						System.out.println("updateMemory");
+						logger.debug("updateMemory");
 					}
 					updateMemory(true);
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_instruction) {
+				if (Setting.getInstance().updateAfterGKDCommand_instruction) {
 					if (Global.debug) {
-						System.out.println("updateInstruction");
+						logger.debug("updateInstruction");
 					}
 					updateInstruction(null);
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_gdt) {
+				if (Setting.getInstance().updateAfterGKDCommand_gdt) {
 					if (Global.debug) {
-						System.out.println("updateGDT");
+						logger.debug("updateGDT");
 					}
 					updateGDT();
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_idt) {
+				if (Setting.getInstance().updateAfterGKDCommand_idt) {
 					if (Global.debug) {
-						System.out.println("updateIDT");
+						logger.debug("updateIDT");
 					}
 					updateIDT();
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_ldt) {
+				if (Setting.getInstance().updateAfterGKDCommand_ldt) {
 					if (Global.debug) {
-						System.out.println("updateLDT");
+						logger.debug("updateLDT");
 					}
 					updateLDT();
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_pageTable) {
+				if (Setting.getInstance().updateAfterGKDCommand_pageTable) {
 					if (Global.debug) {
-						System.out.println("updatePageTable");
+						logger.debug("updatePageTable");
 					}
 					updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_stack) {
+				if (Setting.getInstance().updateAfterGKDCommand_stack) {
 					if (Global.debug) {
-						System.out.println("updateStack");
+						logger.debug("updateStack");
 					}
 					updateStack();
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_addressTranslate) {
+				if (Setting.getInstance().updateAfterGKDCommand_addressTranslate) {
 					if (Global.debug) {
-						System.out.println("updateAddressTranslate");
+						logger.debug("updateAddressTranslate");
 					}
 					updateAddressTranslate();
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_history) {
+				if (Setting.getInstance().updateAfterGKDCommand_history) {
 					if (Global.debug) {
-						System.out.println("updateHistoryTable");
+						logger.debug("updateHistoryTable");
 					}
 					updateHistoryTable();
 				}
 
-				if (Setting.getInstance().updateAfterBochsCommand_breakpoint) {
+				if (Setting.getInstance().updateAfterGKDCommand_breakpoint) {
 					if (Global.debug) {
-						System.out.println("updateBreakpointTableColor");
+						logger.debug("updateBreakpointTableColor");
 					}
 					updateBreakpoint();
 					updateBreakpointTableColor();
 				}
 
-				jStatusLabel.setText("");
+				statusLabel.setText("");
 
 				enableAllButtons(true, false);
 
 				if (breakpointLoadedOnce == false && Setting.getInstance().loadBreakpointAtStartup) {
-					jLoadBreakpointButtonActionPerformed(null);
+					loadBreakpointButtonActionPerformed(null);
 					breakpointLoadedOnce = true; // since we only have to load
 													// once
 				}
@@ -2410,7 +2086,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public void updateBreakpointTableColor() {
 		for (int x = 0; x < breakpointTable.getRowCount(); x++) {
 			String value = breakpointTable.getValueAt(x, 0).toString();
-			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 			BigInteger currentIP = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 			if (currentIP.equals(CommonLib.string2BigInteger(breakpointTable.getValueAt(x, 2).toString()))) {
 				int hit = CommonLib.string2int(breakpointTable.getValueAt(x, 3).toString());
@@ -2431,7 +2106,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void updateHistoryTable(String instruction) {
 		try {
 			AllRegisters.time.add(new Date());
-			AllRegisters.ptime.add(registerPanel.jPTimeTextField.getText());
+			AllRegisters.ptime.add(registerPanel.pTimeTextField.getText());
 			AllRegisters.eax.add(CommonLib.string2BigInteger(registerPanel.eaxTextField.getText()));
 			AllRegisters.ebx.add(CommonLib.string2BigInteger(registerPanel.ebxTextField.getText()));
 			AllRegisters.ecx.add(CommonLib.string2BigInteger(registerPanel.ecxTextField.getText()));
@@ -2447,8 +2122,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			AllRegisters.es.add(CommonLib.string2BigInteger(registerPanel.esTextField.getText()));
 			AllRegisters.fs.add(CommonLib.string2BigInteger(registerPanel.fsTextField.getText()));
 			AllRegisters.gs.add(CommonLib.string2BigInteger(registerPanel.gsTextField.getText()));
-			AllRegisters.ss.add(CommonLib.string2BigInteger(registerPanel.jSSTextField.getText()));
-			AllRegisters.eflags.add(registerPanel.jEFlagLabel.getText().trim() + registerPanel.jEFlagLabel2.getText().trim());
+			AllRegisters.ss.add(CommonLib.string2BigInteger(registerPanel.ssTextField.getText()));
+			AllRegisters.eflags.add(registerPanel.eflagLabel.getText());
 
 			AllRegisters.cr0.add(CommonLib.string2BigInteger(registerPanel.cr0TextField.getText()));
 			AllRegisters.cr2.add(CommonLib.string2BigInteger(registerPanel.cr2TextField.getText()));
@@ -2470,87 +2145,52 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			AllRegisters.stack.add(stack);
 
-			AllRegisters.st0.add(registerPanel.jST0TextField.getText());
-			AllRegisters.st1.add(registerPanel.jST1TextField.getText());
-			AllRegisters.st2.add(registerPanel.jST2TextField.getText());
-			AllRegisters.st3.add(registerPanel.jST3TextField.getText());
-			AllRegisters.st4.add(registerPanel.jST4TextField.getText());
-			AllRegisters.st5.add(registerPanel.jST5TextField.getText());
-			AllRegisters.st6.add(registerPanel.jST6TextField.getText());
-			AllRegisters.st7.add(registerPanel.jST7TextField.getText());
-			AllRegisters.fpu_status.add(registerPanel.jFPUStatusTextField.getText());
-			AllRegisters.fpu_control.add(registerPanel.jFPUControlTextField.getText());
-			AllRegisters.fpu_tag.add(registerPanel.jFPUTagTextField.getText());
-			AllRegisters.fpu_operand.add(registerPanel.jFPUOperandTextField.getText());
-			AllRegisters.fip.add(registerPanel.jFIPTextField.getText());
-			AllRegisters.fcs.add(registerPanel.jFCSTextField.getText());
-			AllRegisters.fdp.add(registerPanel.jFDPTextField.getText());
-			AllRegisters.fds.add(registerPanel.jFDSTextField.getText());
+			AllRegisters.st0.add(registerPanel.st0TextField.getText());
+			AllRegisters.st1.add(registerPanel.st1TextField.getText());
+			AllRegisters.st2.add(registerPanel.st2TextField.getText());
+			AllRegisters.st3.add(registerPanel.st3TextField.getText());
+			AllRegisters.st4.add(registerPanel.st4TextField.getText());
+			AllRegisters.st5.add(registerPanel.st5TextField.getText());
+			AllRegisters.st6.add(registerPanel.st6TextField.getText());
+			AllRegisters.st7.add(registerPanel.st7TextField.getText());
+			AllRegisters.fpu_status.add(registerPanel.fpuStatusTextField.getText());
+			AllRegisters.fpu_control.add(registerPanel.fpuControlTextField.getText());
+			AllRegisters.fpu_tag.add(registerPanel.fpuTagTextField.getText());
+			AllRegisters.fpu_operand.add(registerPanel.fpuOperandTextField.getText());
+			AllRegisters.fip.add(registerPanel.fipTextField.getText());
+			AllRegisters.fcs.add(registerPanel.fcsTextField.getText());
+			AllRegisters.fdp.add(registerPanel.fdpTextField.getText());
+			AllRegisters.fds.add(registerPanel.fdsTextField.getText());
 
-			AllRegisters.mm0.add(registerPanel.jMMX0TextField.getText());
-			AllRegisters.mm1.add(registerPanel.jMMX1TextField.getText());
-			AllRegisters.mm2.add(registerPanel.jMMX2TextField.getText());
-			AllRegisters.mm3.add(registerPanel.jMMX3TextField.getText());
-			AllRegisters.mm4.add(registerPanel.jMMX4TextField.getText());
-			AllRegisters.mm5.add(registerPanel.jMMX5TextField.getText());
-			AllRegisters.mm6.add(registerPanel.jMMX6TextField.getText());
-			AllRegisters.mm7.add(registerPanel.jMMX7TextField.getText());
+			AllRegisters.mm0.add(registerPanel.mmx0TextField.getText());
+			AllRegisters.mm1.add(registerPanel.mmx1TextField.getText());
+			AllRegisters.mm2.add(registerPanel.mmx2TextField.getText());
+			AllRegisters.mm3.add(registerPanel.mmx3TextField.getText());
+			AllRegisters.mm4.add(registerPanel.mmx4TextField.getText());
+			AllRegisters.mm5.add(registerPanel.mmx5TextField.getText());
+			AllRegisters.mm6.add(registerPanel.mmx6TextField.getText());
+			AllRegisters.mm7.add(registerPanel.mmx7TextField.getText());
 
-			((HistoryTableModel) this.jHistoryTable.getModel()).fireTableDataChanged();
-			jHistoryTable.scrollRectToVisible(jHistoryTable.getCellRect(jHistoryTable.getRowCount() - 1, 0, true));
+			((HistoryTableModel) this.historyTable.getModel()).fireTableDataChanged();
+			historyTable.scrollRectToVisible(historyTable.getCellRect(historyTable.getRowCount() - 1, 0, true));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
-	private void updateEFlags() {
-		if (Global.vmType.equals("bochs")) {
-			try {
-				jStatusLabel.setText("Updating EFlags");
-				// commandReceiver.setCommandNoOfLine(-1);
-				commandReceiver.clearBuffer();
-				commandReceiver.shouldShow = false;
-				sendCommand("info eflags");
-				String result = commandReceiver.getCommandResultUntilEnd();
-				String arr[] = result.replaceAll("<.*> ", "").split(" ");
-
-				registerPanel.jEFlagLabel.setText("");
-				registerPanel.jEFlagLabel2.setText("");
-				for (int x = 0; x < 7; x++) {
-					registerPanel.jEFlagLabel.setText(registerPanel.jEFlagLabel.getText() + arr[x] + " ");
-				}
-				for (int x = 7; x < arr.length; x++) {
-					registerPanel.jEFlagLabel2.setText(registerPanel.jEFlagLabel2.getText() + arr[x] + " ");
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} else if (Global.vmType.equals("qemu")) {
-
-		}
-	}
-
 	protected void updateAddressTranslate() {
 		try {
-			jStatusLabel.setText("Updating Address translate");
-			if (Global.vmType.equals("bochs")) {
-				// commandReceiver.setCommandNoOfLine(-1);
-				commandReceiver.clearBuffer();
-				commandReceiver.shouldShow = false;
-				sendCommand("info tab");
-				Thread.currentThread();
-				String result = commandReceiver.getCommandResultUntilEnd();
-				String[] lines = result.split("\n");
-				DefaultTableModel model = (DefaultTableModel) jAddressTranslateTable.getModel();
-				while (model.getRowCount() > 0) {
-					model.removeRow(0);
-				}
-				for (int x = 1; x < lines.length; x++) {
-					Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split("->")));
-					model.addRow(strs);
-				}
-				((DefaultTableModel) jAddressTranslateTable.getModel()).fireTableDataChanged();
+			statusLabel.setText("Updating Address translate");
+
+			Vector<Vector<String>> r = VMController.getVM().addressTranslate();
+			DefaultTableModel model = (DefaultTableModel) addressTranslateTable.getModel();
+			while (model.getRowCount() > 0) {
+				model.removeRow(0);
 			}
+			for (Vector<String> v : r) {
+				model.addRow(v);
+			}
+			((DefaultTableModel) addressTranslateTable.getModel()).fireTableDataChanged();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -2564,15 +2204,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		stepOverDropDownButton.setEnabled(b);
 		nextButton.setEnabled(b);
 		fastStepBochsButton.setEnabled(b);
-		jUpdateBochsButton.setEnabled(b);
-		jButton13.setEnabled(b);
-		jSettingButton.setEnabled(b);
+		updateBochsButton.setEnabled(b);
+		exportToExcelButton.setEnabled(b);
+		settingButton.setEnabled(b);
 		registerToggleButton.setEnabled(b);
-		jSourceLevelDebuggerToggleButton.setEnabled(b);
-		jProfilerToggleButton.setEnabled(b);
+		sourceLevelDebuggerToggleButton.setEnabled(b);
+		profilerToggleButton.setEnabled(b);
 
-		jPageDirectoryTable.setEnabled(b);
-		jPageTableTable.setEnabled(b);
+		pageDirectoryTable.setEnabled(b);
+		pageTableTable.setEnabled(b);
 
 		pauseVMMenuItem.setEnabled(b);
 		runBochsMenuItem.setEnabled(b);
@@ -2583,278 +2223,111 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void updatePageTable(BigInteger pageDirectoryBaseAddress) {
-		Vector<IA32PageDirectory> ia32_pageDirectories = new Vector<IA32PageDirectory>();
-		try {
-			if (Global.vmType.equals("boochs")) {
-				commandReceiver.clearBuffer();
-				commandReceiver.shouldShow = false;
-				jStatusLabel.setText("Updating page table");
-				// commandReceiver.setCommandNoOfLine(512);
-				sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
-				float totalByte2 = 4096 - 1;
-				totalByte2 = totalByte2 / 8;
-				int totalByte3 = (int) Math.floor(totalByte2);
-				String realEndAddressStr;
-				String realStartAddressStr;
-				BigInteger realStartAddress = pageDirectoryBaseAddress;
-				realStartAddressStr = realStartAddress.toString(16);
-				BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-				realEndAddressStr = String.format("%08x", realEndAddress);
-				String result = commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-				if (result != null) {
-					String[] lines = result.split("\n");
-					DefaultTableModel model = (DefaultTableModel) jPageDirectoryTable.getModel();
-					while (model.getRowCount() > 0) {
-						model.removeRow(0);
-					}
-					jStatusProgressBar.setMaximum(lines.length - 1);
+		//		Vector<IA32PageDirectory> ia32_pageDirectories = new Vector<IA32PageDirectory>();
 
-					for (int y = 0; y < lines.length; y++) {
-						jStatusProgressBar.setValue(y);
-						String[] b = lines[y].replaceFirst("^.*:", "").trim().split("\t");
-
-						for (int z = 0; z < 2; z++) {
-							try {
-								int bytes[] = new int[4];
-								for (int x = 0; x < 4; x++) {
-									bytes[x] = CommonLib.string2BigInteger(b[x + z * 4].substring(2).trim()).intValue();
-								}
-								long value = CommonLib.getInt(bytes, 0);
-								// "No.", "PT base", "AVL", "G",
-								// "D", "A", "PCD", "PWT",
-								// "U/S", "W/R", "P"
-
-								long baseL = value & 0xfffff000;
-								// if (baseL != 0) {
-								String base = "0x" + Long.toHexString(baseL);
-								String avl = String.valueOf((value >> 9) & 3);
-								String g = String.valueOf((value >> 8) & 1);
-								String d = String.valueOf((value >> 6) & 1);
-								String a = String.valueOf((value >> 5) & 1);
-								String pcd = String.valueOf((value >> 4) & 1);
-								String pwt = String.valueOf((value >> 3) & 1);
-								String us = String.valueOf((value >> 2) & 1);
-								String wr = String.valueOf((value >> 1) & 1);
-								String p = String.valueOf((value >> 0) & 1);
-
-								ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
-
-								model.addRow(new String[] { String.valueOf(y * 2 + z), base, avl, g, d, a, pcd, pwt, us, wr, p });
-								// }
-							} catch (Exception ex) {
-							}
-						}
-						jStatusLabel.setText("Updating page table " + (y + 1) + "/" + lines.length);
-					}
-					jPageDirectoryTable.setModel(model);
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		statusLabel.setText("Updating page table");
+		DefaultTableModel model = (DefaultTableModel) pageDirectoryTable.getModel();
+		while (model.getRowCount() > 0) {
+			model.removeRow(0);
 		}
 
-		/*
-		 * if (false && Global.debug &&
-		 * jAutoRefreshPageTableGraphCheckBox.isSelected()) {
-		 * System.out.println("aa"); GraphModel model = new DefaultGraphModel();
-		 * GraphLayoutCache view = new GraphLayoutCache(model, new
-		 * DefaultCellViewFactory() { public CellView createView(GraphModel
-		 * model, Object cell) { CellView view = null; if (model.isPort(cell)) {
-		 * view = new PortView(cell); } else if (model.isEdge(cell)) { view =
-		 * new EdgeView(cell); } else { if (cell instanceof IA32PageDirectory) {
-		 * view = new PageDirectoryView(cell); } else if (cell instanceof
-		 * IA32PageTable) { view = new JButtonView(cell, 1); } else { view = new
-		 * VertexView(cell); } } return view; } }); JGraph graph = new
-		 * JGraph(model, view);
-		 * 
-		 * // add cells
-		 * 
-		 * // DefaultGraphCell[] cells = new //
-		 * DefaultGraphCell[ia32_pageDirectories.size() + 1];
-		 * Vector<DefaultGraphCell> cells = new Vector<DefaultGraphCell>();
-		 * DefaultGraphCell root = new DefaultGraphCell("cr3 " +
-		 * jRegisterPanel1.jCR3TextField.getText());
-		 * GraphConstants.setGradientColor(root.getAttributes(), Color.red);
-		 * GraphConstants.setOpaque(root.getAttributes(), true);
-		 * GraphConstants.setBounds(root.getAttributes(), new
-		 * Rectangle2D.Double(0, 0, 140, 20)); root.add(new DefaultPort());
-		 * cells.add(root);
-		 * 
-		 * Vector<IA32PageDirectory> pageDirectoryCells = new
-		 * Vector<IA32PageDirectory>(); for (int x = 0; x <
-		 * ia32_pageDirectories.size(); x++) { IA32PageDirectory cell =
-		 * ia32_pageDirectories.get(x);
-		 * GraphConstants.setGradientColor(cell.getAttributes(), Color.orange);
-		 * GraphConstants.setOpaque(cell.getAttributes(), true);
-		 * GraphConstants.setBounds(cell.getAttributes(), new
-		 * Rectangle2D.Double(0, x * 20, 140, 20)); cell.add(new DefaultPort());
-		 * pageDirectoryCells.add(cell);
-		 * 
-		 * // page table String pageTableAddress =
-		 * ia32_pageDirectories.get(x).base; sendCommand("xp /4096bx " +
-		 * pageTableAddress);
-		 * 
-		 * float totalByte2 = 4096 - 1; totalByte2 = totalByte2 / 8; int
-		 * totalByte3 = (int) Math.floor(totalByte2); String realEndAddressStr;
-		 * String realStartAddressStr; String baseAddress = pageTableAddress;
-		 * long realStartAddress = CommonLib.string2BigInteger(baseAddress);
-		 * 
-		 * realStartAddressStr = String.format("%08x", realStartAddress); long
-		 * realEndAddress = realStartAddress + totalByte3 * 8; realEndAddressStr
-		 * = String.format("%08x", realEndAddress);
-		 * 
-		 * String result = commandReceiver.getCommandResult(realStartAddressStr,
-		 * realEndAddressStr); String[] lines = result.split("\n");
-		 * 
-		 * Vector<DefaultGraphCell> pageTables = new Vector<DefaultGraphCell>();
-		 * for (int y = 1; y < 4; y++) { String[] b =
-		 * lines[y].replaceFirst("			cell.add(new DefaultPort());^.*:",
-		 * "").trim().split("\t");
-		 * 
-		 * for (int z = 0; z < 2; z++) { try { int bytes[] = new int[4]; for
-		 * (int x2 = 0; x2 < 4; x2++) { bytes[x2] =
-		 * CommonLib.string2BigInteger(b[x2 + z *
-		 * 4].substring(2).trim()).intValue(); } long value =
-		 * CommonLib.getInt(bytes, 0);
-		 * 
-		 * String base = Long.toHexString(value & 0xfffff000); String avl =
-		 * String.valueOf((value >> 9) & 3); String g = String.valueOf((value >>
-		 * 8) & 1); String d = String.valueOf((value >> 6) & 1); String a =
-		 * String.valueOf((value >> 5) & 1); String pcd = String.valueOf((value
-		 * >> 4) & 1); String pwt = String.valueOf((value >> 3) & 1); String us
-		 * = String.valueOf((value >> 2) & 1); String wr = String.valueOf((value
-		 * >> 1) & 1); String p = String.valueOf((value >> 0) & 1);
-		 * IA32PageTable pageTableCell = new IA32PageTable(base, avl, g, d, a,
-		 * pcd, pwt, us, wr, p);
-		 * GraphConstants.setGradientColor(pageTableCell.getAttributes(),
-		 * Color.orange);
-		 * GraphConstants.setOpaque(pageTableCell.getAttributes(), true);
-		 * GraphConstants.setBounds(pageTableCell.getAttributes(), new
-		 * Rectangle2D.Double(0, (z + y) * 20, 140, 20)); pageTableCell.add(new
-		 * DefaultPort()); pageTables.add(pageTableCell); } catch (Exception ex)
-		 * { } } }
-		 * 
-		 * // group it and link it DefaultGraphCell pt[] =
-		 * pageTables.toArray(new DefaultGraphCell[] {}); DefaultGraphCell
-		 * vertex1 = new DefaultGraphCell(new String("page table" + x), null,
-		 * pt); vertex1.add(new DefaultPort()); cells.add(vertex1);
-		 * 
-		 * DefaultEdge edge = new DefaultEdge();
-		 * edge.setSource(cell.getChildAt(0));
-		 * edge.setTarget(vertex1.getLastChild());
-		 * 
-		 * GraphConstants.setLineStyle(edge.getAttributes(),
-		 * GraphConstants.STYLE_ORTHOGONAL);
-		 * GraphConstants.setRouting(edge.getAttributes(),
-		 * GraphConstants.ROUTING_DEFAULT); int arrow =
-		 * GraphConstants.ARROW_CLASSIC;
-		 * GraphConstants.setLineEnd(edge.getAttributes(), arrow);
-		 * GraphConstants.setEndFill(edge.getAttributes(), true);
-		 * 
-		 * cells.add(edge); }
-		 * 
-		 * if (pageDirectoryCells.toArray().length > 0) { IA32PageDirectory pt[]
-		 * = pageDirectoryCells.toArray(new IA32PageDirectory[] {});
-		 * DefaultGraphCell vertex1 = new DefaultGraphCell(new
-		 * String("Vertex1"), null, pt); vertex1.add(new DefaultPort());
-		 * cells.add(vertex1);
-		 * 
-		 * DefaultEdge edge = new DefaultEdge();
-		 * edge.setSource(root.getChildAt(0));
-		 * edge.setTarget(vertex1.getLastChild()); int arrow =
-		 * GraphConstants.ARROW_CLASSIC;
-		 * GraphConstants.setLineEnd(edge.getAttributes(), arrow);
-		 * GraphConstants.setEndFill(edge.getAttributes(), true);
-		 * 
-		 * // lastObj = cells[index]; cells.add(edge); }
-		 * 
-		 * graph.getGraphLayoutCache().insert(cells.toArray());
-		 * graph.setDisconnectable(false);
-		 * 
-		 * JGraphFacade facade = new JGraphFacade(graph); JGraphLayout layout =
-		 * new JGraphTreeLayout(); ((JGraphTreeLayout)
-		 * layout).setOrientation(SwingConstants.WEST); //
-		 * ((JGraphHierarchicalLayout) layout).setNodeDistance(100);
-		 * layout.run(facade); Map nested = facade.createNestedMap(true, true);
-		 * graph.getGraphLayoutCache().edit(nested);
-		 * 
-		 * // JGraphFacade facade = new JGraphFacade(graph); // JGraphLayout
-		 * layout = new JGraphFastOrganicLayout(); // layout.run(facade); // Map
-		 * nested = facade.createNestedMap(true, true); //
-		 * graph.getGraphLayoutCache().edit(nested);
-		 * 
-		 * jPageTableGraphPanel.removeAll(); jPageTableGraphPanel.add(new
-		 * JScrollPane(graph), BorderLayout.CENTER); }
-		 */
+		Vector<String[]> r = VMController.getVM().pageTable(pageDirectoryBaseAddress);
+		for (String s[] : r) {
+			model.addRow(s);
+		}
+		pageDirectoryTable.setModel(model);
 
 	}
 
 	private void updateStack() {
 		try {
-			jStatusLabel.setText("Updating stack");
-			if (Global.vmType.equals("bochs")) {
-				// commandReceiver.setCommandNoOfLine(512);
-
-				commandReceiver.clearBuffer();
-				commandReceiver.shouldShow = false;
-				sendCommand("print-stack 40");
-				String result = commandReceiver.getCommandResultUntilHaveLines(40);
-				String[] lines = result.split("\n");
-				registerPanel.stackList.removeAll();
-				jStatusProgressBar.setMaximum(lines.length - 1);
-				DefaultListModel model = new DefaultListModel();
-				for (int y = 1; y < lines.length; y++) {
-					try {
-						jStatusProgressBar.setValue(y);
-						String[] b = lines[y].split("[\\[\\]]");
-						model.addElement(b[1]);
-						jStatusLabel.setText("Updating stack " + y + "/" + (lines.length - 1));
-					} catch (Exception ex2) {
-					}
-				}
-				registerPanel.stackList.setModel(model);
+			statusLabel.setText("Updating stack");
+			registerPanel.stackList.removeAll();
+			DefaultListModel model = new DefaultListModel();
+			Vector<String> r = VMController.getVM().stack();
+			for (String s : r) {
+				model.addElement(s);
 			}
+			registerPanel.stackList.setModel(model);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
 
 	public void updateInstruction(BigInteger address) {
-		if (Global.vmType.equals("bochs")) {
-			updateInstructionUsingBochs(address);
-		} else if (Global.vmType.equals("qemu")) {
-			updateInstructionUsingNasm(address);
+		String cr0 = registerPanel.cr0TextField.getText();
+		updateInstruction(address, (CommonLib.string2int(cr0.substring(cr0.length() - 1)) & 1) == 1);
+	}
+
+	public void updateInstruction(BigInteger address, boolean is32Bit) {
+		statusLabel.setText("Updating instruction");
+		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
+
+		BigInteger cs;
+		if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
+			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
+		} else {
+			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 		}
+		BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+
+		Vector<String[]> r = VMController.getVM().instruction(address, cs, eip, is32Bit);
+		String lastAddress = null;
+		for (String[] s : r) {
+			if (lastAddress != s[1]) {
+				model.addRow(s);
+			}
+			lastAddress = s[1];
+		}
+		model.getData().sort(new Comparator<String[]>() {
+			@Override
+			public int compare(String[] o1, String[] o2) {
+				String s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1[1]).toString(16), 16, '0');
+				String s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2[1]).toString(16), 16, '0');
+				s1 = s1.replaceAll("cCode : 0x", "");
+				s2 = s2.replaceAll("cCode : 0x", "");
+				return s1.compareTo(s2);
+			}
+
+		});
+		//		model.removeNonOrderInstruction();
+		model.fireTableDataChanged();
 
 		if (!registerPanel.eipTextField.getText().equals("")) {
 			((SourceCodeTableModel) elfTable.getModel()).updateBreakpoint(getRealEIP());
 			((InstructionTableModel) instructionTable.getModel()).updateBreakpoint(getRealEIP());
 		}
+		instructionTable.repaint();
+		jumpToRowInstructionTable(getRealEIP());
+		statusLabel.setText("");
 	}
 
-	private void updateInstructionUsingNasm(BigInteger address) {
+	public void updateInstructionUsingNasm(BigInteger address) {
+		updateInstructionUsingNasm(address, (Integer.parseInt(registerPanel.cr0TextField.getText()) & 1) == 1);
+	}
+
+	private void updateInstructionUsingNasm(BigInteger address, boolean is32Bit) {
 		try {
 			if (address == null) {
-				BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
+				//BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
 				BigInteger eip = CommonLib.string2BigInteger(this.registerPanel.eipTextField.getText());
 				eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 				address = eip;
 			}
-			jStatusLabel.setText("Updating instruction");
-			int bytes[] = libGDB.physicalMemory(address, 200);
-			String result = Disassemble.disassemble(bytes, 32, address);
+			statusLabel.setText("Updating instruction");
+			int bytes[] = VMController.getVM().physicalMemory(address, 200);
+			String result = Disassemble.disassemble(bytes, is32Bit, address);
 			String lines[] = result.split("\n");
 			if (lines.length > 0) {
 				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-				jStatusProgressBar.setMaximum(lines.length - 1);
+				statusProgressBar.setMaximum(lines.length - 1);
 				for (int x = 0; x < lines.length; x++) {
-					jStatusProgressBar.setValue(x);
+					statusProgressBar.setValue(x);
 					try {
 						// load cCode
-
-						//						System.out.println("pcStr=" + pcStr);
+						//						logger.debug("pcStr=" + pcStr);
 						//						if (!pcStr.matches("^[0-9a-fA-F].*")) {
-						//							System.out.println("fuck ar=" + pcStr);
+						//							logger.debug("fuck ar=" + pcStr);
 						//							System.exit(1);
 						//						}
 						String temp[] = lines[x].split("  +");
@@ -2866,6 +2339,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							if (pc == null) {
 								continue;
 							}
+
 							String s[] = getCCode(pc, false);
 							String lineNo[] = getCCode(pc, true);
 							if (s != null && lineNo != null) {
@@ -2893,115 +2367,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void updateInstructionUsingBochs(BigInteger address) {
-		try {
-			final int maximumLine = 400;
-			String command;
-			jStatusLabel.setText("Updating instruction");
-			if (address == null) {
-				BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
-				BigInteger eip = CommonLib.string2BigInteger(this.registerPanel.eipTextField.getText());
-				eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
-				command = "disasm cs:0x" + eip.toString(16) + " 0x" + cs.toString(16) + ":0x" + eip.add(BigInteger.valueOf(0x400)).toString(16);
-			} else {
-				command = "disasm " + address + " " + address.add(BigInteger.valueOf(0x400));
-			}
-			commandReceiver.clearBuffer();
-			commandReceiver.shouldShow = false;
-			sendCommand(command);
-			commandReceiver.waitUntilHaveLine(30);
-			String result = commandReceiver.getCommandResultUntilEnd();
-			String lines[] = result.split("\n");
-			if (lines.length > 0) {
-				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-				jStatusProgressBar.setMaximum(lines.length - 1);
-				for (int x = 0; x < lines.length && x < maximumLine; x++) {
-					jStatusProgressBar.setValue(x);
-					try {
-						lines[x] = lines[x].replaceFirst("\\<.*\\>", "");
-						String strs[] = lines[x].split(":");
-						int secondColon = lines[x].indexOf(":", lines[x].indexOf(":") + 1);
-
-						// load cCode
-						String pcStr = strs[0].trim();
-						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
-						if (pc == null) {
-							continue;
-						}
-						String s[] = getCCode(pc, false);
-						String lineNo[] = getCCode(pc, true);
-						if (s != null && lineNo != null) {
-							for (int index = 0; index < s.length; index++) {
-								model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
-							}
-						}
-						// end load cCode
-						model.addRow(new String[] { "", "0x" + pc.toString(16), lines[x].substring(secondColon + 1).trim().split(";")[0].trim(), lines[x].split(";")[1] });
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-
-				model.removeNonOrderInstruction();
-				model.fireTableDataChanged();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	private void updateInstructionUsingMaxine(BigInteger address) {
-		/*try {
-			final int maxNoOfByte = 400;
-			jStatusLabel.setText("Updating instruction");
-			if (address == null) {
-				BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
-				BigInteger eip = CommonLib.string2BigInteger(this.registerPanel.eipTextField.getText());
-				eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
-				address = eip;
-			}
-			String lines[] = libGDB.disassemble(address, maxNoOfByte);
-			if (lines.length > 0) {
-				InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-				jStatusProgressBar.setMaximum(lines.length - 1);
-				for (int x = 0; x < lines.length; x++) {
-					jStatusProgressBar.setValue(x);
-					try {
-						//						lines[x] = lines[x].replaceFirst("\\<.*\\>", "");
-						//						String strs[] = lines[x].split(":");
-						//						int secondColon = lines[x].indexOf(":", lines[x].indexOf(":") + 1);
-
-						// load cCode
-						String pcStr = lines[x].replaceFirst(" *", "");
-						BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
-						if (pc == null) {
-							continue;
-						}
-						String s[] = getCCode(pc, false);
-						String lineNo[] = getCCode(pc, true);
-						if (s != null && lineNo != null) {
-							for (int index = 0; index < s.length; index++) {
-								model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
-							}
-						}
-						// end load cCode
-						//						model.addRow(new String[] { "", "0x" + pc.toString(16), lines[x].substring(secondColon + 1).trim().split(";")[0].trim(), lines[x].split(";")[1] });
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
-				}
-
-				model.removeNonOrderInstruction();
-				model.fireTableDataChanged();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
-	}
-
 	public void jumpToRowInstructionTable(BigInteger eip) {
+		logger.debug("jumpToRowInstructionTable=" + eip.toString(16));
 		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 		int eIPRow = model.findEIPRowNo(eip);
+		System.out.println("eIPRow=" + eIPRow);
 		instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow + 10, 1, true));
 		sourceLevelDebugger.instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow + 10, 1, true));
 		instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow, 1, true));
@@ -3022,47 +2392,30 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return null;
 	}
 
-	private String[] getCCode(BigInteger pc, boolean getFile) {
+	public String[] getCCode(BigInteger pc, boolean getFile) {
 		for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
 			try {
 				// if (pc.equals(BigInteger.valueOf(0x1600000))) {
-				// System.out.println("test");
+				// logger.debug("test");
 				// }
 				// if (pc.equals(BigInteger.valueOf(0x160000c))) {
-				// System.out.println("test");
+				// logger.debug("test");
 				// }
 				// if (pc.equals(BigInteger.valueOf(0x160000f))) {
-				// System.out.println("test");
+				// logger.debug("test");
 				// }
 				if (pc.equals(BigInteger.valueOf(0x1600943))) {
-					System.out.println("test");
+					logger.debug("test");
 				}
 				DwarfLine startLine = null;
 				DwarfLine endLine = null;
 				DwarfDebugLineHeader startHeader = null;
 
 				outerloop: for (DwarfDebugLineHeader header : dwarf.headers) {
-					// Vector<DwarfLine> norepeatedline = new
-					// Vector<DwarfLine>();
-					// DwarfLine lastLine = null;
-					// for (DwarfLine line : header.lines) {
-					// if (lastLine != null && lastLine.address == line.address)
-					// {
-					// norepeatedline.remove(norepeatedline.size() - 1);
-					// norepeatedline.add(line);
-					// } else {
-					// norepeatedline.add(line);
-					// }
-					// lastLine = line;
-					// }
-
 					boolean toggle = false;
 					for (DwarfLine line : header.lines) {
 						if (!toggle && line.address.equals(pc)) {
 							startLine = line;
-							if (startLine == null) {
-								System.out.println("NULL AR");
-							}
 							startHeader = header;
 							toggle = true;
 							continue;
@@ -3096,7 +2449,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				// endLineNo = startLine.line_num;
 				// }
 
-				// System.out.println(pc.toString(16) + ", " +
+				// logger.debug(pc.toString(16) + ", " +
 				// startLine.line_num + ", " + endLineNo);
 				String s[] = new String[endLineNo - startLine.line_num + 1];
 				for (int z = startLine.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {
@@ -3129,92 +2482,40 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void updateGDT() {
-		try {
-			jStatusLabel.setText("Updating GDT");
-			if (Global.vmType.equals("bochs")) {
-				// commandReceiver.setCommandNoOfLine(20);
-
-				int limit = Integer.parseInt(this.registerPanel.gdtrLimitTextField.getText().substring(2), 16);
-				limit = (limit + 1) / 8 - 1;
-				if (limit > 100) {
-					limit = 100;
-				}
-				commandReceiver.clearBuffer();
-				commandReceiver.shouldShow = false;
-				sendCommand("info gdt 0 " + limit);
-				String limitStr = String.format("0x%02x", limit);
-
-				String result = commandReceiver.getCommandResult("GDT[0x00]", "GDT[" + limitStr + "]", null);
-				if (result != null) {
-					String lines[] = result.split("\n");
-					GDTTableModel model = (GDTTableModel) jGDTTable.getModel();
-					model.clear();
-					// jStatusProgressBar.setMaximum(lines.length - 1);
-					for (int x = 1; x < lines.length; x++) {
-						jStatusLabel.setText("Updating GDT " + x);
-						// System.out.println(">++>>" + lines[x]);
-						jStatusProgressBar.setValue(x);
-						try {
-							Vector<String> v = new Vector<String>();
-							v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
-							v.add(lines[x].replaceFirst("^.*]=", ""));
-							model.addValue(v);
-						} catch (Exception ex) {
-						}
-					}
-
-					((GDTTableModel) jGDTTable.getModel()).fireTableDataChanged();
-				}
-			} else if (Global.vmType.equals("qemu")) {
-				//				GDTTableModel model = (GDTTableModel) jGDTTable.getModel();
-				//				model.clear();
-				//				model.addValue(v);
-
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		statusLabel.setText("Updating GDT");
+		int gdtLimit = Integer.parseInt(this.registerPanel.gdtrLimitTextField.getText().substring(2), 16);
+		gdtLimit = (gdtLimit + 1) / 8 - 1;
+		if (gdtLimit > 96) {
+			gdtLimit = 96;
 		}
+		BigInteger gdtVirtualAddress = CommonLib.string2BigInteger(registerPanel.gdtrTextField.getText());
+		Vector<Vector<String>> r = VMController.getVM().gdt(gdtVirtualAddress, gdtLimit);
+		GDTTableModel model = (GDTTableModel) gdtTable.getModel();
+		model.clear();
+		for (Vector<String> v : r) {
+			model.addValue(v);
+		}
+
+		((GDTTableModel) gdtTable.getModel()).fireTableDataChanged();
 	}
 
 	private void updateIDT() {
 		try {
-			jStatusLabel.setText("Updating IDT");
-			if (Global.vmType.equals("bochs")) {
-				commandReceiver.clearBuffer();
-				commandReceiver.shouldShow = false;
-				int limit = Integer.parseInt(this.registerPanel.idtrLimitTextField.getText().substring(2), 16);
-				limit = (limit + 1) / 8 - 1;
-				if (limit > 200 || limit < 0) {
-					limit = 200;
-				}
-				sendCommand("info idt 0 " + limit);
-
-				String limitStr = String.format("0x%02x", limit);
-
-				String result = commandReceiver.getCommandResult("IDT[0x00]", "IDT[" + limitStr + "]", "limit=0)");
-
-				IDTTableModel model = (IDTTableModel) jIDTTable.getModel();
-				model.clear();
-				if (result == null) {
-					((IDTTableModel) jIDTTable.getModel()).fireTableDataChanged();
-					return;
-				} else {
-					String lines[] = result.split("\n");
-					jStatusProgressBar.setMaximum(lines.length - 1);
-					for (int x = 0; x < lines.length; x++) {
-						jStatusLabel.setText("Updating IDT " + x);
-						jStatusProgressBar.setValue(x);
-						try {
-							Vector<String> v = new Vector<String>();
-							v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
-							v.add(lines[x].replaceFirst("^.*]=", ""));
-							model.addValue(v);
-						} catch (Exception ex) {
-						}
-					}
-					((IDTTableModel) jIDTTable.getModel()).fireTableDataChanged();
-				}
+			statusLabel.setText("Updating IDT");
+			int idtLimit = Integer.parseInt(this.registerPanel.idtrLimitTextField.getText().substring(2), 16);
+			idtLimit = (idtLimit + 1) / 8 - 1;
+			if (idtLimit > 96) {
+				idtLimit = 96;
 			}
+			IDTTableModel model = (IDTTableModel) idtTable.getModel();
+			model.clear();
+			BigInteger idtVirtualAddress = CommonLib.string2BigInteger(registerPanel.idtrTextField.getText());
+			Vector<Vector<String>> r = VMController.getVM().idt(idtVirtualAddress, idtLimit);
+			for (Vector<String> v : r) {
+				model.addValue(v);
+			}
+			((IDTTableModel) idtTable.getModel()).fireTableDataChanged();
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -3222,26 +2523,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void updateLDT() {
 		try {
-			jStatusLabel.setText("Updating LDT");
-			if (Global.vmType.equals("bochs")) {
-				// commandReceiver.setCommandNoOfLine(20);
-
-				sendCommand("info ldt 0 200");
-				String result = commandReceiver.getCommandResultUntilEnd();
-				String lines[] = result.split("\n");
-				LDTTableModel model = (LDTTableModel) jLDTTable.getModel();
+			statusLabel.setText("Updating LDT");
+			if (VMController.vmType == VMType.Bochs) {
+				LDTTableModel model = (LDTTableModel) ldtTable.getModel();
 				model.clear();
-				jStatusProgressBar.setMaximum(lines.length - 1);
-				for (int x = 1; x < lines.length; x++) {
-					jStatusProgressBar.setValue(x);
-					try {
-						Vector<String> v = new Vector<String>();
-						v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
-						v.add(lines[x].replaceFirst("^.*]=", ""));
-						model.addValue(v);
-					} catch (Exception ex) {
-					}
+				BigInteger ldtVirtualAddress = CommonLib.string2BigInteger(registerPanel.ldtrTextField.getText());
+				Vector<Vector<String>> r = VMController.getVM().idt(ldtVirtualAddress, 200);
+
+				for (Vector<String> v : r) {
+					model.addValue(v);
 				}
+
 				model.fireTableDataChanged();
 			}
 		} catch (Exception ex) {
@@ -3249,520 +2541,120 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void changeText(JTextField jTextField, long value) {
-		String newValue = "0x" + Long.toHexString(value);
-		if (jTextField.getText().equals(newValue)) {
-			jTextField.setForeground(Color.black);
+	private void changeText(JTextField textField, BigInteger value) {
+		if (textField.getText().equals(value)) {
+			textField.setForeground(Color.black);
 		} else {
-			jTextField.setForeground(Color.red);
+			textField.setForeground(Color.blue);
 		}
-		jTextField.setText(newValue);
+		textField.setText("0x" + value.toString(16));
 	}
 
-	private void changeText(JTextField jTextField, BigInteger value) {
+	private void changeText(SegmentRegister segmentRegister, String value, String base, String limit, String flags) {
+		changeText(segmentRegister, CommonLib.string2BigInteger(value), CommonLib.string2BigInteger(base), CommonLib.string2BigInteger(limit), CommonLib.string2BigInteger(flags));
+	}
+
+	private void changeText(SegmentRegister segmentRegister, BigInteger value, BigInteger base, BigInteger limit, BigInteger flags) {
 		String newValue = "0x" + value.toString(16);
-		if (jTextField.getText().equals(newValue)) {
-			jTextField.setForeground(Color.black);
+		if (segmentRegister.getText().equals(newValue)) {
+			segmentRegister.setForeground(Color.black);
 		} else {
-			jTextField.setForeground(Color.red);
+			segmentRegister.setForeground(Color.blue);
 		}
-		jTextField.setText(newValue);
+		segmentRegister.setText(newValue);
+		segmentRegister.setBase("0x" + base.toString(16));
+		segmentRegister.setLimit("0x" + limit.toString(16));
+		segmentRegister.setFlags("0x" + flags.toString(16));
 	}
 
-	private void changeText(JTextField jTextField, String value) {
-		if (jTextField.getText().equals(value)) {
-			jTextField.setForeground(Color.black);
-		} else {
-			jTextField.setForeground(Color.red);
-		}
-		jTextField.setText(value);
+	private void updateEFlags() {
+
 	}
 
 	private void updateRegister(boolean updateGUI) {
-		if (Global.vmType.equals("bochs")) {
-			try {
-				if (updateGUI) {
-					jStatusLabel.setText("Updating general registers");
-				}
-				commandReceiver.shouldShow = false;
-				sendCommand("r");
-				String result = commandReceiver.getCommandResult("ax:", "eflags", null);
-				result = result.replaceAll("r", "\nr");
-				String lines[] = result.split("\n");
-				if (updateGUI) {
-					if (updateGUI) {
-						jStatusProgressBar.setMaximum(lines.length - 1);
-					}
-
-					int x = 0;
-					for (String line : lines) {
-						if (updateGUI) {
-							jStatusProgressBar.setValue(x++);
-						}
-						if (line.matches(".*.ax:.*")) {
-							changeText(this.registerPanel.eaxTextField, line.replaceAll(":", "").replaceAll("^.*ax", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.bx:.*")) {
-							changeText(this.registerPanel.ebxTextField, line.replaceAll(":", "").replaceAll("^.*bx", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.cx:.*")) {
-							changeText(this.registerPanel.ecxTextField, line.replaceAll(":", "").replaceAll("^.*cx", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.dx:.*")) {
-							changeText(this.registerPanel.edxTextField, line.replaceAll(":", "").replaceAll("^.*dx", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.si:.*")) {
-							changeText(this.registerPanel.esiTextField, line.replaceAll(":", "").replaceAll("^.*si", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.di:.*")) {
-							changeText(this.registerPanel.ediTextField, line.replaceAll(":", "").replaceAll("^.*di", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.bp:.*")) {
-							changeText(this.registerPanel.ebpTextField, line.replaceAll(":", "").replaceAll("^.*bp", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.sp:.*")) {
-							changeText(this.registerPanel.espTextField, line.replaceAll(":", "").replaceAll("^.*sp", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*.ip:.*")) {
-							changeText(this.registerPanel.eipTextField, line.replaceAll(":", "").replaceAll("^.*ip", "").split(" ")[1].replaceAll("_", ""));
-						}
-						if (line.matches(".*eflags .*")) {
-							changeText(this.registerPanel.eflagsTextField, line.replaceAll(":", "").replaceAll("^.*eflags", "").split(" ")[1].replaceAll("_", ""));
-						}
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			if (version.contains("2.4.1")) {
-				try {
-					// sregs
-					if (updateGUI) {
-						jStatusLabel.setText("Updating segment registers");
-					}
-					// System.out.println("want sreg");
-					commandReceiver.clearBuffer();
-					sendCommand("sreg");
-					String result = commandReceiver.getCommandResult("s:", "idtr:", null);
-					// System.out.println(result);
-					String[] lines = result.split("\n");
-
-					int x = 0;
-					if (updateGUI) {
-						jStatusProgressBar.setMaximum(lines.length - 1);
-					}
-
-					for (String line : lines) {
-						line = line.replaceFirst("<.*>", "");
-						if (updateGUI) {
-							jStatusProgressBar.setValue(x++);
-						}
-						String str[] = line.split(" ");
-
-						if (line.matches(".*cs:.*")) {
-							changeText(this.registerPanel.csTextField, line.split("=")[1].split(",")[0]);
-						} else if (line.matches(".*ds:.*")) {
-							changeText(this.registerPanel.dsTextField, line.split("=")[1].split(",")[0]);
-						} else if (line.matches(".*es:.*")) {
-							changeText(this.registerPanel.esTextField, line.split("=")[1].split(",")[0]);
-						} else if (line.matches(".*fs:.*")) {
-							changeText(this.registerPanel.fsTextField, line.split("=")[1].split(",")[0]);
-						} else if (line.matches(".*gs:.*")) {
-							changeText(this.registerPanel.gsTextField, line.split("=")[1].split(",")[0]);
-						} else if (line.matches(".*ss:.*")) {
-							changeText(this.registerPanel.jSSTextField, line.split("=")[1].split(",")[0]);
-						} else
-
-						if (line.matches(".*gdtr:.*")) {
-							changeText(this.registerPanel.gdtrTextField, line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.gdtrLimitTextField, str[1].split("=")[1]);
-						} else if (line.matches(".*ldtr.*")) {
-							changeText(this.registerPanel.ldtrTextField, line.split("=")[1].split(",")[0]);
-						} else if (line.matches(".*idtr:.*")) {
-							changeText(this.registerPanel.idtrTextField, line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.idtrLimitTextField, str[1].split("=")[1]);
-						} else if (line.matches(".*tr:.*")) {
-							changeText(this.registerPanel.trTextField, line.split("=")[1].split(",")[0]);
-						}
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			} else {
-				try {
-					// sregs
-					if (updateGUI) {
-						jStatusLabel.setText("Updating segment registers");
-					}
-					// System.out.println("want sreg");
-					commandReceiver.clearBuffer();
-					sendCommand("sreg");
-					String result = commandReceiver.getCommandResult("s:", "idtr:", null);
-					// System.out.println(result);
-					String[] lines = result.split("\n");
-
-					int x = 0;
-					if (updateGUI) {
-						jStatusProgressBar.setMaximum(lines.length - 1);
-					}
-
-					for (String line : lines) {
-						line = line.replaceFirst("<.*>", "");
-						if (updateGUI) {
-							jStatusProgressBar.setValue(x++);
-						}
-						String str[] = line.split(" ");
-
-						if (line.matches(".*cs:.*")) {
-							changeText(this.registerPanel.csTextField, line.split(":")[1].split(",")[0]);
-						} else if (line.matches(".*ds:.*")) {
-							changeText(this.registerPanel.dsTextField, line.split(":")[1].split(",")[0]);
-						} else if (line.matches(".*es:.*")) {
-							changeText(this.registerPanel.esTextField, line.split(":")[1].split(",")[0]);
-						} else if (line.matches(".*fs:.*")) {
-							changeText(this.registerPanel.fsTextField, line.split(":")[1].split(",")[0]);
-						} else if (line.matches(".*gs:.*")) {
-							changeText(this.registerPanel.gsTextField, line.split(":")[1].split(",")[0]);
-						} else if (line.matches(".*ss:.*")) {
-							changeText(this.registerPanel.jSSTextField, line.split(":")[1].split(",")[0]);
-						}
-
-						if (line.matches(".*gdtr:.*")) {
-							changeText(this.registerPanel.gdtrTextField, line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.gdtrLimitTextField, str[1].split("=")[1]);
-						} else if (line.matches(".*ldtr.*")) {
-							changeText(this.registerPanel.ldtrTextField, line.split("=")[1].split(",")[0]);
-						} else if (line.matches(".*idtr:.*")) {
-							changeText(this.registerPanel.idtrTextField, line.split("=")[1].split(",")[0]);
-							changeText(this.registerPanel.idtrLimitTextField, str[1].split("=")[1]);
-						} else if (line.matches(".*tr:.*")) {
-							changeText(this.registerPanel.trTextField, line.split(":")[1].split(",")[0]);
-						}
-					}
-				} catch (Exception ex) {
-					ex.printStackTrace();
-				}
-			}
-
-			try {
-				// cregs
-				if (updateGUI) {
-					jStatusLabel.setText("Updating control registers");
-				}
-				// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
-				commandReceiver.clearBuffer();
-				sendCommand("creg");
-				String result = commandReceiver.getCommandResult("CR0", "CR4", null);
-				String[] lines = result.split("\n");
-
-				int x = 0;
-				if (updateGUI) {
-					jStatusProgressBar.setMaximum(lines.length - 1);
-				}
-
-				for (String line : lines) {
-					if (updateGUI) {
-						jStatusProgressBar.setValue(x++);
-					}
-					if (line.matches(".*CR0=.*")) {
-						line = line.replaceFirst("^.*CR0", "CR0");
-						changeText(this.registerPanel.cr0TextField, line.split(" ")[0].split("=")[1].replace(":", ""));
-
-						if (CommonLib.getBit(CommonLib.string2long(registerPanel.cr0TextField.getText()), 0) == 1) {
-							jCPUModeLabel.setText(MyLanguage.getString("Protected_mode") + "     ");
-						} else {
-							jCPUModeLabel.setText(MyLanguage.getString("Real_mode") + "     ");
-						}
-						String arr[] = line.split(":")[1].split(" ");
-
-						registerPanel.cr0DetailLabel.setText("");
-						registerPanel.cr0DetailLabel2.setText(" ");
-						for (int z = 0; z < 7; z++) {
-							registerPanel.cr0DetailLabel.setText(registerPanel.cr0DetailLabel.getText() + arr[z] + " ");
-						}
-						for (int z = 7; z < arr.length; z++) {
-							registerPanel.cr0DetailLabel2.setText(registerPanel.cr0DetailLabel2.getText() + arr[z] + " ");
-						}
-					} else if (line.matches(".*CR2=.*")) {
-						changeText(this.registerPanel.cr2TextField, line.split(" ")[2].split("=")[1]);
-					} else if (line.matches(".*CR3=.*")) {
-						changeText(this.registerPanel.cr3TextField, line.split(" ")[0].split("=")[1]);
-					} else if (line.matches(".*CR4=.*")) {
-						changeText(this.registerPanel.cr4TextField, line.split(" ")[0].split("=")[1].replace(":", ""));
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			try {
-				if (version.contains("2.4.1")) {
-				} else {
-					// dregs
-					if (updateGUI) {
-						jStatusLabel.setText("Updating debug registers");
-					}
-					// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
-					sendCommand("dreg");
-					String result = commandReceiver.getCommandResult("DR0", "DR7", null);
-					String[] lines = result.split("\n");
-
-					int x = 0;
-					if (updateGUI) {
-						jStatusProgressBar.setMaximum(lines.length - 1);
-					}
-
-					for (String line : lines) {
-						if (updateGUI) {
-							jStatusProgressBar.setValue(x++);
-						}
-						if (line.matches(".*DR0=0x.*")) {
-							changeText(this.registerPanel.dr0TextField, line.split("=")[1].split(":")[0]);
-						} else if (line.matches(".*DR1=0x.*")) {
-							changeText(this.registerPanel.dr1TextField, line.split("=")[1].split(":")[0]);
-						} else if (line.matches(".*DR2=0x.*")) {
-							changeText(this.registerPanel.dr2TextField, line.split("=")[1].split(":")[0]);
-						} else if (line.matches(".*DR3=0x.*")) {
-							changeText(this.registerPanel.dr3TextField, line.split("=")[1].split(":")[0]);
-						} else if (line.matches(".*DR6=0x.*")) {
-							changeText(this.registerPanel.dr6TextField, line.split("=")[1].split(":")[0]);
-						} else if (line.matches(".*DR7=0x.*")) {
-							changeText(this.registerPanel.dr7TextField, line.split("=")[1].split(":")[0]);
-						}
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			try {
-				// fpu
-				if (updateGUI) {
-					jStatusLabel.setText("Updating FPU registers");
-				}
-				commandReceiver.clearBuffer();
-				sendCommand("fpu");
-				String result = commandReceiver.getCommandResult("status", "FP7", null);
-				String[] lines = result.split("\n");
-
-				int x = 0;
-				if (updateGUI) {
-					jStatusProgressBar.setMaximum(lines.length - 1);
-				}
-
-				for (String line : lines) {
-					if (updateGUI) {
-						jStatusProgressBar.setValue(x++);
-					}
-					String ss[] = line.split(":");
-					if (line.matches(".*ST0.*")) {
-						changeText(this.registerPanel.jST0TextField, line.split(" ")[10]);
-					} else if (line.matches(".*ST1.*")) {
-						changeText(this.registerPanel.jST1TextField, line.split(" ")[12]);
-					} else if (line.matches(".*ST2.*")) {
-						changeText(this.registerPanel.jST2TextField, line.split(" ")[12]);
-					} else if (line.matches(".*ST3.*")) {
-						changeText(this.registerPanel.jST3TextField, line.split(" ")[12]);
-					} else if (line.matches(".*ST4.*")) {
-						changeText(this.registerPanel.jST4TextField, line.split(" ")[12]);
-					} else if (line.matches(".*ST5.*")) {
-						changeText(this.registerPanel.jST5TextField, line.split(" ")[12]);
-					} else if (line.matches(".*ST6.*")) {
-						changeText(this.registerPanel.jST6TextField, line.split(" ")[12]);
-					} else if (line.matches(".*ST7.*")) {
-						changeText(this.registerPanel.jST7TextField, line.split(" ")[12]);
-					} else if (line.matches(".*status.*")) {
-						changeText(this.registerPanel.jFPUStatusTextField, line.substring(line.indexOf(":")));
-					} else if (line.matches(".*control.*")) {
-						changeText(this.registerPanel.jFPUControlTextField, ss[ss.length - 2].trim() + " " + ss[ss.length - 1].trim());
-					} else if (line.matches(".*tag.*")) {
-						changeText(this.registerPanel.jFPUTagTextField, ss[ss.length - 1].trim());
-					} else if (line.matches(".*operand.*")) {
-						changeText(this.registerPanel.jFPUOperandTextField, ss[ss.length - 1].trim());
-					} else if (line.matches("fip.*")) {
-						changeText(this.registerPanel.jFIPTextField, line.split(":")[1].trim());
-					} else if (line.matches("fcs.*")) {
-						changeText(this.registerPanel.jFCSTextField, line.split(":")[1].trim());
-					} else if (line.matches("fdp.*")) {
-						changeText(this.registerPanel.jFDPTextField, line.split(":")[1].trim());
-					} else if (line.matches("fds.*")) {
-						changeText(this.registerPanel.jFDSTextField, line.split(":")[1].trim());
-					}
-				}
-
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-
-			try {
-				// mmx
-				if (updateGUI) {
-					jStatusLabel.setText("Updating MMX registers");
-				}
-				commandReceiver.clearBuffer();
-				sendCommand("mmx");
-				String result = commandReceiver.getCommandResult("MM[0]", "MM[7]", null);
-				String[] lines = result.split("\n");
-
-				int x = 0;
-				if (updateGUI) {
-					jStatusProgressBar.setMaximum(lines.length - 1);
-				}
-
-				for (String line : lines) {
-					if (updateGUI) {
-						jStatusProgressBar.setValue(x++);
-					}
-					String ss[] = line.split(":");
-					if (line.matches(".*MM\\[0\\].*")) {
-						changeText(this.registerPanel.jMMX0TextField, ss[1].trim());
-					} else if (line.matches(".*MM\\[1\\].*")) {
-						changeText(this.registerPanel.jMMX1TextField, ss[1].trim());
-					} else if (line.matches(".*MM\\[2\\].*")) {
-						changeText(this.registerPanel.jMMX2TextField, ss[1].trim());
-					} else if (line.matches(".*MM\\[3\\].*")) {
-						changeText(this.registerPanel.jMMX3TextField, ss[1].trim());
-					} else if (line.matches(".*MM\\[4\\].*")) {
-						changeText(this.registerPanel.jMMX4TextField, ss[1].trim());
-					} else if (line.matches(".*MM\\[5\\].*")) {
-						changeText(this.registerPanel.jMMX5TextField, ss[1].trim());
-					} else if (line.matches(".*MM\\[6\\].*")) {
-						changeText(this.registerPanel.jMMX6TextField, ss[1].trim());
-					} else if (line.matches(".*MM\\[7\\].*")) {
-						changeText(this.registerPanel.jMMX7TextField, ss[1].trim());
-					}
-				}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-		} else if (Global.vmType.equals("qemu")) {
-			Hashtable<String, BigInteger> ht = libGDB.register();
-
-			if (ht != null) {
-				changeText(this.registerPanel.csTextField, ht.get("cs"));
-				changeText(this.registerPanel.dsTextField, ht.get("ds"));
-				changeText(this.registerPanel.esTextField, ht.get("es"));
-				changeText(this.registerPanel.fsTextField, ht.get("fs"));
-				changeText(this.registerPanel.gsTextField, ht.get("gs"));
-				changeText(this.registerPanel.jSSTextField, ht.get("ss"));
-				changeText(this.registerPanel.eipTextField, ht.get("eip"));
-				changeText(this.registerPanel.eflagsTextField, ht.get("eflags"));
-
-				changeText(this.registerPanel.eaxTextField, ht.get("eax"));
-				changeText(this.registerPanel.ebxTextField, ht.get("ebx"));
-				changeText(this.registerPanel.ecxTextField, ht.get("ecx"));
-				changeText(this.registerPanel.edxTextField, ht.get("edx"));
-				changeText(this.registerPanel.esiTextField, ht.get("esi"));
-				changeText(this.registerPanel.ediTextField, ht.get("edi"));
-				changeText(this.registerPanel.ebpTextField, ht.get("ebp"));
-				changeText(this.registerPanel.espTextField, ht.get("esp"));
-
-				changeText(this.registerPanel.cr0TextField, ht.get("cr0"));
-				String cr0Detail1 = "";
-				String cr0Detail2 = "";
-				BigInteger cr0 = ht.get("cr0");
-				if (CommonLib.getBit(cr0, 31) == 1) {
-					cr0Detail1 = "PG";
-				} else {
-					cr0Detail1 = "pg";
-				}
-				if (CommonLib.getBit(cr0, 30) == 1) {
-					cr0Detail1 += " CD";
-				} else {
-					cr0Detail1 += " cd";
-				}
-				if (CommonLib.getBit(cr0, 29) == 1) {
-					cr0Detail1 += " NW";
-				} else {
-					cr0Detail1 += " nw";
-				}
-				if (CommonLib.getBit(cr0, 18) == 1) {
-					cr0Detail1 += " AM";
-				} else {
-					cr0Detail1 += " am";
-				}
-				if (CommonLib.getBit(cr0, 16) == 1) {
-					cr0Detail1 += " WP";
-				} else {
-					cr0Detail1 += " wp";
-				}
-				if (CommonLib.getBit(cr0, 5) == 1) {
-					cr0Detail1 += " NE";
-				} else {
-					cr0Detail1 += " ne";
-				}
-				this.registerPanel.cr0DetailLabel.setText(cr0Detail1);
-
-				if (CommonLib.getBit(cr0, 4) == 1) {
-					cr0Detail2 = "ET";
-				} else {
-					cr0Detail2 = "et";
-				}
-				if (CommonLib.getBit(cr0, 3) == 1) {
-					cr0Detail2 += " TS";
-				} else {
-					cr0Detail2 += " ts";
-				}
-				if (CommonLib.getBit(cr0, 2) == 1) {
-					cr0Detail2 += " EM";
-				} else {
-					cr0Detail2 += " em";
-				}
-				if (CommonLib.getBit(cr0, 1) == 1) {
-					cr0Detail2 += " MP";
-				} else {
-					cr0Detail2 += " mp";
-				}
-				if (CommonLib.getBit(cr0, 0) == 1) {
-					cr0Detail2 += " PE";
-				} else {
-					cr0Detail2 += " pe";
-				}
-				this.registerPanel.cr0DetailLabel2.setText(cr0Detail2);
-
-				changeText(this.registerPanel.cr2TextField, ht.get("cr2"));
-				changeText(this.registerPanel.cr3TextField, ht.get("cr3"));
-				changeText(this.registerPanel.cr4TextField, ht.get("cr4"));
-
-				changeText(this.registerPanel.dr0TextField, ht.get("dr0"));
-				changeText(this.registerPanel.dr1TextField, ht.get("dr1"));
-				changeText(this.registerPanel.dr2TextField, ht.get("dr2"));
-				changeText(this.registerPanel.dr3TextField, ht.get("dr3"));
-				changeText(this.registerPanel.dr6TextField, ht.get("dr6"));
-				changeText(this.registerPanel.dr7TextField, ht.get("dr7"));
-
-				changeText(this.registerPanel.gdtrTextField, ht.get("gdtr"));
-				changeText(this.registerPanel.gdtrLimitTextField, ht.get("gdtr_limit"));
-				changeText(this.registerPanel.ldtrTextField, ht.get("ldtr"));
-				changeText(this.registerPanel.idtrTextField, ht.get("idtr"));
-				changeText(this.registerPanel.idtrLimitTextField, ht.get("idtr_limit"));
-
-				changeText(this.registerPanel.trTextField, ht.get("tr"));
-
-				System.out.println(ht);
-			}
+		Hashtable<String, String> ht = VMController.getVM().registers();
+		if (ht == null) {
+			return;
 		}
+		changeText(this.registerPanel.eaxTextField, CommonLib.string2BigInteger(ht.get("ax")));
+		changeText(this.registerPanel.ebxTextField, CommonLib.string2BigInteger(ht.get("bx")));
+		changeText(this.registerPanel.ecxTextField, CommonLib.string2BigInteger(ht.get("cx")));
+		changeText(this.registerPanel.edxTextField, CommonLib.string2BigInteger(ht.get("dx")));
+		changeText(this.registerPanel.esiTextField, CommonLib.string2BigInteger(ht.get("si")));
+		changeText(this.registerPanel.ediTextField, CommonLib.string2BigInteger(ht.get("di")));
+		changeText(this.registerPanel.ebpTextField, CommonLib.string2BigInteger(ht.get("bp")));
+		changeText(this.registerPanel.espTextField, CommonLib.string2BigInteger(ht.get("sp")));
+		changeText(this.registerPanel.eipTextField, CommonLib.string2BigInteger(ht.get("ip")));
+		changeText(this.registerPanel.eflagsTextField, CommonLib.string2BigInteger(ht.get("flags")));
+		changeText(this.registerPanel.csTextField, ht.get("cs"), ht.get("cs_base"), ht.get("cs_limit"), ht.get("cs_flags"));
+		changeText(this.registerPanel.dsTextField, ht.get("ds"), ht.get("ds_base"), ht.get("ds_limit"), ht.get("ds_flags"));
+		changeText(this.registerPanel.esTextField, ht.get("es"), ht.get("es_base"), ht.get("es_limit"), ht.get("es_flags"));
+		changeText(this.registerPanel.fsTextField, ht.get("fs"), ht.get("fs_base"), ht.get("fs_limit"), ht.get("fs_flags"));
+		changeText(this.registerPanel.gsTextField, ht.get("gs"), ht.get("gs_base"), ht.get("gs_limit"), ht.get("gs_flags"));
+		changeText(this.registerPanel.ssTextField, ht.get("ss"), ht.get("ss_base"), ht.get("ss_limit"), ht.get("ss_flags"));
+		changeText(this.registerPanel.gdtrTextField, CommonLib.string2BigInteger(ht.get("gdtr")));
+		changeText(this.registerPanel.gdtrLimitTextField, CommonLib.string2BigInteger(ht.get("gdtr_limit")));
+		changeText(this.registerPanel.ldtrTextField, CommonLib.string2BigInteger(ht.get("ldtr")));
+		changeText(this.registerPanel.idtrTextField, CommonLib.string2BigInteger(ht.get("idtr")));
+		changeText(this.registerPanel.idtrLimitTextField, CommonLib.string2BigInteger(ht.get("idtr_limit")));
+		changeText(this.registerPanel.trTextField, CommonLib.string2BigInteger(ht.get("tr")));
+
+		changeText(this.registerPanel.eflagsTextField, CommonLib.string2BigInteger(ht.get("eflags")));
+		registerPanel.eflagLabel.setText(ht.get("eflagsDetail"));
+
+		cpuModeLabel.setText(ht.get("model"));
+		changeText(this.registerPanel.cr0TextField, CommonLib.string2BigInteger(ht.get("cr0")));
+		registerPanel.cr0DetailLabel.setText(ht.get("cr0Detail"));
+		registerPanel.cr0DetailLabel2.setText(ht.get("cr0Detail2"));
+		changeText(this.registerPanel.cr2TextField, CommonLib.string2BigInteger(ht.get("cr2")));
+		changeText(this.registerPanel.cr3TextField, CommonLib.string2BigInteger(ht.get("cr3")));
+		changeText(this.registerPanel.cr4TextField, CommonLib.string2BigInteger(ht.get("cr4")));
+		changeText(this.registerPanel.dr0TextField, CommonLib.string2BigInteger(ht.get("dr0")));
+		changeText(this.registerPanel.dr1TextField, CommonLib.string2BigInteger(ht.get("dr1")));
+		changeText(this.registerPanel.dr2TextField, CommonLib.string2BigInteger(ht.get("dr2")));
+		changeText(this.registerPanel.dr3TextField, CommonLib.string2BigInteger(ht.get("dr3")));
+		changeText(this.registerPanel.dr6TextField, CommonLib.string2BigInteger(ht.get("dr6")));
+		changeText(this.registerPanel.dr7TextField, CommonLib.string2BigInteger(ht.get("dr7")));
+		changeText(this.registerPanel.st0TextField, CommonLib.string2BigInteger(ht.get("st0")));
+		changeText(this.registerPanel.st1TextField, CommonLib.string2BigInteger(ht.get("st1")));
+		changeText(this.registerPanel.st2TextField, CommonLib.string2BigInteger(ht.get("st2")));
+		changeText(this.registerPanel.st3TextField, CommonLib.string2BigInteger(ht.get("st3")));
+		changeText(this.registerPanel.st4TextField, CommonLib.string2BigInteger(ht.get("st4")));
+		changeText(this.registerPanel.st5TextField, CommonLib.string2BigInteger(ht.get("st5")));
+		changeText(this.registerPanel.st6TextField, CommonLib.string2BigInteger(ht.get("st6")));
+		changeText(this.registerPanel.st7TextField, CommonLib.string2BigInteger(ht.get("st7")));
+		changeText(this.registerPanel.fpuStatusTextField, CommonLib.string2BigInteger(ht.get("fpuStatus")));
+		changeText(this.registerPanel.fpuControlTextField, CommonLib.string2BigInteger(ht.get("fpuControl")));
+		changeText(this.registerPanel.fpuTagTextField, CommonLib.string2BigInteger(ht.get("fpuTag")));
+		changeText(this.registerPanel.fpuOperandTextField, CommonLib.string2BigInteger(ht.get("fpuOperand")));
+		changeText(this.registerPanel.fipTextField, CommonLib.string2BigInteger(ht.get("fip")));
+		changeText(this.registerPanel.fcsTextField, CommonLib.string2BigInteger(ht.get("fcs")));
+		changeText(this.registerPanel.fdpTextField, CommonLib.string2BigInteger(ht.get("fdp")));
+		changeText(this.registerPanel.fdsTextField, CommonLib.string2BigInteger(ht.get("fds")));
+		changeText(this.registerPanel.mmx0TextField, CommonLib.string2BigInteger(ht.get("mm0")));
+		changeText(this.registerPanel.mmx1TextField, CommonLib.string2BigInteger(ht.get("mm1")));
+		changeText(this.registerPanel.mmx2TextField, CommonLib.string2BigInteger(ht.get("mm2")));
+		changeText(this.registerPanel.mmx3TextField, CommonLib.string2BigInteger(ht.get("mm3")));
+		changeText(this.registerPanel.mmx4TextField, CommonLib.string2BigInteger(ht.get("mm4")));
+		changeText(this.registerPanel.mmx5TextField, CommonLib.string2BigInteger(ht.get("mm5")));
+		changeText(this.registerPanel.mmx6TextField, CommonLib.string2BigInteger(ht.get("mm6")));
+		changeText(this.registerPanel.mmx7TextField, CommonLib.string2BigInteger(ht.get("mm7")));
+
 	}
 
 	private void updateMemory(boolean isPhysicalAddress) {
 		try {
-			if (this.jMemoryAddressComboBox.getSelectedItem() != null) {
+			if (this.memoryAddressComboBox.getSelectedItem() != null) {
 				int totalByte = 200;
 				int bytes[] = new int[0];
-				if (Global.vmType.equals("bochs")) {
-					commandReceiver.shouldShow = false;
+				//					commandReceiver.shouldShow = false;
 
-					currentMemoryWindowsAddress = CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString());
-					jStatusLabel.setText("Updating memory");
+				currentMemoryWindowsAddress = CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString());
+				statusLabel.setText("Updating memory");
+				bytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()), totalByte);
 
-					bytes = getMemory(CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte, isPhysicalAddress);
-				} else if (Global.vmType.equals("qemu")) {
-					bytes = libGDB.physicalMemory(CommonLib.string2BigInteger(this.jMemoryAddressComboBox.getSelectedItem().toString()), totalByte);
-					System.out.println("bytes=" + bytes.length);
-				}
-				jStatusLabel.setText("");
-				hexTable.getModel().setCurrentAddress(CommonLib.string2long(this.jMemoryAddressComboBox.getSelectedItem().toString()));
+				statusLabel.setText("");
+				hexTable.getModel().setCurrentAddress(CommonLib.string2long(this.memoryAddressComboBox.getSelectedItem().toString()));
 				hexTable.getModel().set(bytes);
 				hexTable.getModel().fireTableDataChanged();
 			}
@@ -3777,7 +2669,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void thisWindowClosing(WindowEvent evt) {
-		killVM();
+		VMController.getVM().stopVM();
 
 		Setting.getInstance().width = this.getWidth();
 		Setting.getInstance().height = this.getHeight();
@@ -3785,50 +2677,38 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Setting.getInstance().y = this.getLocation().y;
 		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
 		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
-		Setting.getInstance().osDebugSplitPane_DividerLocation = this.jOSDebugInformationPanel1.getjMainSplitPane().getDividerLocation();
+		Setting.getInstance().osDebugSplitPane_DividerLocation = this.osDebugInformationPanel1.getMainSplitPane().getDividerLocation();
 		Setting.getInstance().save();
 	}
 
 	private void jGDTTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
-			for (int x = 0; x < jTabbedPane2.getTabCount(); x++) {
-				if (jTabbedPane2.getTitleAt(x).equals(("GDT " + String.format("0x%02x", jGDTTable.getSelectedRow() + 1)))) {
-					jTabbedPane2.setSelectedIndex(x);
+			int gdtNo = CommonLib.string2int((String) gdtTable.getValueAt(gdtTable.getSelectedRow(), 0));
+			String tabTitle = "GDT " + String.format("0x%02x", gdtNo);
+			for (int x = 0; x < bottomTabbedPane.getTabCount(); x++) {
+				if (bottomTabbedPane.getTitleAt(x).equals(tabTitle)) {
+					bottomTabbedPane.setSelectedIndex(x);
 					return;
 				}
 			}
-			jTabbedPane2.addTabWithCloseButton("GDT " + String.format("0x%02x", jGDTTable.getSelectedRow() + 1), null,
-					new GDTLDTPanel(this, 0, CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()), jGDTTable.getSelectedRow() + 1), null);
-			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
+
+			bottomTabbedPane.addTabWithCloseButton(tabTitle, null, new GDTLDTPanel(this, 0, CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()), gdtNo), null);
+			bottomTabbedPane.setSelectedIndex(bottomTabbedPane.getTabCount() - 1);
 		}
 	}
 
 	private void jLDTTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
-			for (int x = 0; x < jTabbedPane2.getTabCount(); x++) {
-				if (jTabbedPane2.getTitleAt(x).equals(("LDT " + jLDTTable.getSelectedRow() + 1))) {
-					jTabbedPane2.setSelectedIndex(x);
+			for (int x = 0; x < bottomTabbedPane.getTabCount(); x++) {
+				if (bottomTabbedPane.getTitleAt(x).equals(("LDT " + ldtTable.getSelectedRow() + 1))) {
+					bottomTabbedPane.setSelectedIndex(x);
 					return;
 				}
 			}
 			JScrollPane temp = new JScrollPane();
-			temp.setViewportView(new GDTLDTPanel(this, 1, CommonLib.string2BigInteger(this.registerPanel.ldtrTextField.getText()), jLDTTable.getSelectedRow() + 1));
-			jTabbedPane2.addTabWithCloseButton("LDT " + jLDTTable.getSelectedRow(), null, temp, null);
-			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
-		}
-	}
-
-	private void jButton2ActionPerformed(ActionEvent evt) {
-		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showSaveDialog(this);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			if (!file.getName().toLowerCase().endsWith(".png")) {
-				file = new File(file.getAbsolutePath() + ".png");
-			}
-			if (!GKDCommonLib.saveImage(hexTable, file)) {
-				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			temp.setViewportView(new GDTLDTPanel(this, 1, CommonLib.string2BigInteger(this.registerPanel.ldtrTextField.getText()), ldtTable.getSelectedRow() + 1));
+			bottomTabbedPane.addTabWithCloseButton("LDT " + ldtTable.getSelectedRow(), null, temp, null);
+			bottomTabbedPane.setSelectedIndex(bottomTabbedPane.getTabCount() - 1);
 		}
 	}
 
@@ -3836,84 +2716,52 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateVMStatus(true);
 	}
 
-	private void jPageDirectoryTableMouseClicked(MouseEvent evt) {
+	private void pageDirectoryTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
-			jStatusProgressBar.setValue(0);
-			String pageTableAddress = jPageDirectoryTable.getValueAt(jPageDirectoryTable.getSelectedRow(), 1).toString();
+			statusProgressBar.setValue(0);
+			String pageTableAddress = pageDirectoryTable.getValueAt(pageDirectoryTable.getSelectedRow(), 1).toString();
 			if (!CommonLib.isNumber(pageTableAddress)) {
 				return;
 			}
 
-			// commandReceiver.setCommandNoOfLine(512);
-			sendCommand("xp /4096bx " + pageTableAddress);
-
-			float totalByte2 = 4096 - 1;
-			totalByte2 = totalByte2 / 8;
-			int totalByte3 = (int) Math.floor(totalByte2);
-			String realEndAddressStr;
-			String realStartAddressStr;
-			String baseAddress = pageTableAddress;
-			BigInteger realStartAddress = CommonLib.string2BigInteger(baseAddress);
-
-			realStartAddressStr = String.format("%08x", realStartAddress);
-			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-			realEndAddressStr = String.format("%08x", realEndAddress);
-
-			String result = commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-			String[] lines = result.split("\n");
-			PageTableTableModel model = (PageTableTableModel) jPageTableTable.getModel();
+			int bytes[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(pageTableAddress), 4096);
+			PageTableTableModel model = (PageTableTableModel) pageTableTable.getModel();
 			while (model.getRowCount() > 0) {
 				model.removeRow(0);
 			}
-			jStatusProgressBar.setMaximum(lines.length - 1);
-			for (int y = 0; y < lines.length; y++) {
-				jStatusProgressBar.setValue(y);
-				String[] b = lines[y].replaceFirst("^.*:", "").trim().split("\t");
 
-				for (int z = 0; z < 2; z++) {
-					try {
-						int bytes[] = new int[4];
-						for (int x = 0; x < 4; x++) {
-							bytes[x] = CommonLib.string2BigInteger(b[x + z * 4].substring(2).trim()).intValue();
-						}
-						long value = CommonLib.getInt(bytes, 0);
-						// "No.", "PT base", "AVL", "G",
-						// "D", "A", "PCD", "PWT",
-						// "U/S", "W/R", "P"
-
-						String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
-						String avl = String.valueOf((value >> 9) & 3);
-						String g = String.valueOf((value >> 8) & 1);
-						String pat = String.valueOf((value >> 7) & 1);
-						String d = String.valueOf((value >> 6) & 1);
-						String a = String.valueOf((value >> 5) & 1);
-						String pcd = String.valueOf((value >> 4) & 1);
-						String pwt = String.valueOf((value >> 3) & 1);
-						String us = String.valueOf((value >> 2) & 1);
-						String wr = String.valueOf((value >> 1) & 1);
-						String p = String.valueOf((value >> 0) & 1);
-						boolean tempB = model.isShowZeroAddress();
-						model.setShowZeroAddress(true);
-						model.addRow(new String[] { String.valueOf(y * 2 + z), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
-						model.setShowZeroAddress(tempB);
-					} catch (Exception ex) {
-					}
-				}
-
-				jPageTableTable.setModel(model);
+			for (int x = 0; x <= bytes.length - 4; x += 4) {
+				long value = CommonLib.getInt(bytes, x);
+				String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
+				String avl = String.valueOf((value >> 9) & 3);
+				String g = String.valueOf((value >> 8) & 1);
+				String pat = String.valueOf((value >> 7) & 1);
+				String d = String.valueOf((value >> 6) & 1);
+				String a = String.valueOf((value >> 5) & 1);
+				String pcd = String.valueOf((value >> 4) & 1);
+				String pwt = String.valueOf((value >> 3) & 1);
+				String us = String.valueOf((value >> 2) & 1);
+				String wr = String.valueOf((value >> 1) & 1);
+				String p = String.valueOf((value >> 0) & 1);
+				boolean tempB = model.isShowZeroAddress();
+				model.setShowZeroAddress(true);
+				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+				model.setShowZeroAddress(tempB);
 			}
+			pageTableTable.setModel(model);
+
 		}
 	}
 
-	private void jPageTableTableMouseClicked(MouseEvent evt) {
+	private void pageTableTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
-			String pageAddress = jPageTableTable.getValueAt(jPageTableTable.getSelectedRow(), 1).toString();
-			this.jMemoryAddressComboBox.setSelectedItem(pageAddress);
-			this.jGOMemoryButtonActionPerformed(null);
+			String pageAddress = pageTableTable.getValueAt(pageTableTable.getSelectedRow(), 1).toString();
+			this.memoryAddressComboBox.setSelectedItem(pageAddress);
+			this.goMemoryButtonActionPerformed(null);
 		}
 	}
 
-	private void jRefreshBreakpointButtonActionPerformed(ActionEvent evt) {
+	private void refreshBreakpointButtonActionPerformed(ActionEvent evt) {
 		jRefreshBreakpointButton.setEnabled(false);
 		updateBreakpoint();
 		jRefreshBreakpointButton.setEnabled(true);
@@ -3921,42 +2769,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void updateBreakpoint() {
 		try {
-			jStatusLabel.setText("Updating breakpoint");
-			if (Global.vmType.equals("bochs")) {
-				// commandReceiver.setCommandNoOfLine(-1);
-				commandReceiver.clearBuffer();
-				sendCommand("info break");
-				Thread.currentThread();
-				String result = commandReceiver.getCommandResultUntilEnd();
-				String[] lines = result.split("\n");
-				DefaultTableModel model = (DefaultTableModel) breakpointTable.getModel();
-				while (model.getRowCount() > 0) {
-					model.removeRow(0);
-				}
+			statusLabel.setText("Updating breakpoint");
 
-				for (int x = 1; x < lines.length; x++) {
-					if (lines[x].contains("breakpoint")) {
-						Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
-						strs.add("0"); // hit count
-						if (strs.size() > 1) {
-							strs.remove(1);
-							model.addRow(strs);
-						}
-					}
-				}
-			} else if (Global.vmType.equals("qemu")) {
-				DefaultTableModel model = (DefaultTableModel) breakpointTable.getModel();
-				while (model.getRowCount() > 0) {
-					model.removeRow(0);
-				}
-				Vector<com.jlibgdb.Breakpoint> breakpoints = libGDB.listBreakpoint();
-				int x = 0;
-				for (com.jlibgdb.Breakpoint bp : breakpoints) {
-					model.addRow(new String[] { String.valueOf(x++), "pbreakpoint", "0x" + bp.addr.toString(16), "0x" + Long.toHexString(bp.flag) });
-				}
+			DefaultTableModel model = (DefaultTableModel) breakpointTable.getModel();
+			while (model.getRowCount() > 0) {
+				model.removeRow(0);
 			}
-			this.jRefreshELFBreakpointButtonActionPerformed(null);
-			jStatusLabel.setText("");
+
+			Vector<Vector<String>> r = VMController.getVM().breakpoint();
+			for (Vector<String> v : r) {
+				model.addRow(v);
+			}
+			this.refreshELFBreakpointButtonActionPerformed(null);
+			statusLabel.setText("");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -3964,9 +2789,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void disassembleCurrentIPButtonActionPerformed(ActionEvent evt) {
 		disassembleCurrentIPButton.setEnabled(false);
-		// InstructionTableModel model = (InstructionTableModel)
-		// instructionTable.getModel();
-		// model.clearData();
 		updateInstruction(null);
 		updateBreakpointTableColor();
 		disassembleCurrentIPButton.setEnabled(true);
@@ -3980,7 +2802,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (type != null) {
 			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint", JOptionPane.QUESTION_MESSAGE);
 			if (address != null) {
-				addPhysicalBreakpoint(address, type);
+				if (type.equals(MyLanguage.getString("Physical_address"))) {
+					VMController.getVM().addPhysicalBreakpoint(CommonLib.string2BigInteger(address));
+				} else if (type.equals(MyLanguage.getString("Linear_address"))) {
+					VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger(address));
+				} else {
+					try {
+						VMController.getVM().addVirtualBreakpoint(CommonLib.string2BigInteger(address.split(":")[0]), CommonLib.string2BigInteger(address.split(":")[1]));
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(this, "Virtual address should be in form 0x12:0xabcdef", "Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
 				updateBreakpoint();
 				updateBreakpointTableColor();
 			}
@@ -3988,23 +2820,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		addBreakpointButton.setEnabled(true);
 	}
 
-	private void addPhysicalBreakpoint(String address, String type) {
-		if (Global.vmType.equals("bochs")) {
-			if (type.equals(MyLanguage.getString("Physical_address"))) {
-				sendCommand("pb " + address);
-			} else if (type.equals(MyLanguage.getString("Linear_address"))) {
-				sendCommand("lb " + address);
-			} else {
-				sendCommand("vb " + address);
-			}
-		} else if (Global.vmType.equals("qemu")) {
-			libGDB.physicalBreakpoint(CommonLib.string2BigInteger(address));
-		}
-	}
-
-	private void jSaveBreakpointButtonActionPerformed(ActionEvent evt) {
-		jSaveBreakpointButton.setEnabled(false);
-		LinkedList<com.gkd.Breakpoint> v = Setting.getInstance().breakpoint;
+	private void saveBreakpointButtonActionPerformed(ActionEvent evt) {
+		saveBreakpointButton.setEnabled(false);
+		LinkedList<Breakpoint> v = Setting.getInstance().breakpoint;
 		v.clear();
 
 		for (int x = 0; x < this.breakpointTable.getRowCount(); x++) {
@@ -4012,16 +2830,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			h.setNo(x);
 			h.setType(this.breakpointTable.getValueAt(x, 1).toString());
 			h.setEnable(this.breakpointTable.getValueAt(x, 1).toString());
-			h.setAddress(this.breakpointTable.getValueAt(x, 2).toString());
+			String breakpointAddress = breakpointTable.getValueAt(x, 2).toString();
+			if (breakpointAddress.contains(":")) {
+				h.setAddress(CommonLib.string2BigInteger(breakpointAddress.split(":")[0]));
+				h.setSegment(CommonLib.string2BigInteger(breakpointAddress.split(":")[1]));
+			} else {
+				h.setAddress(CommonLib.string2BigInteger(breakpointAddress));
+			}
 			h.setHit(CommonLib.string2int(this.breakpointTable.getValueAt(x, 3).toString()));
 			v.add(h);
 		}
 		Setting.getInstance().save();
-		jSaveBreakpointButton.setEnabled(true);
+		saveBreakpointButton.setEnabled(true);
 	}
 
-	private void jLoadBreakpointButtonActionPerformed(ActionEvent evt) {
-		if (jLoadBreakpointButton.getEventSource() == loadElfMenuItem) {
+	private void loadBreakpointButtonActionPerformed(ActionEvent evt) {
+		if (loadBreakpointButton.getEventSource() == loadElfMenuItem) {
 			JFileChooser fc = new JFileChooser(new File("."));
 			int returnVal = fc.showOpenDialog(this);
 
@@ -4030,13 +2854,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				sourceLevelDebugger.loadELF(file, null, 0);
 			}
 		} else {
-			jLoadBreakpointButton.setEnabled(false);
-			LinkedList<com.gkd.Breakpoint> vector = Setting.getInstance().breakpoint;
+			loadBreakpointButton.setEnabled(false);
+			LinkedList<Breakpoint> vector = Setting.getInstance().breakpoint;
 			try {
 				for (int x = 0; x < vector.size(); x++) {
 					boolean match = false;
 					for (int y = 0; y < this.breakpointTable.getRowCount(); y++) {
-						if (vector.get(x).getAddress().trim().equals(breakpointTable.getValueAt(y, 2).toString().trim())) {
+						if (vector.get(x).getAddress().equals(CommonLib.string2BigInteger(breakpointTable.getValueAt(y, 2).toString().trim()))) {
 							match = true;
 							break;
 						}
@@ -4044,12 +2868,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					if (!match) {
 						if (vector.get(x).getType().contains("pbreakpoint")) {
 							//sendCommand("pb " + vector.get(x).getAddress());
-							addPhysicalBreakpoint(vector.get(x).getAddress(), MyLanguage.getString("Physical_address"));
+							//addPhysicalBreakpoint(vector.get(x).getAddress(), MyLanguage.getString("Physical_address"));
+							VMController.getVM().addPhysicalBreakpoint(vector.get(x).getAddress());
+						} else if (vector.get(x).getType().contains("lbreakpoint")) {
+							//							sendBochsCommand("lb " + vector.get(x).getAddress());
+							VMController.getVM().addLinearBreakpoint(vector.get(x).getAddress());
 						} else {
-							sendCommand("lb " + vector.get(x).getAddress());
+							VMController.getVM().addLinearBreakpoint(vector.get(x).getAddress());
 						}
-						if (Global.vmType.equals("bochs") && vector.get(x).getEnable().trim().equals("keep n")) {
-							sendCommand("bpd " + (x + 1));
+						if (VMController.vmType == VMType.Bochs && vector.get(x).getEnable().trim().equals("keep n")) {
+							VMController.getVM().disablePhysicalBreakpoint(BigInteger.valueOf(x + 1));
 						}
 					}
 				}
@@ -4060,46 +2888,44 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			updateBreakpoint();
 			updateBreakpointTableColor();
-			jLoadBreakpointButton.setEnabled(true);
+			loadBreakpointButton.setEnabled(true);
 		}
 	}
 
-	private void jDeleteBreakpointButtonActionPerformed(ActionEvent evt) {
-		jDeleteBreakpointButton.setEnabled(false);
+	private void deleteBreakpointButtonActionPerformed(ActionEvent evt) {
+		deleteBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			if (Global.vmType.equals("bochs")) {
-				sendCommand("del " + breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]);
-			} else if (Global.vmType.equals("qemu")) {
-				libGDB.deletePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 2).toString()));
-			}
+			VMController.getVM().deletePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 2).toString()));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
-		jDeleteBreakpointButton.setEnabled(true);
+		deleteBreakpointButton.setEnabled(true);
 	}
 
-	private void jDisableBreakpointButtonActionPerformed(ActionEvent evt) {
-		jDisableBreakpointButton.setEnabled(false);
+	private void disableBreakpointButtonActionPerformed(ActionEvent evt) {
+		disableBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			sendCommand("bpd " + breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]);
+			VMController.getVM().disablePhysicalBreakpoint(
+					CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
-		jDisableBreakpointButton.setEnabled(true);
+		disableBreakpointButton.setEnabled(true);
 		updateInstruction(null);
 	}
 
-	private void jEnableBreakpointButtonActionPerformed(ActionEvent evt) {
-		jEnableBreakpointButton.setEnabled(false);
+	private void enableBreakpointButtonActionPerformed(ActionEvent evt) {
+		enableBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			sendCommand("bpe " + breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]);
+			VMController.getVM()
+					.enablePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
-		jEnableBreakpointButton.setEnabled(true);
+		enableBreakpointButton.setEnabled(true);
 		updateInstruction(null);
 	}
 
@@ -4128,274 +2954,260 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return buttonGroup1;
 	}
 
-	private void jBinaryRadioButtonStateChanged(ChangeEvent evt) {
-
-	}
-
-	private void jOctRadioButton1StateChanged(ChangeEvent evt) {
-
-	}
-
-	private void jDecRadioButtonStateChanged(ChangeEvent evt) {
-
-	}
-
-	private void jHexRadioButtonStateChanged(ChangeEvent evt) {
-
-	}
-
-	private void jBinaryRadioButtonItemStateChanged(ItemEvent evt) {
+	private void binaryRadioButtonItemStateChanged(ItemEvent evt) {
 		hexTable.getModel().setRadix(2);
 		hexTable.getModel().fireTableDataChanged();
 	}
 
-	private void jOctRadioButton1ItemStateChanged(ItemEvent evt) {
+	private void octRadioButton1ItemStateChanged(ItemEvent evt) {
 		hexTable.getModel().setRadix(8);
 		hexTable.getModel().fireTableDataChanged();
 	}
 
-	private void jDecRadioButtonItemStateChanged(ItemEvent evt) {
+	private void decRadioButtonItemStateChanged(ItemEvent evt) {
 		hexTable.getModel().setRadix(10);
 		hexTable.getModel().fireTableDataChanged();
 	}
 
-	private void jHexRadioButtonItemStateChanged(ItemEvent evt) {
+	private void hexRadioButtonItemStateChanged(ItemEvent evt) {
 		hexTable.getModel().setRadix(16);
 		hexTable.getModel().fireTableDataChanged();
 	}
 
-	private JScrollPane getJTableTranslateScrollPane() {
-		if (jTableTranslateScrollPane == null) {
-			jTableTranslateScrollPane = new JScrollPane();
-			jTableTranslateScrollPane.setViewportView(getJPanel30());
+	private JScrollPane getTableTranslateScrollPane() {
+		if (tableTranslateScrollPane == null) {
+			tableTranslateScrollPane = new JScrollPane();
+			tableTranslateScrollPane.setViewportView(getJPanel30());
 		}
-		return jTableTranslateScrollPane;
+		return tableTranslateScrollPane;
 	}
 
-	private JTable getJAddressTranslateTable() {
-		if (jAddressTranslateTable == null) {
+	private JTable getAddressTranslateTable() {
+		if (addressTranslateTable == null) {
 			TableModel jAddressTranslateTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("From"), MyLanguage.getString("To") });
-			jAddressTranslateTable = new JTable();
-			jAddressTranslateTable.setModel(jAddressTranslateTableModel);
+			addressTranslateTable = new JTable();
+			addressTranslateTable.setModel(jAddressTranslateTableModel);
 		}
-		return jAddressTranslateTable;
+		return addressTranslateTable;
 	}
 
-	private JMenu getJFontMenu() {
-		if (jFontMenu == null) {
-			jFontMenu = new JMenu();
-			jFontMenu.setText(MyLanguage.getString("Font"));
-			jFontMenu.add(getJMenu1());
-			jFontMenu.add(getJMenu2());
+	private JMenu getTopFontMenu() {
+		if (topFontMenu == null) {
+			topFontMenu = new JMenu();
+			topFontMenu.setText(MyLanguage.getString("Font"));
+			topFontMenu.add(getSizeMenu());
+			topFontMenu.add(getFontMenu());
 		}
-		return jFontMenu;
+		return topFontMenu;
 	}
 
-	private JMenuItem getJFont8MenuItem() {
-		if (jFont8MenuItem == null) {
-			jFont8MenuItem = new JMenuItem();
-			jFont8MenuItem.setText("8");
-			jFont8MenuItem.setBounds(0, -110, 80, 22);
-			jFont8MenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getFont8MenuItem() {
+		if (font8MenuItem == null) {
+			font8MenuItem = new JMenuItem();
+			font8MenuItem.setText("8");
+			font8MenuItem.setBounds(0, -110, 80, 22);
+			font8MenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jFont8MenuItemActionPerformed(evt);
+					font8MenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jFont8MenuItem;
+		return font8MenuItem;
 	}
 
-	private JMenuItem getJFont10MenuItem() {
-		if (jFont10MenuItem == null) {
-			jFont10MenuItem = new JMenuItem();
-			jFont10MenuItem.setText("10");
-			jFont10MenuItem.setBounds(0, -88, 80, 22);
-			jFont10MenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getFont10MenuItem() {
+		if (font10MenuItem == null) {
+			font10MenuItem = new JMenuItem();
+			font10MenuItem.setText("10");
+			font10MenuItem.setBounds(0, -88, 80, 22);
+			font10MenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jFont10MenuItemActionPerformed(evt);
+					font10MenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jFont10MenuItem;
+		return font10MenuItem;
 	}
 
-	private JMenuItem getJFont12MenuItem() {
-		if (jFont12MenuItem == null) {
-			jFont12MenuItem = new JMenuItem();
-			jFont12MenuItem.setText("12");
-			jFont12MenuItem.setBounds(0, -66, 80, 22);
-			jFont12MenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getFont12MenuItem() {
+		if (font12MenuItem == null) {
+			font12MenuItem = new JMenuItem();
+			font12MenuItem.setText("12");
+			font12MenuItem.setBounds(0, -66, 80, 22);
+			font12MenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jFont12MenuItemActionPerformed(evt);
+					font12MenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jFont12MenuItem;
+		return font12MenuItem;
 	}
 
-	private JMenuItem getJFont14MenuItem() {
-		if (jFont14MenuItem == null) {
-			jFont14MenuItem = new JMenuItem();
-			jFont14MenuItem.setText("14");
-			jFont14MenuItem.setBounds(0, -44, 80, 22);
-			jFont14MenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getFont14MenuItem() {
+		if (font14MenuItem == null) {
+			font14MenuItem = new JMenuItem();
+			font14MenuItem.setText("14");
+			font14MenuItem.setBounds(0, -44, 80, 22);
+			font14MenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jFont14MenuItemActionPerformed(evt);
+					font14MenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jFont14MenuItem;
+		return font14MenuItem;
 	}
 
-	private void jFont14MenuItemActionPerformed(ActionEvent evt) {
+	private void font14MenuItemActionPerformed(ActionEvent evt) {
 		Setting.getInstance().fontsize = 14;
 		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
-	private void jFont12MenuItemActionPerformed(ActionEvent evt) {
+	private void font12MenuItemActionPerformed(ActionEvent evt) {
 		Setting.getInstance().fontsize = 12;
 		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
-	private void jFont10MenuItemActionPerformed(ActionEvent evt) {
+	private void font10MenuItemActionPerformed(ActionEvent evt) {
 		Setting.getInstance().fontsize = 10;
 		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
-	private void jFont8MenuItemActionPerformed(ActionEvent evt) {
+	private void font8MenuItemActionPerformed(ActionEvent evt) {
 		Setting.getInstance().fontsize = 8;
 		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
 	public void initGlobalFontSetting(Font fnt) {
-		FontUIResource fontRes = new FontUIResource(fnt);
-		for (Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
-			Object key = keys.nextElement();
-			Object value = UIManager.get(key);
-			if (value instanceof FontUIResource) {
-				UIManager.put(key, fontRes);
-			}
-		}
-		SwingUtilities.updateComponentTreeUI(this);
+		//		FontUIResource fontRes = new FontUIResource(fnt);
+		//		for (Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
+		//			Object key = keys.nextElement();
+		//			Object value = UIManager.get(key);
+		//			if (value instanceof FontUIResource) {
+		//				UIManager.put(key, fontRes);
+		//			}
+		//		}
+		//		SwingUtilities.updateComponentTreeUI(this);
 	}
 
-	private JMenu getJMenu1() {
-		if (jMenu1 == null) {
-			jMenu1 = new JMenu();
-			jMenu1.setText(MyLanguage.getString("Size"));
-			jMenu1.add(getJFont8MenuItem());
-			jMenu1.add(getJFont10MenuItem());
-			jMenu1.add(getJFont12MenuItem());
-			jMenu1.add(getJFont14MenuItem());
+	private JMenu getSizeMenu() {
+		if (sizeMenu == null) {
+			sizeMenu = new JMenu();
+			sizeMenu.setText(MyLanguage.getString("Size"));
+			sizeMenu.add(getFont8MenuItem());
+			sizeMenu.add(getFont10MenuItem());
+			sizeMenu.add(getFont12MenuItem());
+			sizeMenu.add(getFont14MenuItem());
 		}
-		return jMenu1;
+		return sizeMenu;
 	}
 
-	private JMenu getJMenu2() {
-		if (jMenu2 == null) {
-			jMenu2 = new JMenu();
-			jMenu2.setText(MyLanguage.getString("Font"));
-			jMenu2.add(getJArialMenuItem());
-			jMenu2.add(getJDialogMenuItem());
+	private JMenu getFontMenu() {
+		if (fontMenu == null) {
+			fontMenu = new JMenu();
+			fontMenu.setText(MyLanguage.getString("Font"));
+			fontMenu.add(getArialMenuItem());
+			fontMenu.add(getDialogMenuItem());
 		}
-		return jMenu2;
+		return fontMenu;
 	}
 
-	private JMenuItem getJArialMenuItem() {
-		if (jArialMenuItem == null) {
-			jArialMenuItem = new JMenuItem();
-			jArialMenuItem.setText("Arial");
-			jArialMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getArialMenuItem() {
+		if (arialMenuItem == null) {
+			arialMenuItem = new JMenuItem();
+			arialMenuItem.setText("Arial");
+			arialMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jArialMenuItemActionPerformed(evt);
+					arialMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jArialMenuItem;
+		return arialMenuItem;
 	}
 
-	private JMenuItem getJDialogMenuItem() {
-		if (jDialogMenuItem == null) {
-			jDialogMenuItem = new JMenuItem();
-			jDialogMenuItem.setText("Dialog");
-			jDialogMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getDialogMenuItem() {
+		if (dialogMenuItem == null) {
+			dialogMenuItem = new JMenuItem();
+			dialogMenuItem.setText("Dialog");
+			dialogMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jDialogMenuItemActionPerformed(evt);
+					dialogMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jDialogMenuItem;
+		return dialogMenuItem;
 	}
 
-	private void jArialMenuItemActionPerformed(ActionEvent evt) {
+	private void arialMenuItemActionPerformed(ActionEvent evt) {
 		Setting.getInstance().fontFamily = "Arial";
+		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
-	private void jDialogMenuItemActionPerformed(ActionEvent evt) {
+	private void dialogMenuItemActionPerformed(ActionEvent evt) {
 		Setting.getInstance().fontFamily = "Dialog";
+		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
-	private JMenu getJMenu6() {
-		if (jMenu6 == null) {
-			jMenu6 = new JMenu();
-			jMenu6.setText(MyLanguage.getString("Language"));
-			jMenu6.add(getJMenuItem1());
-			jMenu6.add(getJMenuItem2());
-			jMenu6.add(getJMenuItem3());
-			jMenu6.add(getJKRMenuItem());
-			jMenu6.add(getJJPMenuItem());
+	private JMenu getLanguageMenu() {
+		if (languageMenu == null) {
+			languageMenu = new JMenu();
+			languageMenu.setText(MyLanguage.getString("Language"));
+			languageMenu.add(getEnglishMenuItem());
+			languageMenu.add(getTraditionalChineseMenuItem());
+			languageMenu.add(getSimplifiedChineseMenuItem());
+			languageMenu.add(getKoreanMenuItem());
+			languageMenu.add(getJapaneseMenuItem());
 		}
-		return jMenu6;
+		return languageMenu;
 	}
 
-	private JMenuItem getJMenuItem1() {
-		if (jEnglishMenuItem == null) {
-			jEnglishMenuItem = new JMenuItem();
-			jEnglishMenuItem.setText(MyLanguage.getString("English"));
-			jEnglishMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getEnglishMenuItem() {
+		if (englishMenuItem == null) {
+			englishMenuItem = new JMenuItem();
+			englishMenuItem.setText(MyLanguage.getString("English"));
+			englishMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMenuItem1ActionPerformed(evt);
+					englishMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jEnglishMenuItem;
+		return englishMenuItem;
 	}
 
-	private JMenuItem getJMenuItem2() {
-		if (jHKMenuItem == null) {
-			jHKMenuItem = new JMenuItem();
-			jHKMenuItem.setText(MyLanguage.getString("Traditional_chinese"));
-			jHKMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getTraditionalChineseMenuItem() {
+		if (traditionalChineseMenuItem == null) {
+			traditionalChineseMenuItem = new JMenuItem();
+			traditionalChineseMenuItem.setText(MyLanguage.getString("Traditional_chinese"));
+			traditionalChineseMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMenuItem2ActionPerformed(evt);
+					traditionalChineseMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jHKMenuItem;
+		return traditionalChineseMenuItem;
 	}
 
-	private JMenuItem getJMenuItem3() {
-		if (jSCMenuItem == null) {
-			jSCMenuItem = new JMenuItem();
-			jSCMenuItem.setText(MyLanguage.getString("Simplified_chinese"));
-			jSCMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getSimplifiedChineseMenuItem() {
+		if (simplifiedChineseMenuItem == null) {
+			simplifiedChineseMenuItem = new JMenuItem();
+			simplifiedChineseMenuItem.setText(MyLanguage.getString("Simplified_chinese"));
+			simplifiedChineseMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMenuItem3ActionPerformed(evt);
+					simplifiedChineseMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jSCMenuItem;
+		return simplifiedChineseMenuItem;
 	}
 
-	private void jMenuItem2ActionPerformed(ActionEvent evt) {
+	private void traditionalChineseMenuItemActionPerformed(ActionEvent evt) {
 		changeLanguage("zh_TW");
 	}
 
-	private void jMenuItem1ActionPerformed(ActionEvent evt) {
+	private void englishMenuItemActionPerformed(ActionEvent evt) {
 		changeLanguage("en_US");
 	}
 
-	private void jMenuItem3ActionPerformed(ActionEvent evt) {
+	private void simplifiedChineseMenuItemActionPerformed(ActionEvent evt) {
 		changeLanguage("zh_CN");
 	}
 
@@ -4407,41 +3219,41 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JTable getJHistoryTable() {
-		if (jHistoryTable == null) {
-			jHistoryTable = new JTable();
+		if (historyTable == null) {
+			historyTable = new JTable();
 			HistoryTableModel model = new HistoryTableModel();
-			jHistoryTable.setModel(model);
+			historyTable.setModel(model);
 			final MyTableRowSorter<TableModel> sorter = new MyTableRowSorter<TableModel>(model);
-			jHistoryTable.setRowSorter(sorter);
-			jHistoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			historyTable.setRowSorter(sorter);
+			historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			for (int x = 1; x <= 15; x++) {
-				jHistoryTable.getColumnModel().getColumn(x).setPreferredWidth(120);
+				historyTable.getColumnModel().getColumn(x).setPreferredWidth(120);
 			}
-			jHistoryTable.getColumnModel().getColumn(5).setPreferredWidth(800);
+			historyTable.getColumnModel().getColumn(5).setPreferredWidth(800);
 		}
-		jHistoryTable.setDefaultRenderer(String.class, new HistoryTableCellRenderer());
-		jHistoryTable.setIntercellSpacing(new Dimension(0, 0));
-		jHistoryTable.addMouseListener(new MouseAdapter() {
+		historyTable.setDefaultRenderer(String.class, new HistoryTableCellRenderer());
+		historyTable.setIntercellSpacing(new Dimension(0, 0));
+		historyTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
-				jHistoryTableMouseClicked(evt);
+				historyTableMouseClicked(evt);
 			}
 		});
-		return jHistoryTable;
+		return historyTable;
 	}
 
-	private JRadioButton getJRadioButton1() {
-		if (jRegRadioButton == null) {
-			jRegRadioButton = new JRadioButton();
-			jRegRadioButton.setText("reg");
-			getButtonGroup2().add(jRegRadioButton);
-			jRegRadioButton.setSelected(true);
-			jRegRadioButton.addActionListener(new ActionListener() {
+	private JRadioButton getRegRadioButton() {
+		if (regRadioButton == null) {
+			regRadioButton = new JRadioButton();
+			regRadioButton.setText("reg");
+			getButtonGroup2().add(regRadioButton);
+			regRadioButton.setSelected(true);
+			regRadioButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jRegRadioButtonActionPerformed(evt);
+					regRadioButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jRegRadioButton;
+		return regRadioButton;
 	}
 
 	private JToolBar getJPanel13() {
@@ -4454,36 +3266,36 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				jPanel13.add(jLabel3);
 				jLabel3.setText(MyLanguage.getString("Pause_history"));
 			}
-			jPanel13.add(getJRadioButton1());
-			jPanel13.add(getJRadioButton2());
-			jPanel13.add(getJFPURadioButton());
-			jPanel13.add(getJMMXRadioButton());
-			jPanel13.add(getJButton1());
-			jPanel13.add(getJExportHistoryToExcelButton());
-			jPanel13.add(getJClearHistoryTableButton());
+			jPanel13.add(getRegRadioButton());
+			jPanel13.add(getTblRadioButton());
+			jPanel13.add(getFPURadioButton());
+			jPanel13.add(getMMXRadioButton());
+			jPanel13.add(getSaveHistoryTableButton());
+			jPanel13.add(getExportHistoryToExcelButton());
+			jPanel13.add(getClearHistoryTableButton());
 			jPanel13.add(getJLabel2());
-			jPanel13.add(getJHistoryTableRepeatedLabel());
-			jPanel13.add(getJFilterHistoryTableTextField());
+			jPanel13.add(getHistoryTableRepeatedLabel());
+			jPanel13.add(getFilterHistoryTableTextField());
 			jPanel13.add(getJLabel9());
 			jPanel13.add(getJLabel8());
 			jPanel13.add(getJLabel7());
-			jPanel13.add(getJShowAfterwardSpinner());
+			jPanel13.add(getShowAfterwardSpinner());
 		}
 		return jPanel13;
 	}
 
-	private JRadioButton getJRadioButton2() {
-		if (jTblRadioButton == null) {
-			jTblRadioButton = new JRadioButton();
-			jTblRadioButton.setText("tbl. desc.");
-			getButtonGroup2().add(jTblRadioButton);
-			jTblRadioButton.addActionListener(new ActionListener() {
+	private JRadioButton getTblRadioButton() {
+		if (tblRadioButton == null) {
+			tblRadioButton = new JRadioButton();
+			tblRadioButton.setText("tbl. desc.");
+			getButtonGroup2().add(tblRadioButton);
+			tblRadioButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jTblRadioButtonActionPerformed(evt);
+					tblRadioButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jTblRadioButton;
+		return tblRadioButton;
 	}
 
 	private ButtonGroup getButtonGroup2() {
@@ -4493,22 +3305,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return buttonGroup2;
 	}
 
-	private void jRegRadioButtonActionPerformed(ActionEvent evt) {
-		HistoryTableModel model = (HistoryTableModel) this.jHistoryTable.getModel();
+	private void regRadioButtonActionPerformed(ActionEvent evt) {
+		HistoryTableModel model = (HistoryTableModel) this.historyTable.getModel();
 		model.setView("reg");
 		for (int x = 1; x <= 15; x++) {
-			jHistoryTable.getColumnModel().getColumn(x).setPreferredWidth(120);
+			historyTable.getColumnModel().getColumn(x).setPreferredWidth(120);
 		}
-		jHistoryTable.getColumnModel().getColumn(5).setPreferredWidth(800);
+		historyTable.getColumnModel().getColumn(5).setPreferredWidth(800);
 	}
 
-	private void jTblRadioButtonActionPerformed(ActionEvent evt) {
-		HistoryTableModel model = (HistoryTableModel) this.jHistoryTable.getModel();
+	private void tblRadioButtonActionPerformed(ActionEvent evt) {
+		HistoryTableModel model = (HistoryTableModel) this.historyTable.getModel();
 		model.setView("tbl");
 		for (int x = 1; x < model.getColumnCount(); x++) {
-			jHistoryTable.getColumnModel().getColumn(x).setPreferredWidth(120);
+			historyTable.getColumnModel().getColumn(x).setPreferredWidth(120);
 		}
-		jHistoryTable.getColumnModel().getColumn(6).setPreferredWidth(300);
+		historyTable.getColumnModel().getColumn(6).setPreferredWidth(300);
 	}
 
 	private JSplitPane getJSplitPane3() {
@@ -4519,17 +3331,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				jScrollPane7 = new JScrollPane();
 				jSplitPane3.add(jScrollPane7, JSplitPane.RIGHT);
 				{
-					jPageTableTable = new JTable();
-					jScrollPane7.setViewportView(jPageTableTable);
-					jPageTableTable.setModel(new PageTableTableModel());
-					jPageTableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					jPageTableTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+					pageTableTable = new JTable();
+					jScrollPane7.setViewportView(pageTableTable);
+					pageTableTable.setModel(new PageTableTableModel());
+					pageTableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+					pageTableTable.getColumnModel().getColumn(0).setPreferredWidth(40);
 					for (int x = 2; x <= 11; x++) {
-						jPageTableTable.getColumnModel().getColumn(x).setPreferredWidth(40);
+						pageTableTable.getColumnModel().getColumn(x).setPreferredWidth(40);
 					}
-					jPageTableTable.addMouseListener(new MouseAdapter() {
+					pageTableTable.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent evt) {
-							jPageTableTableMouseClicked(evt);
+							pageTableTableMouseClicked(evt);
 						}
 					});
 				}
@@ -4538,26 +3350,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				jScrollPane8 = new JScrollPane();
 				jSplitPane3.add(jScrollPane8, JSplitPane.LEFT);
 				{
-					// TableModel jPageDirectoryTableModel = new
-					// DefaultTableModel(new String[][] {}, new String[] {
-					// "No.", "PT base", "AVL", "G", "D", "A", "PCD", "PWT",
-					// "U/S",
-					// "W/R", "P" }) {
-					// public boolean isCellEditable(int row, int column) {
-					// return false;
-					// }
-					// };
-					jPageDirectoryTable = new JTable();
-					jScrollPane8.setViewportView(jPageDirectoryTable);
-					jPageDirectoryTable.setModel(new PageDirectoryTableModel());
-					jPageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					jPageDirectoryTable.getColumnModel().getColumn(0).setPreferredWidth(40);
+					pageDirectoryTable = new JTable();
+					jScrollPane8.setViewportView(pageDirectoryTable);
+					pageDirectoryTable.setModel(new PageDirectoryTableModel());
+					pageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+					pageDirectoryTable.getColumnModel().getColumn(0).setPreferredWidth(40);
 					for (int x = 2; x < 11; x++) {
-						jPageDirectoryTable.getColumnModel().getColumn(x).setPreferredWidth(40);
+						pageDirectoryTable.getColumnModel().getColumn(x).setPreferredWidth(40);
 					}
-					jPageDirectoryTable.addMouseListener(new MouseAdapter() {
+					pageDirectoryTable.addMouseListener(new MouseAdapter() {
 						public void mouseClicked(MouseEvent evt) {
-							jPageDirectoryTableMouseClicked(evt);
+							pageDirectoryTableMouseClicked(evt);
 						}
 					});
 				}
@@ -4566,46 +3369,71 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jSplitPane3;
 	}
 
-	private JButton getJButton1() {
-		if (jButton1 == null) {
-			jButton1 = new JButton();
-			jButton1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			jButton1.addActionListener(new ActionListener() {
+	private JButton getSaveHistoryTableButton() {
+		if (saveHistoryTableImageButton == null) {
+			saveHistoryTableImageButton = new JButton();
+			saveHistoryTableImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveHistoryTableImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton1ActionPerformed(evt);
+					saveHistoryTableButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton1;
+		return saveHistoryTableImageButton;
 	}
 
-	private JButton getJButton2() {
-		if (jButton2 == null) {
-			jButton2 = new JButton();
-			jButton2.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			jButton2.addActionListener(new ActionListener() {
+	private void saveHistoryTableButtonActionPerformed(ActionEvent evt) {
+		JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showSaveDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			if (!GKDCommonLib.saveImage(historyTable, file)) {
+				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private JButton getSaveHexTableImageButton() {
+		if (saveHexTableImageButton == null) {
+			saveHexTableImageButton = new JButton();
+			saveHexTableImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveHexTableImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton2ActionPerformed(evt);
+					saveHexTableImageButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton2;
+		return saveHexTableImageButton;
+	}
+
+	private void saveHexTableImageButtonActionPerformed(ActionEvent evt) {
+		JFileChooser fc = new JFileChooser();
+		int returnVal = fc.showSaveDialog(this);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			if (!file.getName().toLowerCase().endsWith(".png")) {
+				file = new File(file.getAbsolutePath() + ".png");
+			}
+			if (!GKDCommonLib.saveImage(hexTable, file)) {
+				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
 	}
 
 	private JButton getJButton3() {
-		if (jButton3 == null) {
-			jButton3 = new JButton();
-			jButton3.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			jButton3.addActionListener(new ActionListener() {
+		if (saveInstructionTableImageButton == null) {
+			saveInstructionTableImageButton = new JButton();
+			saveInstructionTableImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveInstructionTableImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton3ActionPerformed(evt);
+					saveInstructionTableImageButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton3;
+		return saveInstructionTableImageButton;
 	}
 
-	private void jButton3ActionPerformed(ActionEvent evt) {
+	private void saveInstructionTableImageButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -4616,20 +3444,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JButton getJExportHistoryToExcelButton() {
-		if (jExportHistoryToExcelButton == null) {
-			jExportHistoryToExcelButton = new JButton();
-			jExportHistoryToExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jExportHistoryToExcelButton.addActionListener(new ActionListener() {
+	private JButton getExportHistoryToExcelButton() {
+		if (exportHistoryToExcelButton == null) {
+			exportHistoryToExcelButton = new JButton();
+			exportHistoryToExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			exportHistoryToExcelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jExportHistoryToExcelButtonActionPerformed(evt);
+					exportHistoryToExcelButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jExportHistoryToExcelButton;
+		return exportHistoryToExcelButton;
 	}
 
-	private void jExportHistoryToExcelButtonActionPerformed(ActionEvent evt) {
+	private void exportHistoryToExcelButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -4663,24 +3491,24 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JButton getJButton5() {
-		if (jButton5 == null) {
-			jButton5 = new JButton();
-			jButton5.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jButton5.addActionListener(new ActionListener() {
+	private JButton getExcelMemoryButton() {
+		if (excelMemoryButton == null) {
+			excelMemoryButton = new JButton();
+			excelMemoryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelMemoryButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton5ActionPerformed(evt);
+					excelMemoryButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton5;
+		return excelMemoryButton;
 	}
 
-	private void jButton5ActionPerformed(ActionEvent evt) {
+	private void excelMemoryButtonActionPerformed(ActionEvent evt) {
 		SaveMemoryToXLSDialog d = new SaveMemoryToXLSDialog(this);
-		long currentMemoryAddress = CommonLib.string2long(jMemoryAddressComboBox.getSelectedItem().toString());
-		d.jFromTextField.setText("0x" + Long.toHexString(currentMemoryAddress));
-		d.jToTextField.setText("0x" + Long.toHexString(currentMemoryAddress + 64 * 1024));
+		long currentMemoryAddress = CommonLib.string2long(memoryAddressComboBox.getSelectedItem().toString());
+		d.fromTextField.setText("0x" + Long.toHexString(currentMemoryAddress));
+		d.toTextField.setText("0x" + Long.toHexString(currentMemoryAddress + 64 * 1024));
 		d.setVisible(true);
 		if (d.ok) {
 			JFileChooser fc = new JFileChooser();
@@ -4690,7 +3518,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (!file.getName().toLowerCase().endsWith(".xls")) {
 					file = new File(file.getAbsolutePath() + ".xls");
 				}
-				GKDCommonLib.exportTableModelToExcel(file, hexTable.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
+				GKDCommonLib.exportTableModelToExcel(file, hexTable.getModel(), memoryAddressComboBox.getSelectedItem().toString());
 			}
 		}
 	}
@@ -4698,64 +3526,64 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel getJPanel14() {
 		if (jPanel14 == null) {
 			jPanel14 = new JPanel();
-			jPanel14.add(getJButton6());
-			jPanel14.add(getJButton7());
+			jPanel14.add(getSaveGDTImageButton());
+			jPanel14.add(getExcelGDTButton());
 			jPanel14.add(getJGDTGraphButton());
 		}
 		return jPanel14;
 	}
 
-	private JButton getJButton6() {
-		if (jButton6 == null) {
-			jButton6 = new JButton();
-			jButton6.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			jButton6.addActionListener(new ActionListener() {
+	private JButton getSaveGDTImageButton() {
+		if (saveGDTImageButton == null) {
+			saveGDTImageButton = new JButton();
+			saveGDTImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveGDTImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton6ActionPerformed(evt);
+					saveGDTImageButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton6;
+		return saveGDTImageButton;
 	}
 
-	private void jButton6ActionPerformed(ActionEvent evt) {
+	private void saveGDTImageButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!GKDCommonLib.saveImage(this.jGDTTable, file)) {
+			if (!GKDCommonLib.saveImage(this.gdtTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
-	private JButton getJButton7() {
-		if (jButton7 == null) {
-			jButton7 = new JButton();
-			jButton7.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jButton7.addActionListener(new ActionListener() {
+	private JButton getExcelGDTButton() {
+		if (excelGDTButton == null) {
+			excelGDTButton = new JButton();
+			excelGDTButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelGDTButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton7ActionPerformed(evt);
+					excelGDTButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton7;
+		return excelGDTButton;
 	}
 
-	private void jButton7ActionPerformed(ActionEvent evt) {
+	private void excelGDTButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.jGDTTable.getModel(), "GDT");
+			GKDCommonLib.exportTableModelToExcel(file, this.gdtTable.getModel(), "GDT");
 		}
 	}
 
 	private JPanel getJPanel15() {
 		if (jPanel15 == null) {
 			jPanel15 = new JPanel();
-			jPanel15.add(getJButton9());
-			jPanel15.add(getJButton8());
+			jPanel15.add(getSaveImageButton());
+			jPanel15.add(getExcelIDTButton());
 		}
 		return jPanel15;
 	}
@@ -4763,129 +3591,129 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel getJPanel16() {
 		if (jPanel16 == null) {
 			jPanel16 = new JPanel();
-			jPanel16.add(getJButton11());
-			jPanel16.add(getJButton10());
+			jPanel16.add(getDiskButton());
+			jPanel16.add(getExcelButton2());
 		}
 		return jPanel16;
 	}
 
-	private JButton getJButton8() {
-		if (jButton8 == null) {
-			jButton8 = new JButton();
-			jButton8.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jButton8.addActionListener(new ActionListener() {
+	private JButton getExcelIDTButton() {
+		if (excelIDTButton == null) {
+			excelIDTButton = new JButton();
+			excelIDTButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelIDTButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton8ActionPerformed(evt);
+					excelIDTButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton8;
+		return excelIDTButton;
 	}
 
-	private void jButton8ActionPerformed(ActionEvent evt) {
+	private void excelIDTButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.jIDTTable.getModel(), "IDT");
+			GKDCommonLib.exportTableModelToExcel(file, this.idtTable.getModel(), "IDT");
 		}
 	}
 
-	private JButton getJButton9() {
-		if (jButton9 == null) {
-			jButton9 = new JButton();
-			jButton9.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			jButton9.addActionListener(new ActionListener() {
+	private JButton getSaveImageButton() {
+		if (saveImageButton == null) {
+			saveImageButton = new JButton();
+			saveImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton9ActionPerformed(evt);
+					saveImageButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton9;
+		return saveImageButton;
 	}
 
-	private void jButton9ActionPerformed(ActionEvent evt) {
+	private void saveImageButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!GKDCommonLib.saveImage(this.jIDTTable, file)) {
+			if (!GKDCommonLib.saveImage(this.idtTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
-	private JButton getJButton10() {
-		if (jButton10 == null) {
-			jButton10 = new JButton();
-			jButton10.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jButton10.addActionListener(new ActionListener() {
+	private JButton getExcelButton2() {
+		if (excelButton2 == null) {
+			excelButton2 = new JButton();
+			excelButton2.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelButton2.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton10ActionPerformed(evt);
+					excelButton2ActionPerformed(evt);
 				}
 			});
 		}
-		return jButton10;
+		return excelButton2;
 	}
 
-	private void jButton10ActionPerformed(ActionEvent evt) {
-		System.out.println("not implement");
+	private void excelButton2ActionPerformed(ActionEvent evt) {
+		logger.debug("not implement");
 	}
 
-	private JButton getJButton11() {
-		if (jButton11 == null) {
-			jButton11 = new JButton();
-			jButton11.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			jButton11.addActionListener(new ActionListener() {
+	private JButton getDiskButton() {
+		if (diskButton == null) {
+			diskButton = new JButton();
+			diskButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			diskButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton11ActionPerformed(evt);
+					diskButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton11;
+		return diskButton;
 	}
 
-	private void jButton11ActionPerformed(ActionEvent evt) {
-		System.out.println("jButton11.actionPerformed, event=" + evt);
+	private void diskButtonActionPerformed(ActionEvent evt) {
+		logger.debug("jButton11.actionPerformed, event=" + evt);
 	}
 
-	private JButton getJButton12() {
-		if (jButton12 == null) {
-			jButton12 = new JButton();
-			jButton12.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jButton12.addActionListener(new ActionListener() {
+	private JButton getExcelButton() {
+		if (excelButton == null) {
+			excelButton = new JButton();
+			excelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton12ActionPerformed(evt);
+					excelButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton12;
+		return excelButton;
 	}
 
-	private void jButton12ActionPerformed(ActionEvent evt) {
+	private void excelButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + this.jInstructionComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + this.instructionComboBox.getSelectedItem().toString());
 		}
 	}
 
-	private JButton getJExportToExcelButton() {
-		if (jButton13 == null) {
-			jButton13 = new JButton();
-			jButton13.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jButton13.setText("Excel");
-			jButton13.addActionListener(new ActionListener() {
+	private JButton getExportToExcelButton() {
+		if (exportToExcelButton == null) {
+			exportToExcelButton = new JButton();
+			exportToExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			exportToExcelButton.setText("Excel");
+			exportToExcelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton13ActionPerformed(evt);
+					excelActionPerformed(evt);
 				}
 			});
 		}
-		return jButton13;
+		return exportToExcelButton;
 	}
 
-	private void jButton13ActionPerformed(ActionEvent evt) {
+	private void excelActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -4896,10 +3724,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			class MyThread extends Thread {
 				File file;
-				GKD peterBochsDebugger;
+				GKD gkd;
 
-				public MyThread(GKD peterBochsDebugger, File file) {
-					this.peterBochsDebugger = peterBochsDebugger;
+				public MyThread(GKD gkd, File file) {
+					this.gkd = gkd;
 					this.file = file;
 				}
 
@@ -4907,11 +3735,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					XSSFWorkbook wb = new XSSFWorkbook();// Write the output to
 															// a file
 					GKDCommonLib.exportRegisterHistory(wb, d);
-					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jGDTTable.getModel(), "GDT", wb);
-					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.jIDTTable.getModel(), "IDT", wb);
-					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.instructionTable.getModel(), "instruction 0x"
-							+ peterBochsDebugger.jInstructionComboBox.getSelectedItem().toString(), wb);
-					GKDCommonLib.exportTableModelToExcel(file, peterBochsDebugger.hexTable.getModel(), jMemoryAddressComboBox.getSelectedItem().toString(), wb);
+					GKDCommonLib.exportTableModelToExcel(file, gkd.gdtTable.getModel(), "GDT", wb);
+					GKDCommonLib.exportTableModelToExcel(file, gkd.idtTable.getModel(), "IDT", wb);
+					GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + gkd.instructionComboBox.getSelectedItem().toString(), wb);
+					GKDCommonLib.exportTableModelToExcel(file, gkd.hexTable.getModel(), memoryAddressComboBox.getSelectedItem().toString(), wb);
 					FileOutputStream fileOut;
 					try {
 						fileOut = new FileOutputStream(file);
@@ -4941,13 +3768,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel getJPanel18() {
 		if (jPanel18 == null) {
 			jPanel18 = new JPanel();
-			jPanel18.add(getJLabel4());
-			jPanel18.add(getJTextField1());
-			jPanel18.add(getJLabel5());
-			jPanel18.add(getJSearchMemoryFromComboBox());
-			jPanel18.add(getJLabel6());
-			jPanel18.add(getJSearchMemoryToComboBox());
-			jPanel18.add(getJSearchMemoryButton());
+			jPanel18.add(getHexDecStringLabel());
+			jPanel18.add(getSearchMemoryTextField());
+			jPanel18.add(getFromLabel());
+			jPanel18.add(getSearchMemoryFromComboBox());
+			jPanel18.add(getToLabel());
+			jPanel18.add(getSearchMemoryToComboBox());
+			jPanel18.add(getSearchMemoryButton());
 			jPanel18.add(getJButton15());
 		}
 		return jPanel18;
@@ -4956,101 +3783,101 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JScrollPane getJScrollPane12() {
 		if (jScrollPane12 == null) {
 			jScrollPane12 = new JScrollPane();
-			jScrollPane12.setViewportView(getJSearchMemoryTable());
+			jScrollPane12.setViewportView(getSearchMemoryTable());
 		}
 		return jScrollPane12;
 	}
 
-	private JTable getJSearchMemoryTable() {
-		if (jSearchMemoryTable == null) {
-			jSearchMemoryTable = new JTable();
-			getJSearchMemoryTable().getTableHeader().setReorderingAllowed(false);
-			jSearchMemoryTable.addMouseListener(new MouseAdapter() {
+	private JTable getSearchMemoryTable() {
+		if (searchMemoryTable == null) {
+			searchMemoryTable = new JTable();
+			getSearchMemoryTable().getTableHeader().setReorderingAllowed(false);
+			searchMemoryTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
-					jSearchMemoryTableMouseClicked(evt);
+					searchMemoryTableMouseClicked(evt);
 				}
 			});
-			jSearchMemoryTable.setModel(new SearchTableModel());
+			searchMemoryTable.setModel(new SearchTableModel());
 		}
-		return jSearchMemoryTable;
+		return searchMemoryTable;
 	}
 
-	private JLabel getJLabel4() {
-		if (jLabel4 == null) {
-			jLabel4 = new JLabel();
-			jLabel4.setText("hex/dec/string");
+	private JLabel getHexDecStringLabel() {
+		if (hexDecStringLabel == null) {
+			hexDecStringLabel = new JLabel();
+			hexDecStringLabel.setText("hex/dec/string");
 		}
-		return jLabel4;
+		return hexDecStringLabel;
 	}
 
-	private JTextField getJTextField1() {
-		if (jSearchMemoryTextField == null) {
-			jSearchMemoryTextField = new JTextField();
-			jSearchMemoryTextField.setPreferredSize(new java.awt.Dimension(84, 18));
+	private JTextField getSearchMemoryTextField() {
+		if (searchMemoryTextField == null) {
+			searchMemoryTextField = new JTextField();
+			searchMemoryTextField.setPreferredSize(new java.awt.Dimension(84, 18));
 		}
-		return jSearchMemoryTextField;
+		return searchMemoryTextField;
 	}
 
-	private JLabel getJLabel5() {
-		if (jLabel5 == null) {
-			jLabel5 = new JLabel();
-			jLabel5.setText("from");
+	private JLabel getFromLabel() {
+		if (fromLabel == null) {
+			fromLabel = new JLabel();
+			fromLabel.setText("from");
 		}
-		return jLabel5;
+		return fromLabel;
 	}
 
-	private JComboBox getJSearchMemoryFromComboBox() {
-		if (jSearchMemoryFromComboBox == null) {
-			ComboBoxModel jSearchMemoryFromComboBoxModel = new DefaultComboBoxModel(new String[] {});
-			jSearchMemoryFromComboBox = new JComboBox();
-			jSearchMemoryFromComboBox.setModel(jSearchMemoryFromComboBoxModel);
-			jSearchMemoryFromComboBox.setEditable(true);
-			jSearchMemoryFromComboBox.setPreferredSize(new java.awt.Dimension(120, 22));
+	private JComboBox<String> getSearchMemoryFromComboBox() {
+		if (searchMemoryFromComboBox == null) {
+			ComboBoxModel<String> searchMemoryFromComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+			searchMemoryFromComboBox = new JComboBox<String>();
+			searchMemoryFromComboBox.setModel(searchMemoryFromComboBoxModel);
+			searchMemoryFromComboBox.setEditable(true);
+			searchMemoryFromComboBox.setPreferredSize(new java.awt.Dimension(120, 22));
 		}
-		return jSearchMemoryFromComboBox;
+		return searchMemoryFromComboBox;
 	}
 
-	private JLabel getJLabel6() {
-		if (jLabel6 == null) {
-			jLabel6 = new JLabel();
-			jLabel6.setText("to");
+	private JLabel getToLabel() {
+		if (toLabel == null) {
+			toLabel = new JLabel();
+			toLabel.setText("to");
 		}
-		return jLabel6;
+		return toLabel;
 	}
 
-	private JComboBox getJSearchMemoryToComboBox() {
-		if (jSearchMemoryToComboBox == null) {
-			ComboBoxModel jSearchMemoryToComboBoxModel = new DefaultComboBoxModel(new String[] {});
-			jSearchMemoryToComboBox = new JComboBox();
-			jSearchMemoryToComboBox.setModel(jSearchMemoryToComboBoxModel);
-			jSearchMemoryToComboBox.setEditable(true);
-			jSearchMemoryToComboBox.setPreferredSize(new java.awt.Dimension(120, 22));
+	private JComboBox<String> getSearchMemoryToComboBox() {
+		if (searchMemoryToComboBox == null) {
+			ComboBoxModel<String> jSearchMemoryToComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+			searchMemoryToComboBox = new JComboBox<String>();
+			searchMemoryToComboBox.setModel(jSearchMemoryToComboBoxModel);
+			searchMemoryToComboBox.setEditable(true);
+			searchMemoryToComboBox.setPreferredSize(new java.awt.Dimension(120, 22));
 		}
-		return jSearchMemoryToComboBox;
+		return searchMemoryToComboBox;
 	}
 
-	private JButton getJSearchMemoryButton() {
-		if (jSearchMemoryButton == null) {
-			jSearchMemoryButton = new JButton();
-			jSearchMemoryButton.setText("Search");
-			jSearchMemoryButton.addActionListener(new ActionListener() {
+	private JButton getSearchMemoryButton() {
+		if (searchMemoryButton == null) {
+			searchMemoryButton = new JButton();
+			searchMemoryButton.setText("Search");
+			searchMemoryButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSearchMemoryButtonActionPerformed(evt);
+					searchMemoryButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSearchMemoryButton;
+		return searchMemoryButton;
 	}
 
-	private void jSearchMemoryButtonActionPerformed(ActionEvent evt) {
+	private void searchMemoryButtonActionPerformed(ActionEvent evt) {
 		try {
-			if (this.jSearchMemoryToComboBox.getSelectedItem().toString().trim().startsWith("+")) {
-				this.jSearchMemoryToComboBox.setSelectedItem("0x"
-						+ Long.toHexString(CommonLib.string2long(this.jSearchMemoryFromComboBox.getSelectedItem().toString())
-								+ CommonLib.string2long(this.jSearchMemoryToComboBox.getSelectedItem().toString().substring(1))));
+			if (this.searchMemoryToComboBox.getSelectedItem().toString().trim().startsWith("+")) {
+				this.searchMemoryToComboBox.setSelectedItem("0x"
+						+ Long.toHexString(CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem().toString())
+								+ CommonLib.string2long(this.searchMemoryToComboBox.getSelectedItem().toString().substring(1))));
 			}
-			new SearchMemoryDialog(this, this.jSearchMemoryTable, this.jSearchMemoryTextField.getText(), CommonLib.string2long(this.jSearchMemoryFromComboBox.getSelectedItem()
-					.toString()), CommonLib.string2long(this.jSearchMemoryToComboBox.getSelectedItem().toString())).setVisible(true);
+			new SearchMemoryDialog(this, this.searchMemoryTable, this.searchMemoryTextField.getText(), CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem()
+					.toString()), CommonLib.string2long(this.searchMemoryToComboBox.getSelectedItem().toString())).setVisible(true);
 		} catch (Exception ex) {
 
 		}
@@ -5070,15 +3897,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void disassembleButtonActionPerformed(ActionEvent evt) {
-		if (this.jInstructionComboBox.getSelectedItem() == null) {
+		if (this.instructionComboBox.getSelectedItem() == null) {
 			return;
 		}
-		this.addInstructionComboBox(this.jInstructionComboBox.getSelectedItem().toString());
+		this.addInstructionComboBox(this.instructionComboBox.getSelectedItem().toString());
 		disassembleCurrentIPButton.setEnabled(false);
 		try {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 			model.clearData();
-			updateInstruction(CommonLib.string2BigInteger(this.jInstructionComboBox.getSelectedItem().toString()));
+			updateInstruction(CommonLib.string2BigInteger(this.instructionComboBox.getSelectedItem().toString()));
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -5100,571 +3927,468 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jButton15ActionPerformed(ActionEvent evt) {
-		((SearchTableModel) this.jSearchMemoryTable.getModel()).removeAll();
+		((SearchTableModel) this.searchMemoryTable.getModel()).removeAll();
 	}
 
-	private JPanel getJMainPanel() {
-		if (jMainPanel == null) {
-			jMainPanel = new JPanel();
+	private JPanel getMainPanel() {
+		if (mainPanel == null) {
+			mainPanel = new JPanel();
 			CardLayout jMainPanelLayout = new CardLayout();
-			jMainPanel.setLayout(jMainPanelLayout);
+			mainPanel.setLayout(jMainPanelLayout);
 			{
 				progressBarDialog.jProgressBar.setValue(51);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.1");
 
-				jMainPanel.add(getJMaximizableTabbedPane_BasePanel1(), "jMaximizableTabbedPane_BasePanel1");
+				mainPanel.add(getMaximizableTabbedPane_BasePanel1(), "jMaximizableTabbedPane_BasePanel1");
 
 				progressBarDialog.jProgressBar.setValue(52);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.2");
 
-				jMainPanel.add(getJInstrumentPanel(), "jInstrumentPanel");
+				mainPanel.add(getJInstrumentPanel(), "instrumentPanel");
 
 				progressBarDialog.jProgressBar.setValue(53);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.3");
 
-				jMainPanel.add(getJRunningLabel(), "Running Label");
-				jMainPanel.add(getLogPanel1(), "logPanel1");
-				jMainPanel.add(getOsLogPanel1(), "oSLogPanel1");
-				jMainPanel.add(getJRunningPanel(), "Running Label 2");
+				mainPanel.add(getJRunningLabel(), "Running Label");
+				mainPanel.add(getOsLogPanel(), "osLogPanel");
+				mainPanel.add(getRunningPanel(), "Running Label 2");
 
 				progressBarDialog.jProgressBar.setValue(56);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.4");
-				jMainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
+				mainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
 			}
 		}
-		return jMainPanel;
+		return mainPanel;
 	}
 
-	private JSplitPane getJSplitPane2() {
+	private JSplitPane getSplitPane2() {
+		//longest task
 		jSplitPane2 = new JSplitPane();
 
 		jSplitPane2.setPreferredSize(new java.awt.Dimension(1009, 781));
 		jSplitPane2.setOrientation(JSplitPane.VERTICAL_SPLIT);
-		{
-			jSplitPane1 = new JSplitPane();
-			jSplitPane2.add(jSplitPane1, JSplitPane.TOP);
-			jSplitPane1.setDividerLocation(400);
-			{
-				jTabbedPane1 = new JMaximizableTabbedPane();
-				jSplitPane1.add(jTabbedPane1, JSplitPane.RIGHT);
-				jTabbedPane1.addChangeListener(new ChangeListener() {
-					public void stateChanged(ChangeEvent evt) {
-						jTabbedPane1StateChanged(evt);
-					}
-				});
-				{
-					jPanel10 = new JPanel();
-					BorderLayout jPanel10Layout = new BorderLayout();
-					jPanel10.setLayout(jPanel10Layout);
-					jTabbedPane1.addTab(MyLanguage.getString("Instruction"),
-							new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")), jPanel10, null);
-					jPanel10.setPreferredSize(new java.awt.Dimension(604, 452));
-					{
-						jInstructionControlPanel = new JPanel();
-						jPanel10.add(jInstructionControlPanel, BorderLayout.NORTH);
-						{
-							ComboBoxModel jInstructionComboBoxModel = new DefaultComboBoxModel(new String[] {});
-							jInstructionComboBox = new JComboBox();
-							jInstructionControlPanel.add(jInstructionComboBox);
-							jInstructionControlPanel.add(getDisassembleButton());
-							jInstructionComboBox.setModel(jInstructionComboBoxModel);
-							jInstructionComboBox.setEditable(true);
-							jInstructionComboBox.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jInstructionComboBoxActionPerformed(evt);
-								}
-							});
-						}
-						{
-							disassembleCurrentIPButton = new JButton();
-							jInstructionControlPanel.add(disassembleCurrentIPButton);
-							jInstructionControlPanel.add(getJInstructionUpTenButton());
-							jInstructionControlPanel.add(getJInstructionUpButton());
-							jInstructionControlPanel.add(getJButton22());
-							jInstructionControlPanel.add(getJButton3());
-							jInstructionControlPanel.add(getJButton12());
-							disassembleCurrentIPButton.setText(MyLanguage.getString("Disassemble") + " cs:eip");
-							disassembleCurrentIPButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									disassembleCurrentIPButtonActionPerformed(evt);
-								}
-							});
-						}
-					}
-					{
-						instructionTableScrollPane = new JScrollPane();
-						jPanel10.add(instructionTableScrollPane, BorderLayout.CENTER);
-						{
-							instructionTable = new JTable();
-							instructionTableScrollPane.setViewportView(instructionTable);
-							instructionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							instructionTable.setModel(new InstructionTableModel());
-							instructionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-							instructionTable.getTableHeader().setReorderingAllowed(false);
-							instructionTable.getColumnModel().getColumn(0).setMaxWidth(20);
-							instructionTable.getColumnModel().getColumn(1).setPreferredWidth(200);
-							instructionTable.getColumnModel().getColumn(2).setPreferredWidth(300);
-							instructionTable.getColumnModel().getColumn(3).setPreferredWidth(400);
-							instructionTable.setDefaultRenderer(String.class, new InstructionTableCellRenderer());
-							instructionTable.addMouseListener(new MouseAdapter() {
-								public void mouseClicked(MouseEvent evt) {
-									instructionTableMouseClicked(evt);
-								}
-							});
-						}
-					}
-				}
-				{
-					jPanel4 = new JPanel();
-					jTabbedPane1.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")),
-							jPanel4, null);
-					BorderLayout jPanel4Layout = new BorderLayout();
-					jPanel4.setLayout(jPanel4Layout);
-					{
-						jScrollPane9 = new JScrollPane();
-						jPanel4.add(jScrollPane9, BorderLayout.CENTER);
-						{
-							breakpointTable = new JTable();
-							breakpointTable.getTableHeader().setReorderingAllowed(false);
-							jScrollPane9.setViewportView(breakpointTable);
-							breakpointTable.setModel(jBreakpointTableModel);
-							breakpointTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-							breakpointTable.getColumnModel().getColumn(0).setCellRenderer(new BreakpointTableCellRenderer());
-							breakpointTable.addMouseListener(new MouseAdapter() {
-								public void mouseClicked(MouseEvent evt) {
-									breakpointTableMouseClicked(evt);
-								}
-							});
-							breakpointTable.getColumnModel().getColumn(2).setPreferredWidth(100);
-							breakpointTable.getColumnModel().getColumn(3).setPreferredWidth(20);
-						}
-					}
-					{
-						jPanel12 = new JPanel();
-						jPanel4.add(jPanel12, BorderLayout.SOUTH);
-						{
-							addBreakpointButton = new JButton();
-							jPanel12.add(addBreakpointButton);
-							addBreakpointButton.setText(MyLanguage.getString("Add"));
-							addBreakpointButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									addBreakpointButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jDeleteBreakpointButton = new JButton();
-							jPanel12.add(jDeleteBreakpointButton);
-							jDeleteBreakpointButton.setText(MyLanguage.getString("Del"));
-							jDeleteBreakpointButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jDeleteBreakpointButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jRefreshBreakpointButton = new JButton();
-							jPanel12.add(jRefreshBreakpointButton);
-							jRefreshBreakpointButton.setText(MyLanguage.getString("Refresh"));
-							jRefreshBreakpointButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jRefreshBreakpointButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jEnableBreakpointButton = new JButton();
-							jPanel12.add(jEnableBreakpointButton);
-							jEnableBreakpointButton.setText(MyLanguage.getString("Enable"));
-							jEnableBreakpointButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jEnableBreakpointButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jDisableBreakpointButton = new JButton();
-							jPanel12.add(jDisableBreakpointButton);
-							jDisableBreakpointButton.setText(MyLanguage.getString("Disable"));
-							jDisableBreakpointButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jDisableBreakpointButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jSaveBreakpointButton = new JButton();
-							jPanel12.add(jSaveBreakpointButton);
-							jSaveBreakpointButton.setText(MyLanguage.getString("Save"));
-							jSaveBreakpointButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jSaveBreakpointButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jLoadBreakpointButton = new JDropDownButton();
-							jPanel12.add(jLoadBreakpointButton);
-							jPanel12.add(getJSBButton());
-							jPanel12.add(getJSBAButton());
-							jLoadBreakpointButton.setText(MyLanguage.getString("Load"));
-							jLoadBreakpointButton.add(loadElfMenuItem);
-							jLoadBreakpointButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jLoadBreakpointButtonActionPerformed(evt);
-								}
-							});
-						}
-					}
-				}
-				{
-					vmPanel = new JPanel();
-					if (Global.vmType.equals("bochs")) {
-						jTabbedPane1.addTab(MyLanguage.getString("Bochs"),
-								new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
-					} else if (Global.vmType.equals("qemu")) {
-						jTabbedPane1.addTab(MyLanguage.getString("Qemu"),
-								new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
-					}
-					jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
-					DiskPanel diskPanel = getDiskPanel();
-					if (diskPanel.getFile() != null) {
-						jTabbedPane1.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")),
-								diskPanel, null);
-					}
-					BorderLayout jPanel1Layout = new BorderLayout();
-					vmPanel.setLayout(jPanel1Layout);
-					{
-						jScrollPane4 = new JScrollPane();
-						vmPanel.add(jScrollPane4, BorderLayout.CENTER);
-						{
-							vmCommandEditorPane = new JEditorPane();
-							jScrollPane4.setViewportView(vmCommandEditorPane);
-						}
-					}
-					{
-						jPanel2 = new JPanel();
-						TableLayout jPanel2Layout = new TableLayout(new double[][] { { TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM }, { TableLayout.FILL } });
-						jPanel2Layout.setHGap(5);
-						jPanel2Layout.setVGap(5);
-						jPanel2.setLayout(jPanel2Layout);
-						vmPanel.add(jPanel2, BorderLayout.SOUTH);
-						{
-							vmCommandTextField = new JTextField();
-							jPanel2.add(vmCommandTextField, "0, 0, 1, 0");
-							vmCommandTextField.addKeyListener(new KeyAdapter() {
-								public void keyPressed(KeyEvent evt) {
-									vmCommandTextFieldKeyPressed(evt);
-								}
 
-								public void keyTyped(KeyEvent evt) {
-									vmCommandTextFieldKeyTyped(evt);
-								}
-							});
-						}
-						{
-							vmCommandButton = new JButton();
-							jPanel2.add(vmCommandButton, "2, 0");
-							jPanel2.add(getJClearBochsButton(), "3, 0");
-							vmCommandButton.setText("Run");
-							vmCommandButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									vmCommandButtonActionPerformed(evt);
-								}
-							});
-						}
-					}
-				}
+		jSplitPane1 = new JSplitPane();
+		jSplitPane2.add(jSplitPane1, JSplitPane.TOP);
+		jSplitPane1.setDividerLocation(400);
+
+		jTabbedPane1 = new JMaximizableTabbedPane();
+		jSplitPane1.add(jTabbedPane1, JSplitPane.RIGHT);
+		jTabbedPane1.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent evt) {
+				jTabbedPane1StateChanged(evt);
 			}
-			{
-				jTabbedPane3 = new JMaximizableTabbedPane();
-				jSplitPane1.add(jTabbedPane3, JSplitPane.LEFT);
-				{
-					jPanel8 = new JPanel();
-					BorderLayout jPanel8Layout = new BorderLayout();
-					jPanel8.setLayout(jPanel8Layout);
-					if (Global.vmType.equals("qemu") && GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
-						jTabbedPane3.addTab("VNC", null, getVncPanel(), null);
-					}
-					jTabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8,
-							null);
-					{
-						jScrollPane2 = new JScrollPane();
-						jPanel8.add(jScrollPane2, BorderLayout.CENTER);
-						{
-							hexTable = new HexTable();
-							hexTable.getColumnModel().getColumn(0).setPreferredWidth(30);
-							for (int x = 1; x < 9; x++) {
-								hexTable.getColumnModel().getColumn(x).setPreferredWidth(10);
-							}
-							jScrollPane2.setViewportView(hexTable);
-							hexTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-							hexTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-							hexTable.setCellSelectionEnabled(true);
-							hexTable.getTableHeader().setReorderingAllowed(false);
-							hexTable.setDefaultRenderer(String.class, new MemoryTableCellRenderer());
-							hexTable.addMouseListener(new MouseAdapter() {
-								public void mouseClicked(MouseEvent evt) {
-									jHexTable1MouseClicked(evt);
-								}
-							});
-						}
-					}
-					{
-						jPanel9 = new JPanel();
-						FlowLayout jPanel9Layout = new FlowLayout();
-						jPanel9.setLayout(jPanel9Layout);
-						jPanel8.add(jPanel9, BorderLayout.NORTH);
-						{
-							jMemoryAddressComboBox = new JComboBox();
-							jPanel9.add(jMemoryAddressComboBox);
-							jMemoryAddressComboBox.setSelectedItem("0x00000000");
-							jMemoryAddressComboBox.setEditable(true);
-							jMemoryAddressComboBox.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jMemoryAddressComboBoxActionPerformed(evt);
-								}
-							});
-							new Thread("addMemoryAddressComboBox thread") {
-								public void run() {
-									TreeSet<String> vector = Setting.getInstance().memoryCombo;
-
-									Iterator<String> iterator = vector.iterator();
-									while (iterator.hasNext()) {
-										addMemoryAddressComboBox(iterator.next());
-									}
-								}
-							}.start();
-							jMemoryAddressComboBox.setSelectedItem("0x00000000");
-						}
-						{
-							jGOMemoryButton = new JButton();
-							jPanel9.add(jGOMemoryButton);
-							jPanel9.add(getJGoLinearButton());
-							jPanel9.add(getJPreviousMemoryButton());
-							jPanel9.add(getJNextMemoryPageButton());
-							jPanel9.add(getJButton2());
-							jPanel9.add(getJButton5());
-							jGOMemoryButton.setText(MyLanguage.getString("Go"));
-							jGOMemoryButton.setToolTipText(MyLanguage.getString("Physical_address"));
-							jGOMemoryButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jGOMemoryButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jBinaryRadioButton = new JRadioButton();
-							jPanel9.add(jBinaryRadioButton);
-							jBinaryRadioButton.setText("2");
-							jBinaryRadioButton.addItemListener(new ItemListener() {
-								public void itemStateChanged(ItemEvent evt) {
-									jBinaryRadioButtonItemStateChanged(evt);
-								}
-							});
-							jBinaryRadioButton.addChangeListener(new ChangeListener() {
-								public void stateChanged(ChangeEvent evt) {
-									jBinaryRadioButtonStateChanged(evt);
-								}
-							});
-							getButtonGroup1().add(jBinaryRadioButton);
-						}
-						{
-							jOctRadioButton1 = new JRadioButton();
-							jPanel9.add(jOctRadioButton1);
-							jOctRadioButton1.setText("8");
-							jOctRadioButton1.addItemListener(new ItemListener() {
-								public void itemStateChanged(ItemEvent evt) {
-									jOctRadioButton1ItemStateChanged(evt);
-								}
-							});
-							jOctRadioButton1.addChangeListener(new ChangeListener() {
-								public void stateChanged(ChangeEvent evt) {
-									jOctRadioButton1StateChanged(evt);
-								}
-							});
-							getButtonGroup1().add(jOctRadioButton1);
-						}
-						{
-							jDecRadioButton = new JRadioButton();
-							jPanel9.add(jDecRadioButton);
-							jDecRadioButton.setText("10");
-							jDecRadioButton.addItemListener(new ItemListener() {
-								public void itemStateChanged(ItemEvent evt) {
-									jDecRadioButtonItemStateChanged(evt);
-								}
-							});
-							jDecRadioButton.addChangeListener(new ChangeListener() {
-								public void stateChanged(ChangeEvent evt) {
-									jDecRadioButtonStateChanged(evt);
-								}
-							});
-							getButtonGroup1().add(jDecRadioButton);
-						}
-						{
-							jHexRadioButton = new JRadioButton();
-							jPanel9.add(jHexRadioButton);
-							jHexRadioButton.setText("16");
-							jHexRadioButton.setSelected(true);
-							jHexRadioButton.addItemListener(new ItemListener() {
-								public void itemStateChanged(ItemEvent evt) {
-									jHexRadioButtonItemStateChanged(evt);
-								}
-							});
-							jHexRadioButton.addChangeListener(new ChangeListener() {
-								public void stateChanged(ChangeEvent evt) {
-									jHexRadioButtonStateChanged(evt);
-								}
-							});
-							getButtonGroup1().add(jHexRadioButton);
-						}
-					}
-				}
-				{
-					jPanel5 = new JPanel();
-					jTabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5, null);
-					BorderLayout jPanel5Layout = new BorderLayout();
-					jPanel5.setLayout(jPanel5Layout);
-					{
-						jScrollPane3 = new JScrollPane();
-						jPanel5.add(jScrollPane3, BorderLayout.CENTER);
-						jPanel5.add(getJPanel14(), BorderLayout.NORTH);
-						{
-							GDTTableModel jGDTTableModel = new GDTTableModel();
-							jGDTTable = new JTable();
-							jGDTTable.setModel(jGDTTableModel);
-							jScrollPane3.setViewportView(jGDTTable);
-							jGDTTable.getColumnModel().getColumn(0).setMaxWidth(40);
-							jGDTTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-							jGDTTable.getTableHeader().setReorderingAllowed(false);
-							jGDTTable.addMouseListener(new MouseAdapter() {
-								public void mouseClicked(MouseEvent evt) {
-									jGDTTableMouseClicked(evt);
-								}
-							});
-
-						}
-					}
-				}
-				{
-					jPanel6 = new JPanel();
-					BorderLayout jPanel6Layout = new BorderLayout();
-					jPanel6.setLayout(jPanel6Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("IDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/idt.png")), jPanel6, null);
-					{
-						jScrollPane10 = new JScrollPane();
-						jPanel6.add(jScrollPane10, BorderLayout.CENTER);
-						jPanel6.add(getJPanel15(), BorderLayout.NORTH);
-						{
-							IDTTableModel jIDTTableModel = new IDTTableModel();
-							jIDTTable = new JTable();
-							jIDTTable.setModel(jIDTTableModel);
-							jScrollPane10.setViewportView(jIDTTable);
-							jIDTTable.getColumnModel().getColumn(0).setMaxWidth(40);
-							jIDTTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-							jIDTTable.getTableHeader().setReorderingAllowed(false);
-							jIDTTable.addMouseListener(new MouseAdapter() {
-								public void mouseClicked(MouseEvent evt) {
-									jIDTTableMouseClicked(evt);
-								}
-							});
-						}
-					}
-				}
-				{
-					jPanel7 = new JPanel();
-					BorderLayout jPanel7Layout = new BorderLayout();
-					jPanel7.setLayout(jPanel7Layout);
-					jTabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7, null);
-					jTabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
-							getJPanel17(), null);
-					jTabbedPane3.addTab(Global.vmType.equals("bochs") ? "bochsout.txt" : "qemu log",
-							new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
-					{
-						jScrollPane11 = new JScrollPane();
-						jPanel7.add(jScrollPane11, BorderLayout.CENTER);
-						jPanel7.add(getJPanel16(), BorderLayout.NORTH);
-						{
-							LDTTableModel jLDTTableModel = new LDTTableModel();
-							jLDTTable = new JTable();
-							jLDTTable.setModel(jLDTTableModel);
-							jScrollPane11.setViewportView(jLDTTable);
-							jLDTTable.getColumnModel().getColumn(0).setMaxWidth(40);
-							jLDTTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-							jLDTTable.getTableHeader().setReorderingAllowed(false);
-							jLDTTable.addMouseListener(new MouseAdapter() {
-								public void mouseClicked(MouseEvent evt) {
-									jLDTTableMouseClicked(evt);
-								}
-							});
-						}
-					}
-				}
+		});
+		jPanel10 = new JPanel();
+		BorderLayout jPanel10Layout = new BorderLayout();
+		jPanel10.setLayout(jPanel10Layout);
+		jTabbedPane1.addTab(MyLanguage.getString("Instruction"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")),
+				jPanel10, null);
+		jPanel10.setPreferredSize(new java.awt.Dimension(604, 452));
+		instructionControlPanel = new JToolBar();
+		jPanel10.add(instructionControlPanel, BorderLayout.NORTH);
+		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+		instructionComboBox = new JComboBox<String>();
+		instructionComboBox.setMaximumSize(new Dimension(200, 25));
+		instructionComboBox.setOpaque(false);
+		instructionControlPanel.add(instructionComboBox);
+		instructionControlPanel.add(getDisassembleButton());
+		instructionComboBox.setModel(instructionComboBoxModel);
+		instructionComboBox.setEditable(true);
+		instructionComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				instructionComboBoxActionPerformed(evt);
 			}
+		});
+		disassembleCurrentIPButton = new JButton();
+		instructionControlPanel.add(disassembleCurrentIPButton);
+		instructionControlPanel.add(getInstructionUpTenButton());
+		instructionControlPanel.add(getInstructionUpButton());
+		instructionControlPanel.add(getInstructionDownButton());
+		instructionControlPanel.add(getJButton3());
+		instructionControlPanel.add(getExcelButton());
+		disassembleCurrentIPButton.setText(MyLanguage.getString("Disassemble") + " cs:eip");
+		instructionControlPanel.add(getJumpToInstructionButton());
+		disassembleCurrentIPButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				disassembleCurrentIPButtonActionPerformed(evt);
+			}
+		});
+		instructionTableScrollPane = new JScrollPane();
+		jPanel10.add(instructionTableScrollPane, BorderLayout.CENTER);
+		instructionTable = new JTable();
+		instructionTableScrollPane.setViewportView(instructionTable);
+		instructionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		instructionTable.setModel(new InstructionTableModel());
+		instructionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		instructionTable.getTableHeader().setReorderingAllowed(false);
+		instructionTable.getColumnModel().getColumn(0).setMaxWidth(20);
+		instructionTable.getColumnModel().getColumn(1).setPreferredWidth(150);
+		instructionTable.getColumnModel().getColumn(2).setPreferredWidth(200);
+		instructionTable.getColumnModel().getColumn(3).setPreferredWidth(200);
+		instructionTable.setDefaultRenderer(String.class, new InstructionTableCellRenderer());
+		instructionTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				instructionTableMouseClicked(evt);
+			}
+		});
+		jPanel4 = new JPanel();
+		jTabbedPane1.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")), jPanel4, null);
+		BorderLayout jPanel4Layout = new BorderLayout();
+		jPanel4.setLayout(jPanel4Layout);
+
+		jScrollPane9 = new JScrollPane();
+		jPanel4.add(jScrollPane9, BorderLayout.CENTER);
+		breakpointTable = new JTable();
+		breakpointTable.getTableHeader().setReorderingAllowed(false);
+		jScrollPane9.setViewportView(breakpointTable);
+		breakpointTable.setModel(jBreakpointTableModel);
+		breakpointTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		breakpointTable.getColumnModel().getColumn(0).setCellRenderer(new BreakpointTableCellRenderer());
+		breakpointTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				breakpointTableMouseClicked(evt);
+			}
+		});
+		breakpointTable.getColumnModel().getColumn(2).setPreferredWidth(100);
+		breakpointTable.getColumnModel().getColumn(3).setPreferredWidth(20);
+
+		jPanel12 = new JPanel();
+		jPanel4.add(jPanel12, BorderLayout.SOUTH);
+
+		addBreakpointButton = new JButton();
+		jPanel12.add(addBreakpointButton);
+		addBreakpointButton.setText(MyLanguage.getString("Add"));
+		addBreakpointButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				addBreakpointButtonActionPerformed(evt);
+			}
+		});
+		deleteBreakpointButton = new JButton();
+		jPanel12.add(deleteBreakpointButton);
+		deleteBreakpointButton.setText(MyLanguage.getString("Del"));
+		deleteBreakpointButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				deleteBreakpointButtonActionPerformed(evt);
+			}
+		});
+		jRefreshBreakpointButton = new JButton();
+		jPanel12.add(jRefreshBreakpointButton);
+		jRefreshBreakpointButton.setText(MyLanguage.getString("Refresh"));
+		jRefreshBreakpointButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				refreshBreakpointButtonActionPerformed(evt);
+			}
+		});
+		enableBreakpointButton = new JButton();
+		jPanel12.add(enableBreakpointButton);
+		enableBreakpointButton.setText(MyLanguage.getString("Enable"));
+		enableBreakpointButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				enableBreakpointButtonActionPerformed(evt);
+			}
+		});
+		disableBreakpointButton = new JButton();
+		jPanel12.add(disableBreakpointButton);
+		disableBreakpointButton.setText(MyLanguage.getString("Disable"));
+		disableBreakpointButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				disableBreakpointButtonActionPerformed(evt);
+			}
+		});
+		saveBreakpointButton = new JButton();
+		jPanel12.add(saveBreakpointButton);
+		saveBreakpointButton.setText(MyLanguage.getString("Save"));
+		saveBreakpointButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				saveBreakpointButtonActionPerformed(evt);
+			}
+		});
+		loadBreakpointButton = new JDropDownButton();
+		jPanel12.add(loadBreakpointButton);
+		jPanel12.add(getSBButton());
+		jPanel12.add(getSBAButton());
+		loadBreakpointButton.setText(MyLanguage.getString("Load"));
+		loadBreakpointButton.add(loadElfMenuItem);
+		loadBreakpointButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				loadBreakpointButtonActionPerformed(evt);
+			}
+		});
+		vmPanel = new JPanel();
+		//$hide>>$
+		if (VMController.vmType == VMType.Bochs) {
+			//$hide><<$
+			jTabbedPane1.addTab(MyLanguage.getString("Bochs"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
+					vmPanel, null);
+			//$hide>>$
+		} else if (VMController.vmType == VMType.Qemu) {
+			//$hide<<$
+			jTabbedPane1.addTab(MyLanguage.getString("Qemu"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
+					vmPanel, null);
+			//$hide>>$
 		}
-		{
-			jTabbedPane2 = new JMaximizableTabbedPane();
-			// jTabbedPane2.setCloseIcon(true);
-			// jTabbedPane2.setMaxIcon(true);
-			//
-			// jTabbedPane2.addCloseListener(new CloseListener() {
-			// public void closeOperation(MouseEvent e) {
-			// jTabbedPane2.remove(jTabbedPane2.getOverTabIndex());
-			// }
-			// });
-			//
-			// jTabbedPane2.addMaxListener(new MaxListener() {
-			// public void maxOperation(MouseEvent e) {
-			// jTabbedPane2.detachTab(jTabbedPane2.getOverTabIndex());
-			// }
-			// });
-
-			jSplitPane2.add(jTabbedPane2, JSplitPane.BOTTOM);
-			{
-				registerPanelScrollPane = new JScrollPane();
-				jTabbedPane2.addTab(MyLanguage.getString("Register"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_kerning.png")),
-						registerPanelScrollPane, null);
-				{
-					registerPanel = new RegisterPanel(this);
-					registerPanelScrollPane.setViewportView(registerPanel);
-				}
-			}
-			{
-				jPanel3 = new JPanel();
-				jTabbedPane2.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")),
-						jPanel3, null);
-				BorderLayout jPanel3Layout = new BorderLayout();
-				jPanel3.setLayout(jPanel3Layout);
-				{
-					jScrollPane6 = new JScrollPane();
-					jPanel3.add(jScrollPane6, BorderLayout.CENTER);
-					jPanel3.add(getJPanel13(), BorderLayout.NORTH);
-					jScrollPane6.setViewportView(getJHistoryTable());
-				}
-			}
-			{
-				jPanel11 = new JPanel();
-				jTabbedPane2.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), jPanel11,
-						null);
-				jTabbedPane2.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")),
-						getJAddressTranslatePanel(), null);
-				jTabbedPane2.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
-						getJPageTableGraphPanel(), null);
-				if (!Global.debug) {
-					jTabbedPane2.removeTabAt(jTabbedPane2.getTabCount() - 1);
-				}
-				jTabbedPane2.addTab(MyLanguage.getString("Table_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")),
-						getJTableTranslateScrollPane(), null);
-				jTabbedPane2.addTab(MyLanguage.getString("ELF_dump"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
-						getJELFDumpScrollPane(), null);
-				jTabbedPane2.addTab("OS debug informations", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/bug.png")),
-						getJOSDebugStandardPanel(), null);
-				BorderLayout jPanel11Layout = new BorderLayout();
-				jPanel11.setLayout(jPanel11Layout);
-				jPanel11.add(getJSplitPane3(), BorderLayout.CENTER);
-				jPanel11.add(getJPanel19(), BorderLayout.NORTH);
-			}
+		//$hide<<$
+		jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
+		DiskPanel diskPanel = getDiskPanel();
+		if (diskPanel.getFile() != null) {
+			jTabbedPane1.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")), diskPanel, null);
 		}
+		BorderLayout jPanel1Layout = new BorderLayout();
+		vmPanel.setLayout(jPanel1Layout);
+		vmCommandScrollPane4 = new JScrollPane();
+		vmCommandEditorPane = new JEditorPane();
+		vmCommandScrollPane4.setViewportView(vmCommandEditorPane);
+		vmPanel.add(vmCommandScrollPane4, BorderLayout.CENTER);
+		jPanel2 = new JPanel();
+		TableLayout jPanel2Layout = new TableLayout(new double[][] { { TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM }, { TableLayout.FILL } });
+		jPanel2Layout.setHGap(5);
+		jPanel2Layout.setVGap(5);
+		jPanel2.setLayout(jPanel2Layout);
+		vmPanel.add(jPanel2, BorderLayout.SOUTH);
+		vmCommandTextField = new JTextField();
+		jPanel2.add(vmCommandTextField, "0, 0, 1, 0");
+		vmCommandTextField.addKeyListener(new KeyAdapter() {
+			public void keyPressed(KeyEvent evt) {
+				vmCommandTextFieldKeyPressed(evt);
+			}
+
+			public void keyTyped(KeyEvent evt) {
+				vmCommandTextFieldKeyTyped(evt);
+			}
+		});
+		vmCommandButton = new JButton();
+		jPanel2.add(vmCommandButton, "2, 0");
+		jPanel2.add(getClearBochsButton(), "3, 0");
+		vmCommandButton.setText("Run");
+		vmCommandButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				vmCommandButtonActionPerformed(evt);
+			}
+		});
+		tabbedPane3 = new JMaximizableTabbedPane();
+		jSplitPane1.add(tabbedPane3, JSplitPane.LEFT);
+
+		jPanel8 = new JPanel();
+		BorderLayout jPanel8Layout = new BorderLayout();
+		jPanel8.setLayout(jPanel8Layout);
+		if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
+			tabbedPane3.addTab("VNC", null, getVncPanel(), null);
+			TightVNC.initVNCPanel(this, getVncPanel(), "localhost", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
+		}
+		tabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8, null);
+
+		jScrollPane2 = new JScrollPane();
+		jPanel8.add(jScrollPane2, BorderLayout.CENTER);
+		hexTable = new HexTable();
+		hexTable.getColumnModel().getColumn(0).setPreferredWidth(30);
+		for (int x = 1; x < 9; x++) {
+			hexTable.getColumnModel().getColumn(x).setPreferredWidth(10);
+		}
+		jScrollPane2.setViewportView(hexTable);
+		hexTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		hexTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		hexTable.setCellSelectionEnabled(true);
+		hexTable.getTableHeader().setReorderingAllowed(false);
+		hexTable.setDefaultRenderer(String.class, new MemoryTableCellRenderer());
+		hexTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				jHexTable1MouseClicked(evt);
+			}
+		});
+		jPanel9 = new JPanel();
+		FlowLayout jPanel9Layout = new FlowLayout();
+		jPanel9.setLayout(jPanel9Layout);
+		jPanel8.add(jPanel9, BorderLayout.NORTH);
+
+		memoryAddressComboBox = new JComboBox<String>();
+		jPanel9.add(memoryAddressComboBox);
+		memoryAddressComboBox.setSelectedItem("0x00000000");
+		memoryAddressComboBox.setEditable(true);
+		memoryAddressComboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				jMemoryAddressComboBoxActionPerformed(evt);
+			}
+		});
+		new Thread("addMemoryAddressComboBox thread") {
+			public void run() {
+				TreeSet<String> vector = Setting.getInstance().memoryCombo;
+
+				Iterator<String> iterator = vector.iterator();
+				while (iterator.hasNext()) {
+					addMemoryAddressComboBox(iterator.next());
+				}
+			}
+		}.start();
+		memoryAddressComboBox.setSelectedItem("0x00000000");
+
+		goMemoryButton = new JButton();
+		jPanel9.add(goMemoryButton);
+		jPanel9.add(getGoLinearButton());
+		jPanel9.add(getPreviousMemoryButton());
+		jPanel9.add(getNextMemoryPageButton());
+		jPanel9.add(getSaveHexTableImageButton());
+		jPanel9.add(getExcelMemoryButton());
+		goMemoryButton.setText(MyLanguage.getString("Go"));
+		goMemoryButton.setToolTipText(MyLanguage.getString("Physical_address"));
+		goMemoryButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent evt) {
+				goMemoryButtonActionPerformed(evt);
+			}
+		});
+
+		binaryRadioButton = new JRadioButton();
+		jPanel9.add(binaryRadioButton);
+		binaryRadioButton.setText("2");
+		binaryRadioButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent evt) {
+				binaryRadioButtonItemStateChanged(evt);
+			}
+		});
+		getButtonGroup1().add(binaryRadioButton);
+		octRadioButton1 = new JRadioButton();
+		jPanel9.add(octRadioButton1);
+		octRadioButton1.setText("8");
+		octRadioButton1.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent evt) {
+				octRadioButton1ItemStateChanged(evt);
+			}
+		});
+		getButtonGroup1().add(octRadioButton1);
+
+		decRadioButton = new JRadioButton();
+		jPanel9.add(decRadioButton);
+		decRadioButton.setText("10");
+		decRadioButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent evt) {
+				decRadioButtonItemStateChanged(evt);
+			}
+		});
+		getButtonGroup1().add(decRadioButton);
+
+		hexRadioButton = new JRadioButton();
+		jPanel9.add(hexRadioButton);
+		hexRadioButton.setText("16");
+		hexRadioButton.setSelected(true);
+		hexRadioButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent evt) {
+				hexRadioButtonItemStateChanged(evt);
+			}
+		});
+		getButtonGroup1().add(hexRadioButton);
+
+		jPanel5 = new JPanel();
+		tabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5, null);
+		BorderLayout jPanel5Layout = new BorderLayout();
+		jPanel5.setLayout(jPanel5Layout);
+
+		jScrollPane3 = new JScrollPane();
+		jPanel5.add(jScrollPane3, BorderLayout.CENTER);
+		jPanel5.add(getJPanel14(), BorderLayout.NORTH);
+
+		GDTTableModel jGDTTableModel = new GDTTableModel();
+		gdtTable = new JTable();
+		gdtTable.setModel(jGDTTableModel);
+		jScrollPane3.setViewportView(gdtTable);
+		gdtTable.getColumnModel().getColumn(0).setMaxWidth(40);
+		gdtTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		gdtTable.getTableHeader().setReorderingAllowed(false);
+		gdtTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				jGDTTableMouseClicked(evt);
+			}
+		});
+
+		jPanel6 = new JPanel();
+		BorderLayout jPanel6Layout = new BorderLayout();
+		jPanel6.setLayout(jPanel6Layout);
+		tabbedPane3.addTab(MyLanguage.getString("IDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/idt.png")), jPanel6, null);
+
+		scrollPane10 = new JScrollPane();
+		jPanel6.add(scrollPane10, BorderLayout.CENTER);
+		jPanel6.add(getJPanel15(), BorderLayout.NORTH);
+
+		IDTTableModel jIDTTableModel = new IDTTableModel();
+		idtTable = new JTable();
+		idtTable.setModel(jIDTTableModel);
+		scrollPane10.setViewportView(idtTable);
+		idtTable.getColumnModel().getColumn(0).setMaxWidth(40);
+		idtTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		idtTable.getTableHeader().setReorderingAllowed(false);
+		idtTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				idtTableMouseClicked(evt);
+			}
+		});
+
+		jPanel7 = new JPanel();
+		BorderLayout jPanel7Layout = new BorderLayout();
+		jPanel7.setLayout(jPanel7Layout);
+		tabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7, null);
+		tabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), getJPanel17(),
+				null);
+		tabbedPane3.addTab(VMController.vmType == VMType.Bochs ? "bochsout.txt" : "qemu log",
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
+
+		jScrollPane11 = new JScrollPane();
+		jPanel7.add(jScrollPane11, BorderLayout.CENTER);
+		jPanel7.add(getJPanel16(), BorderLayout.NORTH);
+
+		LDTTableModel jLDTTableModel = new LDTTableModel();
+		ldtTable = new JTable();
+		ldtTable.setModel(jLDTTableModel);
+		jScrollPane11.setViewportView(ldtTable);
+		ldtTable.getColumnModel().getColumn(0).setMaxWidth(40);
+		ldtTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+		ldtTable.getTableHeader().setReorderingAllowed(false);
+		ldtTable.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent evt) {
+				jLDTTableMouseClicked(evt);
+			}
+		});
+		bottomTabbedPane = new JMaximizableTabbedPane();
+
+		jSplitPane2.add(bottomTabbedPane, JSplitPane.BOTTOM);
+		registerPanelScrollPane = new JScrollPane();
+		registerPanelScrollPane.getVerticalScrollBar().setUnitIncrement(20);
+		registerPanelScrollPane.getHorizontalScrollBar().setUnitIncrement(20);
+		bottomTabbedPane.addTab(MyLanguage.getString("Register"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_kerning.png")),
+				registerPanelScrollPane, null);
+
+		registerPanel = new RegisterPanel(this);
+		registerPanelScrollPane.setViewportView(registerPanel);
+
+		jPanel3 = new JPanel();
+		bottomTabbedPane.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")), jPanel3,
+				null);
+		BorderLayout jPanel3Layout = new BorderLayout();
+		jPanel3.setLayout(jPanel3Layout);
+
+		jScrollPane6 = new JScrollPane();
+		jPanel3.add(jScrollPane6, BorderLayout.CENTER);
+		jPanel3.add(getJPanel13(), BorderLayout.NORTH);
+		jScrollPane6.setViewportView(getJHistoryTable());
+
+		jPanel11 = new JPanel();
+		bottomTabbedPane.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), jPanel11, null);
+		bottomTabbedPane.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")),
+				getJAddressTranslatePanel(), null);
+		bottomTabbedPane.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
+				getJPageTableGraphPanel(), null);
+		if (!Global.debug) {
+			bottomTabbedPane.removeTabAt(bottomTabbedPane.getTabCount() - 1);
+		}
+		bottomTabbedPane.addTab(MyLanguage.getString("Table_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")),
+				getTableTranslateScrollPane(), null);
+		bottomTabbedPane.addTab(MyLanguage.getString("ELF_dump"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
+				getELFDumpScrollPane(), null);
+		bottomTabbedPane.addTab("OS debug informations", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/bug.png")), getOSDebugStandardPanel(),
+				null);
+		bottomTabbedPane.addTab("Log", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getLogPanel(), null);
+		BorderLayout jPanel11Layout = new BorderLayout();
+		jPanel11.setLayout(jPanel11Layout);
+		jPanel11.add(getJSplitPane3(), BorderLayout.CENTER);
+		jPanel11.add(getJPanel19(), BorderLayout.NORTH);
 		return jSplitPane2;
 	}
 
@@ -5691,7 +4415,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}.start();
 			jRunningLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			jRunningLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-			jRunningLabel.setFont(new java.awt.Font("Arial", 0, 20));
+			jRunningLabel.setFont(new java.awt.Font(jRunningLabel.getFont().getFamily(), 0, 20));
 			jRunningLabel.setForeground(Color.white);
 			jRunningLabel.setBackground(new Color(0, 0, 0, 180));
 			jRunningLabel.setOpaque(true);
@@ -5700,16 +4424,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JButton getJGDTGraphButton() {
-		if (jGDTGraphButton == null) {
-			jGDTGraphButton = new JButton();
-			jGDTGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/map.png")));
-			jGDTGraphButton.addActionListener(new ActionListener() {
+		if (gdtGraphButton == null) {
+			gdtGraphButton = new JButton();
+			gdtGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/map.png")));
+			gdtGraphButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jGDTGraphButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jGDTGraphButton;
+		return gdtGraphButton;
 	}
 
 	private void jGDTGraphButtonActionPerformed(ActionEvent evt) {
@@ -5717,31 +4441,31 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JToolBar getJPanel19() {
-		if (jPanel19 == null) {
-			jPanel19 = new JToolBar();
+		if (panel19 == null) {
+			panel19 = new JToolBar();
 			FlowLayout jPanel19Layout = new FlowLayout();
 			jPanel19Layout.setAlignment(FlowLayout.LEFT);
-			jPanel19.add(getJPagingGraphButton());
-			jPanel19.add(getJButton21x());
-			jPanel19.add(getJButton20());
-			jPanel19.add(getJDumpPageDirectoryAddressTextField());
-			jPanel19.add(getJButton21());
-			jPanel19.add(getJHideIfAddressIsZeroCheckBox());
+			panel19.add(getJPagingGraphButton());
+			panel19.add(getJButton21x());
+			panel19.add(getDumpCR3Button());
+			panel19.add(getDumpPageDirectoryAddressTextField());
+			panel19.add(getDumpPageTableAtAddressButton());
+			panel19.add(getHideIfAddressIsZeroCheckBox());
 		}
-		return jPanel19;
+		return panel19;
 	}
 
 	private JButton getJPagingGraphButton() {
-		if (jPagingGraphButton == null) {
-			jPagingGraphButton = new JButton();
-			jPagingGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			jPagingGraphButton.addActionListener(new ActionListener() {
+		if (pagingGraphButton == null) {
+			pagingGraphButton = new JButton();
+			pagingGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			pagingGraphButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jPagingGraphButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jPagingGraphButton;
+		return pagingGraphButton;
 	}
 
 	private void jPagingGraphButtonActionPerformed(ActionEvent evt) {
@@ -5756,13 +4480,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JPanel getJPageTableGraphPanel() {
-		if (jPageTableGraphPanel == null) {
-			jPageTableGraphPanel = new JPanel();
+		if (pageTableGraphPanel == null) {
+			pageTableGraphPanel = new JPanel();
 			BorderLayout jPageTableGraphPanelLayout = new BorderLayout();
-			jPageTableGraphPanel.setLayout(jPageTableGraphPanelLayout);
-			jPageTableGraphPanel.add(getJToolBar2(), BorderLayout.NORTH);
+			pageTableGraphPanel.setLayout(jPageTableGraphPanelLayout);
+			pageTableGraphPanel.add(getJToolBar2(), BorderLayout.NORTH);
 		}
-		return jPageTableGraphPanel;
+		return pageTableGraphPanel;
 	}
 
 	private JToolBar getJToolBar2() {
@@ -5775,31 +4499,31 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JCheckBox getJAutoRefreshPageTableGraphCheckBox() {
-		if (jAutoRefreshPageTableGraphCheckBox == null) {
-			jAutoRefreshPageTableGraphCheckBox = new JCheckBox();
-			jAutoRefreshPageTableGraphCheckBox.setText("Auto refresh");
+		if (autoRefreshPageTableGraphCheckBox == null) {
+			autoRefreshPageTableGraphCheckBox = new JCheckBox();
+			autoRefreshPageTableGraphCheckBox.setText("Auto refresh");
 		}
-		return jAutoRefreshPageTableGraphCheckBox;
+		return autoRefreshPageTableGraphCheckBox;
 	}
 
 	private JButton getJRefreshPageTableGraphButton() {
-		if (jRefreshPageTableGraphButton == null) {
-			jRefreshPageTableGraphButton = new JButton();
-			jRefreshPageTableGraphButton.setText("Refresh");
+		if (refreshPageTableGraphButton == null) {
+			refreshPageTableGraphButton = new JButton();
+			refreshPageTableGraphButton.setText("Refresh");
 		}
-		return jRefreshPageTableGraphButton;
+		return refreshPageTableGraphButton;
 	}
 
 	private JPanel getJAddressTranslatePanel() {
-		if (jAddressTranslatePanel == null) {
-			jAddressTranslatePanel = new JPanel();
+		if (addressTranslatePanel == null) {
+			addressTranslatePanel = new JPanel();
 			BorderLayout jAddressTranslatePanelLayout = new BorderLayout();
-			jAddressTranslatePanel.setLayout(jAddressTranslatePanelLayout);
-			jAddressTranslatePanel.add(getJPanel20(), BorderLayout.WEST);
-			jAddressTranslatePanel.add(getJPanel22(), BorderLayout.CENTER);
-			jAddressTranslatePanel.add(getJToolBar3(), BorderLayout.NORTH);
+			addressTranslatePanel.setLayout(jAddressTranslatePanelLayout);
+			addressTranslatePanel.add(getJPanel20(), BorderLayout.WEST);
+			addressTranslatePanel.add(getJPanel22(), BorderLayout.CENTER);
+			addressTranslatePanel.add(getJToolBar3(), BorderLayout.NORTH);
 		}
-		return jAddressTranslatePanel;
+		return addressTranslatePanel;
 	}
 
 	private JPanel getJPanel20() {
@@ -5820,47 +4544,47 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JRadioButton getJRadioButton3() {
-		if (jSearchAddressRadioButton1 == null) {
-			jSearchAddressRadioButton1 = new JRadioButton();
-			jSearchAddressRadioButton1.setText(MyLanguage.getString("Virtual_address"));
-			jSearchAddressRadioButton1.setSelected(true);
-			getButtonGroup3().add(jSearchAddressRadioButton1);
+		if (searchAddressRadioButton1 == null) {
+			searchAddressRadioButton1 = new JRadioButton();
+			searchAddressRadioButton1.setText(MyLanguage.getString("Virtual_address"));
+			searchAddressRadioButton1.setSelected(true);
+			getButtonGroup3().add(searchAddressRadioButton1);
 		}
-		return jSearchAddressRadioButton1;
+		return searchAddressRadioButton1;
 	}
 
 	private JRadioButton getJRadioButton4() {
-		if (jSearchAddressRadioButton2 == null) {
-			jSearchAddressRadioButton2 = new JRadioButton();
-			jSearchAddressRadioButton2.setText(MyLanguage.getString("Linear_address"));
-			getButtonGroup3().add(jSearchAddressRadioButton2);
+		if (searchAddressRadioButton2 == null) {
+			searchAddressRadioButton2 = new JRadioButton();
+			searchAddressRadioButton2.setText(MyLanguage.getString("Linear_address"));
+			getButtonGroup3().add(searchAddressRadioButton2);
 		}
 
-		return jSearchAddressRadioButton2;
+		return searchAddressRadioButton2;
 	}
 
 	private JRadioButton getJRadioButton5() {
-		if (jSearchAddressRadioButton3 == null) {
-			jSearchAddressRadioButton3 = new JRadioButton();
-			jSearchAddressRadioButton3.setVisible(false);
-			jSearchAddressRadioButton3.setText(MyLanguage.getString("Physical_address"));
-			getButtonGroup3().add(jSearchAddressRadioButton3);
+		if (searchAddressRadioButton3 == null) {
+			searchAddressRadioButton3 = new JRadioButton();
+			searchAddressRadioButton3.setVisible(false);
+			searchAddressRadioButton3.setText(MyLanguage.getString("Physical_address"));
+			getButtonGroup3().add(searchAddressRadioButton3);
 		}
 
-		return jSearchAddressRadioButton3;
+		return searchAddressRadioButton3;
 	}
 
 	private JButton getJButton16() {
-		if (jRefreshAddressTranslateButton == null) {
-			jRefreshAddressTranslateButton = new JButton();
-			jRefreshAddressTranslateButton.setText(MyLanguage.getString("Convert"));
-			jRefreshAddressTranslateButton.addActionListener(new ActionListener() {
+		if (refreshAddressTranslateButton == null) {
+			refreshAddressTranslateButton = new JButton();
+			refreshAddressTranslateButton.setText(MyLanguage.getString("Convert"));
+			refreshAddressTranslateButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jRefreshAddressTranslateButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jRefreshAddressTranslateButton;
+		return refreshAddressTranslateButton;
 	}
 
 	private JPanel getJPanel22() {
@@ -5874,16 +4598,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JTable getJTable1() {
-		if (jAddressTranslateTable2 == null) {
-			jAddressTranslateTable2 = new JTable();
+		if (addressTranslateTable2 == null) {
+			addressTranslateTable2 = new JTable();
 			AddressTranslateTableModel addressTranslateTableModel = new AddressTranslateTableModel();
-			jAddressTranslateTable2.setModel(addressTranslateTableModel);
-			jAddressTranslateTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int x = 0; x < jAddressTranslateTable2.getColumnCount(); x++) {
-				jAddressTranslateTable2.getColumnModel().getColumn(x).setPreferredWidth(100);
+			addressTranslateTable2.setModel(addressTranslateTableModel);
+			addressTranslateTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			for (int x = 0; x < addressTranslateTable2.getColumnCount(); x++) {
+				addressTranslateTable2.getColumnModel().getColumn(x).setPreferredWidth(100);
 			}
 		}
-		return jAddressTranslateTable2;
+		return addressTranslateTable2;
 	}
 
 	private JScrollPane getJScrollPane13() {
@@ -5948,27 +4672,27 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JTextField getJAddressTextField() {
-		if (jAddressTextField == null) {
-			jAddressTextField = new JTextField();
-			jAddressTextField.addKeyListener(new KeyAdapter() {
+		if (addressTextField == null) {
+			addressTextField = new JTextField();
+			addressTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
-					jAddressTextFieldKeyTyped(evt);
+					addressTextFieldKeyTyped(evt);
 				}
 			});
 		}
-		return jAddressTextField;
+		return addressTextField;
 	}
 
 	private void jRefreshAddressTranslateButtonActionPerformed(ActionEvent evt) {
-		AddressTranslateTableModel model = (AddressTranslateTableModel) this.jAddressTranslateTable2.getModel();
+		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
 
-		if (jSearchAddressRadioButton1.isSelected()) {
-			if (!this.jAddressTextField.getText().contains(":") || this.jAddressTextField.getText().replaceAll("[^:]", "").length() != 1) {
+		if (searchAddressRadioButton1.isSelected()) {
+			if (!this.addressTextField.getText().contains(":") || this.addressTextField.getText().replaceAll("[^:]", "").length() != 1) {
 				JOptionPane.showMessageDialog(this, "Error, please input <segment selector>:<offset>\n\ne.g. : 0x10:0x12345678", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			BigInteger segSelector = CommonLib.string2BigInteger(this.jAddressTextField.getText().split(":")[0]);
-			BigInteger address = CommonLib.string2BigInteger(this.jAddressTextField.getText().split(":")[1]);
+			BigInteger segSelector = CommonLib.string2BigInteger(this.addressTextField.getText().split(":")[0]);
+			BigInteger address = CommonLib.string2BigInteger(this.addressTextField.getText().split(":")[1]);
 
 			// for (int x = 0; x < model.getRowCount(); x++) {
 			// if (model.searchType.get(x).equals(1) &&
@@ -5987,8 +4711,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))),
-					8);
+			int descriptor[];
+			//			if (VMController.vmType == VMType.Bochs) {
+			//				descriptor = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			//			} else if (VMController.vmType == VMType.Qemu) {
+			descriptor = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			//			} else {
+			//				return;
+			//			}
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
@@ -5996,25 +4726,47 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[];
+			//			if (VMController.vmType == VMType.Bochs) {
+			//				pdeBytes = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			//			} else if (VMController.vmType == VMType.Qemu) {
+			pdeBytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			//			} else {
+			//				return;
+			//			}
+
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
-			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[];
+			//			if (VMController.vmType == VMType.Bochs) {
+			//				pteBytes = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			//			} else if (VMController.vmType == VMType.Qemu) {
+			pteBytes = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			//			} else {
+			//				return;
+			//			}
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			int bytesAtPhysicalAddress[];
+			//			if (VMController.vmType == VMType.Bochs) {
+			//				bytesAtPhysicalAddress = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			//			} else if (VMController.vmType == VMType.Qemu) {
+			bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
+			//			} else {
+			//				return;
+			//			}
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
-		} else if (jSearchAddressRadioButton2.isSelected()) {
+		} else if (searchAddressRadioButton2.isSelected()) {
 			// for (int x = 0; x < model.getRowCount(); x++) {
 			// if (model.searchType.get(x).equals(2) &&
 			// model.searchAddress.get(x).equals(CommonLib.string2long(this.jAddressTextField.getText())))
@@ -6022,7 +4774,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// return;
 			// }
 			// }
-			BigInteger address = CommonLib.string2BigInteger(this.jAddressTextField.getText());
+			BigInteger address = CommonLib.string2BigInteger(this.addressTextField.getText());
 
 			model.searchType.add(2);
 			model.searchAddress.add(address);
@@ -6034,31 +4786,32 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
+					4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
-			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[] = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			int bytesAtPhysicalAddress[] = VMController.getVM().physicalMemory(physicalAddress, 8);
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
-		} else if (jSearchAddressRadioButton3.isSelected()) {
+		} else if (searchAddressRadioButton3.isSelected()) {
 			for (int x = 0; x < model.getRowCount(); x++) {
-				if (model.searchType.get(x).equals(3) && model.searchAddress.get(x).equals(CommonLib.string2long(this.jAddressTextField.getText()))) {
+				if (model.searchType.get(x).equals(3) && model.searchAddress.get(x).equals(CommonLib.string2long(this.addressTextField.getText()))) {
 					return;
 				}
 			}
-			BigInteger addr = CommonLib.string2BigInteger(this.jAddressTextField.getText());
+			BigInteger addr = CommonLib.string2BigInteger(this.addressTextField.getText());
 			model.searchType.add(3);
 			model.searchSegSelector.add(BigInteger.ZERO);
 			model.searchAddress.add(addr);
@@ -6075,44 +4828,38 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JButton getJRefreshAddressTranslateTableButton() {
-		if (jRefreshAddressTranslateTableButton == null) {
-			jRefreshAddressTranslateTableButton = new JButton();
-			jRefreshAddressTranslateTableButton.setText(MyLanguage.getString("Refresh"));
-			jRefreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
-			jRefreshAddressTranslateTableButton.setText("Refresh");
-			jRefreshAddressTranslateTableButton.addActionListener(new ActionListener() {
+		if (refreshAddressTranslateTableButton == null) {
+			refreshAddressTranslateTableButton = new JButton();
+			refreshAddressTranslateTableButton.setText(MyLanguage.getString("Refresh"));
+			refreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
+			refreshAddressTranslateTableButton.setText("Refresh");
+			refreshAddressTranslateTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jRefreshAddressTranslateTableButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jRefreshAddressTranslateTableButton;
+		return refreshAddressTranslateTableButton;
 	}
 
 	private void jRefreshAddressTranslateTableButtonActionPerformed(ActionEvent evt) {
-		AddressTranslateTableModel model = (AddressTranslateTableModel) this.jAddressTranslateTable2.getModel();
+		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
 		for (int x = 0; x < model.getRowCount(); x++) {
 			if (model.searchType.get(x).equals(1)) {
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
-				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()),
-						CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()));
-				commandReceiver.clearBuffer();
+				BigInteger gdtBase = CommonLib.getBigInteger(
+						VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()),
+								CommonLib.string2int(this.registerPanel.gdtrTextField.getText())), 0);
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
-				sendCommand("xp /8bx " + gdtBase);
-				String result = commandReceiver.getCommandResult(String.format("%08x", gdtBase));
-
 				int bytes[] = new int[8];
-				String[] b = result.replaceFirst("^.*:", "").split("\t");
-				for (int y = 1; y <= 8; y++) {
-					bytes[y - 1] = (int) CommonLib.string2long(b[y]);
-				}
+				bytes = VMController.getVM().physicalMemory(gdtBase, 8);
 
 				Long gdtDescriptor = CommonLib.getLong(bytes, 0);
-				System.out.println(Long.toHexString(gdtDescriptor));
+				logger.debug(Long.toHexString(gdtDescriptor));
 				BigInteger base = CommonLib.getBigInteger(bytes[2], bytes[3], bytes[4], bytes[7], 0, 0, 0, 0);
-				System.out.println(base.toString(16));
+				logger.debug(base.toString(16));
 
 				model.linearAddress.set(x, base.add(model.searchAddress.get(x)));
 			}
@@ -6136,96 +4883,96 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JPopupMenu getJHexTablePopupMenu() {
-		if (jHexTablePopupMenu == null) {
-			jHexTablePopupMenu = new JPopupMenu();
-			jHexTablePopupMenu.add(getJMenu7());
-			jHexTablePopupMenu.add(getJMenu8());
-			jHexTablePopupMenu.add(getJMenuItem4());
-			jHexTablePopupMenu.add(getJMenuItem5());
-			jHexTablePopupMenu.add(getJMenuItem6());
-			jHexTablePopupMenu.add(getJMenuItem7());
-			jHexTablePopupMenu.add(getJDisassemble32MenuItem());
+		if (hexTablePopupMenu == null) {
+			hexTablePopupMenu = new JPopupMenu();
+			hexTablePopupMenu.add(getJMenu7());
+			hexTablePopupMenu.add(getJMenu8());
+			hexTablePopupMenu.add(getJMenuItem4());
+			hexTablePopupMenu.add(getJMenuItem5());
+			hexTablePopupMenu.add(getJMenuItem6());
+			hexTablePopupMenu.add(getJMenuItem7());
+			hexTablePopupMenu.add(getJDisassemble32MenuItem());
 		}
-		return jHexTablePopupMenu;
+		return hexTablePopupMenu;
 	}
 
 	private JMenuItem getJMenu7() {
-		if (jGDTMenuItem == null) {
-			jGDTMenuItem = new JMenuItem();
-			jGDTMenuItem.setText("GDT table");
-			jGDTMenuItem.setBounds(0, 21, 115, 21);
-			jGDTMenuItem.addActionListener(new ActionListener() {
+		if (gdtMenuItem == null) {
+			gdtMenuItem = new JMenuItem();
+			gdtMenuItem.setText("GDT table");
+			gdtMenuItem.setBounds(0, 21, 115, 21);
+			gdtMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jGDTMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jGDTMenuItem;
+		return gdtMenuItem;
 	}
 
 	private JMenuItem getJMenu8() {
-		if (jGDTDescriptorMenuItem == null) {
-			jGDTDescriptorMenuItem = new JMenuItem();
-			jGDTDescriptorMenuItem.setText("GDT descriptor");
-			jGDTDescriptorMenuItem.addActionListener(new ActionListener() {
+		if (gdtDescriptorMenuItem == null) {
+			gdtDescriptorMenuItem = new JMenuItem();
+			gdtDescriptorMenuItem.setText("GDT descriptor");
+			gdtDescriptorMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jGDTDescriptorMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jGDTDescriptorMenuItem;
+		return gdtDescriptorMenuItem;
 	}
 
 	private JMenuItem getJMenuItem4() {
-		if (jIDTMenuItem == null) {
-			jIDTMenuItem = new JMenuItem();
-			jIDTMenuItem.setText("IDT table");
-			jIDTMenuItem.addActionListener(new ActionListener() {
+		if (idtMenuItem == null) {
+			idtMenuItem = new JMenuItem();
+			idtMenuItem.setText("IDT table");
+			idtMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jIDTMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jIDTMenuItem;
+		return idtMenuItem;
 	}
 
 	private JMenuItem getJMenuItem5() {
-		if (jIDTDescriptorMenuItem == null) {
-			jIDTDescriptorMenuItem = new JMenuItem();
-			jIDTDescriptorMenuItem.setText("IDT descriptor");
-			jIDTDescriptorMenuItem.addActionListener(new ActionListener() {
+		if (idtDescriptorMenuItem == null) {
+			idtDescriptorMenuItem = new JMenuItem();
+			idtDescriptorMenuItem.setText("IDT descriptor");
+			idtDescriptorMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jIDTDescriptorMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jIDTDescriptorMenuItem;
+		return idtDescriptorMenuItem;
 	}
 
 	private JMenuItem getJMenuItem6() {
-		if (jPDEMenuItem == null) {
-			jPDEMenuItem = new JMenuItem();
-			jPDEMenuItem.setText(MyLanguage.getString("PDE"));
-			jPDEMenuItem.addActionListener(new ActionListener() {
+		if (pdeMenuItem == null) {
+			pdeMenuItem = new JMenuItem();
+			pdeMenuItem.setText(MyLanguage.getString("PDE"));
+			pdeMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jPDEMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jPDEMenuItem;
+		return pdeMenuItem;
 	}
 
 	private JMenuItem getJMenuItem7() {
-		if (jPTEMenuItem == null) {
-			jPTEMenuItem = new JMenuItem();
-			jPTEMenuItem.setText(MyLanguage.getString("PTE"));
-			jPTEMenuItem.addActionListener(new ActionListener() {
+		if (pteMenuItem == null) {
+			pteMenuItem = new JMenuItem();
+			pteMenuItem.setText(MyLanguage.getString("PTE"));
+			pteMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jPTEMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jPTEMenuItem;
+		return pteMenuItem;
 	}
 
 	private void jGDTMenuItemActionPerformed(ActionEvent evt) {
@@ -6256,79 +5003,79 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void jMemoryAddressComboBoxActionPerformed(ActionEvent evt) {
 		if (this.isVisible()) {
-			jGOMemoryButtonActionPerformed(evt);
+			goMemoryButtonActionPerformed(evt);
 		}
 	}
 
 	private JMenuItem getJDisassemble32MenuItem() {
-		if (jDisassemble32MenuItem == null) {
-			jDisassemble32MenuItem = new JMenuItem();
-			jDisassemble32MenuItem.addActionListener(new ActionListener() {
+		if (disassemble32MenuItem == null) {
+			disassemble32MenuItem = new JMenuItem();
+			disassemble32MenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jDisassemble32MenuItemActionPerformed(evt);
 				}
 			});
-			jDisassemble32MenuItem.setText(MyLanguage.getString("Disassemble"));
+			disassemble32MenuItem.setText(MyLanguage.getString("Disassemble"));
 		}
-		return jDisassemble32MenuItem;
+		return disassemble32MenuItem;
 	}
 
 	private void jDisassemble32MenuItemActionPerformed(ActionEvent evt) {
-		this.jInstructionComboBox.setSelectedItem(currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)));
+		this.instructionComboBox.setSelectedItem(currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)));
 		disassembleButtonActionPerformed(null);
 		jTabbedPane1.setSelectedIndex(0);
 	}
 
 	private JPanel getJELFBreakpointPanel() {
-		if (jELFBreakpointPanel == null) {
-			jELFBreakpointPanel = new JPanel();
+		if (elfBreakpointPanel == null) {
+			elfBreakpointPanel = new JPanel();
 			BorderLayout jELFBreakpointPanelLayout = new BorderLayout();
-			jELFBreakpointPanel.setLayout(jELFBreakpointPanelLayout);
-			jELFBreakpointPanel.add(getJPanel23(), BorderLayout.NORTH);
-			jELFBreakpointPanel.add(getJScrollPane14(), BorderLayout.CENTER);
-			jELFBreakpointPanel.add(getJPanel24(), BorderLayout.SOUTH);
+			elfBreakpointPanel.setLayout(jELFBreakpointPanelLayout);
+			elfBreakpointPanel.add(getELFToolbar(), BorderLayout.NORTH);
+			elfBreakpointPanel.add(getJScrollPane14(), BorderLayout.CENTER);
+			elfBreakpointPanel.add(getJPanel24(), BorderLayout.SOUTH);
 		}
-		return jELFBreakpointPanel;
+		return elfBreakpointPanel;
 	}
 
-	private JPanel getJPanel23() {
-		if (jPanel23 == null) {
-			jPanel23 = new JPanel();
+	private JToolBar getELFToolbar() {
+		if (elfToolbar == null) {
+			elfToolbar = new JToolBar();
 			FlowLayout jPanel23Layout = new FlowLayout();
-			jPanel23.setLayout(jPanel23Layout);
-			jPanel23.add(getJELFFileComboBox());
-			jPanel23.add(getJOpenELFButton());
-			jPanel23.add(getJShowELFByteCheckBox());
+			elfToolbar.setLayout(jPanel23Layout);
+			elfToolbar.add(getELFFileComboBox());
+			elfToolbar.add(getOpenELFButton());
+			elfToolbar.add(getShowELFByteCheckBox());
 		}
-		return jPanel23;
+		return elfToolbar;
 	}
 
-	private JButton getJOpenELFButton() {
-		if (jOpenELFButton == null) {
-			jOpenELFButton = new JButton();
-			jOpenELFButton.setText("Open ELF");
-			jOpenELFButton.addActionListener(new ActionListener() {
+	private JButton getOpenELFButton() {
+		if (openELFButton == null) {
+			openELFButton = new JButton();
+			openELFButton.setText("Open ELF");
+			openELFButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jOpenELFButtonActionPerformed(evt);
+					openELFButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jOpenELFButton;
+		return openELFButton;
 	}
 
-	private JComboBox getJELFFileComboBox() {
-		if (jELFFileComboBox == null) {
-			ComboBoxModel jELFFileComboBoxModel = new DefaultComboBoxModel();
-			jELFFileComboBox = new JComboBox();
-			jELFFileComboBox.setModel(jELFFileComboBoxModel);
-			jELFFileComboBox.setPreferredSize(new java.awt.Dimension(163, 26));
-			jELFFileComboBox.addActionListener(new ActionListener() {
+	private JComboBox<String> getELFFileComboBox() {
+		if (elfFileComboBox == null) {
+			ComboBoxModel<String> elfFileComboBoxModel = new DefaultComboBoxModel<String>();
+			elfFileComboBox = new JComboBox<String>();
+			elfFileComboBox.setModel(elfFileComboBoxModel);
+			elfFileComboBox.setPreferredSize(new java.awt.Dimension(163, 26));
+			elfFileComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jELFFileComboBoxActionPerformed(evt);
+					elfFileComboBoxActionPerformed(evt);
 				}
 			});
 		}
-		return jELFFileComboBox;
+		return elfFileComboBox;
 	}
 
 	private JScrollPane getJScrollPane14() {
@@ -6353,14 +5100,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			elfTable.getTableHeader().setReorderingAllowed(false);
 			elfTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
-					jELFTableMouseClicked(evt);
+					elfTableMouseClicked(evt);
 				}
 			});
 		}
 		return elfTable;
 	}
 
-	private void jOpenELFButtonActionPerformed(ActionEvent evt) {
+	private void openELFButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		fc.setCurrentDirectory(new File(Setting.getInstance().lastElfHistoryOpenDir));
 
@@ -6381,7 +5128,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// find source file
 			Collection<File> found = FileUtils.listFiles(file.getParentFile(), FileFilterUtils.nameFileFilter(filenames[x]), TrueFileFilter.INSTANCE);
 			if (found.size() == 0) {
-				this.jELFFileComboBox.addItem(file.getName() + " - " + filenames[x] + " (missing)");
+				this.elfFileComboBox.addItem(file.getName() + " - " + filenames[x] + " (missing)");
 			} else {
 				File foundFile = (File) found.toArray()[0];
 
@@ -6393,12 +5140,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					e.printStackTrace();
 				}
 
-				this.jELFFileComboBox.addItem(file.getName() + " - " + foundFile.getAbsolutePath().substring(file.getParent().length()));
+				this.elfFileComboBox.addItem(file.getName() + " - " + foundFile.getAbsolutePath().substring(file.getParent().length()));
 				// end read source code
 			}
 			// end find source file
 		}
-		jELFFileComboBoxActionPerformed(null);
+		elfFileComboBoxActionPerformed(null);
 
 		model.updateBreakpoint(getRealEIP());
 
@@ -6408,89 +5155,89 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		// end save history
 	}
 
-	private void jELFFileComboBoxActionPerformed(ActionEvent evt) {
+	private void elfFileComboBoxActionPerformed(ActionEvent evt) {
 		SourceCodeTableModel model = (SourceCodeTableModel) elfTable.getModel();
-		model.setCurrentFile(new File(jELFFileComboBox.getSelectedItem().toString().split("-")[1]).getName());
+		model.setCurrentFile(new File(elfFileComboBox.getSelectedItem().toString().split("-")[1]).getName());
 	}
 
 	private JPanel getJPanel24() {
 		if (jPanel24 == null) {
 			jPanel24 = new JPanel();
-			jPanel24.add(getJRefreshButton());
-			jPanel24.add(getJEnableELFBreakpointButton());
-			jPanel24.add(getJDisableELFBreakpointButton());
-			jPanel24.add(getJSaveELFBreakpointButton());
-			jPanel24.add(getJLoadELFBreakpointButton());
+			jPanel24.add(getRefreshButton());
+			jPanel24.add(getEnableELFBreakpointButton());
+			jPanel24.add(getDisableELFBreakpointButton());
+			jPanel24.add(getSaveELFBreakpointButton());
+			jPanel24.add(getLoadELFBreakpointButton());
 		}
 		return jPanel24;
 	}
 
-	private JButton getJRefreshButton() {
-		if (jRefreshELFBreakpointButton == null) {
-			jRefreshELFBreakpointButton = new JButton();
-			jRefreshELFBreakpointButton.addActionListener(new ActionListener() {
+	private JButton getRefreshButton() {
+		if (refreshELFBreakpointButton == null) {
+			refreshELFBreakpointButton = new JButton();
+			refreshELFBreakpointButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jRefreshELFBreakpointButtonActionPerformed(evt);
+					refreshELFBreakpointButtonActionPerformed(evt);
 				}
 			});
-			jRefreshELFBreakpointButton.setText(MyLanguage.getString("Refresh"));
+			refreshELFBreakpointButton.setText(MyLanguage.getString("Refresh"));
 		}
-		return jRefreshELFBreakpointButton;
+		return refreshELFBreakpointButton;
 	}
 
-	private JButton getJEnableELFBreakpointButton() {
-		if (jEnableELFBreakpointButton == null) {
-			jEnableELFBreakpointButton = new JButton();
-			jEnableELFBreakpointButton.addActionListener(new ActionListener() {
+	private JButton getEnableELFBreakpointButton() {
+		if (enableELFBreakpointButton == null) {
+			enableELFBreakpointButton = new JButton();
+			enableELFBreakpointButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jEnableELFBreakpointButtonActionPerformed(evt);
+					enableELFBreakpointButtonActionPerformed(evt);
 				}
 			});
-			jEnableELFBreakpointButton.setText(MyLanguage.getString("Enable"));
+			enableELFBreakpointButton.setText(MyLanguage.getString("Enable"));
 		}
-		return jEnableELFBreakpointButton;
+		return enableELFBreakpointButton;
 	}
 
-	private JButton getJDisableELFBreakpointButton() {
-		if (jDisableELFBreakpointButton == null) {
-			jDisableELFBreakpointButton = new JButton();
-			jDisableELFBreakpointButton.addActionListener(new ActionListener() {
+	private JButton getDisableELFBreakpointButton() {
+		if (disableELFBreakpointButton == null) {
+			disableELFBreakpointButton = new JButton();
+			disableELFBreakpointButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jDisableELFBreakpointButtonActionPerformed(evt);
+					disableELFBreakpointButtonActionPerformed(evt);
 				}
 			});
-			jDisableELFBreakpointButton.setText(MyLanguage.getString("Disable"));
+			disableELFBreakpointButton.setText(MyLanguage.getString("Disable"));
 		}
-		return jDisableELFBreakpointButton;
+		return disableELFBreakpointButton;
 	}
 
-	private JButton getJSaveELFBreakpointButton() {
-		if (jSaveELFBreakpointButton == null) {
-			jSaveELFBreakpointButton = new JButton();
-			jSaveELFBreakpointButton.addActionListener(new ActionListener() {
+	private JButton getSaveELFBreakpointButton() {
+		if (saveELFBreakpointButton == null) {
+			saveELFBreakpointButton = new JButton();
+			saveELFBreakpointButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSaveELFBreakpointButtonActionPerformed(evt);
+					saveELFBreakpointButtonActionPerformed(evt);
 				}
 			});
-			jSaveELFBreakpointButton.setText(MyLanguage.getString("Save"));
+			saveELFBreakpointButton.setText(MyLanguage.getString("Save"));
 		}
-		return jSaveELFBreakpointButton;
+		return saveELFBreakpointButton;
 	}
 
-	private JButton getJLoadELFBreakpointButton() {
-		if (jLoadELFBreakpointButton == null) {
-			jLoadELFBreakpointButton = new JButton();
-			jLoadELFBreakpointButton.addActionListener(new ActionListener() {
+	private JButton getLoadELFBreakpointButton() {
+		if (loadELFBreakpointButton == null) {
+			loadELFBreakpointButton = new JButton();
+			loadELFBreakpointButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jLoadELFBreakpointButtonActionPerformed(evt);
+					loadELFBreakpointButtonActionPerformed(evt);
 				}
 			});
-			jLoadELFBreakpointButton.setText(MyLanguage.getString("Load"));
+			loadELFBreakpointButton.setText(MyLanguage.getString("Load"));
 		}
-		return jLoadELFBreakpointButton;
+		return loadELFBreakpointButton;
 	}
 
-	private void jRefreshELFBreakpointButtonActionPerformed(ActionEvent evt) {
+	private void refreshELFBreakpointButtonActionPerformed(ActionEvent evt) {
 		if (Global.debug) {
 			SourceCodeTableModel model = (SourceCodeTableModel) elfTable.getModel();
 
@@ -6500,20 +5247,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public BigInteger getRealEIP() {
 		try {
-			BigInteger eip;
-			if (CommonLib.getBit(CommonLib.string2long(registerPanel.cr0TextField.getText()), 0) == 1) {
-				eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+			//			BigInteger eip;
+			//			if (CommonLib.getBit(CommonLib.string2long(registerPanel.cr0TextField.getText()), 0) == 1) {
+			//				eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+			//			} else {
+			//				eip = CommonLib.string2BigInteger(registerPanel.csTextField.getText()).multiply(BigInteger.valueOf(16))
+			//						.add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
+			//			}
+			BigInteger cs;
+			if (registerPanel.csTextField.getBase().equals("")) {
+				cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
 			} else {
-				eip = CommonLib.string2BigInteger(registerPanel.csTextField.getText()).multiply(BigInteger.valueOf(16))
-						.add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
+				cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 			}
-			return eip;
+			return cs.add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
 		} catch (Exception ex) {
 			return BigInteger.valueOf(0);
 		}
 	}
 
-	private void jEnableELFBreakpointButtonActionPerformed(ActionEvent evt) {
+	private void enableELFBreakpointButtonActionPerformed(ActionEvent evt) {
 		SourceCodeTableModel model = (SourceCodeTableModel) elfTable.getModel();
 		BigInteger address = model.getDebugLineInfo().get(model.getCurrentFile()).get(this.elfTable.getSelectedRow());
 
@@ -6521,7 +5274,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			BigInteger addr = CommonLib.string2BigInteger(breakpointTable.getValueAt(x, 2).toString());
 			if (addr == address) {
 				String breakpointNo = breakpointTable.getValueAt(x, 0).toString().trim().split(" ")[0];
-				sendCommand("bpe " + breakpointNo);
+				VMController.getVM().enablePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointNo));
 
 				model.updateBreakpoint(getRealEIP());
 				this.updateBreakpoint();
@@ -6530,7 +5283,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void jDisableELFBreakpointButtonActionPerformed(ActionEvent evt) {
+	private void disableELFBreakpointButtonActionPerformed(ActionEvent evt) {
 		SourceCodeTableModel model = (SourceCodeTableModel) elfTable.getModel();
 		BigInteger address = model.getDebugLineInfo().get(model.getCurrentFile()).get(this.elfTable.getSelectedRow());
 
@@ -6538,7 +5291,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			BigInteger addr = CommonLib.string2BigInteger(breakpointTable.getValueAt(x, 2).toString());
 			if (addr == address) {
 				String breakpointNo = breakpointTable.getValueAt(x, 0).toString().trim().split(" ")[0];
-				sendCommand("bpd " + breakpointNo);
+				VMController.getVM().disablePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointNo));
 
 				model.updateBreakpoint(getRealEIP());
 				this.updateBreakpoint();
@@ -6547,15 +5300,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void jSaveELFBreakpointButtonActionPerformed(ActionEvent evt) {
-		this.jSaveBreakpointButtonActionPerformed(null);
+	private void saveELFBreakpointButtonActionPerformed(ActionEvent evt) {
+		this.saveBreakpointButtonActionPerformed(null);
 	}
 
-	private void jLoadELFBreakpointButtonActionPerformed(ActionEvent evt) {
-		this.jLoadBreakpointButtonActionPerformed(null);
+	private void loadELFBreakpointButtonActionPerformed(ActionEvent evt) {
+		this.loadBreakpointButtonActionPerformed(null);
 	}
 
-	private void jELFTableMouseClicked(MouseEvent evt) {
+	private void elfTableMouseClicked(MouseEvent evt) {
 		if (SwingUtilities.isRightMouseButton(evt)) {
 			// select
 			Point p = evt.getPoint();
@@ -6566,7 +5319,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			elfTable.getColumnModel().getSelectionModel().setSelectionInterval(columnNumber, columnNumber);
 			// end select
 
-			getJELFTablePopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
+			getELFTablePopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}
 
@@ -6579,65 +5332,65 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel25Layout.setAlignment(FlowLayout.LEFT);
 			jPanel25.setLayout(jPanel25Layout);
 			{
-				jStatusLabel = new JLabel();
-				jPanel25.add(jStatusLabel);
-				jStatusLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
-				jStatusLabel.setForeground(new java.awt.Color(255, 0, 0));
+				statusLabel = new JLabel();
+				jPanel25.add(statusLabel);
+				statusLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+				statusLabel.setForeground(new java.awt.Color(255, 0, 0));
 			}
-			jPanel25.add(getJCPUModeLabel());
-			jPanel25.add(getJBochsVersionLabel());
-			jPanel25.add(getJLatestVersionLabel());
+			jPanel25.add(getCPUModeLabel());
+			jPanel25.add(getBochsVersionLabel());
+			jPanel25.add(getLatestVersionLabel());
 		}
 		return jPanel25;
 	}
 
-	private JLabel getJCPUModeLabel() {
-		if (jCPUModeLabel == null) {
-			jCPUModeLabel = new JLabel();
+	private JLabel getCPUModeLabel() {
+		if (cpuModeLabel == null) {
+			cpuModeLabel = new JLabel();
 		}
-		return jCPUModeLabel;
+		return cpuModeLabel;
 	}
 
-	private JCheckBox getJShowELFByteCheckBox() {
-		if (jShowELFByteCheckBox == null) {
-			jShowELFByteCheckBox = new JCheckBox();
-			jShowELFByteCheckBox.addActionListener(new ActionListener() {
+	private JCheckBox getShowELFByteCheckBox() {
+		if (showELFByteCheckBox == null) {
+			showELFByteCheckBox = new JCheckBox();
+			showELFByteCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jShowELFByteCheckBoxActionPerformed(evt);
+					showELFByteCheckBoxActionPerformed(evt);
 				}
 			});
-			jShowELFByteCheckBox.setText(MyLanguage.getString("Bytes"));
+			showELFByteCheckBox.setText(MyLanguage.getString("Bytes"));
 		}
-		return jShowELFByteCheckBox;
+		return showELFByteCheckBox;
 	}
 
-	private void jShowELFByteCheckBoxActionPerformed(ActionEvent evt) {
+	private void showELFByteCheckBoxActionPerformed(ActionEvent evt) {
 		SourceCodeTableModel model = (SourceCodeTableModel) elfTable.getModel();
-		model.showBytes(jShowELFByteCheckBox.isSelected());
+		model.showBytes(showELFByteCheckBox.isSelected());
 	}
 
-	private JLabel getJBochsVersionLabel() {
-		if (jBochsVersionLabel == null) {
-			jBochsVersionLabel = new JLabel();
+	private JLabel getBochsVersionLabel() {
+		if (bochsVersionLabel == null) {
+			bochsVersionLabel = new JLabel();
 		}
-		return jBochsVersionLabel;
+		return bochsVersionLabel;
 	}
 
-	private JLabel getJLatestVersionLabel() {
-		if (jLatestVersionLabel == null) {
-			jLatestVersionLabel = new JLabel();
-			jLatestVersionLabel.setForeground(Color.green);
-			jLatestVersionLabel.addMouseListener(new MouseAdapter() {
+	private JLabel getLatestVersionLabel() {
+		if (latestVersionLabel == null) {
+			latestVersionLabel = new JLabel();
+			latestVersionLabel.setForeground(Color.green);
+			latestVersionLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
-					jLatestVersionLabelMouseClicked(evt);
+					latestVersionLabelMouseClicked(evt);
 				}
 			});
 		}
-		return jLatestVersionLabel;
+		return latestVersionLabel;
 	}
 
-	private void jLatestVersionLabelMouseClicked(MouseEvent evt) {
-		if (!jLatestVersionLabel.getText().equals("")) {
+	private void latestVersionLabelMouseClicked(MouseEvent evt) {
+		if (!latestVersionLabel.getText().equals("")) {
 			try {
 				// java.awt.Desktop.getDesktop().browse(new
 				// URI(jLatestVersionLabel.getText().split(MyLanguage.getString("Download_url")
@@ -6653,15 +5406,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	}
 
-	private JPanel getJELFDumpScrollPane() {
-		if (jELFDumpPanel == null) {
-			jELFDumpPanel = new JPanel();
+	private JPanel getELFDumpScrollPane() {
+		if (elfDumpPanel == null) {
+			elfDumpPanel = new JPanel();
 			BorderLayout jELFDumpPanelLayout = new BorderLayout();
-			jELFDumpPanel.setLayout(jELFDumpPanelLayout);
-			jELFDumpPanel.add(getJPanel26(), BorderLayout.NORTH);
-			jELFDumpPanel.add(getJTabbedPane4(), BorderLayout.CENTER);
+			elfDumpPanel.setLayout(jELFDumpPanelLayout);
+			elfDumpPanel.add(getJPanel26(), BorderLayout.NORTH);
+			elfDumpPanel.add(getJTabbedPane4(), BorderLayout.CENTER);
 		}
-		return jELFDumpPanel;
+		return elfDumpPanel;
 	}
 
 	private JToolBar getJPanel26() {
@@ -6669,71 +5422,71 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel26 = new JToolBar();
 			FlowLayout jPanel26Layout = new FlowLayout();
 			jPanel26Layout.setAlignment(FlowLayout.LEFT);
-			jPanel26.add(getJELFComboBox());
-			jPanel26.add(getJButton16x());
+			jPanel26.add(getELFComboBox());
+			jPanel26.add(getOpenELFDumpButton());
 		}
 		return jPanel26;
 	}
 
-	private JComboBox getJELFComboBox() {
-		if (jELFComboBox == null) {
-			ComboBoxModel jELFComboBoxModel = new DefaultComboBoxModel(new String[] {});
-			jELFComboBox = new JComboBox();
-			jELFComboBox.setModel(jELFComboBoxModel);
-			jELFComboBox.setMaximumSize(new java.awt.Dimension(400, 30));
-			jELFComboBox.addActionListener(new ActionListener() {
+	private JComboBox<File> getELFComboBox() {
+		if (elfComboBox == null) {
+			ComboBoxModel<File> elfComboBoxModel = new DefaultComboBoxModel<File>();
+			elfComboBox = new JComboBox<File>();
+			elfComboBox.setModel(elfComboBoxModel);
+			elfComboBox.setMaximumSize(new java.awt.Dimension(400, 30));
+			elfComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jELFComboBoxActionPerformed(evt);
+					elfComboBoxActionPerformed(evt);
 				}
 			});
 		}
-		return jELFComboBox;
+		return elfComboBox;
 	}
 
-	private JButton getJButton16x() {
-		if (jOpenELFDumpButton == null) {
-			jOpenELFDumpButton = new JButton();
-			jOpenELFDumpButton.setText("Open ELF");
-			jOpenELFDumpButton.addActionListener(new ActionListener() {
+	private JButton getOpenELFDumpButton() {
+		if (openELFDumpButton == null) {
+			openELFDumpButton = new JButton();
+			openELFDumpButton.setText("Open ELF");
+			openELFDumpButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jOpenELFDumpButtonActionPerformed(evt);
+					openELFDumpButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jOpenELFDumpButton;
+		return openELFDumpButton;
 	}
 
 	private JTabbedPane getJTabbedPane4() {
-		if (jTabbedPane4 == null) {
-			jTabbedPane4 = new JMaximizableTabbedPane();
-			jTabbedPane4.addTab("Header", null, getJELFHeaderScrollPane(), null);
-			jTabbedPane4.addTab("Section", null, getJScrollPane15(), null);
-			jTabbedPane4.addTab("Program header", null, getJScrollPane16(), null);
-			jTabbedPane4.addTab("objdump", null, getObjdump(), null);
-			jTabbedPane4.addTab(".rel.plt", null, getJPanel28(), null);
-			jTabbedPane4.addTab(".dynamic", null, getJPanel29(), null);
+		if (tabbedPane4 == null) {
+			tabbedPane4 = new JMaximizableTabbedPane();
+			tabbedPane4.addTab("Header", null, getELFHeaderScrollPane(), null);
+			tabbedPane4.addTab("Section", null, getJScrollPane15(), null);
+			tabbedPane4.addTab("Program header", null, getJScrollPane16(), null);
+			tabbedPane4.addTab("objdump", null, getObjdumpPanel(), null);
+			tabbedPane4.addTab(".rel.plt", null, getJPanel28(), null);
+			tabbedPane4.addTab(".dynamic", null, getJPanel29(), null);
 		}
-		return jTabbedPane4;
+		return tabbedPane4;
 	}
 
-	private JScrollPane getJELFHeaderScrollPane() {
-		if (jELFHeaderScrollPane == null) {
-			jELFHeaderScrollPane = new JScrollPane();
-			jELFHeaderScrollPane.setViewportView(getJELFHeaderTable());
+	private JScrollPane getELFHeaderScrollPane() {
+		if (elfHeaderScrollPane == null) {
+			elfHeaderScrollPane = new JScrollPane();
+			elfHeaderScrollPane.setViewportView(getELFHeaderTable());
 		}
-		return jELFHeaderScrollPane;
+		return elfHeaderScrollPane;
 	}
 
-	private JTable getJELFHeaderTable() {
-		if (jELFHeaderTable == null) {
+	private JTable getELFHeaderTable() {
+		if (elfHeaderTable == null) {
 			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
-			jELFHeaderTable = new JTable();
-			jELFHeaderTable.setModel(jELFHeaderTableModel);
+			elfHeaderTable = new JTable();
+			elfHeaderTable.setModel(jELFHeaderTableModel);
 		}
-		return jELFHeaderTable;
+		return elfHeaderTable;
 	}
 
-	private void jOpenELFDumpButtonActionPerformed(ActionEvent evt) {
+	private void openELFDumpButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		// load history
 		fc.setCurrentDirectory(new File(Setting.getInstance().lastElfHistoryOpenDir2));
@@ -6742,7 +5495,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			jELFComboBox.addItem(file);
+			elfComboBox.addItem(file);
 
 			parseELF(file);
 			openELF(file);
@@ -6754,14 +5507,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void parseELF(File elfFile) {
-		jELFDumpPanel.remove(jTabbedPane4);
-		jTabbedPane4 = null;
-		jELFDumpPanel.add(getJTabbedPane4(), BorderLayout.CENTER);
+		elfDumpPanel.remove(tabbedPane4);
+		tabbedPane4 = null;
+		elfDumpPanel.add(getJTabbedPane4(), BorderLayout.CENTER);
 
 		HashMap map = ElfUtil.getELFDetail(elfFile);
 		if (map != null) {
 			// header
-			DefaultTableModel model = (DefaultTableModel) jELFHeaderTable.getModel();
+			DefaultTableModel model = (DefaultTableModel) elfHeaderTable.getModel();
 			while (model.getRowCount() > 0) {
 				model.removeRow(0);
 			}
@@ -6776,7 +5529,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				String bytesStr = "";
 
 				if (entry.getValue().getClass() == Short.class) {
-					jStatusLabel.setText("header " + Long.toHexString((Short) entry.getValue()));
+					statusLabel.setText("header " + Long.toHexString((Short) entry.getValue()));
 					bytesStr += "0x" + Long.toHexString((Short) entry.getValue());
 				} else if (entry.getValue().getClass() == Integer.class) {
 					bytesStr += "0x" + Long.toHexString((Integer) entry.getValue());
@@ -6795,7 +5548,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// end header
 
 			// section
-			model = (DefaultTableModel) jELFSectionTable.getModel();
+			model = (DefaultTableModel) elfSectionTable.getModel();
 			while (model.getRowCount() > 0) {
 				model.removeRow(0);
 			}
@@ -6809,7 +5562,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 					String bytesStr = "";
 					if (entry.getValue().getClass() == Short.class) {
-						jStatusLabel.setText("section " + Long.toHexString((Short) entry.getValue()));
+						statusLabel.setText("section " + Long.toHexString((Short) entry.getValue()));
 						bytesStr += "0x" + Long.toHexString((Short) entry.getValue());
 					} else if (entry.getValue().getClass() == Integer.class) {
 						bytesStr += "0x" + Long.toHexString((Integer) entry.getValue());
@@ -6832,7 +5585,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// end section
 
 			// program header
-			model = (DefaultTableModel) jProgramHeaderTable.getModel();
+			model = (DefaultTableModel) programHeaderTable.getModel();
 			while (model.getRowCount() > 0) {
 				model.removeRow(0);
 			}
@@ -6846,7 +5599,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 					String bytesStr = "";
 					if (entry.getValue().getClass() == Short.class) {
-						jStatusLabel.setText("Program header " + Long.toHexString((Short) entry.getValue()));
+						statusLabel.setText("Program header " + Long.toHexString((Short) entry.getValue()));
 						bytesStr += "0x" + Long.toHexString((Short) entry.getValue());
 					} else if (entry.getValue().getClass() == Integer.class) {
 						bytesStr += "0x" + Long.toHexString((Integer) entry.getValue());
@@ -6876,10 +5629,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				HashMap tempMap = (HashMap) map.get("symbolTable" + symbolTableNo);
 				Vector<LinkedHashMap> v = (Vector<LinkedHashMap>) tempMap.get("vector");
 				for (int x = 0; x < v.size(); x++) {
-					Vector tempV = new Vector();
-					jStatusLabel.setText("Symbol table " + x);
+					Vector<String> tempV = new Vector<String>();
+					statusLabel.setText("Symbol table " + x);
 					tempV.add("0x" + Long.toHexString((Integer) v.get(x).get("No.")));
-					tempV.add(v.get(x).get("st_name"));
+					tempV.add((String) v.get(x).get("st_name"));
 					tempV.add("0x" + Long.toHexString((Long) v.get(x).get("st_value")));
 					tempV.add("0x" + Long.toHexString((Long) v.get(x).get("st_size")));
 					tempV.add("0x" + Long.toHexString((Integer) v.get(x).get("st_info")));
@@ -6892,7 +5645,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				tempTable.setModel(tempTableModel);
 				JScrollPane tempScrollPane = new JScrollPane();
 				tempScrollPane.setViewportView(tempTable);
-				jTabbedPane4.addTab(tempMap.get("name").toString(), null, tempScrollPane, null);
+				tabbedPane4.addTab(tempMap.get("name").toString(), null, tempScrollPane, null);
 
 				symbolTableNo++;
 			}
@@ -6903,17 +5656,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			while (map.get("note" + noteSectionNo) != null) {
 				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "namesz", "descsz", "type", "name", "desc" });
 				JTable tempTable = new JTable();
-				HashMap tempMap = (HashMap) map.get("note" + noteSectionNo);
-				Vector<LinkedHashMap> v = (Vector<LinkedHashMap>) tempMap.get("vector");
+				HashMap<String, Vector<LinkedHashMap<String, Object>>> tempMap = (HashMap) map.get("note" + noteSectionNo);
+				Vector<LinkedHashMap<String, Object>> v = tempMap.get("vector");
 				for (int x = 0; x < v.size(); x++) {
-					Vector tempV = new Vector();
-					jStatusLabel.setText("Note " + x);
+					Vector<String> tempV = new Vector<String>();
+					statusLabel.setText("Note " + x);
 					tempV.add("0x" + Long.toHexString((Integer) v.get(x).get("No.")));
 					tempV.add("0x" + Long.toHexString((Long) v.get(x).get("namesz")));
 					tempV.add("0x" + Long.toHexString((Long) v.get(x).get("descsz")));
 					tempV.add("0x" + Long.toHexString((Long) v.get(x).get("type")));
-					tempV.add(v.get(x).get("name"));
-					tempV.add(v.get(x).get("desc"));
+					tempV.add((String) v.get(x).get("name"));
+					tempV.add((String) v.get(x).get("desc"));
 
 					tempTableModel.addRow(tempV);
 				}
@@ -6921,7 +5674,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				tempTable.setModel(tempTableModel);
 				JScrollPane tempScrollPane = new JScrollPane();
 				tempScrollPane.setViewportView(tempTable);
-				jTabbedPane4.addTab(tempMap.get("name").toString(), null, tempScrollPane, null);
+				tabbedPane4.addTab(tempMap.get("name").toString(), null, tempScrollPane, null);
 
 				noteSectionNo++;
 			}
@@ -6929,7 +5682,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		try {
-			jStatusLabel.setText("running objdump -DS");
+			statusLabel.setText("running objdump -DS");
 			Process process = Runtime.getRuntime().exec("objdump -DS " + elfFile.getAbsolutePath());
 			InputStream input = process.getInputStream();
 			String str = "";
@@ -6940,7 +5693,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			jEditorPane1.setText(str);
 
-			jStatusLabel.setText("readelf -r");
+			statusLabel.setText("readelf -r");
 			process = Runtime.getRuntime().exec("readelf -r " + elfFile.getAbsolutePath());
 			input = process.getInputStream();
 			str = "";
@@ -6950,7 +5703,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			jSearchRelPltEditorPane.setText(str);
 
-			jStatusLabel.setText("readelf -d");
+			statusLabel.setText("readelf -d");
 			process = Runtime.getRuntime().exec("readelf -d " + elfFile.getAbsolutePath());
 			input = process.getInputStream();
 			str = "";
@@ -6959,26 +5712,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				str += new String(b, 0, len);
 			}
 			input.close();
-			jSearchDynamicEditorPane.setText(str);
+			searchDynamicEditorPane.setText(str);
 
-			jStatusLabel.setText("");
+			statusLabel.setText("");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		// end symbol table
 	}
 
-	private void jELFComboBoxActionPerformed(ActionEvent evt) {
-		parseELF((File) jELFComboBox.getSelectedItem());
+	private void elfComboBoxActionPerformed(ActionEvent evt) {
+		parseELF((File) elfComboBox.getSelectedItem());
 	}
 
 	private void thisWindowOpened(WindowEvent evt) {
 		if (Global.debug) {
-			System.out.println("updateVMStatus");
+			logger.debug("updateVMStatus");
 		}
 		updateVMStatus(true);
 		if (Global.debug) {
-			System.out.println("updateVMStatus end");
+			logger.debug("updateVMStatus end");
 		}
 	}
 
@@ -6991,14 +5744,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JTable getJSectionTable() {
-		if (jELFSectionTable == null) {
+		if (elfSectionTable == null) {
 			TableModel jSectionTableModel = new DefaultTableModel(null, new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link",
 					"sh_info", "sh_addralign", "sh_entsize" });
-			jELFSectionTable = new JTable();
-			jELFSectionTable.setModel(jSectionTableModel);
-			jELFSectionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			elfSectionTable = new JTable();
+			elfSectionTable.setModel(jSectionTableModel);
+			elfSectionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
-		return jELFSectionTable;
+		return elfSectionTable;
 	}
 
 	private JScrollPane getJScrollPane16() {
@@ -7010,13 +5763,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JTable getJProgramHeaderTable() {
-		if (jProgramHeaderTable == null) {
+		if (programHeaderTable == null) {
 			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[] { "No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align" });
-			jProgramHeaderTable = new JTable();
-			jProgramHeaderTable.setModel(jProgramHeaderTableModel);
-			jProgramHeaderTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			programHeaderTable = new JTable();
+			programHeaderTable.setModel(jProgramHeaderTableModel);
+			programHeaderTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
-		return jProgramHeaderTable;
+		return programHeaderTable;
 	}
 
 	private JButton getJButton19() {
@@ -7034,56 +5787,56 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jButton19ActionPerformed(ActionEvent evt) {
-		int rows[] = jAddressTranslateTable2.getSelectedRows();
-		AddressTranslateTableModel model = (AddressTranslateTableModel) this.jAddressTranslateTable2.getModel();
+		int rows[] = addressTranslateTable2.getSelectedRows();
+		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
 		model.removeRow(rows);
 	}
 
-	private JButton getJButton20() {
-		if (jButton20 == null) {
-			jButton20 = new JButton();
-			jButton20.setText("Dump CR3");
-			jButton20.addActionListener(new ActionListener() {
+	private JButton getDumpCR3Button() {
+		if (dumpCR3Button == null) {
+			dumpCR3Button = new JButton();
+			dumpCR3Button.setText("Dump CR3");
+			dumpCR3Button.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jDumpCR3ButtonActionPerformed(evt);
+					dumpCR3ButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton20;
+		return dumpCR3Button;
 	}
 
-	private JButton getJButton21() {
-		if (jDumpPageTableAtAddressButton == null) {
-			jDumpPageTableAtAddressButton = new JButton();
-			jDumpPageTableAtAddressButton.setText("Dump at here");
-			jDumpPageTableAtAddressButton.addActionListener(new ActionListener() {
+	private JButton getDumpPageTableAtAddressButton() {
+		if (dumpPageTableAtAddressButton == null) {
+			dumpPageTableAtAddressButton = new JButton();
+			dumpPageTableAtAddressButton.setText("Dump at here");
+			dumpPageTableAtAddressButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jDumpPageTableAtAddressButtonActionPerformed(evt);
+					dumpPageTableAtAddressButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jDumpPageTableAtAddressButton;
+		return dumpPageTableAtAddressButton;
 	}
 
-	private JTextField getJDumpPageDirectoryAddressTextField() {
-		if (jDumpPageDirectoryAddressTextField == null) {
-			jDumpPageDirectoryAddressTextField = new JTextField();
-			jDumpPageDirectoryAddressTextField.setMaximumSize(new java.awt.Dimension(150, 28));
-			jDumpPageDirectoryAddressTextField.addKeyListener(new KeyAdapter() {
+	private JTextField getDumpPageDirectoryAddressTextField() {
+		if (dumpPageDirectoryAddressTextField == null) {
+			dumpPageDirectoryAddressTextField = new JTextField();
+			dumpPageDirectoryAddressTextField.setMaximumSize(new java.awt.Dimension(150, 28));
+			dumpPageDirectoryAddressTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
-					jDumpPageDirectoryAddressTextFieldKeyTyped(evt);
+					dumpPageDirectoryAddressTextFieldKeyTyped(evt);
 				}
 			});
 		}
-		return jDumpPageDirectoryAddressTextField;
+		return dumpPageDirectoryAddressTextField;
 	}
 
-	private void jDumpCR3ButtonActionPerformed(ActionEvent evt) {
+	private void dumpCR3ButtonActionPerformed(ActionEvent evt) {
 		updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
 	}
 
-	private void jDumpPageTableAtAddressButtonActionPerformed(ActionEvent evt) {
-		updatePageTable(CommonLib.string2BigInteger(jDumpPageDirectoryAddressTextField.getText()));
+	private void dumpPageTableAtAddressButtonActionPerformed(ActionEvent evt) {
+		updatePageTable(CommonLib.string2BigInteger(dumpPageDirectoryAddressTextField.getText()));
 	}
 
 	private JButton getJButton21x() {
@@ -7104,18 +5857,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.jPageDirectoryTable.getModel(), this.jPageTableTable.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
-		}
-	}
-
-	private void jButton1ActionPerformed(ActionEvent evt) {
-		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showSaveDialog(this);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			if (!GKDCommonLib.saveImage(jHistoryTable, file)) {
-				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
-			}
+			GKDCommonLib.exportTableModelToExcel(file, this.pageDirectoryTable.getModel(), this.pageTableTable.getModel(), memoryAddressComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -7124,7 +5866,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!GKDCommonLib.saveImage(jAddressTranslateTable2, file)) {
+			if (!GKDCommonLib.saveImage(addressTranslateTable2, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -7135,105 +5877,47 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.jAddressTranslateTable2.getModel(), jMemoryAddressComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, this.addressTranslateTable2.getModel(), memoryAddressComboBox.getSelectedItem().toString());
 		}
 	}
 
-	private void jDumpPageDirectoryAddressTextFieldKeyTyped(KeyEvent evt) {
+	private void dumpPageDirectoryAddressTextFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
-			jDumpPageTableAtAddressButtonActionPerformed(null);
+			dumpPageTableAtAddressButtonActionPerformed(null);
 		}
 	}
 
-	private void jAddressTextFieldKeyTyped(KeyEvent evt) {
+	private void addressTextFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
 			jRefreshAddressTranslateButtonActionPerformed(null);
 		}
 	}
 
-	private JButton getJClearBochsButton() {
-		if (jClearBochsButton == null) {
-			jClearBochsButton = new JButton();
-			jClearBochsButton.setText(MyLanguage.getString("Clear"));
-			jClearBochsButton.addActionListener(new ActionListener() {
+	private JButton getClearBochsButton() {
+		if (clearBochsButton == null) {
+			clearBochsButton = new JButton();
+			clearBochsButton.setText(MyLanguage.getString("Clear"));
+			clearBochsButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jClearBochsButtonActionPerformed(evt);
+					clearBochsButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jClearBochsButton;
+		return clearBochsButton;
 	}
 
-	private void jClearBochsButtonActionPerformed(ActionEvent evt) {
+	private void clearBochsButtonActionPerformed(ActionEvent evt) {
 		this.vmCommandEditorPane.setText("");
 	}
 
-	public static int[] getPhysicalMemory(BigInteger address, int totalByte) {
-		return getMemory(address, totalByte, true);
-	}
-
-	public static int[] getLinearMemory(BigInteger address, int totalByte) {
-		return getMemory(address, totalByte, false);
-	}
-
-	public static int[] getMemory(BigInteger address, int totalByte, boolean isPhysicalAddress) {
-		if (Global.vmType.equals("bochs")) {
-			try {
-				commandReceiver.clearBuffer();
-				commandReceiver.shouldShow = false;
-				if (isPhysicalAddress) {
-					sendCommand("xp /" + totalByte + "bx " + address);
-				} else {
-					sendCommand("x /" + totalByte + "bx " + address);
-				}
-				int bytes[] = new int[totalByte];
-
-				if (totalByte > 0) {
-					float totalByte2 = totalByte - 1;
-					totalByte2 = totalByte2 / 8;
-					int totalByte3 = (int) Math.floor(totalByte2);
-					String realEndAddressStr;
-					String realStartAddressStr;
-					BigInteger realStartAddress = address;
-					realStartAddressStr = String.format("%08x", realStartAddress);
-					BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-					realEndAddressStr = String.format("%08x", realEndAddress);
-					String result = commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-					if (result != null) {
-						String[] lines = result.split("\n");
-						int offset = 0;
-						// System.out.println(result);
-						for (int y = 0; y < lines.length; y++) {
-							String[] b = lines[y].replaceFirst("^.*:", "").split("\t");
-							// System.out.println(lines[y]);
-
-							for (int x = 1; x < b.length && offset < totalByte; x++) {
-								// System.out.println(offset + "==" + x);
-								bytes[offset] = (int) CommonLib.string2long(b[x]);
-								offset++;
-							}
-						}
-					}
-				}
-				return bytes;
-			} catch (OutOfMemoryError ex) {
-				System.gc();
-				ex.printStackTrace();
-				return null;
-			}
-		} else if (Global.vmType.equals("qemu")) {
-			if (isPhysicalAddress) {
-				return libGDB.physicalMemory(address, totalByte);
-			} else {
-				return libGDB.virtualMemory(address, totalByte);
-			}
-		} else {
-			return null;
-		}
-	}
-
 	private static String getMemoryStr(BigInteger address, int totalByte, boolean isPhysicalAddress) {
-		int bytes[] = getMemory(address, totalByte, isPhysicalAddress);
+		int bytes[];
+		if (isPhysicalAddress) {
+			bytes = VMController.getVM().physicalMemory(address, totalByte);
+		} else {
+			bytes = VMController.getVM().virtualMemory(address, totalByte);
+		}
+
 		String str = "";
 		for (int x = 0; x < bytes.length; x++) {
 			str += (char) bytes[x];
@@ -7241,25 +5925,25 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return str;
 	}
 
-	private JButton getJGoLinearButton() {
-		if (jGoLinearButton == null) {
-			jGoLinearButton = new JButton();
-			jGoLinearButton.setText("Lin");
-			jGoLinearButton.addActionListener(new ActionListener() {
+	private JButton getGoLinearButton() {
+		if (goLinearButton == null) {
+			goLinearButton = new JButton();
+			goLinearButton.setText("Lin");
+			goLinearButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jGoLinearButtonActionPerformed(evt);
+					goLinearButtonActionPerformed(evt);
 				}
 			});
-			jGoLinearButton.setToolTipText(MyLanguage.getString("Linear_address"));
+			goLinearButton.setToolTipText(MyLanguage.getString("Linear_address"));
 		}
-		return jGoLinearButton;
+		return goLinearButton;
 	}
 
-	private void jGoLinearButtonActionPerformed(ActionEvent evt) {
+	private void goLinearButtonActionPerformed(ActionEvent evt) {
 		updateMemory(false);
 
-		addMemoryAddressComboBox(jMemoryAddressComboBox.getSelectedItem().toString());
-		Setting.getInstance().memoryCombo.add(jMemoryAddressComboBox.getSelectedItem().toString());
+		addMemoryAddressComboBox(memoryAddressComboBox.getSelectedItem().toString());
+		Setting.getInstance().memoryCombo.add(memoryAddressComboBox.getSelectedItem().toString());
 		Setting.getInstance().save();
 	}
 
@@ -7267,7 +5951,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (diskPanel == null) {
 			diskPanel = new DiskPanel();
 			try {
-				if (Global.vmType.equals("bochs")) {
+				if (VMController.vmType == VMType.Bochs) {
 					String line = GKDCommonLib.findLineInFile(new File(bochsrc), "ata0-master");
 					if (line != null) {
 						String strs[] = line.split(",");
@@ -7283,7 +5967,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							}
 						}
 					}
-				} else if (Global.vmType.equals("qemu")) {
+				} else if (VMController.vmType == VMType.Qemu) {
 					diskPanel.setFile(new File(GKDCommonLib.readConfig(cmd, "/gkd/hd/text()")));
 				}
 			} catch (Exception ex) {
@@ -7293,86 +5977,69 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return diskPanel;
 	}
 
-	private JMaximizableTabbedPane_BasePanel getJMaximizableTabbedPane_BasePanel1() {
-		if (jMaximizableTabbedPane_BasePanel1 == null) {
-			jMaximizableTabbedPane_BasePanel1 = new JMaximizableTabbedPane_BasePanel();
-			jMaximizableTabbedPane_BasePanel1.add(getJSplitPane2(), "MAIN");
+	private JMaximizableTabbedPane_BasePanel getMaximizableTabbedPane_BasePanel1() {
+		if (maximizableTabbedPane_BasePanel1 == null) {
+			maximizableTabbedPane_BasePanel1 = new JMaximizableTabbedPane_BasePanel();
+			maximizableTabbedPane_BasePanel1.add(getSplitPane2(), "MAIN");
 		}
-		return jMaximizableTabbedPane_BasePanel1;
+		return maximizableTabbedPane_BasePanel1;
 	}
 
-	private JCheckBox getJHideIfAddressIsZeroCheckBox() {
-		if (jHideIfAddressIsZeroCheckBox == null) {
-			jHideIfAddressIsZeroCheckBox = new JCheckBox();
-			jHideIfAddressIsZeroCheckBox.setText("Hide if address = 0");
-			jHideIfAddressIsZeroCheckBox.addActionListener(new ActionListener() {
+	private JCheckBox getHideIfAddressIsZeroCheckBox() {
+		if (hideIfAddressIsZeroCheckBox == null) {
+			hideIfAddressIsZeroCheckBox = new JCheckBox();
+			hideIfAddressIsZeroCheckBox.setText("Hide if address = 0");
+			hideIfAddressIsZeroCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jHideIfAddressIsZeroCheckBoxActionPerformed(evt);
+					hideIfAddressIsZeroCheckBoxActionPerformed(evt);
 				}
 			});
 		}
-		return jHideIfAddressIsZeroCheckBox;
+		return hideIfAddressIsZeroCheckBox;
 	}
 
-	private void jHideIfAddressIsZeroCheckBoxActionPerformed(ActionEvent evt) {
-		((PageDirectoryTableModel) jPageDirectoryTable.getModel()).setShowZeroAddress(!jHideIfAddressIsZeroCheckBox.isSelected());
-		((PageTableTableModel) jPageTableTable.getModel()).setShowZeroAddress(!jHideIfAddressIsZeroCheckBox.isSelected());
+	private void hideIfAddressIsZeroCheckBoxActionPerformed(ActionEvent evt) {
+		((PageDirectoryTableModel) pageDirectoryTable.getModel()).setShowZeroAddress(!hideIfAddressIsZeroCheckBox.isSelected());
+		((PageTableTableModel) pageTableTable.getModel()).setShowZeroAddress(!hideIfAddressIsZeroCheckBox.isSelected());
 	}
 
-	private JPopupMenu getJInstructionPanelPopupMenu() {
-		if (jInstructionPanelPopupMenu == null) {
-			jInstructionPanelPopupMenu = new JPopupMenu();
-			jInstructionPanelPopupMenu.add(getJSetPhysicalBreakpointMenuItem());
-			jInstructionPanelPopupMenu.add(getJSetLinearBreakpointMenuItem());
-			jInstructionPanelPopupMenu.add(getJSeparator3());
-			jInstructionPanelPopupMenu.add(getJDisasmHereMenuItem());
-			jInstructionPanelPopupMenu.add(getDisasmFromEIPMinus100MenuItem());
-			jInstructionPanelPopupMenu.add(getClearInstructionTableMenuItem());
+	private JPopupMenu getInstructionPanelPopupMenu() {
+		if (instructionPanelPopupMenu == null) {
+			instructionPanelPopupMenu = new JPopupMenu();
+			instructionPanelPopupMenu.add(getSetPhysicalBreakpointMenuItem());
+			instructionPanelPopupMenu.add(getSetLinearBreakpointMenuItem());
+			instructionPanelPopupMenu.add(getJSeparator3());
+			instructionPanelPopupMenu.add(getDisasmHereMenuItem());
+			instructionPanelPopupMenu.add(getDisasmFromEIPMinus100MenuItem());
+			instructionPanelPopupMenu.add(getClearInstructionTableMenuItem());
 		}
-		return jInstructionPanelPopupMenu;
+		return instructionPanelPopupMenu;
 	}
 
-	/**
-	 * Auto-generated method for setting the popup menu for a component
-	 */
-	private void setComponentPopupMenu(final java.awt.Component parent, final javax.swing.JPopupMenu menu) {
-		parent.addMouseListener(new java.awt.event.MouseAdapter() {
-			public void mousePressed(java.awt.event.MouseEvent e) {
-				if (e.isPopupTrigger())
-					menu.show(parent, e.getX(), e.getY());
-			}
-
-			public void mouseReleased(java.awt.event.MouseEvent e) {
-				if (e.isPopupTrigger())
-					menu.show(parent, e.getX(), e.getY());
-			}
-		});
-	}
-
-	private JMenuItem getJSetPhysicalBreakpointMenuItem() {
-		if (jSetPhysicalBreakpointMenuItem == null) {
-			jSetPhysicalBreakpointMenuItem = new JMenuItem();
-			jSetPhysicalBreakpointMenuItem.setText("Set physical breakpoint here");
-			jSetPhysicalBreakpointMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getSetPhysicalBreakpointMenuItem() {
+		if (setPhysicalBreakpointMenuItem == null) {
+			setPhysicalBreakpointMenuItem = new JMenuItem();
+			setPhysicalBreakpointMenuItem.setText("Set physical breakpoint here");
+			setPhysicalBreakpointMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSetPhysicalBreakpointMenuItemActionPerformed(evt);
+					setPhysicalBreakpointMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jSetPhysicalBreakpointMenuItem;
+		return setPhysicalBreakpointMenuItem;
 	}
 
-	private JMenuItem getJSetLinearBreakpointMenuItem() {
-		if (jSetLinearBreakpointMenuItem == null) {
-			jSetLinearBreakpointMenuItem = new JMenuItem();
-			jSetLinearBreakpointMenuItem.setText("Set linear breakpoint here");
-			jSetLinearBreakpointMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getSetLinearBreakpointMenuItem() {
+		if (setLinearBreakpointMenuItem == null) {
+			setLinearBreakpointMenuItem = new JMenuItem();
+			setLinearBreakpointMenuItem.setText("Set linear breakpoint here");
+			setLinearBreakpointMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSetLinearBreakpointMenuItemActionPerformed(evt);
+					setLinearBreakpointMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jSetLinearBreakpointMenuItem;
+		return setLinearBreakpointMenuItem;
 	}
 
 	public void instructionTableMouseClicked(MouseEvent evt) {
@@ -7395,27 +6062,28 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jTable.getColumnModel().getSelectionModel().setSelectionInterval(columnNumber, columnNumber);
 			// end select
 
-			getJInstructionPanelPopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
+			getInstructionPanelPopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}
 
-	private void jSetPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
+	private void setPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (registerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-			GKD.sendCommand("pb " + model.getMemoryAddress(instructionTable.getSelectedRow()));
-		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
+			VMController.getVM().addPhysicalBreakpoint(CommonLib.string2BigInteger(model.getMemoryAddress(instructionTable.getSelectedRow())));
+		} else if (this.sourceLevelDebuggerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) sourceLevelDebugger.instructionTable.getModel();
-			GKD.sendCommand("pb " + model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow()));
+			VMController.getVM().addPhysicalBreakpoint(CommonLib.string2BigInteger(model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow())));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
 	}
 
-	private void jSetLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
+	private void setLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (registerToggleButton.isSelected()) {
-			GKD.sendCommand("lb " + GKD.instructionTable.getValueAt(GKD.instructionTable.getSelectedRow(), 1));
-		} else if (this.jSourceLevelDebuggerToggleButton.isSelected()) {
-			GKD.sendCommand("lb " + this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1));
+			VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger((String) GKD.instructionTable.getValueAt(GKD.instructionTable.getSelectedRow(), 1)));
+		} else if (this.sourceLevelDebuggerToggleButton.isSelected()) {
+			VMController.getVM().addLinearBreakpoint(
+					CommonLib.string2BigInteger((String) this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1)));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
@@ -7432,70 +6100,70 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			breakpointTable.getColumnModel().getSelectionModel().setSelectionInterval(columnNumber, columnNumber);
 			// end select
 
-			getJBreakpointPopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
+			getBreakpointPopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
 		}
 	}
 
-	private JPopupMenu getJBreakpointPopupMenu() {
-		if (jBreakpointPopupMenu == null) {
-			jBreakpointPopupMenu = new JPopupMenu();
-			jBreakpointPopupMenu.add(getJMenuItem6x());
-			jBreakpointPopupMenu.add(getJMenuItem7x());
+	private JPopupMenu getBreakpointPopupMenu() {
+		if (breakpointPopupMenu == null) {
+			breakpointPopupMenu = new JPopupMenu();
+			breakpointPopupMenu.add(getDumpHereMenuItem());
+			breakpointPopupMenu.add(getDisassembleMenuItem());
 		}
-		return jBreakpointPopupMenu;
+		return breakpointPopupMenu;
 	}
 
-	private JMenuItem getJMenuItem6x() {
-		if (jMenuItem6 == null) {
-			jMenuItem6 = new JMenuItem();
-			jMenuItem6.setText("Dump here");
-			jMenuItem6.addActionListener(new ActionListener() {
+	private JMenuItem getDumpHereMenuItem() {
+		if (dumpHereMenuItem == null) {
+			dumpHereMenuItem = new JMenuItem();
+			dumpHereMenuItem.setText("Dump here");
+			dumpHereMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMenuItem6ActionPerformed(evt);
+					dumpHereMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jMenuItem6;
+		return dumpHereMenuItem;
 	}
 
-	private JMenuItem getJMenuItem7x() {
-		if (jMenuItem7 == null) {
-			jMenuItem7 = new JMenuItem();
-			jMenuItem7.setText(MyLanguage.getString("Disassemble"));
-			jMenuItem7.addActionListener(new ActionListener() {
+	private JMenuItem getDisassembleMenuItem() {
+		if (disassembleMenuItem == null) {
+			disassembleMenuItem = new JMenuItem();
+			disassembleMenuItem.setText(MyLanguage.getString("Disassemble"));
+			disassembleMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMenuItem7ActionPerformed(evt);
+					disassembleMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jMenuItem7;
+		return disassembleMenuItem;
 	}
 
-	private void jMenuItem6ActionPerformed(ActionEvent evt) {
-		this.jMemoryAddressComboBox.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
+	private void dumpHereMenuItemActionPerformed(ActionEvent evt) {
+		this.memoryAddressComboBox.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
 		if (this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 0).toString().contains("lb")) {
-			jGoLinearButtonActionPerformed(null);
+			goLinearButtonActionPerformed(null);
 		} else {
-			jGOMemoryButtonActionPerformed(null);
+			goMemoryButtonActionPerformed(null);
 		}
-		jTabbedPane3.setSelectedIndex(0);
+		tabbedPane3.setSelectedIndex(0);
 	}
 
-	private void jMenuItem7ActionPerformed(ActionEvent evt) {
-		this.jInstructionComboBox.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
+	private void disassembleMenuItemActionPerformed(ActionEvent evt) {
+		this.instructionComboBox.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
 		disassembleButtonActionPerformed(null);
 		jTabbedPane1.setSelectedIndex(0);
 	}
 
-	private void jSearchMemoryTableMouseClicked(MouseEvent evt) {
+	private void searchMemoryTableMouseClicked(MouseEvent evt) {
 		if (SwingUtilities.isRightMouseButton(evt)) {
 			// select
 			Point p = evt.getPoint();
-			int rowNumber = jSearchMemoryTable.rowAtPoint(p);
-			int columnNumber = jSearchMemoryTable.columnAtPoint(p);
-			ListSelectionModel model = jSearchMemoryTable.getSelectionModel();
+			int rowNumber = searchMemoryTable.rowAtPoint(p);
+			int columnNumber = searchMemoryTable.columnAtPoint(p);
+			ListSelectionModel model = searchMemoryTable.getSelectionModel();
 			model.setSelectionInterval(rowNumber, rowNumber);
-			jSearchMemoryTable.getColumnModel().getSelectionModel().setSelectionInterval(columnNumber, columnNumber);
+			searchMemoryTable.getColumnModel().getSelectionModel().setSelectionInterval(columnNumber, columnNumber);
 			// end select
 
 			getJSearchMemoryTablePopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
@@ -7503,82 +6171,82 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JPopupMenu getJSearchMemoryTablePopupMenu() {
-		if (jSearchMemoryTablePopupMenu == null) {
-			jSearchMemoryTablePopupMenu = new JPopupMenu();
-			jSearchMemoryTablePopupMenu.add(getJMenuItem8());
-			jSearchMemoryTablePopupMenu.add(getJMenuItem9());
+		if (searchMemoryTablePopupMenu == null) {
+			searchMemoryTablePopupMenu = new JPopupMenu();
+			searchMemoryTablePopupMenu.add(getSetPhysicalBreakpointHereMenuItem());
+			searchMemoryTablePopupMenu.add(getSetLinerBreakpointHereMenuItem());
 		}
-		return jSearchMemoryTablePopupMenu;
+		return searchMemoryTablePopupMenu;
 	}
 
-	private JMenuItem getJMenuItem8() {
-		if (jMenuItem8 == null) {
-			jMenuItem8 = new JMenuItem();
-			jMenuItem8.setText("Set physical breakpoint here");
-			jMenuItem8.addActionListener(new ActionListener() {
+	private JMenuItem getSetPhysicalBreakpointHereMenuItem() {
+		if (setPhysicalBreakpointHereMenuItem == null) {
+			setPhysicalBreakpointHereMenuItem = new JMenuItem();
+			setPhysicalBreakpointHereMenuItem.setText("Set physical breakpoint here");
+			setPhysicalBreakpointHereMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMenuItem8ActionPerformed(evt);
+					setPhysicalBreakpointHereMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jMenuItem8;
+		return setPhysicalBreakpointHereMenuItem;
 	}
 
-	private JMenuItem getJMenuItem9() {
-		if (jMenuItem9 == null) {
-			jMenuItem9 = new JMenuItem();
-			jMenuItem9.setText("Set linear breakpoint here");
-			jMenuItem9.addActionListener(new ActionListener() {
+	private JMenuItem getSetLinerBreakpointHereMenuItem() {
+		if (setLinerBreakpointHereMenuItem == null) {
+			setLinerBreakpointHereMenuItem = new JMenuItem();
+			setLinerBreakpointHereMenuItem.setText("Set linear breakpoint here");
+			setLinerBreakpointHereMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMenuItem9ActionPerformed(evt);
+					setLinerBreakpointHereMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jMenuItem9;
+		return setLinerBreakpointHereMenuItem;
 	}
 
-	private void jMenuItem8ActionPerformed(ActionEvent evt) {
-		System.out.println(this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
-		GKD.sendCommand("pb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
+	private void setPhysicalBreakpointHereMenuItemActionPerformed(ActionEvent evt) {
+		logger.debug(this.searchMemoryTable.getValueAt(searchMemoryTable.getSelectedRow(), 0));
+		VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger((String) searchMemoryTable.getValueAt(this.searchMemoryTable.getSelectedRow(), 0)));
 		this.updateBreakpoint();
 	}
 
-	private void jMenuItem9ActionPerformed(ActionEvent evt) {
-		GKD.sendCommand("lb " + this.jSearchMemoryTable.getValueAt(this.jSearchMemoryTable.getSelectedRow(), 0));
+	private void setLinerBreakpointHereMenuItemActionPerformed(ActionEvent evt) {
+		VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger((String) searchMemoryTable.getValueAt(this.searchMemoryTable.getSelectedRow(), 0)));
 		this.updateBreakpoint();
 	}
 
-	private JButton getJInstructionUpButton() {
-		if (jInstructionUpButton == null) {
-			jInstructionUpButton = new JButton();
-			jInstructionUpButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up1.png")));
-			jInstructionUpButton.addActionListener(new ActionListener() {
+	private JButton getInstructionUpButton() {
+		if (instructionUpButton == null) {
+			instructionUpButton = new JButton();
+			instructionUpButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up1.png")));
+			instructionUpButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jInstructionUpButtonActionPerformed(evt);
+					instructionUpButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jInstructionUpButton;
+		return instructionUpButton;
 	}
 
-	private JButton getJButton22() {
-		if (jInstructionDownButton == null) {
-			jInstructionDownButton = new JButton();
-			jInstructionDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_down.png")));
-			jInstructionDownButton.addActionListener(new ActionListener() {
+	private JButton getInstructionDownButton() {
+		if (instructionDownButton == null) {
+			instructionDownButton = new JButton();
+			instructionDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_down.png")));
+			instructionDownButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jInstructionDownButtonActionPerformed(evt);
+					instructionDownButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jInstructionDownButton;
+		return instructionDownButton;
 	}
 
-	public JEditorPane getjBochsEditorPane() {
+	public JEditorPane getBochsEditorPane() {
 		return vmCommandEditorPane;
 	}
 
-	public void jInstructionUpButtonActionPerformed(ActionEvent evt) {
+	public void instructionUpButtonActionPerformed(ActionEvent evt) {
 		if (GKD.instructionTable.getRowCount() > 0) {
 			String firstAddress = "";
 			int x = 0;
@@ -7588,13 +6256,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			} while (!CommonLib.isNumber(firstAddress));
 			firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(1)).toString(16);
 
-			jInstructionComboBox.setSelectedItem("0x" + firstAddress);
+			instructionComboBox.setSelectedItem("0x" + firstAddress);
 			updateInstruction(CommonLib.string2BigInteger("0x" + firstAddress));
 			updateBreakpointTableColor();
 		}
 	}
 
-	public void jInstructionDownButtonActionPerformed(ActionEvent evt) {
+	public void instructionDownButtonActionPerformed(ActionEvent evt) {
 		try {
 			if (GKD.instructionTable.getRowCount() > 10) {
 				String firstAddress = "";
@@ -7605,7 +6273,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				}
 
-				jInstructionComboBox.setSelectedItem(firstAddress);
+				instructionComboBox.setSelectedItem(firstAddress);
 				updateInstruction(CommonLib.string2BigInteger(firstAddress));
 				updateBreakpointTableColor();
 			}
@@ -7614,20 +6282,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JButton getJInstructionUpTenButton() {
-		if (jInstructionUpTenButton == null) {
-			jInstructionUpTenButton = new JButton();
-			jInstructionUpTenButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up10.png")));
-			jInstructionUpTenButton.addActionListener(new ActionListener() {
+	private JButton getInstructionUpTenButton() {
+		if (instructionUpTenButton == null) {
+			instructionUpTenButton = new JButton();
+			instructionUpTenButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up10.png")));
+			instructionUpTenButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jInstructionUpTenButtonActionPerformed(evt);
+					instructionUpTenButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jInstructionUpTenButton;
+		return instructionUpTenButton;
 	}
 
-	public void jInstructionUpTenButtonActionPerformed(ActionEvent evt) {
+	public void instructionUpTenButtonActionPerformed(ActionEvent evt) {
 		String firstAddress = "";
 		int x = 0;
 		do {
@@ -7636,60 +6304,60 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		} while (!CommonLib.isNumber(firstAddress));
 		firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);
 
-		this.jInstructionComboBox.setSelectedItem("0x" + firstAddress);
+		this.instructionComboBox.setSelectedItem("0x" + firstAddress);
 		updateInstruction(CommonLib.string2BigInteger("0x" + firstAddress));
 		updateBreakpointTableColor();
 	}
 
-	private JMenuItem getJKRMenuItem() {
-		if (jKRMenuItem == null) {
-			jKRMenuItem = new JMenuItem();
-			jKRMenuItem.setText("Korean");
-			jKRMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getKoreanMenuItem() {
+		if (koreanMenuItem == null) {
+			koreanMenuItem = new JMenuItem();
+			koreanMenuItem.setText("Korean");
+			koreanMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jKRMenuItemActionPerformed(evt);
+					koreanMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jKRMenuItem;
+		return koreanMenuItem;
 	}
 
-	private void jKRMenuItemActionPerformed(ActionEvent evt) {
+	private void koreanMenuItemActionPerformed(ActionEvent evt) {
 		changeLanguage("KR");
 	}
 
-	private JMenuItem getJJPMenuItem() {
-		if (jJPMenuItem == null) {
-			jJPMenuItem = new JMenuItem();
-			jJPMenuItem.setText("Japanese");
-			jJPMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getJapaneseMenuItem() {
+		if (japaneseMenuItem == null) {
+			japaneseMenuItem = new JMenuItem();
+			japaneseMenuItem.setText("Japanese");
+			japaneseMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jJPMenuItemActionPerformed(evt);
+					japaneseMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jJPMenuItem;
+		return japaneseMenuItem;
 	}
 
-	private void jJPMenuItemActionPerformed(ActionEvent evt) {
+	private void japaneseMenuItemActionPerformed(ActionEvent evt) {
 		changeLanguage("JP");
 	}
 
-	private void jIDTTableMouseClicked(MouseEvent evt) {
+	private void idtTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
-			for (int x = 0; x < jTabbedPane2.getTabCount(); x++) {
-				if (jTabbedPane2.getTitleAt(x).equals(("IDT " + String.format("0x%02x", jIDTTable.getSelectedRow())))) {
-					jTabbedPane2.setSelectedIndex(x);
+			for (int x = 0; x < bottomTabbedPane.getTabCount(); x++) {
+				if (bottomTabbedPane.getTitleAt(x).equals(("IDT " + String.format("0x%02x", idtTable.getSelectedRow())))) {
+					bottomTabbedPane.setSelectedIndex(x);
 					return;
 				}
 			}
-			jTabbedPane2.addTabWithCloseButton("IDT " + String.format("0x%02x", jIDTTable.getSelectedRow()), null,
-					new IDTDescriptorPanel(this, CommonLib.string2BigInteger(this.registerPanel.idtrTextField.getText()), jIDTTable.getSelectedRow()), null);
-			jTabbedPane2.setSelectedIndex(jTabbedPane2.getTabCount() - 1);
+			bottomTabbedPane.addTabWithCloseButton("IDT " + String.format("0x%02x", idtTable.getSelectedRow()), null,
+					new IDTDescriptorPanel(this, CommonLib.string2BigInteger(this.registerPanel.idtrTextField.getText()), idtTable.getSelectedRow()), null);
+			bottomTabbedPane.setSelectedIndex(bottomTabbedPane.getTabCount() - 1);
 		}
 	}
 
-	private JButton getJFastStepBochsButton() {
+	private JButton getFastStepBochsButton() {
 		if (fastStepBochsButton == null) {
 			fastStepBochsButton = new JButton();
 			fastStepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
@@ -7707,42 +6375,41 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void fastStepButtonActionPerformed(ActionEvent evt) {
 		try {
-			sendCommand("s");
+			VMController.getVM().singleStep();
 			WebServiceUtil.log("gkd", "fast step", null, null, null);
 			Thread updateThread = new Thread("Fast step update thread") {
 				public void run() {
-					String result = commandReceiver.getCommandResultUntilEnd();
-
+					logger.debug("fastStepButtonActionPerformed");
 					enableAllButtons(false, false);
 
 					if (Setting.getInstance().updateFastStepCommand_register) {
 						if (Global.debug) {
-							System.out.println("updateRegister");
+							logger.debug("updateRegister");
 						}
 						updateRegister(true);
 						if (Global.debug) {
-							System.out.println("updateEFlags");
+							logger.debug("updateEFlags");
 						}
 						updateEFlags();
 					}
 
 					if (Setting.getInstance().updateFastStepCommand_memory) {
 						if (Global.debug) {
-							System.out.println("updateMemory");
+							logger.debug("updateMemory");
 						}
 						updateMemory(true);
 					}
 
 					if (Setting.getInstance().updateFastStepCommand_instruction) {
 						if (Global.debug) {
-							System.out.println("updateInstruction");
+							logger.debug("updateInstruction");
 						}
 						updateInstruction(null);
 					}
 
 					if (Setting.getInstance().updateFastStepCommand_breakpoint) {
 						if (Global.debug) {
-							System.out.println("updateBreakpointTableColor");
+							logger.debug("updateBreakpointTableColor");
 						}
 						updateBreakpoint();
 						updateBreakpointTableColor();
@@ -7750,12 +6417,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 					if (Setting.getInstance().updateFastStepCommand_history) {
 						if (Global.debug) {
-							System.out.println("updateHistory");
+							logger.debug("updateHistory");
 						}
-						updateHistoryTable(result);
+						//						updateHistoryTable(result);
 					}
 
-					jStatusLabel.setText("");
+					statusLabel.setText("");
 
 					enableAllButtons(true, false);
 				}
@@ -7766,89 +6433,89 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JPopupMenu getJELFTablePopupMenu() {
-		if (jELFTablePopupMenu == null) {
-			jELFTablePopupMenu = new JPopupMenu();
-			jELFTablePopupMenu.add(getJMenuItem1x());
-			jELFTablePopupMenu.add(getJMenuItem2x());
+	private JPopupMenu getELFTablePopupMenu() {
+		if (elfTablePopupMenu == null) {
+			elfTablePopupMenu = new JPopupMenu();
+			elfTablePopupMenu.add(getSetELFLinearBreakpointMenuItem());
+			elfTablePopupMenu.add(getSetELFPhysicalBreakpointMenuItem());
 		}
-		return jELFTablePopupMenu;
+		return elfTablePopupMenu;
 	}
 
-	private JMenuItem getJMenuItem1x() {
-		if (jMenuItem1 == null) {
-			jMenuItem1 = new JMenuItem();
-			jMenuItem1.setText("Set linear breakpoint here");
-			jMenuItem1.addActionListener(new ActionListener() {
+	private JMenuItem getSetELFLinearBreakpointMenuItem() {
+		if (setELFLinearBreakpointMenuItem == null) {
+			setELFLinearBreakpointMenuItem = new JMenuItem();
+			setELFLinearBreakpointMenuItem.setText("Set linear breakpoint here");
+			setELFLinearBreakpointMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jELFLinearBreakpointMenuItemActionPerformed(evt);
+					setELFLinearBreakpointMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jMenuItem1;
+		return setELFLinearBreakpointMenuItem;
 	}
 
-	private JMenuItem getJMenuItem2x() {
-		if (jMenuItem2 == null) {
-			jMenuItem2 = new JMenuItem();
-			jMenuItem2.setText("Set physical breakpoint here");
-			jMenuItem2.addActionListener(new ActionListener() {
+	private JMenuItem getSetELFPhysicalBreakpointMenuItem() {
+		if (setELFPhysicalBreakpointMenuItem == null) {
+			setELFPhysicalBreakpointMenuItem = new JMenuItem();
+			setELFPhysicalBreakpointMenuItem.setText("Set physical breakpoint here");
+			setELFPhysicalBreakpointMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jELFPhysicalBreakpointMenuItemActionPerformed(evt);
+					setELFPhysicalBreakpointMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jMenuItem2;
+		return setELFPhysicalBreakpointMenuItem;
 	}
 
-	private void jELFLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
+	private void setELFLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		SourceCodeTableModel model = (SourceCodeTableModel) elfTable.getModel();
 		BigInteger address = model.getDebugLineInfo().get(model.getCurrentFile()).get(this.elfTable.getSelectedRow());
 		if (address != null) {
-			sendCommand("lb 0x" + address.toString(16));
+			VMController.getVM().addLinearBreakpoint(address);
 
 			model.updateBreakpoint(getRealEIP());
 			this.updateBreakpoint();
 		}
 	}
 
-	private void jELFPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
+	private void setELFPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		SourceCodeTableModel model = (SourceCodeTableModel) elfTable.getModel();
 		BigInteger address = model.getDebugLineInfo().get(model.getCurrentFile()).get(this.elfTable.getSelectedRow());
 		if (address != null) {
-			sendCommand("pb 0x" + address.toString(16));
+			VMController.getVM().addLinearBreakpoint(address);
 
 			model.updateBreakpoint(getRealEIP());
 			this.updateBreakpoint();
 		}
 	}
 
-	private JButton getJSettingButton() {
-		if (jSettingButton == null) {
-			jSettingButton = new JButton();
-			jSettingButton.setText(MyLanguage.getString("Setting"));
-			jSettingButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/wrench.png")));
-			jSettingButton.setToolTipText("System setting");
-			jSettingButton.addActionListener(new ActionListener() {
+	private JButton getSettingButton() {
+		if (settingButton == null) {
+			settingButton = new JButton();
+			settingButton.setText(MyLanguage.getString("Setting"));
+			settingButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/wrench.png")));
+			settingButton.setToolTipText("System setting");
+			settingButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSettingButtonActionPerformed(evt);
+					settingButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSettingButton;
+		return settingButton;
 	}
 
-	private void jSettingButtonActionPerformed(ActionEvent evt) {
+	private void settingButtonActionPerformed(ActionEvent evt) {
 		SettingDialog jSettingDialog = new SettingDialog(this);
 		CommonLib.centerDialog(jSettingDialog);
 		jSettingDialog.setVisible(true);
 	}
 
-	private JPanel getObjdump() {
+	private JPanel getObjdumpPanel() {
 		if (objdumpPanel == null) {
 			objdumpPanel = new JPanel();
-			BorderLayout ObjdumpLayout = new BorderLayout();
-			objdumpPanel.setLayout(ObjdumpLayout);
+			BorderLayout objdumpLayout = new BorderLayout();
+			objdumpPanel.setLayout(objdumpLayout);
 			objdumpPanel.add(getJPanel27(), BorderLayout.NORTH);
 			objdumpPanel.add(getJScrollPane17(), BorderLayout.CENTER);
 		}
@@ -7860,63 +6527,64 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel27 = new JToolBar();
 			FlowLayout jPanel27Layout = new FlowLayout();
 			jPanel27Layout.setAlignment(FlowLayout.LEFT);
-			jPanel27.add(getJTextField1x());
-			jPanel27.add(getJSearchObjdumpButton());
+			jPanel27.add(getSearchObjdumpTextField());
+			jPanel27.add(getSearchObjdumpButton());
 		}
 		return jPanel27;
 	}
 
-	private JTextField getJTextField1x() {
-		if (jTextField1 == null) {
-			jTextField1 = new JTextField();
-			jTextField1.setMaximumSize(new java.awt.Dimension(100, 25));
-			jTextField1.addKeyListener(new KeyAdapter() {
+	private JTextField getSearchObjdumpTextField() {
+		if (searchObjdumpTextField == null) {
+			searchObjdumpTextField = new JTextField();
+			searchObjdumpTextField.setMaximumSize(new java.awt.Dimension(100, 25));
+			searchObjdumpTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
-					jTextField1KeyTyped(evt);
+					searchObjdumpTextFieldKeyTyped(evt);
 				}
 			});
 		}
-		return jTextField1;
+		return searchObjdumpTextField;
 	}
 
-	private void jTextField1KeyTyped(KeyEvent evt) {
+	private void searchObjdumpTextFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
-			jSearchObjdumpButtonActionPerformed(null);
+			searchObjdumpButtonActionPerformed(null);
 		}
 	}
 
-	private JButton getJSearchObjdumpButton() {
-		if (jSearchObjdumpButton == null) {
-			jSearchObjdumpButton = new JButton();
-			jSearchObjdumpButton.setText("Search");
-			jSearchObjdumpButton.addActionListener(new ActionListener() {
+	private JButton getSearchObjdumpButton() {
+		if (searchObjdumpButton == null) {
+			searchObjdumpButton = new JButton();
+			searchObjdumpButton.setText("Search");
+			searchObjdumpButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSearchObjdumpButtonActionPerformed(evt);
+					searchObjdumpButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSearchObjdumpButton;
+		return searchObjdumpButton;
 	}
 
 	final Highlighter hilit = new DefaultHighlighter();
 	final Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE);
+	private JButton jumpToInstructionButton;
 
-	private void jSearchObjdumpButtonActionPerformed(ActionEvent evt) {
-		if (jTextField1.getText().length() > 0) {
+	private void searchObjdumpButtonActionPerformed(ActionEvent evt) {
+		if (searchObjdumpTextField.getText().length() > 0) {
 			Highlighter h = jEditorPane1.getHighlighter();
 			h.removeAllHighlights();
 			String text = jEditorPane1.getText().toLowerCase();
 
 			int nextPosition = -1;
 
-			for (int j = 0; j < text.length() - jTextField1.getText().length() + 1; j += 1) {
-				if (text.substring(j, j + jTextField1.getText().length()).equals(jTextField1.getText().toLowerCase())) {
+			for (int j = 0; j < text.length() - searchObjdumpTextField.getText().length() + 1; j += 1) {
+				if (text.substring(j, j + searchObjdumpTextField.getText().length()).equals(searchObjdumpTextField.getText().toLowerCase())) {
 					try {
 						if (j >= jEditorPane1.getCaretPosition() && nextPosition == -1) {
-							h.addHighlight(j, j + jTextField1.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
-							nextPosition = j + jTextField1.getText().length();
+							h.addHighlight(j, j + searchObjdumpTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+							nextPosition = j + searchObjdumpTextField.getText().length();
 						} else {
-							h.addHighlight(j, j + jTextField1.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
+							h.addHighlight(j, j + searchObjdumpTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
 						}
 					} catch (BadLocationException ble) {
 					}
@@ -7976,54 +6644,54 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JToolBar getJToolBar4() {
 		if (jToolBar4 == null) {
 			jToolBar4 = new JToolBar();
-			jToolBar4.add(getJTextField2());
-			jToolBar4.add(getJButton16xx());
+			jToolBar4.add(getSearchRelPltTextField());
+			jToolBar4.add(getSearchRelPltButton());
 		}
 		return jToolBar4;
 	}
 
-	private JTextField getJTextField2() {
-		if (jSearchRelPltTextField == null) {
-			jSearchRelPltTextField = new JTextField();
-			jSearchRelPltTextField.setMaximumSize(new java.awt.Dimension(100, 25));
-			jSearchRelPltTextField.addKeyListener(new KeyAdapter() {
+	private JTextField getSearchRelPltTextField() {
+		if (searchRelPltTextField == null) {
+			searchRelPltTextField = new JTextField();
+			searchRelPltTextField.setMaximumSize(new java.awt.Dimension(100, 25));
+			searchRelPltTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
-					jTextField2KeyTyped(evt);
+					searchRelPltTextFieldKeyTyped(evt);
 				}
 			});
 		}
-		return jSearchRelPltTextField;
+		return searchRelPltTextField;
 	}
 
-	private JButton getJButton16xx() {
-		if (jSearchRelPltButton == null) {
-			jSearchRelPltButton = new JButton();
-			jSearchRelPltButton.setText("Search");
-			jSearchRelPltButton.addActionListener(new ActionListener() {
+	private JButton getSearchRelPltButton() {
+		if (searchRelPltButton == null) {
+			searchRelPltButton = new JButton();
+			searchRelPltButton.setText("Search");
+			searchRelPltButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSearchRelPltButtonActionPerformed(evt);
+					searchRelPltButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSearchRelPltButton;
+		return searchRelPltButton;
 	}
 
-	private void jSearchRelPltButtonActionPerformed(ActionEvent evt) {
-		if (jSearchRelPltTextField.getText().length() > 0) {
+	private void searchRelPltButtonActionPerformed(ActionEvent evt) {
+		if (searchRelPltTextField.getText().length() > 0) {
 			Highlighter h = jSearchRelPltEditorPane.getHighlighter();
 			h.removeAllHighlights();
 			String text = jSearchRelPltEditorPane.getText().toLowerCase();
 
 			int nextPosition = -1;
 
-			for (int j = 0; j < text.length() - jSearchRelPltTextField.getText().length() + 1; j += 1) {
-				if (text.substring(j, j + jSearchRelPltTextField.getText().length()).equals(jSearchRelPltTextField.getText().toLowerCase())) {
+			for (int j = 0; j < text.length() - searchRelPltTextField.getText().length() + 1; j += 1) {
+				if (text.substring(j, j + searchRelPltTextField.getText().length()).equals(searchRelPltTextField.getText().toLowerCase())) {
 					try {
 						if (j >= jSearchRelPltEditorPane.getCaretPosition() && nextPosition == -1) {
-							h.addHighlight(j, j + jSearchRelPltTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
-							nextPosition = j + jSearchRelPltTextField.getText().length();
+							h.addHighlight(j, j + searchRelPltTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+							nextPosition = j + searchRelPltTextField.getText().length();
 						} else {
-							h.addHighlight(j, j + jSearchRelPltTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
+							h.addHighlight(j, j + searchRelPltTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
 						}
 					} catch (BadLocationException ble) {
 					}
@@ -8051,63 +6719,63 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JToolBar getJToolBar5() {
 		if (jToolBar5 == null) {
 			jToolBar5 = new JToolBar();
-			jToolBar5.add(getJTextField3());
-			jToolBar5.add(getJButton22x());
+			jToolBar5.add(getSearchDynamicTextField());
+			jToolBar5.add(getSearchDynamicButton());
 		}
 		return jToolBar5;
 	}
 
-	private JTextField getJTextField3() {
-		if (jSearchDynamicTextField == null) {
-			jSearchDynamicTextField = new JTextField();
-			jSearchDynamicTextField.setMaximumSize(new java.awt.Dimension(100, 25));
-			jSearchDynamicTextField.addKeyListener(new KeyAdapter() {
+	private JTextField getSearchDynamicTextField() {
+		if (searchDynamicTextField == null) {
+			searchDynamicTextField = new JTextField();
+			searchDynamicTextField.setMaximumSize(new java.awt.Dimension(100, 25));
+			searchDynamicTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
-					jTextField3KeyTyped(evt);
+					searchDynamicTextFieldKeyTyped(evt);
 				}
 			});
 		}
-		return jSearchDynamicTextField;
+		return searchDynamicTextField;
 	}
 
-	private JButton getJButton22x() {
-		if (jSearchDynamicButton == null) {
-			jSearchDynamicButton = new JButton();
-			jSearchDynamicButton.setText("Search");
-			jSearchDynamicButton.addActionListener(new ActionListener() {
+	private JButton getSearchDynamicButton() {
+		if (searchDynamicButton == null) {
+			searchDynamicButton = new JButton();
+			searchDynamicButton.setText("Search");
+			searchDynamicButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSearchDynamicButtonActionPerformed(evt);
+					searchDynamicButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSearchDynamicButton;
+		return searchDynamicButton;
 	}
 
-	private void jSearchDynamicButtonActionPerformed(ActionEvent evt) {
-		if (jSearchDynamicTextField.getText().length() > 0) {
-			Highlighter h = jSearchDynamicEditorPane.getHighlighter();
+	private void searchDynamicButtonActionPerformed(ActionEvent evt) {
+		if (searchDynamicTextField.getText().length() > 0) {
+			Highlighter h = searchDynamicEditorPane.getHighlighter();
 			h.removeAllHighlights();
-			String text = jSearchDynamicEditorPane.getText().toLowerCase();
+			String text = searchDynamicEditorPane.getText().toLowerCase();
 
 			int nextPosition = -1;
 
-			for (int j = 0; j < text.length() - jSearchDynamicTextField.getText().length() + 1; j += 1) {
-				if (text.substring(j, j + jSearchDynamicTextField.getText().length()).equals(jSearchDynamicTextField.getText().toLowerCase())) {
+			for (int j = 0; j < text.length() - searchDynamicTextField.getText().length() + 1; j += 1) {
+				if (text.substring(j, j + searchDynamicTextField.getText().length()).equals(searchDynamicTextField.getText().toLowerCase())) {
 					try {
-						if (j >= jSearchDynamicEditorPane.getCaretPosition() && nextPosition == -1) {
-							h.addHighlight(j, j + jSearchDynamicTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
-							nextPosition = j + jSearchDynamicTextField.getText().length();
+						if (j >= searchDynamicEditorPane.getCaretPosition() && nextPosition == -1) {
+							h.addHighlight(j, j + searchDynamicTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+							nextPosition = j + searchDynamicTextField.getText().length();
 						} else {
-							h.addHighlight(j, j + jSearchDynamicTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
+							h.addHighlight(j, j + searchDynamicTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
 						}
 					} catch (BadLocationException ble) {
 					}
 				}
 			}
 			if (nextPosition != -1) {
-				jSearchDynamicEditorPane.setCaretPosition(nextPosition);
+				searchDynamicEditorPane.setCaretPosition(nextPosition);
 			} else {
-				jSearchDynamicEditorPane.setCaretPosition(0);
+				searchDynamicEditorPane.setCaretPosition(0);
 			}
 		}
 	}
@@ -8116,142 +6784,115 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jScrollPane19 == null) {
 			jScrollPane19 = new JScrollPane();
 			jScrollPane19.setPreferredSize(new java.awt.Dimension(993, 533));
-			jScrollPane19.setViewportView(getJEditorPane3());
+			jScrollPane19.setViewportView(getSearchDynamicEditorPane());
 		}
 		return jScrollPane19;
 	}
 
-	private JEditorPane getJEditorPane3() {
-		if (jSearchDynamicEditorPane == null) {
-			jSearchDynamicEditorPane = new JEditorPane();
+	private JEditorPane getSearchDynamicEditorPane() {
+		if (searchDynamicEditorPane == null) {
+			searchDynamicEditorPane = new JEditorPane();
 		}
-		return jSearchDynamicEditorPane;
+		return searchDynamicEditorPane;
 	}
 
-	private void jTextField2KeyTyped(KeyEvent evt) {
+	private void searchRelPltTextFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
-			jSearchRelPltButtonActionPerformed(null);
+			searchRelPltButtonActionPerformed(null);
 		}
 	}
 
-	private void jTextField3KeyTyped(KeyEvent evt) {
+	private void searchDynamicTextFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
-			jSearchDynamicButtonActionPerformed(null);
+			searchDynamicButtonActionPerformed(null);
 		}
 	}
 
-	private JPanel getJOSDebugStandardPanel() {
-		if (jOSDebugStandardPanel == null) {
-			jOSDebugStandardPanel = new JPanel();
+	private JPanel getOSDebugStandardPanel() {
+		if (osDebugStandardPanel == null) {
+			osDebugStandardPanel = new JPanel();
 			CardLayout jOSDebugStandardPanelLayout = new CardLayout();
-			jOSDebugStandardPanel.setLayout(jOSDebugStandardPanelLayout);
-			jOSDebugStandardPanel.add(getJOSDebugInfoErrorLabel(), "OS debug error label");
-			jOSDebugStandardPanel.add(getJOSDebugInformationPanel1(), "jOSDebugInformationPanel1");
+			osDebugStandardPanel.setLayout(jOSDebugStandardPanelLayout);
+			osDebugStandardPanel.add(getOSDebugInfoErrorLabel(), "OS debug error label");
+			osDebugStandardPanel.add(getJOSDebugInformationPanel1(), "jOSDebugInformationPanel1");
 		}
-		return jOSDebugStandardPanel;
+		return osDebugStandardPanel;
 	}
 
 	private JTabbedPane getJTabbedPane5() {
-		if (jTabbedPane5 == null) {
-			jTabbedPane5 = new JTabbedPane();
+		if (tabbedPane5 == null) {
+			tabbedPane5 = new JTabbedPane();
 		}
-		return jTabbedPane5;
+		return tabbedPane5;
 	}
 
-	private JLabel getJOSDebugInfoErrorLabel() {
-		if (jOSDebugInfoErrorLabel == null) {
-			jOSDebugInfoErrorLabel = new JLabel();
+	private JLabel getOSDebugInfoErrorLabel() {
+		if (osDebugInfoErrorLabel == null) {
+			osDebugInfoErrorLabel = new JLabel();
 			if (Global.osDebug.compareTo(BigInteger.valueOf(-1)) == 0) {
-				jOSDebugInfoErrorLabel.setText("Parameter -osdebug is not specified.");
+				osDebugInfoErrorLabel.setText("Parameter -osdebug is not specified.");
 			} else {
-				jOSDebugInfoErrorLabel.setText("OS debug information not found - wrong magic bytes.");
+				osDebugInfoErrorLabel.setText("OS debug information not found - wrong magic bytes.");
 			}
-			jOSDebugInfoErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
-			jOSDebugInfoErrorLabel.setHorizontalTextPosition(SwingConstants.CENTER);
-			jOSDebugInfoErrorLabel.setFont(new java.awt.Font("Arial", 0, 20));
-			jOSDebugInfoErrorLabel.setForeground(Color.white);
-			jOSDebugInfoErrorLabel.setBackground(new Color(0, 0, 0, 180));
-			jOSDebugInfoErrorLabel.setOpaque(true);
+			osDebugInfoErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			osDebugInfoErrorLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+			osDebugInfoErrorLabel.setFont(new java.awt.Font(osDebugInfoErrorLabel.getFont().getFamily(), 0, 20));
+			osDebugInfoErrorLabel.setForeground(Color.white);
+			osDebugInfoErrorLabel.setBackground(new Color(0, 0, 0, 180));
+			osDebugInfoErrorLabel.setOpaque(true);
 		}
-		return jOSDebugInfoErrorLabel;
+		return osDebugInfoErrorLabel;
 	}
 
 	private JOSDebugInformationPanel getJOSDebugInformationPanel1() {
-		if (jOSDebugInformationPanel1 == null) {
-			jOSDebugInformationPanel1 = new JOSDebugInformationPanel();
+		if (osDebugInformationPanel1 == null) {
+			osDebugInformationPanel1 = new JOSDebugInformationPanel();
 		}
-		return jOSDebugInformationPanel1;
+		return osDebugInformationPanel1;
 	}
 
 	private InstrumentPanel getJInstrumentPanel() {
-		if (jInstrumentPanel == null) {
-			jInstrumentPanel = new InstrumentPanel();
+		if (instrumentPanel == null) {
+			instrumentPanel = new InstrumentPanel();
 		}
-		return jInstrumentPanel;
+		return instrumentPanel;
 	}
 
-	private JToggleButton getJProfilerToggleButton() {
-		if (jProfilerToggleButton == null) {
-			jProfilerToggleButton = new JToggleButton();
-			jProfilerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_organisation.png")));
-			jProfilerToggleButton.setText(MyLanguage.getString("Profile_and_Sampling"));
-			getButtonGroup4().add(jProfilerToggleButton);
-			jProfilerToggleButton.setToolTipText("Profile & Sampling");
-			jProfilerToggleButton.addActionListener(new ActionListener() {
+	private JToggleButton getProfilerToggleButton() {
+		if (profilerToggleButton == null) {
+			profilerToggleButton = new JToggleButton();
+			profilerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_organisation.png")));
+			profilerToggleButton.setText(MyLanguage.getString("Profile_and_Sampling"));
+			getButtonGroup4().add(profilerToggleButton);
+			profilerToggleButton.setToolTipText("Profile & Sampling");
+			profilerToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jProfilerToggleButtonActionPerformed(evt);
+					profilerToggleButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jProfilerToggleButton;
+		return profilerToggleButton;
 	}
 
-	private void jProfilerToggleButtonActionPerformed(ActionEvent evt) {
-		CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-		if (jProfilerToggleButton.isSelected()) {
-			cl.show(jMainPanel, "jInstrumentPanel");
-			currentPanel = "jInstrumentPanel";
+	private void profilerToggleButtonActionPerformed(ActionEvent evt) {
+		CardLayout cl = (CardLayout) (mainPanel.getLayout());
+		if (profilerToggleButton.isSelected()) {
+			cl.show(mainPanel, "instrumentPanel");
+			currentPanel = "instrumentPanel";
 		} else {
-			cl.show(jMainPanel, "jMaximizableTabbedPane_BasePanel1");
+			cl.show(mainPanel, "jMaximizableTabbedPane_BasePanel1");
 			currentPanel = "jMaximizableTabbedPane_BasePanel1";
 		}
 	}
 
-	private JToggleButton getJLogToggleButton() {
-		if (logToggleButton == null) {
-			logToggleButton = new JToggleButton();
-			logToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")));
-			logToggleButton.setText("Log");
-			getButtonGroup4().add(logToggleButton);
-			logToggleButton.setToolTipText("Log");
-			logToggleButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					jLogToggleButtonActionPerformed(evt);
-				}
-			});
+	private LogPanel getLogPanel() {
+		if (logPanel == null) {
+			logPanel = new LogPanel();
 		}
-		return logToggleButton;
+		return logPanel;
 	}
 
-	private void jLogToggleButtonActionPerformed(ActionEvent evt) {
-		CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-		if (logToggleButton.isSelected()) {
-			cl.show(jMainPanel, "logPanel1");
-			currentPanel = "logPanel1";
-		} else {
-			cl.show(jMainPanel, "jMaximizableTabbedPane_BasePanel1");
-			currentPanel = "jMaximizableTabbedPane_BasePanel1";
-		}
-	}
-
-	private LogPanel getLogPanel1() {
-		if (logPanel1 == null) {
-			logPanel1 = new LogPanel();
-		}
-		return logPanel1;
-	}
-
-	private JToggleButton getJRegisterToggleButton() {
+	private JToggleButton getRegisterToggleButton() {
 		if (registerToggleButton == null) {
 			registerToggleButton = new JToggleButton();
 			registerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_bar.png")));
@@ -8269,10 +6910,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jRegisterToggleButtonActionPerformed(ActionEvent evt) {
-		final CardLayout cl = (CardLayout) (jMainPanel.getLayout());
+		final CardLayout cl = (CardLayout) (mainPanel.getLayout());
 		if (registerToggleButton.isSelected()) {
 			registerPanelScrollPane.setViewportView(registerPanel);
-			cl.show(jMainPanel, "jMaximizableTabbedPane_BasePanel1");
+			cl.show(mainPanel, "jMaximizableTabbedPane_BasePanel1");
 			currentPanel = "jMaximizableTabbedPane_BasePanel1";
 		}
 		// else {
@@ -8307,39 +6948,39 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jOSLogToggleButtonActionPerformed(ActionEvent evt) {
-		CardLayout cl = (CardLayout) (jMainPanel.getLayout());
+		CardLayout cl = (CardLayout) (mainPanel.getLayout());
 		if (osLogToggleButton.isSelected()) {
-			cl.show(jMainPanel, "oSLogPanel1");
+			cl.show(mainPanel, "osLogPanel");
 			currentPanel = "osLogPanel1";
 		} else {
-			cl.show(jMainPanel, "jMaximizableTabbedPane_BasePanel1");
+			cl.show(mainPanel, "jMaximizableTabbedPane_BasePanel1");
 			currentPanel = "jMaximizableTabbedPane_BasePanel1";
 		}
 	}
 
-	private EnhancedTextArea getOsLogPanel1() {
-		if (osLogPanel1 == null) {
-			osLogPanel1 = new EnhancedTextArea();
-			osLogPanel1.addTrailListener(new File("os.log"));
+	private EnhancedTextArea getOsLogPanel() {
+		if (osLogPanel == null) {
+			osLogPanel = new EnhancedTextArea();
+			osLogPanel.addTrailListener(new File("."), new File("os.log"));
 		}
-		return osLogPanel1;
+		return osLogPanel;
 	}
 
-	private JMenuItem getJHelpRequestMenuItem() {
+	private JMenuItem getHelpRequestMenuItem() {
 		if (helpRequestMenuItem == null) {
 			helpRequestMenuItem = new JMenuItem();
 			helpRequestMenuItem.setText("Help request");
 			helpRequestMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jHelpRequestMenuItemActionPerformed(evt);
+					helpRequestMenuItemActionPerformed(evt);
 				}
 			});
 		}
 		return helpRequestMenuItem;
 	}
 
-	private void jHelpRequestMenuItemActionPerformed(ActionEvent evt) {
-		HelpRequestDialog helpRequestDialog = new HelpRequestDialog(this, commandReceiver);
+	private void helpRequestMenuItemActionPerformed(ActionEvent evt) {
+		HelpRequestDialog helpRequestDialog = new HelpRequestDialog(this);
 		CommonLib.centerDialog(helpRequestDialog);
 		helpRequestDialog.setVisible(true);
 	}
@@ -8349,13 +6990,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel30 = new JPanel();
 			BorderLayout jPanel30Layout = new BorderLayout();
 			jPanel30.setLayout(jPanel30Layout);
-			jPanel30.add(getJAddressTranslateTable(), BorderLayout.CENTER);
+			jPanel30.add(getAddressTranslateTable(), BorderLayout.CENTER);
 			jPanel30.add(getJTabbedPane5(), BorderLayout.WEST);
 		}
 		return jPanel30;
 	}
 
-	private JMenuItem getJStep10MenuItem() {
+	private JMenuItem getStep10MenuItem() {
 		if (step10MenuItem == null) {
 			step10MenuItem = new JMenuItem();
 			step10MenuItem.setText("Step 10 Instructions");
@@ -8363,7 +7004,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return step10MenuItem;
 	}
 
-	private JMenuItem getJStep100MenuItem() {
+	private JMenuItem getStep100MenuItem() {
 		if (step100MenuItem == null) {
 			step100MenuItem = new JMenuItem();
 			step100MenuItem.setText("Step 100 Instructions");
@@ -8371,7 +7012,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return step100MenuItem;
 	}
 
-	private JMenuItem getJStepNMenuItem() {
+	private JMenuItem getStepNMenuItem() {
 		if (stepNMenuItem == null) {
 			stepNMenuItem = new JMenuItem();
 			stepNMenuItem.setText("Step N Instructions");
@@ -8379,7 +7020,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepNMenuItem;
 	}
 
-	private JMenuItem getJStepUntilCallOrJumpMenuItem() {
+	private JMenuItem getStepUntilCallOrJumpMenuItem() {
 		if (stepUntilCallOrJumpMenuItem == null) {
 			stepUntilCallOrJumpMenuItem = new JMenuItem();
 			stepUntilCallOrJumpMenuItem.setText("Until call or jump");
@@ -8387,7 +7028,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepUntilCallOrJumpMenuItem;
 	}
 
-	private JMenuItem getJStepUntilRetMenuItem() {
+	private JMenuItem getStepUntilRetMenuItem() {
 		if (stepUntilRetMenuItem == null) {
 			stepUntilRetMenuItem = new JMenuItem();
 			stepUntilRetMenuItem.setText("Until ret");
@@ -8395,7 +7036,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepUntilRetMenuItem;
 	}
 
-	private JMenuItem getJStepUntilIRetMenuItem() {
+	private JMenuItem getStepUntilIRetMenuItem() {
 		if (stepUntilIRetMenuItem == null) {
 			stepUntilIRetMenuItem = new JMenuItem();
 			stepUntilIRetMenuItem.setText("Until iret");
@@ -8403,7 +7044,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepUntilIRetMenuItem;
 	}
 
-	private JMenuItem getJStepUntilMovMenuItem() {
+	private JMenuItem getStepUntilMovMenuItem() {
 		if (stepUntilMovMenuItem == null) {
 			stepUntilMovMenuItem = new JMenuItem();
 			stepUntilMovMenuItem.setText("Until mov");
@@ -8411,24 +7052,24 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepUntilMovMenuItem;
 	}
 
-	private JMenuItem getJJVMMenuItem() {
+	private JMenuItem getJVMMenuItem() {
 		if (jvmMenuItem == null) {
 			jvmMenuItem = new JMenuItem();
 			jvmMenuItem.setText("JVM");
 			jvmMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jJVMMenuItemActionPerformed(evt);
+					jvmMenuItemActionPerformed(evt);
 				}
 			});
 		}
 		return jvmMenuItem;
 	}
 
-	private void jJVMMenuItemActionPerformed(ActionEvent evt) {
+	private void jvmMenuItemActionPerformed(ActionEvent evt) {
 		new JVMInfoDialog(this).setVisible(true);
 	}
 
-	private JMenuItem getJStepUntilIPBigChangeMenuItem() {
+	private JMenuItem getStepUntilIPBigChangeMenuItem() {
 		if (stepUntilIPBigChangeMenuItem == null) {
 			stepUntilIPBigChangeMenuItem = new JMenuItem();
 			stepUntilIPBigChangeMenuItem.setText("Until IP big change");
@@ -8436,106 +7077,103 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepUntilIPBigChangeMenuItem;
 	}
 
-	private JPanel getJRunningPanel() {
-		if (jRunningPanel == null) {
-			jRunningPanel = new JPanel();
-			GroupLayout jRunningPanelLayout = new GroupLayout((JComponent) jRunningPanel);
-			jRunningPanel.setLayout(jRunningPanelLayout);
-			jRunningPanel.setPreferredSize(new java.awt.Dimension(1073, 758));
-			jRunningPanelLayout
-					.setHorizontalGroup(jRunningPanelLayout
-							.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(
-									jRunningPanelLayout
-											.createParallelGroup()
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													jRunningPanelLayout.createSequentialGroup()
-															.addComponent(getJButton16xxx(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-															.addComponent(getJLabel1(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-															.addComponent(getJMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-															.addComponent(getJClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getJStepCountLabel(), 0, 749, Short.MAX_VALUE)
-															.addGap(48))
-											.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE)
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													jRunningPanelLayout
-															.createSequentialGroup()
-															.addGap(65)
-															.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-															.addGroup(
-																	jRunningPanelLayout
-																			.createParallelGroup()
-																			.addGroup(
-																					GroupLayout.Alignment.LEADING,
-																					jRunningPanelLayout
-																							.createSequentialGroup()
-																							.addComponent(getJAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-																							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																							.addComponent(getJSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158,
-																									GroupLayout.PREFERRED_SIZE))
-																			.addGroup(
-																					GroupLayout.Alignment.LEADING,
-																					jRunningPanelLayout
-																							.createSequentialGroup()
-																							.addPreferredGap(getJAutoUpdateEvery20LinesCheckBox(), getJRunningLabel2(),
-																									LayoutStyle.ComponentPlacement.INDENT)
-																							.addComponent(getJRunningLabel2(), GroupLayout.PREFERRED_SIZE, 679,
-																									GroupLayout.PREFERRED_SIZE).addGap(0, 25, Short.MAX_VALUE))))));
+	private JPanel getRunningPanel() {
+		if (runningPanel == null) {
+			runningPanel = new JPanel();
+			GroupLayout jRunningPanelLayout = new GroupLayout((JComponent) runningPanel);
+			runningPanel.setLayout(jRunningPanelLayout);
+			runningPanel.setPreferredSize(new java.awt.Dimension(1073, 758));
+			jRunningPanelLayout.setHorizontalGroup(jRunningPanelLayout
+					.createSequentialGroup()
+					.addContainerGap()
+					.addGroup(
+							jRunningPanelLayout
+									.createParallelGroup()
+									.addGroup(
+											GroupLayout.Alignment.LEADING,
+											jRunningPanelLayout.createSequentialGroup().addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+													.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+													.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+													.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
+									.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE)
+									.addGroup(
+											GroupLayout.Alignment.LEADING,
+											jRunningPanelLayout
+													.createSequentialGroup()
+													.addGap(65)
+													.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+													.addGroup(
+															jRunningPanelLayout
+																	.createParallelGroup()
+																	.addGroup(
+																			GroupLayout.Alignment.LEADING,
+																			jRunningPanelLayout
+																					.createSequentialGroup()
+																					.addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
+																					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																					.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158,
+																							GroupLayout.PREFERRED_SIZE))
+																	.addGroup(
+																			GroupLayout.Alignment.LEADING,
+																			jRunningPanelLayout
+																					.createSequentialGroup()
+																					.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
+																							LayoutStyle.ComponentPlacement.INDENT)
+																					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+																					.addGap(0, 25, Short.MAX_VALUE))))));
 			jRunningPanelLayout.setVerticalGroup(jRunningPanelLayout
 					.createSequentialGroup()
-					.addComponent(getJRunningLabel2(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
+					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 					.addGroup(
 							jRunningPanelLayout
 									.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(getJButton16xxx(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+									.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 											GroupLayout.PREFERRED_SIZE)
-									.addComponent(getJLabel1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getJMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getJClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
-									.addComponent(getJStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+									.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+									.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+									.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
+									.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 					.addGroup(
 							jRunningPanelLayout
 									.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(getJAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getJSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+									.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+									.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 											GroupLayout.PREFERRED_SIZE)
 									.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getJTextArea1(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
 		}
-		return jRunningPanel;
+		return runningPanel;
 	}
 
-	private JLabel getJRunningLabel2() {
-		if (jRunningLabel2 == null) {
-			jRunningLabel2 = new JLabel();
+	private JLabel getRunningLabel() {
+		if (runningLabel == null) {
+			runningLabel = new JLabel();
 			URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader_red.gif");
 			if (Setting.getInstance().currentLanguage.equals("zh_TW")) {
-				jRunningLabel2
+				runningLabel
 						.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
 								+ url
 								+ "\" /><br><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">?????????????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 			} else if (Setting.getInstance().currentLanguage.equals("zh_CN")) {
-				jRunningLabel2
+				runningLabel
 						.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
 								+ url
 								+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 			} else {
-				jRunningLabel2.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /></center></html>");
+				runningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /></center></html>");
 			}
-			jRunningLabel2.setHorizontalAlignment(SwingConstants.CENTER);
-			jRunningLabel2.setHorizontalTextPosition(SwingConstants.CENTER);
-			jRunningLabel2.setFont(new java.awt.Font("Arial", 0, 20));
+			runningLabel.setHorizontalAlignment(SwingConstants.CENTER);
+			runningLabel.setHorizontalTextPosition(SwingConstants.CENTER);
+			runningLabel.setFont(new java.awt.Font(runningLabel.getFont().getFamily(), 0, 20));
 		}
-		return jRunningLabel2;
+		return runningLabel;
 	}
 
 	private EnhancedTextArea getJTextArea1() {
@@ -8546,32 +7184,32 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jTextArea1;
 	}
 
-	private JButton getJButton16xxx() {
-		if (jButton16 == null) {
-			jButton16 = new JButton();
-			jButton16.setText("Pause");
-			jButton16.addActionListener(new ActionListener() {
+	private JButton getPauseButton() {
+		if (pauseButton == null) {
+			pauseButton = new JButton();
+			pauseButton.setText("Pause");
+			pauseButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton16ActionPerformed(evt);
+					pauseButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton16;
+		return pauseButton;
 	}
 
-	private void jButton16ActionPerformed(ActionEvent evt) {
+	private void pauseButtonActionPerformed(ActionEvent evt) {
 		if (untilThread != null) {
 			untilThread.shouldStop = true;
 		}
 	}
 
-	private JLabel getJStepCountLabel() {
-		if (jStepCountLabel == null) {
-			jStepCountLabel = new JLabel();
-			jStepCountLabel.setForeground(new java.awt.Color(222, 0, 5));
-			jStepCountLabel.setFont(new java.awt.Font("Abyssinica SIL", 0, 14));
+	private JLabel getStepCountLabel() {
+		if (stepCountLabel == null) {
+			stepCountLabel = new JLabel();
+			stepCountLabel.setForeground(new java.awt.Color(222, 0, 5));
+			stepCountLabel.setFont(new java.awt.Font(stepCountLabel.getFont().getFamily(), 0, 14));
 		}
-		return jStepCountLabel;
+		return stepCountLabel;
 	}
 
 	private JCheckBox getJCheckBox1() {
@@ -8582,89 +7220,89 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jDisableAutoUpdateCheckBox;
 	}
 
-	private JCheckBox getJAutoUpdateEvery20LinesCheckBox() {
-		if (jAutoUpdateEvery20LinesCheckBox == null) {
-			jAutoUpdateEvery20LinesCheckBox = new JCheckBox();
-			jAutoUpdateEvery20LinesCheckBox.setSelected(true);
-			jAutoUpdateEvery20LinesCheckBox.setText("Update the following instruction box every 20 lines, this make bochs runs faster");
+	private JCheckBox getAutoUpdateEvery20LinesCheckBox() {
+		if (autoUpdateEvery20LinesCheckBox == null) {
+			autoUpdateEvery20LinesCheckBox = new JCheckBox();
+			autoUpdateEvery20LinesCheckBox.setSelected(true);
+			autoUpdateEvery20LinesCheckBox.setText("Update the following instruction box every 20 lines, this make bochs runs faster");
 		}
-		return jAutoUpdateEvery20LinesCheckBox;
+		return autoUpdateEvery20LinesCheckBox;
 	}
 
-	private JCheckBox getJSaveToRunDotTxtCheckBox() {
-		if (jSaveToRunDotTxtCheckBox == null) {
-			jSaveToRunDotTxtCheckBox = new JCheckBox();
-			jSaveToRunDotTxtCheckBox.setText("Append to run.txt");
-			jSaveToRunDotTxtCheckBox.addActionListener(new ActionListener() {
+	private JCheckBox getSaveToRunDotTxtCheckBox() {
+		if (saveToRunDotTxtCheckBox == null) {
+			saveToRunDotTxtCheckBox = new JCheckBox();
+			saveToRunDotTxtCheckBox.setText("Append to run.txt");
+			saveToRunDotTxtCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSaveToRunDotTxtCheckBoxActionPerformed(evt);
+					saveToRunDotTxtCheckBoxActionPerformed(evt);
 				}
 			});
 		}
-		return jSaveToRunDotTxtCheckBox;
+		return saveToRunDotTxtCheckBox;
 	}
 
-	private void jSaveToRunDotTxtCheckBoxActionPerformed(ActionEvent evt) {
-		saveToRunDotTxt = jSaveToRunDotTxtCheckBox.isSelected();
+	private void saveToRunDotTxtCheckBoxActionPerformed(ActionEvent evt) {
+		saveToRunDotTxt = saveToRunDotTxtCheckBox.isSelected();
 	}
 
-	private JLabel getJLabel1() {
-		if (jLabel1 == null) {
-			jLabel1 = new JLabel();
-			jLabel1.setText("Maximum row");
+	private JLabel getMaximumRowLabel() {
+		if (maximumRowLabel == null) {
+			maximumRowLabel = new JLabel();
+			maximumRowLabel.setText("Maximum row");
 		}
-		return jLabel1;
+		return maximumRowLabel;
 	}
 
-	private JComboBox getJMaxRowComboBox() {
-		if (jMaxRowComboBox == null) {
-			ComboBoxModel jMaxRowComboBoxModel = new DefaultComboBoxModel(new String[] { "infinite", "10", "100", "200", "500", "1000", "2000" });
-			jMaxRowComboBox = new JComboBox();
-			jMaxRowComboBox.setModel(jMaxRowComboBoxModel);
-			jMaxRowComboBox.setSelectedItem("100");
+	private JComboBox<String> getMaxRowComboBox() {
+		if (maxRowComboBox == null) {
+			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[] { "infinite", "10", "100", "200", "500", "1000", "2000" });
+			maxRowComboBox = new JComboBox<String>();
+			maxRowComboBox.setModel(maxRowComboBoxModel);
+			maxRowComboBox.setSelectedItem("100");
 		}
-		return jMaxRowComboBox;
+		return maxRowComboBox;
 	}
 
-	private void jInstructionComboBoxActionPerformed(ActionEvent evt) {
+	private void instructionComboBoxActionPerformed(ActionEvent evt) {
 		disassembleButtonActionPerformed(evt);
 	}
 
-	private JButton getJNextMemoryPageButton() {
-		if (jNextMemoryPageButton == null) {
-			jNextMemoryPageButton = new JButton();
-			jNextMemoryPageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next_grey.png")));
-			jNextMemoryPageButton.addActionListener(new ActionListener() {
+	private JButton getNextMemoryPageButton() {
+		if (nextMemoryPageButton == null) {
+			nextMemoryPageButton = new JButton();
+			nextMemoryPageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next_grey.png")));
+			nextMemoryPageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jNextMemoryPageButtonActionPerformed(evt);
+					nextMemoryPageButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jNextMemoryPageButton;
+		return nextMemoryPageButton;
 	}
 
-	private JButton getJPreviousMemoryButton() {
-		if (jPreviousMemoryButton == null) {
-			jPreviousMemoryButton = new JButton();
-			jPreviousMemoryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_previous_grey.png")));
-			jPreviousMemoryButton.addActionListener(new ActionListener() {
+	private JButton getPreviousMemoryButton() {
+		if (previousMemoryButton == null) {
+			previousMemoryButton = new JButton();
+			previousMemoryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_previous_grey.png")));
+			previousMemoryButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jPreviousMemoryButtonActionPerformed(evt);
+					previousMemoryButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jPreviousMemoryButton;
+		return previousMemoryButton;
 	}
 
-	private void jPreviousMemoryButtonActionPerformed(ActionEvent evt) {
+	private void previousMemoryButtonActionPerformed(ActionEvent evt) {
 		try {
-			long address = CommonLib.string2long(jMemoryAddressComboBox.getSelectedItem().toString());
+			long address = CommonLib.string2long(memoryAddressComboBox.getSelectedItem().toString());
 			if (address >= 0xc8) {
-				jMemoryAddressComboBox.setSelectedItem("0x" + Long.toHexString(address - 0xc8));
+				memoryAddressComboBox.setSelectedItem("0x" + Long.toHexString(address - 0xc8));
 			} else {
-				jMemoryAddressComboBox.setSelectedItem("0x0");
+				memoryAddressComboBox.setSelectedItem("0x0");
 			}
-			jGOMemoryButtonActionPerformed(null);
+			goMemoryButtonActionPerformed(null);
 		} catch (Exception ex) {
 			if (Global.debug) {
 				ex.printStackTrace();
@@ -8672,11 +7310,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void jNextMemoryPageButtonActionPerformed(ActionEvent evt) {
+	private void nextMemoryPageButtonActionPerformed(ActionEvent evt) {
 		try {
-			long address = CommonLib.string2long(jMemoryAddressComboBox.getSelectedItem().toString());
-			jMemoryAddressComboBox.setSelectedItem("0x" + Long.toHexString(address + 0xc8));
-			jGOMemoryButtonActionPerformed(null);
+			long address = CommonLib.string2long(memoryAddressComboBox.getSelectedItem().toString());
+			memoryAddressComboBox.setSelectedItem("0x" + Long.toHexString(address + 0xc8));
+			goMemoryButtonActionPerformed(null);
 		} catch (Exception ex) {
 			if (Global.debug) {
 				ex.printStackTrace();
@@ -8684,50 +7322,50 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JRadioButton getJFPURadioButton() {
-		if (jFPURadioButton == null) {
-			jFPURadioButton = new JRadioButton();
-			jFPURadioButton.setText("fpu");
-			jFPURadioButton.addActionListener(new ActionListener() {
+	private JRadioButton getFPURadioButton() {
+		if (fpuRadioButton == null) {
+			fpuRadioButton = new JRadioButton();
+			fpuRadioButton.setText("fpu");
+			fpuRadioButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jFPURadioButtonActionPerformed(evt);
+					fpuRadioButtonActionPerformed(evt);
 				}
 			});
-			getButtonGroup2().add(jFPURadioButton);
+			getButtonGroup2().add(fpuRadioButton);
 		}
-		return jFPURadioButton;
+		return fpuRadioButton;
 	}
 
-	private JRadioButton getJMMXRadioButton() {
-		if (jMMXRadioButton == null) {
-			jMMXRadioButton = new JRadioButton();
-			jMMXRadioButton.setText("mmx");
-			jMMXRadioButton.addActionListener(new ActionListener() {
+	private JRadioButton getMMXRadioButton() {
+		if (mmxRadioButton == null) {
+			mmxRadioButton = new JRadioButton();
+			mmxRadioButton.setText("mmx");
+			mmxRadioButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jMMXRadioButtonActionPerformed(evt);
+					mmxRadioButtonActionPerformed(evt);
 				}
 			});
-			getButtonGroup2().add(jMMXRadioButton);
+			getButtonGroup2().add(mmxRadioButton);
 		}
-		return jMMXRadioButton;
+		return mmxRadioButton;
 	}
 
-	private void jMMXRadioButtonActionPerformed(ActionEvent evt) {
-		HistoryTableModel model = (HistoryTableModel) this.jHistoryTable.getModel();
+	private void mmxRadioButtonActionPerformed(ActionEvent evt) {
+		HistoryTableModel model = (HistoryTableModel) this.historyTable.getModel();
 		model.setView("mmx");
 		for (int x = 0; x < model.getColumnCount(); x++) {
-			jHistoryTable.getColumnModel().getColumn(x).setPreferredWidth(200);
+			historyTable.getColumnModel().getColumn(x).setPreferredWidth(200);
 		}
 	}
 
-	private void jFPURadioButtonActionPerformed(ActionEvent evt) {
-		HistoryTableModel model = (HistoryTableModel) this.jHistoryTable.getModel();
+	private void fpuRadioButtonActionPerformed(ActionEvent evt) {
+		HistoryTableModel model = (HistoryTableModel) this.historyTable.getModel();
 		model.setView("fpu");
 		for (int x = 1; x < model.getColumnCount(); x++) {
-			jHistoryTable.getColumnModel().getColumn(x).setPreferredWidth(200);
+			historyTable.getColumnModel().getColumn(x).setPreferredWidth(200);
 		}
-		jHistoryTable.getColumnModel().getColumn(9).setPreferredWidth(600);
-		jHistoryTable.getColumnModel().getColumn(10).setPreferredWidth(500);
+		historyTable.getColumnModel().getColumn(9).setPreferredWidth(600);
+		historyTable.getColumnModel().getColumn(10).setPreferredWidth(500);
 	}
 
 	private void jTabbedPane1StateChanged(ChangeEvent evt) {
@@ -8745,21 +7383,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jSeparator3;
 	}
 
-	private JMenuItem getJDisasmHereMenuItem() {
-		if (jDisasmHereMenuItem == null) {
-			jDisasmHereMenuItem = new JMenuItem();
-			jDisasmHereMenuItem.setText("Disasm from here");
-			jDisasmHereMenuItem.setEnabled(false);
-			jDisasmHereMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getDisasmHereMenuItem() {
+		if (disasmHereMenuItem == null) {
+			disasmHereMenuItem = new JMenuItem();
+			disasmHereMenuItem.setText("Disasm from here");
+			disasmHereMenuItem.setEnabled(false);
+			disasmHereMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jDisasmHereMenuItemActionPerformed(evt);
+					disasmHereMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jDisasmHereMenuItem;
+		return disasmHereMenuItem;
 	}
 
-	private void jDisasmHereMenuItemActionPerformed(ActionEvent evt) {
+	private void disasmHereMenuItemActionPerformed(ActionEvent evt) {
 		String str;
 		if (Global.clickedWhichInstructionPanel == 0) {
 			str = (String) instructionTable.getValueAt(instructionTable.getSelectedRow(), 1);
@@ -8786,61 +7424,61 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return sourceLevelDebugger;
 	}
 
-	private JToggleButton getJSourceLevelDebuggerButton() {
-		if (jSourceLevelDebuggerToggleButton == null) {
-			jSourceLevelDebuggerToggleButton = new JToggleButton();
-			getButtonGroup4().add(jSourceLevelDebuggerToggleButton);
-			jSourceLevelDebuggerToggleButton.setText("C/C++");
-			jSourceLevelDebuggerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_white_text.png")));
-			jSourceLevelDebuggerToggleButton.setEnabled(false);
-			jSourceLevelDebuggerToggleButton.addActionListener(new ActionListener() {
+	private JToggleButton getSourceLevelDebuggerButton() {
+		if (sourceLevelDebuggerToggleButton == null) {
+			sourceLevelDebuggerToggleButton = new JToggleButton();
+			getButtonGroup4().add(sourceLevelDebuggerToggleButton);
+			sourceLevelDebuggerToggleButton.setText("C/C++");
+			sourceLevelDebuggerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_white_text.png")));
+			sourceLevelDebuggerToggleButton.setEnabled(false);
+			sourceLevelDebuggerToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSourceLevelDebuggerToggleButtonActionPerformed(evt);
+					sourceLevelDebuggerToggleButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSourceLevelDebuggerToggleButton;
+		return sourceLevelDebuggerToggleButton;
 	}
 
-	public void jSourceLevelDebuggerToggleButtonActionPerformed(ActionEvent evt) {
-		CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-		if (jSourceLevelDebuggerToggleButton.isSelected() || evt == null) {
+	public void sourceLevelDebuggerToggleButtonActionPerformed(ActionEvent evt) {
+		CardLayout cl = (CardLayout) (mainPanel.getLayout());
+		if (sourceLevelDebuggerToggleButton.isSelected() || evt == null) {
 			sourceLevelDebugger.registerPanelScrollPane.setViewportView(registerPanel);
-			cl.show(jMainPanel, "sourceLevelDebugger");
+			cl.show(mainPanel, "sourceLevelDebugger");
 			currentPanel = "sourceLevelDebugger";
 		} else {
-			cl.show(jMainPanel, "jMaximizableTabbedPane_BasePanel1");
+			cl.show(mainPanel, "jMaximizableTabbedPane_BasePanel1");
 			currentPanel = "jMaximizableTabbedPane_BasePanel1";
 		}
 
 		if (evt == null) {
-			jSourceLevelDebuggerToggleButton.setSelected(true);
+			sourceLevelDebuggerToggleButton.setSelected(true);
 		}
 	}
 
-	private JMenu getJSystemMenu() {
-		if (jSystemMenu == null) {
-			jSystemMenu = new JMenu();
-			jSystemMenu.setText(MyLanguage.getString("System"));
-			jSystemMenu.add(getJLoadSystemMapMenuItem());
+	private JMenu getSystemMenu() {
+		if (systemMenu == null) {
+			systemMenu = new JMenu();
+			systemMenu.setText(MyLanguage.getString("System"));
+			systemMenu.add(getLoadSystemMapMenuItem());
 		}
-		return jSystemMenu;
+		return systemMenu;
 	}
 
-	private JMenuItem getJLoadSystemMapMenuItem() {
-		if (jLoadElfMenuItem == null) {
-			jLoadElfMenuItem = new JMenuItem();
-			jLoadElfMenuItem.setText(MyLanguage.getString("Load_Elf"));
-			jLoadElfMenuItem.addActionListener(new ActionListener() {
+	private JMenuItem getLoadSystemMapMenuItem() {
+		if (loadSystemMapMenuItem == null) {
+			loadSystemMapMenuItem = new JMenuItem();
+			loadSystemMapMenuItem.setText(MyLanguage.getString("Load_Elf"));
+			loadSystemMapMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jLoadElfMenuItemActionPerformed(evt);
+					loadSystemMapMenuItemActionPerformed(evt);
 				}
 			});
 		}
-		return jLoadElfMenuItem;
+		return loadSystemMapMenuItem;
 	}
 
-	private void jLoadElfMenuItemActionPerformed(ActionEvent evt) {
+	private void loadSystemMapMenuItemActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser(new File("."));
 		int returnVal = fc.showOpenDialog(this);
 
@@ -8854,7 +7492,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (clearInstructionTableMenuItem == null) {
 			clearInstructionTableMenuItem = new JMenuItem();
 			clearInstructionTableMenuItem.setText("Clear");
-			clearInstructionTableMenuItem.setEnabled(false);
 			clearInstructionTableMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					clearInstructionTableMenuItemActionPerformed(evt);
@@ -8876,55 +7513,55 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return buttonGroup4;
 	}
 
-	private JButton getJClearHistoryTableButton() {
+	private JButton getClearHistoryTableButton() {
 		if (clearHistoryTableButton == null) {
 			clearHistoryTableButton = new JButton();
 			clearHistoryTableButton.setText("Clear");
 			clearHistoryTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jClearHistoryTableButtonActionPerformed(evt);
+					clearHistoryTableButtonActionPerformed(evt);
 				}
 			});
 		}
 		return clearHistoryTableButton;
 	}
 
-	private void jClearHistoryTableButtonActionPerformed(ActionEvent evt) {
-		((HistoryTableModel) this.jHistoryTable.getModel()).clear();
+	private void clearHistoryTableButtonActionPerformed(ActionEvent evt) {
+		((HistoryTableModel) this.historyTable.getModel()).clear();
 	}
 
-	private JButton getJClearRunningTextAreaButton() {
+	private JButton getClearRunningTextAreaButton() {
 		if (clearRunningTextAreaButton == null) {
 			clearRunningTextAreaButton = new JButton();
 			clearRunningTextAreaButton.setText("Clear");
 			clearRunningTextAreaButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jClearRunningTextAreaButtonActionPerformed(evt);
+					clearRunningTextAreaButtonActionPerformed(evt);
 				}
 			});
 		}
 		return clearRunningTextAreaButton;
 	}
 
-	private void jClearRunningTextAreaButtonActionPerformed(ActionEvent evt) {
+	private void clearRunningTextAreaButtonActionPerformed(ActionEvent evt) {
 		jTextArea1.setText("");
 	}
 
-	private JLabel getJHistoryTableRepeatedLabel() {
+	private JLabel getHistoryTableRepeatedLabel() {
 		if (historyTableRepeatedLabel == null) {
 			historyTableRepeatedLabel = new JLabel();
 		}
 		return historyTableRepeatedLabel;
 	}
 
-	private void jHistoryTableMouseClicked(MouseEvent evt) {
+	private void historyTableMouseClicked(MouseEvent evt) {
 		try {
-			String instruction = (String) jHistoryTable.getValueAt(jHistoryTable.getSelectedRow(), 2);
+			String instruction = (String) historyTable.getValueAt(historyTable.getSelectedRow(), 2);
 			instruction = instruction.replaceAll("^.*] [0-9]", "").split(":")[2].trim().replaceAll(" .*", "");
 			int count = 0;
-			for (int x = 0; x <= jHistoryTable.getSelectedRow(); x++) {
+			for (int x = 0; x <= historyTable.getSelectedRow(); x++) {
 				try {
-					String i = (String) jHistoryTable.getValueAt(x, 2);
+					String i = (String) historyTable.getValueAt(x, 2);
 					i = i.replaceAll("^.*]", "").split(":")[2].trim().replaceAll(" .*", "");
 					if (instruction.equals(i)) {
 						count++;
@@ -8951,28 +7588,28 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jLabel2;
 	}
 
-	private JTextField getJFilterHistoryTableTextField() {
+	private JTextField getFilterHistoryTableTextField() {
 		if (filterHistoryTableTextField == null) {
 			filterHistoryTableTextField = new JSearchTextField();
 			filterHistoryTableTextField.setMaximumSize(new java.awt.Dimension(158, 26));
 			filterHistoryTableTextField.addKeyListener(new KeyAdapter() {
 				public void keyReleased(KeyEvent evt) {
-					jFilterHistoryTableTextFieldKeyReleased(evt);
+					filterHistoryTableTextFieldKeyReleased(evt);
 				}
 			});
 		}
 		return filterHistoryTableTextField;
 	}
 
-	private void jFilterHistoryTableTextFieldKeyReleased(KeyEvent evt) {
-		MyTableRowSorter<TableModel> sorter = (MyTableRowSorter<TableModel>) jHistoryTable.getRowSorter();
+	private void filterHistoryTableTextFieldKeyReleased(KeyEvent evt) {
+		MyTableRowSorter<TableModel> sorter = (MyTableRowSorter<TableModel>) historyTable.getRowSorter();
 		sorter.showAfterwardCount = (Integer) showAfterwardSpinner.getValue();
 		sorter.setRowFilter(RowFilter.regexFilter(filterHistoryTableTextField.getText()));
 		// ((MyTableRowSorter<TableModel>)
 		// jHistoryTable.getRowSorter()).setRowFilter(genRegexFilter(jFilterHistoryTableTextField.getText()));
 	}
 
-	private JMenuItem getJRunBochsAndSkipBreakpointMenuItem() {
+	private JMenuItem getRunBochsAndSkipBreakpointMenuItem() {
 		if (runBochsAndSkipBreakpointMenuItem == null) {
 			runBochsAndSkipBreakpointMenuItem = new JMenuItem();
 			runBochsAndSkipBreakpointMenuItem.setText("Run and skip breakpoint for N times");
@@ -8980,7 +7617,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return runBochsAndSkipBreakpointMenuItem;
 	}
 
-	private JSpinner getJShowAfterwardSpinner() {
+	private JSpinner getShowAfterwardSpinner() {
 		if (showAfterwardSpinner == null) {
 			SpinnerNumberModel jShowAfterwardSpinnerModel = new SpinnerNumberModel(0, 0, 100, 1);
 			showAfterwardSpinner = new JSpinner();
@@ -8988,7 +7625,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			showAfterwardSpinner.setModel(jShowAfterwardSpinnerModel);
 			showAfterwardSpinner.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent evt) {
-					jShowAfterwardSpinnerStateChanged(evt);
+					showAfterwardSpinnerStateChanged(evt);
 				}
 			});
 		}
@@ -9024,113 +7661,114 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jLabel9;
 	}
 
-	private void jShowAfterwardSpinnerStateChanged(ChangeEvent evt) {
-		jFilterHistoryTableTextFieldKeyReleased(null);
+	private void showAfterwardSpinnerStateChanged(ChangeEvent evt) {
+		filterHistoryTableTextFieldKeyReleased(null);
 	}
 
-	private JDropDownButton getJSBButton() {
-		if (jSBButton == null) {
-			jSBButton = new JDropDownButton();
-			jSBButton.setText("SB");
-			jSBButton.setPreferredSize(new java.awt.Dimension(40, 25));
+	private JDropDownButton getSBButton() {
+		if (sbButton == null) {
+			sbButton = new JDropDownButton();
+			sbButton.setText("SB");
+			sbButton.setPreferredSize(new java.awt.Dimension(40, 25));
 			loadSBButton();
-			jSBButton.addActionListener(new ActionListener() {
+			sbButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSBButtonActionPerformed(evt);
+					sbButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSBButton;
+		return sbButton;
 	}
 
 	void loadSBButton() {
-		jSBButton.removeAll();
+		sbButton.removeAll();
 		Object[] a = Setting.getInstance().sbAddress.toArray();
 		for (int x = a.length - 1; x >= 0; x--) {
 			JMenuItem menu = new JMenuItem();
 			menu.setText(String.valueOf(a[x]));
-			jSBButton.add(menu);
+			sbButton.add(menu);
 		}
 	}
 
-	private JDropDownButton getJSBAButton() {
-		if (jSBAButton == null) {
-			jSBAButton = new JDropDownButton();
-			jSBAButton.setText("SBA");
+	private JDropDownButton getSBAButton() {
+		if (sbaButton == null) {
+			sbaButton = new JDropDownButton();
+			sbaButton.setText("SBA");
 			loadSBAButton();
-			jSBAButton.addActionListener(new ActionListener() {
+			sbaButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jSBAButtonActionPerformed(evt);
+					sbaButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jSBAButton;
+		return sbaButton;
 	}
 
 	void loadSBAButton() {
-		jSBAButton.removeAll();
+		sbaButton.removeAll();
 		Object[] a = Setting.getInstance().sbaAddress.toArray();
 		for (int x = a.length - 1; x >= 0; x--) {
 			JMenuItem menu = new JMenuItem();
 			menu.setText(String.valueOf(a[x]));
-			jSBAButton.add(menu);
+			sbaButton.add(menu);
 		}
 	}
 
-	private void jSBButtonActionPerformed(ActionEvent evt) {
-		if (jSBButton.getEventSource() != null) {
-			long l = Long.parseLong(((JMenuItem) jSBButton.getEventSource()).getText());
-			sendCommand("sb " + l);
-			Setting.getInstance().sbAddress.add(l);
-		} else {
-			String s = JOptionPane.showInputDialog(this, "Please input cycle interval for next stop?");
-			if (s == null) {
-				return;
-			}
-			try {
-				long l = Long.parseLong(s);
-				sendCommand("sb " + l);
-				Setting.getInstance().sbAddress.add(l);
-			} catch (Exception ex) {
-				if (Global.debug) {
-					ex.printStackTrace();
-				}
-			}
-		}
-
-		for (int x = 0; x < Setting.getInstance().sbAddress.size() - 10; x++) {
-			Setting.getInstance().sbAddress.remove(Setting.getInstance().sbAddress.toArray()[x]);
-		}
-		Setting.getInstance().save();
-		loadSBButton();
+	private void sbButtonActionPerformed(ActionEvent evt) {
+		//		if (jSBButton.getEventSource() != null) {
+		//			long l = Long.parseLong(((JMenuItem) jSBButton.getEventSource()).getText());
+		//			sendBochsCommand("sb " + l);
+		//			Setting.getInstance().sbAddress.add(l);
+		//		} else {
+		//			String s = JOptionPane.showInputDialog(this, "Please input cycle interval for next stop?");
+		//			if (s == null) {
+		//				return;
+		//			}
+		//			try {
+		//				long l = Long.parseLong(s);
+		//				sendBochsCommand("sb " + l);
+		//				Setting.getInstance().sbAddress.add(l);
+		//			} catch (Exception ex) {
+		//				if (Global.debug) {
+		//					ex.printStackTrace();
+		//				}
+		//			}
+		//		}
+		//
+		//		for (int x = 0; x < Setting.getInstance().sbAddress.size() - 10; x++) {
+		//			Setting.getInstance().sbAddress.remove(Setting.getInstance().sbAddress.toArray()[x]);
+		//		}
+		//		Setting.getInstance().save();
+		//		loadSBButton();
 	}
 
-	private void jSBAButtonActionPerformed(ActionEvent evt) {
-		if (jSBAButton.getEventSource() != null) {
-			long l = Long.parseLong(((JMenuItem) jSBAButton.getEventSource()).getText());
-			sendCommand("sba " + l);
-			Setting.getInstance().sbaAddress.add(l);
-		} else {
-			String s = JOptionPane.showInputDialog(this, "Please input cycle interval for next stop?");
-			if (s == null) {
-				return;
-			}
-			try {
-				long l = Long.parseLong(s);
-				sendCommand("sba " + l);
-				Setting.getInstance().sbaAddress.add(l);
-			} catch (Exception ex) {
-				if (Global.debug) {
-					ex.printStackTrace();
-				}
-			}
-		}
+	private void sbaButtonActionPerformed(ActionEvent evt) {
+		//TODO sba
+		//		if (jSBAButton.getEventSource() != null) {
+		//			long l = Long.parseLong(((JMenuItem) jSBAButton.getEventSource()).getText());
+		//			sendBochsCommand("sba " + l);
+		//			Setting.getInstance().sbaAddress.add(l);
+		//		} else {
+		//			String s = JOptionPane.showInputDialog(this, "Please input cycle interval for next stop?");
+		//			if (s == null) {
+		//				return;
+		//			}
+		//			try {
+		//				long l = Long.parseLong(s);
+		//				sendBochsCommand("sba " + l);
+		//				Setting.getInstance().sbaAddress.add(l);
+		//			} catch (Exception ex) {
+		//				if (Global.debug) {
+		//					ex.printStackTrace();
+		//				}
+		//			}
+		//		}
 
-		for (int x = 0; x < Setting.getInstance().sbaAddress.size() - 10; x++) {
-			Setting.getInstance().sbaAddress.remove(Setting.getInstance().sbaAddress.toArray()[x]);
-		}
-		Setting.getInstance().save();
-		loadSBAButton();
+		//		for (int x = 0; x < Setting.getInstance().sbaAddress.size() - 10; x++) {
+		//			Setting.getInstance().sbaAddress.remove(Setting.getInstance().sbaAddress.toArray()[x]);
+		//		}
+		//		Setting.getInstance().save();
+		//		loadSBAButton();
 	}
 
 	private JMenuItem getShortcutHelpMenuItem() {
@@ -9165,7 +7803,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private EnhancedTextArea getBochsoutTextArea() {
 		if (bochsoutTextArea == null) {
 			bochsoutTextArea = new EnhancedTextArea();
-			getBochsoutTextArea().jToolBar.add(getJButton4(), -1);
+			getBochsoutTextArea().toolBar.add(getHelpButton(), -1);
+			getBochsoutTextArea().hideFontComboBox();
 		}
 		return bochsoutTextArea;
 	}
@@ -9193,6 +7832,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 				sb.append((char) readByte);
 			}
+			fileHandler.close();
 
 			sb.deleteCharAt(sb.length() - 1);
 			String lastLine = sb.reverse().toString();
@@ -9202,24 +7842,24 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JButton getJButton4() {
-		if (jButton4 == null) {
-			jButton4 = new JButton();
-			jButton4.setText("Help");
-			jButton4.addActionListener(new ActionListener() {
+	private JButton getHelpButton() {
+		if (helpButton == null) {
+			helpButton = new JButton();
+			helpButton.setText("Help");
+			helpButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jButton4ActionPerformed(evt);
+					helpButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jButton4;
+		return helpButton;
 	}
 
-	private void jButton4ActionPerformed(ActionEvent evt) {
+	private void helpButtonActionPerformed(ActionEvent evt) {
 		JOptionPane.showMessageDialog(this, "To enable bochsout.txt, add \"log: bochsout.txt\" to your bochsrc.bxrc");
 	}
 
-	private JMenuItem getJRunCustomCommandMenuItem() {
+	private JMenuItem getRunCustomCommandMenuItem() {
 		if (runCustomCommandMenuItem == null) {
 			runCustomCommandMenuItem = new JMenuItem();
 			runCustomCommandMenuItem.setText("Run custom commands");
@@ -9227,25 +7867,25 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return runCustomCommandMenuItem;
 	}
 
-	private JDropDownButton getJStepOverDropDownButton() {
+	private JDropDownButton getStepOverDropDownButton() {
 		if (stepOverDropDownButton == null) {
 			stepOverDropDownButton = new JDropDownButton();
 			stepOverDropDownButton.setText(MyLanguage.getString("Step_over"));
 			stepOverDropDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step_over.png")));
 			stepOverDropDownButton.setMaximumSize(new java.awt.Dimension(115, 26));
-			stepOverDropDownButton.add(getJStepOver10MenuItem());
-			stepOverDropDownButton.add(getJStepOver100MenuItem());
-			stepOverDropDownButton.add(getJStepOverNTimesMenuItem());
+			stepOverDropDownButton.add(getStepOver10MenuItem());
+			stepOverDropDownButton.add(getStepOver100MenuItem());
+			stepOverDropDownButton.add(getStepOverNTimesMenuItem());
 			stepOverDropDownButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jStepOverDropDownButtonActionPerformed(evt);
+					stepOverDropDownButtonActionPerformed(evt);
 				}
 			});
 		}
 		return stepOverDropDownButton;
 	}
 
-	private void jStepOverDropDownButtonActionPerformed(ActionEvent evt) {
+	private void stepOverDropDownButtonActionPerformed(ActionEvent evt) {
 		if (stepOverDropDownButton.getEventSource() != null) {
 			untilThread = new StepThread(stepOverDropDownButton.getEventSource());
 			if (stepOverDropDownButton.getEventSource() == stepOverNTimesMenuItem) {
@@ -9257,27 +7897,27 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 
 			// if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
-			CardLayout cl = (CardLayout) (jMainPanel.getLayout());
-			cl.show(jMainPanel, "Running Label 2");
+			CardLayout cl = (CardLayout) (mainPanel.getLayout());
+			cl.show(mainPanel, "Running Label 2");
 			// }
 			new Thread(untilThread, "Step until thread").start();
 		} else {
-			sendCommand("next");
+			VMController.getVM().stepOver();
 			WebServiceUtil.log("gkd", "step over", null, null, null);
 			updateVMStatus(true);
 			// updateHistoryTable(re);
 		}
 	}
 
-	private JMenuItem getJStepOver10MenuItem() {
-		if (jStepOver10MenuItem == null) {
-			jStepOver10MenuItem = new JMenuItem();
-			jStepOver10MenuItem.setText(MyLanguage.getString("Step_over_10_times"));
+	private JMenuItem getStepOver10MenuItem() {
+		if (stepOver10MenuItem == null) {
+			stepOver10MenuItem = new JMenuItem();
+			stepOver10MenuItem.setText(MyLanguage.getString("Step_over_10_times"));
 		}
-		return jStepOver10MenuItem;
+		return stepOver10MenuItem;
 	}
 
-	private JMenuItem getJStepOver100MenuItem() {
+	private JMenuItem getStepOver100MenuItem() {
 		if (stepOver100MenuItem == null) {
 			stepOver100MenuItem = new JMenuItem();
 			stepOver100MenuItem.setText(MyLanguage.getString("Step_over_100_times"));
@@ -9285,7 +7925,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepOver100MenuItem;
 	}
 
-	private JMenuItem getJStepOverNTimesMenuItem() {
+	private JMenuItem getStepOverNTimesMenuItem() {
 		if (stepOverNTimesMenuItem == null) {
 			stepOverNTimesMenuItem = new JMenuItem();
 			stepOverNTimesMenuItem.setText(MyLanguage.getString("Step_over_N_times"));
@@ -9293,20 +7933,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return stepOverNTimesMenuItem;
 	}
 
-	private JMenuItem getJLicenseMenuItem() {
+	private JMenuItem getLicenseMenuItem() {
 		if (licenseMenuItem == null) {
 			licenseMenuItem = new JMenuItem();
 			licenseMenuItem.setText("License");
 			licenseMenuItem.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jLicenseMenuItemActionPerformed(evt);
+					licenseMenuItemActionPerformed(evt);
 				}
 			});
 		}
 		return licenseMenuItem;
 	}
 
-	private void jLicenseMenuItemActionPerformed(ActionEvent evt) {
+	private void licenseMenuItemActionPerformed(ActionEvent evt) {
 		new LicenseDialog(this).setVisible(true);
 	}
 
@@ -9332,16 +7972,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		if (addr != null) {
-			nexti(addr, "s");
+			nexti(addr, false);
 		}
 	}
 
-	private void nexti(BigInteger addr, String command) {
-		// System.out.println("going to " + addr.toString(16));
+	private void nexti(BigInteger addr, boolean isStepOver) {
+		// logger.debug("going to " + addr.toString(16));
 		BigInteger currentEIP = getRealEIP();
 		for (int x = 0; x < Global.MAX_NEXTI_INSTRUCTION_COUNT; x++) {
 			String asmCode = getASMCode(currentEIP);
-			sendCommand(command);
+			if (isStepOver) {
+				VMController.getVM().stepOver();
+			} else {
+				VMController.getVM().singleStep();
+			}
+			//			sendBochsCommand(command);
 			updateRegister(true);
 			waitUpdateFinish();
 			currentEIP = getRealEIP();
@@ -9350,7 +7995,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 
 			if (asmCode != null && asmCode.contains("call")) {
-				System.out.println("bingo la " + asmCode);
+				logger.debug("bingo la " + asmCode);
 				break;
 			}
 		}
@@ -9405,7 +8050,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		if (addr != null) {
-			nexti(addr, "next");
+			nexti(addr, true);
 		}
 	}
 
@@ -9451,43 +8096,32 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	@Override
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-
+		handleQuit(null);
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -9521,10 +8155,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Setting.getInstance().y = this.getLocation().y;
 		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
 		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
-		Setting.getInstance().osDebugSplitPane_DividerLocation = this.jOSDebugInformationPanel1.getjMainSplitPane().getDividerLocation();
+		Setting.getInstance().osDebugSplitPane_DividerLocation = this.osDebugInformationPanel1.getMainSplitPane().getDividerLocation();
 		Setting.getInstance().save();
 
-		killVM();
+		VMController.getVM().stopVM();
 		System.exit(0);
 	}
 
@@ -9533,15 +8167,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	}
 
-	void killVM() {
-		if (p != null) {
-			p.destroy();
-		}
-	}
-
 	@Override
 	public void cancelled() {
-		killVM();
+		VMController.getVM().stopVM();
 		System.exit(0);
+	}
+
+	private JButton getJumpToInstructionButton() {
+		if (jumpToInstructionButton == null) {
+			jumpToInstructionButton = new JButton("");
+			jumpToInstructionButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					jumpToRowInstructionTable(getRealEIP());
+				}
+			});
+			jumpToInstructionButton.setIcon(new ImageIcon(GKD.class.getResource("/com/gkd/icons/famfam_icons/eye.png")));
+		}
+		return jumpToInstructionButton;
 	}
 }

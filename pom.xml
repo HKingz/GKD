@@ -3,7 +3,10 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.peter</groupId>
 	<artifactId>GKD</artifactId>
-	<version>20130821</version>
+	<version>20140414</version>
+	<name>General Kernel Debugger</name>
+	<description>GKD is a gui debug tool for kernel development</description>
+	<url>http://peter.kingofcoders.com</url>
 	<build>
 		<plugins>
 			<plugin>
@@ -14,7 +17,6 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -39,6 +41,11 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>net.sf</groupId>
+				<artifactId>stat-scm</artifactId>
+				<version>1.2.1-SNAPSHOT</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -84,11 +91,6 @@
 			<version>3.9</version>
 		</dependency>
 		<dependency>
-			<groupId>com.jgoodies</groupId>
-			<artifactId>jgoodies-forms</artifactId>
-			<version>1.6.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.axis</groupId>
 			<artifactId>axis</artifactId>
 			<version>1.4</version>
@@ -111,12 +113,12 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-ar</artifactId>
-			<version>20130520</version>
+			<version>20140129</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-dwarf</artifactId>
-			<version>20131001</version>
+			<version>20140129</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -131,17 +133,12 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-swing</artifactId>
-			<version>20131001</version>
-		</dependency>
-		<dependency>
-			<groupId>com.peter</groupId>
-			<artifactId>tightvncpanel</artifactId>
-			<version>20130717</version>
+			<version>20140129</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>JLibGDB</artifactId>
-			<version>20131001</version>
+			<version>20140129</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-discovery</groupId>
@@ -153,5 +150,51 @@
 			<artifactId>axis-wsdl4j</artifactId>
 			<version>1.5.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.miglayout</groupId>
+			<artifactId>miglayout</artifactId>
+			<version>3.7.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.jgoodies</groupId>
+			<artifactId>jgoodies-forms</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.peter</groupId>
+			<artifactId>tightvncpanel</artifactId>
+			<version>20140701</version>
+		</dependency>
 	</dependencies>
+	<scm>
+		<url>scm:svn:svn://210.5.164.14/GKD</url>
+		<connection>scm:svn:svn://210.5.164.14/GKD</connection>
+		<tag>HEAD</tag>
+	</scm>
+	<developers>
+		<developer>
+			<id>peter</id>
+			<name>Peter</name>
+			<email>mcheung63@hotmail.com</email>
+			<url>http://peter.kingofcoders.com</url>
+			<organization>None</organization>
+			<organizationUrl>None</organizationUrl>
+			<roles>
+				<role>architect</role>
+				<role>founder</role>
+			</roles>
+			<timezone>+8</timezone>
+			<properties>
+				<picUrl>http://s.gravatar.com/avatar/09ab35661cb9508c728f11e3b62d24ba?s=80</picUrl>
+			</properties>
+		</developer>
+	</developers>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE, version 3</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly license</comments>
+		</license>
+	</licenses>
 </project>

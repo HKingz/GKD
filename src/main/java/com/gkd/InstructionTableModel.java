@@ -1,12 +1,12 @@
 package com.gkd;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 
 public class InstructionTableModel extends AbstractTableModel {
@@ -116,28 +116,17 @@ public class InstructionTableModel extends AbstractTableModel {
 	public void updateBreakpoint(BigInteger eip) {
 		this.eip = eip;
 		try {
-			// commandReceiver.setCommandNoOfLine(-1);
-			if (Global.vmType.equals("bochs")) {
-				GKD.commandReceiver.clearBuffer();
-				GKD.sendCommand("info break");
-				Thread.currentThread().sleep(100);
-				String result = GKD.commandReceiver.getCommandResultUntilEnd();
-				String[] lines = result.split("\n");
+			breakpoint.clear();
+			Vector<Vector<String>> r = VMController.getVM().breakpoint();
+			for (Vector<String> s : r) {
+				s.add("0"); // hit count
+				if (s.size() > 1) {
+					s.remove(1);
 
-				breakpoint.clear();
-				for (int x = 1; x < lines.length; x++) {
-					if (lines[x].contains("breakpoint")) {
-						Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
-						strs.add("0"); // hit count
-						if (strs.size() > 1) {
-							strs.remove(1);
-
-							if (strs.get(1).contains("y")) {
-								breakpoint.put(CommonLib.string2BigInteger(strs.get(2)), true);
-							} else {
-								breakpoint.put(CommonLib.string2BigInteger(strs.get(2)), false);
-							}
-						}
+					if (s.get(1).contains("y")) {
+						breakpoint.put(CommonLib.string2BigInteger(s.get(2)), true);
+					} else {
+						breakpoint.put(CommonLib.string2BigInteger(s.get(2)), false);
 					}
 				}
 			}

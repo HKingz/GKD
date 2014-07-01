@@ -23,37 +23,23 @@ import org.apache.axis.client.Call;
 import org.apache.axis.client.Service;
 import org.apache.axis.encoding.XMLType;
 
-import com.gkd.CommandReceiver;
-import com.gkd.GKD;
 import com.peterswing.advancedswing.enhancedtextarea.EnhancedTextArea;
 
-/**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
- */
 public class HelpRequestDialog extends javax.swing.JDialog {
-	private JButton jSendButton;
-	private JLabel jLabel3;
-	private JLabel jLabel4;
-	private JLabel jLabel5;
-	private JScrollPane jScrollPane1;
-	private JTextField jNameTextField;
-	private EnhancedTextArea jInfoTextArea;
-	private JTextArea jMessageTextField;
-	private JTextField jEmailTextField;
-	private JLabel jLabel2;
-	private JLabel jLabel1;
-	private CommandReceiver commandReceiver;
+	private JButton sendButton;
+	private JLabel label3;
+	private JLabel label4;
+	private JLabel label5;
+	private JScrollPane scrollPane1;
+	private JTextField nameTextField;
+	private EnhancedTextArea infoTextArea;
+	private JTextArea messageTextField;
+	private JTextField emailTextField;
+	private JLabel label2;
+	private JLabel label1;
 
-	public HelpRequestDialog(JFrame frame, CommandReceiver commandReceiver) {
+	public HelpRequestDialog(JFrame frame) {
 		super(frame);
-		this.commandReceiver = commandReceiver;
 		initGUI();
 	}
 
@@ -62,141 +48,138 @@ public class HelpRequestDialog extends javax.swing.JDialog {
 			GroupLayout thisLayout = new GroupLayout((JComponent) getContentPane());
 			getContentPane().setLayout(thisLayout);
 			this.setTitle("I need help");
-			{
-				jSendButton = new JButton();
-				jSendButton.setText("Send help request");
-				jSendButton.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent evt) {
-						jSendButtonActionPerformed(evt);
-					}
-				});
-			}
-			{
-				jLabel1 = new JLabel();
-				jLabel1.setText("<- Press this button, it will send the information to the author, so that he can help you");
-			}
-			{
-				jLabel4 = new JLabel();
-				jLabel4.setText("Below are the auto-collected information, will be send to the author");
-			}
-			{
-				jInfoTextArea = new EnhancedTextArea();
-			}
-			{
-				jLabel5 = new JLabel();
-				jLabel5.setText("Name");
-			}
-			{
-				jNameTextField = new JTextField();
-			}
-			{
-				jLabel2 = new JLabel();
-				jLabel2.setText("Email");
-			}
-			{
-				jEmailTextField = new JTextField();
-			}
-			{
-				jLabel3 = new JLabel();
-				jLabel3.setText("Massage");
-			}
-			{
-				jScrollPane1 = new JScrollPane();
-				jScrollPane1.setBorder(new LineBorder(new java.awt.Color(88, 88, 88), 1, false));
-				{
-					jMessageTextField = new JTextArea();
-					jScrollPane1.setViewportView(jMessageTextField);
+			sendButton = new JButton();
+			sendButton.setText("Send help request");
+			sendButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					sendButtonActionPerformed(evt);
 				}
+			});
+
+			label1 = new JLabel();
+			label1.setText("<- Press this button, it will send the information to the author, so that he can help you");
+
+			label4 = new JLabel();
+			label4.setText("Below are the auto-collected information, will be send to the author");
+
+			infoTextArea = new EnhancedTextArea();
+
+			label5 = new JLabel();
+			label5.setText("Name");
+
+			nameTextField = new JTextField();
+
+			label2 = new JLabel();
+			label2.setText("Email");
+
+			emailTextField = new JTextField();
+
+			label3 = new JLabel();
+			label3.setText("Massage");
+
+			scrollPane1 = new JScrollPane();
+			scrollPane1.setBorder(new LineBorder(new java.awt.Color(88, 88, 88), 1, false));
+			{
+				messageTextField = new JTextArea();
+				scrollPane1.setViewportView(messageTextField);
 			}
-			thisLayout.setVerticalGroup(thisLayout
-					.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(
-							thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(jSendButton, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
-									.addComponent(jLabel1, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(
-							thisLayout
-									.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(jEmailTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE)
-									.addComponent(jLabel2, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addComponent(jLabel5, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addComponent(jNameTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(
-							thisLayout
-									.createParallelGroup()
-									.addComponent(jScrollPane1, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
-									.addGroup(
-											GroupLayout.Alignment.LEADING,
-											thisLayout.createSequentialGroup().addGap(8)
-													.addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(42)))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(jInfoTextArea, 0, 207, Short.MAX_VALUE).addContainerGap());
-			thisLayout.setHorizontalGroup(thisLayout
-					.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(
-							thisLayout
-									.createParallelGroup()
-									.addGroup(
-											thisLayout
-													.createSequentialGroup()
-													.addGroup(
-															thisLayout
-																	.createParallelGroup()
-																	.addComponent(jLabel3, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 54,
-																			GroupLayout.PREFERRED_SIZE)
-																	.addGroup(
-																			GroupLayout.Alignment.LEADING,
-																			thisLayout.createSequentialGroup()
-																					.addComponent(jLabel2, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE).addGap(18)))
-													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-													.addGroup(
-															thisLayout
-																	.createParallelGroup()
-																	.addComponent(jScrollPane1, GroupLayout.Alignment.LEADING, 0, 560, Short.MAX_VALUE)
-																	.addGroup(
-																			GroupLayout.Alignment.LEADING,
-																			thisLayout.createSequentialGroup()
-																					.addComponent(jEmailTextField, GroupLayout.PREFERRED_SIZE, 254, GroupLayout.PREFERRED_SIZE)
-																					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																					.addComponent(jLabel5, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-																					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																					.addComponent(jNameTextField, 0, 239, Short.MAX_VALUE))))
-									.addGroup(
-											GroupLayout.Alignment.LEADING,
-											thisLayout.createSequentialGroup().addComponent(jSendButton, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(jLabel1, 0, 474, Short.MAX_VALUE))
-									.addGroup(
-											GroupLayout.Alignment.LEADING,
-											thisLayout.createSequentialGroup().addComponent(jLabel4, GroupLayout.PREFERRED_SIZE, 449, GroupLayout.PREFERRED_SIZE)
-													.addGap(0, 177, Short.MAX_VALUE)).addComponent(jInfoTextArea, GroupLayout.Alignment.LEADING, 0, 626, Short.MAX_VALUE))
-					.addContainerGap());
+
+			thisLayout
+					.setVerticalGroup(thisLayout
+							.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(
+									thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+											.addComponent(sendButton, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
+											.addComponent(label1, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addGroup(
+									thisLayout
+											.createParallelGroup(GroupLayout.Alignment.BASELINE)
+											.addComponent(emailTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+													GroupLayout.PREFERRED_SIZE)
+											.addComponent(label2, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+													GroupLayout.PREFERRED_SIZE)
+											.addComponent(label5, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+													GroupLayout.PREFERRED_SIZE)
+											.addComponent(nameTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+													GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addGroup(
+									thisLayout
+											.createParallelGroup()
+											.addComponent(scrollPane1, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+											.addGroup(
+													GroupLayout.Alignment.LEADING,
+													thisLayout.createSequentialGroup().addGap(8)
+															.addComponent(label3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(42)))
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(label4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(infoTextArea, 0, 207, Short.MAX_VALUE).addContainerGap());
+			thisLayout
+					.setHorizontalGroup(thisLayout
+							.createSequentialGroup()
+							.addContainerGap()
+							.addGroup(
+									thisLayout
+											.createParallelGroup()
+											.addGroup(
+													thisLayout
+															.createSequentialGroup()
+															.addGroup(
+																	thisLayout
+																			.createParallelGroup()
+																			.addComponent(label3, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 54,
+																					GroupLayout.PREFERRED_SIZE)
+																			.addGroup(
+																					GroupLayout.Alignment.LEADING,
+																					thisLayout.createSequentialGroup()
+																							.addComponent(label2, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
+																							.addGap(18)))
+															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+															.addGroup(
+																	thisLayout
+																			.createParallelGroup()
+																			.addComponent(scrollPane1, GroupLayout.Alignment.LEADING, 0, 560, Short.MAX_VALUE)
+																			.addGroup(
+																					GroupLayout.Alignment.LEADING,
+																					thisLayout
+																							.createSequentialGroup()
+																							.addComponent(emailTextField, GroupLayout.PREFERRED_SIZE, 254,
+																									GroupLayout.PREFERRED_SIZE)
+																							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																							.addComponent(label5, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+																							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																							.addComponent(nameTextField, 0, 239, Short.MAX_VALUE))))
+											.addGroup(
+													GroupLayout.Alignment.LEADING,
+													thisLayout.createSequentialGroup().addComponent(sendButton, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
+															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(label1, 0, 474, Short.MAX_VALUE))
+											.addGroup(
+													GroupLayout.Alignment.LEADING,
+													thisLayout.createSequentialGroup().addComponent(label4, GroupLayout.PREFERRED_SIZE, 449, GroupLayout.PREFERRED_SIZE)
+															.addGap(0, 177, Short.MAX_VALUE)).addComponent(infoTextArea, GroupLayout.Alignment.LEADING, 0, 626, Short.MAX_VALUE))
+							.addContainerGap());
 
 			this.setSize(666, 425);
-			jInfoTextArea.setEnabled(false);
-			jInfoTextArea.setBorder(new LineBorder(new java.awt.Color(88, 88, 88), 1, false));
-			jInfoTextArea.getTextArea().setEnabled(false);
+			infoTextArea.setEnabled(false);
+			infoTextArea.setBorder(new LineBorder(new java.awt.Color(88, 88, 88), 1, false));
+			infoTextArea.getTextArea().setEnabled(false);
 
-			String commands[] = { "r", "info eflags", "xp /10bx 0x1000", "disasm cs:eip", "disasm 0x7c00 0x7cff", "info gdt 0 10", "info idt 0 10", "xp /4096bx 0x1000",
-					"print-stack 40", "info tab", "info break" };
 			String result = "";
-			for (String c : commands) {
-				GKD.sendCommand(c);
-				result += "\n\n" + c + "\n\n" + commandReceiver.getCommandResultUntilEnd();
-			}
-			jInfoTextArea.setText(result);
+			//			String commands[] = { "r", "info eflags", "xp /10bx 0x1000", "disasm cs:eip", "disasm 0x7c00 0x7cff", "info gdt 0 10", "info idt 0 10", "xp /4096bx 0x1000",
+			//					"print-stack 40", "info tab", "info break" };			
+			//			for (String c : commands) {
+			//				GKD.sendBochsCommand(c);
+			//				result += "\n\n" + c + "\n\n" + commandReceiver.getCommandResultUntilEnd();
+			//			}
+			infoTextArea.setText(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void jSendButtonActionPerformed(ActionEvent evt) {
+	private void sendButtonActionPerformed(ActionEvent evt) {
 		String url = "http://webservice1.petersoft.com/NuSoapServer.php";
 		Service service = new Service();
 		try {
@@ -207,8 +190,8 @@ public class HelpRequestDialog extends javax.swing.JDialog {
 			call.addParameter("Email", XMLType.XSD_STRING, ParameterMode.IN);
 			call.addParameter("Message", XMLType.XSD_STRING, ParameterMode.IN);
 			call.setReturnType(XMLType.XSD_STRING);
-			String res = (String) call.invoke(new Object[] { jNameTextField.getText(), jEmailTextField.getText(),
-					jMessageTextField.getText() + "\n-------------------\n" + jInfoTextArea.getTextArea().getText() });
+			String res = (String) call.invoke(new Object[] { nameTextField.getText(), emailTextField.getText(),
+					messageTextField.getText() + "\n-------------------\n" + infoTextArea.getTextArea().getText() });
 			if (res.equals("ok")) {
 				JOptionPane.showMessageDialog(this, "Message is sent to Peter, thanks");
 			} else {

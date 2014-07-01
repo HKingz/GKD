@@ -8,7 +8,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,7 +42,6 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.w3c.dom.Document;
 
-import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
 
 public class GKDCommonLib {
@@ -404,93 +402,94 @@ public class GKDCommonLib {
 		}
 	}
 
-	public static BigInteger getPhysicalAddress(BigInteger cr3, BigInteger linearAddress) {
-		BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 22, 31);
-		BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 12, 21);
-		BigInteger offset = CommonLib.getBigInteger(linearAddress, 0, 11);
-		System.out.println("pd=" + pdNo);
-		System.out.println("pt=" + ptNo);
-
-		BigInteger pdAddr = cr3.add(pdNo);
-		System.out.println("pdAddr=" + pdAddr.toString(16));
-		GKD.commandReceiver.clearBuffer();
-		GKD.sendCommand("xp /8bx " + pdAddr);
-		String result = GKD.commandReceiver.getCommandResult(String.format("%08x", pdAddr));
-		int bytes[] = new int[8];
-		String[] b = result.replaceFirst("^.*:", "").split("\t");
-		for (int y = 1; y <= 8; y++) {
-			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).intValue();
-		}
-		BigInteger pde = CommonLib.getBigInteger(CommonLib.getLong(bytes, 0), 12, 31).shiftLeft(12);
-		System.out.println("pde=" + pde.toString(16));
-
-		BigInteger ptAddr = pde.shiftLeft(10).add(ptNo);
-		System.out.println("ptAddr=" + ptAddr.toString(16));
-		GKD.commandReceiver.clearBuffer();
-		GKD.sendCommand("xp /8bx " + ptAddr);
-		result = GKD.commandReceiver.getCommandResult(String.format("%08x", ptAddr));
-		bytes = new int[8];
-		b = result.replaceFirst("^.*:", "").split("\t");
-		for (int y = 1; y <= 8; y++) {
-			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).byteValue();
-		}
-		BigInteger pageAddr = CommonLib.getBigInteger(CommonLib.getLong(bytes, 0), 12, 31).shiftLeft(12);
-		System.out.println("pageAddr=" + pageAddr.toString(16));
-
-		return pageAddr.add(offset);
-	}
-
-	public static long getLongFromBochs(BigInteger address) {
-		GKD.commandReceiver.clearBuffer();
-		GKD.sendCommand("xp /8bx " + address);
-		String result = GKD.commandReceiver.getCommandResult(String.format("%08x", address));
-		int bytes[] = new int[8];
-		String[] b = result.replaceFirst("^.*:", "").split("\t");
-		for (int y = 1; y <= 8; y++) {
-			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).byteValue();
-		}
-		return CommonLib.getLong(bytes, 0);
-	}
-
-	public static int[] getMemoryFromBochs(BigInteger address, int totalByte) {
-		int bytes[] = new int[totalByte];
-
-		GKD.commandReceiver.clearBuffer();
-		GKD.sendCommand("xp /" + totalByte + "bx " + address);
-
-		if (totalByte > 0) {
-			float totalByte2 = totalByte - 1;
-			totalByte2 = totalByte2 / 8;
-			int totalByte3 = (int) Math.floor(totalByte2);
-			String realEndAddressStr;
-			String realStartAddressStr;
-			BigInteger realStartAddress = address;
-			realStartAddressStr = String.format("%08x", realStartAddress);
-			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-			realEndAddressStr = String.format("%08x", realEndAddress);
-			// System.out.println(realStartAddressStr);
-			// System.out.println(realEndAddressStr);
-			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-			// System.out.println(result);
-			if (result != null) {
-				String[] lines = result.split("\n");
-
-				int offset = 0;
-				// System.out.println(result);
-
-				for (int y = 0; y < lines.length; y++) {
-					String[] b = lines[y].replaceFirst("^.*:", "").split("\t");
-					// System.out.println(lines[y]);
-					for (int x = 1; x < b.length && x < 200; x++) {
-						// System.out.print(offset + " ");
-						bytes[offset] = (byte) Long.parseLong(b[x].substring(2).trim(), 16);
-						offset++;
-					}
-				}
-			}
-		}
-		return bytes;
-	}
+	//
+	//	public static BigInteger getPhysicalAddress(BigInteger cr3, BigInteger linearAddress) {
+	//		BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 22, 31);
+	//		BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 12, 21);
+	//		BigInteger offset = CommonLib.getBigInteger(linearAddress, 0, 11);
+	//		System.out.println("pd=" + pdNo);
+	//		System.out.println("pt=" + ptNo);
+	//
+	//		BigInteger pdAddr = cr3.add(pdNo);
+	//		System.out.println("pdAddr=" + pdAddr.toString(16));
+	//		GKD.commandReceiver.clearBuffer();
+	//		GKD.sendBochsCommand("xp /8bx " + pdAddr);
+	//		String result = GKD.commandReceiver.getCommandResult(String.format("%08x", pdAddr));
+	//		int bytes[] = new int[8];
+	//		String[] b = result.replaceFirst("^.*:", "").split("\t");
+	//		for (int y = 1; y <= 8; y++) {
+	//			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).intValue();
+	//		}
+	//		BigInteger pde = CommonLib.getBigInteger(CommonLib.getLong(bytes, 0), 12, 31).shiftLeft(12);
+	//		System.out.println("pde=" + pde.toString(16));
+	//
+	//		BigInteger ptAddr = pde.shiftLeft(10).add(ptNo);
+	//		System.out.println("ptAddr=" + ptAddr.toString(16));
+	//		GKD.commandReceiver.clearBuffer();
+	//		GKD.sendBochsCommand("xp /8bx " + ptAddr);
+	//		result = GKD.commandReceiver.getCommandResult(String.format("%08x", ptAddr));
+	//		bytes = new int[8];
+	//		b = result.replaceFirst("^.*:", "").split("\t");
+	//		for (int y = 1; y <= 8; y++) {
+	//			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).byteValue();
+	//		}
+	//		BigInteger pageAddr = CommonLib.getBigInteger(CommonLib.getLong(bytes, 0), 12, 31).shiftLeft(12);
+	//		System.out.println("pageAddr=" + pageAddr.toString(16));
+	//
+	//		return pageAddr.add(offset);
+	//	}
+	//
+	//	public static long getLongFromBochs(BigInteger address) {
+	//		GKD.commandReceiver.clearBuffer();
+	//		GKD.sendBochsCommand("xp /8bx " + address);
+	//		String result = GKD.commandReceiver.getCommandResult(String.format("%08x", address));
+	//		int bytes[] = new int[8];
+	//		String[] b = result.replaceFirst("^.*:", "").split("\t");
+	//		for (int y = 1; y <= 8; y++) {
+	//			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).byteValue();
+	//		}
+	//		return CommonLib.getLong(bytes, 0);
+	//	}
+	//
+	//	public static int[] getMemoryFromBochs(BigInteger address, int totalByte) {
+	//		int bytes[] = new int[totalByte];
+	//
+	//		GKD.commandReceiver.clearBuffer();
+	//		GKD.sendBochsCommand("xp /" + totalByte + "bx " + address);
+	//
+	//		if (totalByte > 0) {
+	//			float totalByte2 = totalByte - 1;
+	//			totalByte2 = totalByte2 / 8;
+	//			int totalByte3 = (int) Math.floor(totalByte2);
+	//			String realEndAddressStr;
+	//			String realStartAddressStr;
+	//			BigInteger realStartAddress = address;
+	//			realStartAddressStr = String.format("%08x", realStartAddress);
+	//			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
+	//			realEndAddressStr = String.format("%08x", realEndAddress);
+	//			// System.out.println(realStartAddressStr);
+	//			// System.out.println(realEndAddressStr);
+	//			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+	//			// System.out.println(result);
+	//			if (result != null) {
+	//				String[] lines = result.split("\n");
+	//
+	//				int offset = 0;
+	//				// System.out.println(result);
+	//
+	//				for (int y = 0; y < lines.length; y++) {
+	//					String[] b = lines[y].replaceFirst("^.*:", "").split("\t");
+	//					// System.out.println(lines[y]);
+	//					for (int x = 1; x < b.length && x < 200; x++) {
+	//						// System.out.print(offset + " ");
+	//						bytes[offset] = (byte) Long.parseLong(b[x].substring(2).trim(), 16);
+	//						offset++;
+	//					}
+	//				}
+	//			}
+	//		}
+	//		return bytes;
+	//	}
 
 	public static HashMap<String, String> checkLatestVersion() {
 		String url = "http://peter-bochs.googlecode.com/files/latestVersion.ini";

@@ -12,7 +12,7 @@ public class SearchTableModel extends AbstractTableModel {
 	Vector<Long> address = new Vector<Long>();
 	Vector<String> bytesForDisplay = new Vector<String>();
 	Vector<String> bytesStr = new Vector<String>();
-	Vector<byte[]> bytes = new Vector<byte[]>();
+	Vector<int[]> bytes = new Vector<int[]>();
 
 	public int getRadix() {
 		return radix;
@@ -22,7 +22,7 @@ public class SearchTableModel extends AbstractTableModel {
 		this.radix = radix;
 	}
 
-	public void addRow(long address, byte bytes[]) {
+	public void addRow(long address, int bytes[]) {
 		for (int x = 0; x < this.address.size(); x++) {
 			if (this.address.get(x) == address && Arrays.equals(this.bytes.get(x), bytes)) {
 				return;
@@ -35,7 +35,7 @@ public class SearchTableModel extends AbstractTableModel {
 			str += String.format("0x%02x", bytes[x]) + " ";
 		}
 		this.bytesForDisplay.add(str);
-		this.bytesStr.add(new String(bytes));
+		this.bytesStr.add(Arrays.toString(bytes));
 		this.fireTableDataChanged();
 	}
 

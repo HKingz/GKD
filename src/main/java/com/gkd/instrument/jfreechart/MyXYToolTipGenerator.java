@@ -15,9 +15,9 @@ public class MyXYToolTipGenerator implements XYToolTipGenerator {
 		double x = xyzDataset.getXValue(series, item);
 		double y = xyzDataset.getYValue(series, item);
 		double z = xyzDataset.getZValue(series, item);
-		long blockSize = CommonLib.convertFilesize((String) InstrumentPanel.jBlockSizeComboBox.getSelectedItem());
-		long columnCount = Data.getColumnCount(CommonLib.convertFilesize((String) InstrumentPanel.jFromComboBox.getSelectedItem()), CommonLib
-				.convertFilesize((String) InstrumentPanel.jToComboBox.getSelectedItem()), blockSize);
+		long blockSize = CommonLib.convertFilesize((String) InstrumentPanel.blockSizeComboBox.getSelectedItem());
+		long columnCount = Data.getColumnCount(CommonLib.convertFilesize((String) InstrumentPanel.fromComboBox.getSelectedItem()), CommonLib
+				.convertFilesize((String) InstrumentPanel.toComboBox.getSelectedItem()), blockSize);
 		long address = (long) (((y * columnCount) + x) * blockSize);
 		return ("0x" + Long.toHexString(address) + ",count=" + (int) z);
 	}

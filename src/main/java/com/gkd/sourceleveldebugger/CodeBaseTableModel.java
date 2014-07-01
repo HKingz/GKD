@@ -2,7 +2,6 @@ package com.gkd.sourceleveldebugger;
 
 import java.io.File;
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 

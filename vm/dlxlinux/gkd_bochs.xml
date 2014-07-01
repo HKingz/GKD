@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gkd>
 	<vmType>bochs</vmType>
-	<bochs>/Users/peter/install/bin/bochs</bochs>
-	<bochsArguments>-f bochsrc.txt -q</bochsArguments>
+	<vm>/Users/peter/install/bin/bochs</vm>
+	<vmArguments>-f bochsrc.txt -q</vmArguments>
+	<vncPort>5900</vncPort>
 </gkd>
+

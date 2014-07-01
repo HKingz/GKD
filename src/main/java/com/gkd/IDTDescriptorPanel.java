@@ -14,36 +14,27 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import com.gkd.architecture.DescriptorParser;
+import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 
-/**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
- */
 public class IDTDescriptorPanel extends JPanel {
-	private JTable jByteTable;
+	private JTable byteTable;
 	private int idtNo;
-	private JPanel jPanel3;
-	private JPanel jPanel2;
-	private JTabbedPane jTabbedPane1;
-	private JLabel jTypeLabel;
-	private JTable jFieldTable;
-	private JScrollPane jScrollPane1;
-	private int b[] = new int[8];
+	private JPanel panel3;
+	private JPanel panel2;
+	private JTabbedPane tabbedPane1;
+	private JLabel typeLabel;
+	private JTable fieldTable;
+	private JScrollPane scrollPane1;
+	private int b[];
 	private long value;
 	private long bit[] = new long[64];
-	private GKD peterBochsDebugger;
+	private GKD gkd;
 	private BigInteger idtAddress;
-	private JScrollPane jScrollPane2;
+	private JScrollPane scrollPane2;
 
-	public IDTDescriptorPanel(GKD peterBochsDebugger, BigInteger idtAddress, int idtNo) {
-		this.peterBochsDebugger = peterBochsDebugger;
+	public IDTDescriptorPanel(GKD gkd, BigInteger idtAddress, int idtNo) {
+		this.gkd = gkd;
 		this.idtAddress = idtAddress;
 		this.idtNo = idtNo;
 
@@ -57,71 +48,73 @@ public class IDTDescriptorPanel extends JPanel {
 				this.setLayout(thisLayout);
 			}
 			{
-				jTabbedPane1 = new JTabbedPane();
-				this.add(jTabbedPane1, BorderLayout.CENTER);
-				jTabbedPane1.setTabPlacement(JTabbedPane.LEFT);
-				jTabbedPane1.setPreferredSize(new java.awt.Dimension(515, 437));
+				tabbedPane1 = new JTabbedPane();
+				this.add(tabbedPane1, BorderLayout.CENTER);
+				tabbedPane1.setTabPlacement(JTabbedPane.LEFT);
+				tabbedPane1.setPreferredSize(new java.awt.Dimension(515, 437));
 				{
-					jPanel2 = new JPanel();
-					jTabbedPane1.addTab(MyLanguage.getString("Info"), null, jPanel2, null);
+					panel2 = new JPanel();
+					tabbedPane1.addTab(MyLanguage.getString("Info"), null, panel2, null);
 					BorderLayout jPanel2Layout = new BorderLayout();
-					jPanel2.setLayout(jPanel2Layout);
+					panel2.setLayout(jPanel2Layout);
 					{
-						jScrollPane1 = new JScrollPane();
-						jPanel2.add(jScrollPane1, BorderLayout.CENTER);
-						jScrollPane1.setBorder(new LineBorder(new java.awt.Color(0, 0, 0), 1, false));
+						scrollPane1 = new JScrollPane();
+						panel2.add(scrollPane1, BorderLayout.CENTER);
+						scrollPane1.setBorder(new LineBorder(new java.awt.Color(0, 0, 0), 1, false));
 						{
 							DefaultTableModel jTable1Model = new DefaultTableModel(new String[][] { { "" }, { "" } }, new String[] { "31" });
 							for (int x = 30; x >= 0; x--) {
 								jTable1Model.addColumn(x);
 							}
 
-							jByteTable = new JTable();
-							jScrollPane1.setViewportView(jByteTable);
-							jByteTable.setModel(jTable1Model);
-							jByteTable.setBounds(12, 12, 562, 50);
+							byteTable = new JTable();
+							scrollPane1.setViewportView(byteTable);
+							byteTable.setModel(jTable1Model);
+							byteTable.setBounds(12, 12, 562, 50);
 						}
 					}
 					{
-						jTypeLabel = new JLabel();
-						jPanel2.add(jTypeLabel, BorderLayout.NORTH);
-						jTypeLabel.setText("Type : ");
+						typeLabel = new JLabel();
+						panel2.add(typeLabel, BorderLayout.NORTH);
+						typeLabel.setText("Type : ");
 					}
 				}
 				{
-					jPanel3 = new JPanel();
-					jTabbedPane1.addTab(MyLanguage.getString("Field"), null, jPanel3, null);
+					panel3 = new JPanel();
+					tabbedPane1.addTab(MyLanguage.getString("Field"), null, panel3, null);
 					BorderLayout jPanel3Layout = new BorderLayout();
-					jPanel3.setLayout(jPanel3Layout);
+					panel3.setLayout(jPanel3Layout);
 					{
-						jScrollPane2 = new JScrollPane();
-						jPanel3.add(jScrollPane2, BorderLayout.CENTER);
+						scrollPane2 = new JScrollPane();
+						panel3.add(scrollPane2, BorderLayout.CENTER);
 						{
 							TableModel jTable2Model = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
-							jFieldTable = new JTable();
-							jScrollPane2.setViewportView(jFieldTable);
-							jFieldTable.setModel(jTable2Model);
+							fieldTable = new JTable();
+							scrollPane2.setViewportView(fieldTable);
+							fieldTable.setModel(jTable2Model);
 						}
 					}
 				}
 			}
-			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
-			String result;
-			//			PeterBochsDebugger.sendCommand("info idt " + idtNo);
+			// GKD.commandReceiver.setCommandNoOfLine(2);
+			//			String result;
+			//			GKD.sendBochsCommand("info idt " + idtNo);
 			//			String idtNoHex = String.format("0x%02x", idtNo);
-			//			result = PeterBochsDebugger.commandReceiver.getCommandResult("IDT[" + idtNoHex + "]");
+			//			result = GKD.commandReceiver.getCommandResult("IDT[" + idtNoHex + "]");
 
-			GKD.commandReceiver.clearBuffer();
-			GKD.sendCommand("x /8bx " + String.format("0x%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
-			result = GKD.commandReceiver.getCommandResult(String.format("%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
-			System.out.println("idtNo=" + idtNo + " , idtAddress+" + idtAddress + " , " + (idtAddress.add(BigInteger.valueOf(idtNo * 8))));
-			System.out.println(result);
-			String lines[] = result.split("\n");
+			//			GKD.commandReceiver.clearBuffer();
+			//			GKD.sendBochsCommand("x /8bx " + String.format("0x%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
+			//			result = GKD.commandReceiver.getCommandResult(String.format("%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
+			//			System.out.println("idtNo=" + idtNo + " , idtAddress+" + idtAddress + " , " + (idtAddress.add(BigInteger.valueOf(idtNo * 8))));
+			//			System.out.println(result);
+			//			String lines[] = result.split("\n");
+			//
+			//			String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");
+			//			for (int x = 0; x < 8; x++) {
+			//				b[x] = (byte) Long.parseLong(byteStr[x].substring(2), 16);
+			//			}
 
-			String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");
-			for (int x = 0; x < 8; x++) {
-				b[x] = (byte) Long.parseLong(byteStr[x].substring(2), 16);
-			}
+			b = VMController.getVM().virtualMemory(idtAddress.add(BigInteger.valueOf(idtNo * 8)), 8);
 
 			value = CommonLib.getLong(b, 0);
 
@@ -130,29 +123,29 @@ public class IDTDescriptorPanel extends JPanel {
 			}
 
 			for (int x = 0; x < 32; x++) {
-				jByteTable.setValueAt(value >> x & 1, 1, 31 - x);
+				byteTable.setValueAt(value >> x & 1, 1, 31 - x);
 			}
 
 			for (int x = 32; x < 64; x++) {
-				jByteTable.setValueAt(value >> x & 1, 0, 63 - x);
+				byteTable.setValueAt(value >> x & 1, 0, 63 - x);
 			}
 
 			// parse descriptor
 			if (bit[40] == 0 && bit[41] == 1 && bit[42] == 1 && bit[44] == 0) {
-				jTypeLabel.setText("Type : Interrupt gate descriptor, value=0x" + Long.toHexString(value));
+				typeLabel.setText("Type : Interrupt gate descriptor, value=0x" + Long.toHexString(value));
 				parseInterruptGateDescriptor();
 			} else if (bit[40] == 1 && bit[41] == 0 && bit[42] == 1 && bit[43] == 0 && bit[44] == 0) {
-				jTypeLabel.setText("Type : Task gate descriptor, value=0x" + Long.toHexString(value));
+				typeLabel.setText("Type : Task gate descriptor, value=0x" + Long.toHexString(value));
 				parseTaskGateDescriptor();
 			} else if (bit[44] == 0 && bit[43] == 0 && bit[42] == 0 && bit[41] == 1 && bit[40] == 0) {
-				jTypeLabel.setText("Type : LDT descriptor, value=0x" + Long.toHexString(value) + ", base=0x" + Long.toHexString(CommonLib.getInt(b[2], b[3], b[4], b[7]))
+				typeLabel.setText("Type : LDT descriptor, value=0x" + Long.toHexString(value) + ", base=0x" + Long.toHexString(CommonLib.getInt(b[2], b[3], b[4], b[7]))
 						+ ", limit=0x" + Long.toHexString(CommonLib.getShort(b[0], b[1])));
 				parseLDT();
 			} else if (bit[44] == 0 && bit[42] == 0 && bit[40] == 1) {
-				jTypeLabel.setText("Type : TSS descriptor, value=0x" + Long.toHexString(value));
+				typeLabel.setText("Type : TSS descriptor, value=0x" + Long.toHexString(value));
 				this.removeAll();
 				this.setLayout(new BorderLayout());
-				this.add(new TSSPanel(peterBochsDebugger, 2, idtAddress, idtNo), BorderLayout.CENTER);
+				this.add(new TSSPanel(gkd, 2, idtAddress, idtNo, b), BorderLayout.CENTER);
 			}
 			// end parse descriptor
 		} catch (Exception e) {
@@ -162,7 +155,7 @@ public class IDTDescriptorPanel extends JPanel {
 
 	private void parseInterruptGateDescriptor() {
 		try {
-			DefaultTableModel model = (DefaultTableModel) jFieldTable.getModel();
+			DefaultTableModel model = (DefaultTableModel) fieldTable.getModel();
 			long cs_selector = CommonLib.getLong(b[2], b[3], 0, 0, 0, 0, 0, 0);
 			model.addRow(new String[] { "cs selector", "0x" + Long.toHexString(cs_selector) + " (0x" + Long.toHexString(cs_selector >> 3) + ")" });
 
@@ -181,7 +174,7 @@ public class IDTDescriptorPanel extends JPanel {
 
 	private void parseTaskGateDescriptor() {
 		try {
-			DefaultTableModel model = (DefaultTableModel) jFieldTable.getModel();
+			DefaultTableModel model = (DefaultTableModel) fieldTable.getModel();
 			long tss_selector = CommonLib.getLong(b[2], b[3], 0, 0, 0, 0, 0, 0);
 			model.addRow(new String[] { "tss selector", "0x" + Long.toHexString(tss_selector) + " (0x" + Long.toHexString(tss_selector >> 3) + ")" });
 
@@ -196,7 +189,7 @@ public class IDTDescriptorPanel extends JPanel {
 
 	private void parseLDT() {
 		try {
-			DefaultTableModel model = (DefaultTableModel) jFieldTable.getModel();
+			DefaultTableModel model = (DefaultTableModel) fieldTable.getModel();
 
 			BigInteger base = BigInteger.valueOf(CommonLib.getInt(b[2], b[3], b[4], b[7]));
 			long limit = CommonLib.getShort(b[0], b[1]);
@@ -210,7 +203,7 @@ public class IDTDescriptorPanel extends JPanel {
 			// parse each descriptor
 
 			JScrollPane pane = new JScrollPane();
-			jTabbedPane1.addTab(MyLanguage.getString("Descriptor"), null, pane, null);
+			tabbedPane1.addTab(MyLanguage.getString("Descriptor"), null, pane, null);
 			JTable table = new JTable();
 			DefaultTableModel model2 = new DefaultTableModel(new String[][] {}, new String[] { "No.", "Type", "Value", "Base", "Limit", "A", "R/W", "C/E", "X", "S", "DPL", "P",
 					"AVL", "D/B", "G" });
@@ -218,7 +211,7 @@ public class IDTDescriptorPanel extends JPanel {
 			if (limit > 1000) {
 				limit = 1000;
 			}
-			int bytes[] = GKD.getLinearMemory(base, (int) (limit + 1));
+			int bytes[] = VMController.getVM().virtualMemory(base, (int) limit + 1); //GKD.getLinearMemory(base, (int) (limit + 1));
 
 			for (int x = 0; x < limit; x += 8) {
 				long value = CommonLib.getLong(bytes, x);

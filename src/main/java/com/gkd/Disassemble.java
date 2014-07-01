@@ -2,28 +2,38 @@ package com.gkd;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 
 import com.gkd.GKD.OSType;
 import com.peterswing.CommonLib;
 
 public class Disassemble {
-	public static String disassemble(int bytes[], int bits, BigInteger address) {
+	static Logger logger = Logger.getLogger(Disassemble.class);
+
+	public static String disassemble(int bytes[], boolean is32Bit, BigInteger address) {
 		try {
+			if (Global.debug) {
+				logger.info("disassemble");
+			}
 			FileUtils.writeByteArrayToFile(new File("temp"), CommonLib.intArrayToByteArray(bytes));
 
 			ProcessBuilder pb;
-			if (GKD.os == OSType.mac || GKD.os == OSType.linux) {
-				pb = new ProcessBuilder("ndisasm", "-b", String.valueOf(bits), "-o", address.toString(), "temp");
-			} else {
-				pb = new ProcessBuilder("ndisasm.exe", "-b", String.valueOf(bits), "-o", address.toString(), "temp");
-			}
+			int bits = is32Bit ? 32 : 16;
 
+			if (Global.ndisasmPath == null || Global.ndisasmPath.equals("")) {
+				if (GKD.os == OSType.mac || GKD.os == OSType.linux) {
+					pb = new ProcessBuilder("ndisasm", "-b", String.valueOf(bits), "-o", address.toString(), "temp");
+				} else {
+					pb = new ProcessBuilder("ndisasm.exe", "-b", String.valueOf(bits), "-o", address.toString(), "temp");
+				}
+			} else {
+				pb = new ProcessBuilder(Global.ndisasmPath, "-b", String.valueOf(bits), "-o", address.toString(), "temp");
+			}
 			pb.redirectErrorStream(true);
 			Process p;
 
@@ -35,9 +45,8 @@ public class Disassemble {
 			while ((line = br.readLine()) != null) {
 				str += line + "\n";
 			}
-			//new File("temp").delete();
 			return str;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
 		}

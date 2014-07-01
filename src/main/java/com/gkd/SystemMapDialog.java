@@ -7,6 +7,7 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -14,23 +15,13 @@ import javax.swing.JTable;
 
 import com.peterswing.CommonLib;
 
-/**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
- */
-public class SystemMapDialog extends javax.swing.JDialog {
-	private JScrollPane jScrollPane1;
-	private JCheckBox jShowSelectedOnlyCheckBox;
-	private JButton jCancelButton;
-	private JButton jSetButton;
-	private JPanel jPanel1;
-	private JTable jTable1;
+public class SystemMapDialog extends JDialog {
+	private JScrollPane scrollPane1;
+	private JCheckBox showSelectedOnlyCheckBox;
+	private JButton cancelButton;
+	private JButton setButton;
+	private JPanel panel1;
+	private JTable table1;
 	File file;
 	SystemMapTableModel model = new SystemMapTableModel();
 
@@ -39,57 +30,46 @@ public class SystemMapDialog extends javax.swing.JDialog {
 		this.file = file;
 
 		model.load(file);
-		initGUI();
-	}
-
-	private void initGUI() {
 		try {
-			{
-				this.setTitle("Load System.map");
-				{
-					jScrollPane1 = new JScrollPane();
-					getContentPane().add(jScrollPane1, BorderLayout.CENTER);
-					{
-						jTable1 = new JTable();
-						jScrollPane1.setViewportView(jTable1);
-						jTable1.setModel(model);
-						jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-						jTable1.getColumnModel().getColumn(0).setPreferredWidth(50);
-						jTable1.getColumnModel().getColumn(1).setPreferredWidth(100);
-						jTable1.getColumnModel().getColumn(2).setPreferredWidth(100);
-						jTable1.getColumnModel().getColumn(3).setPreferredWidth(400);
-					}
+			this.setTitle("Load System.map");
+
+			scrollPane1 = new JScrollPane();
+			getContentPane().add(scrollPane1, BorderLayout.CENTER);
+
+			table1 = new JTable();
+			scrollPane1.setViewportView(table1);
+			table1.setModel(model);
+			table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			table1.getColumnModel().getColumn(0).setPreferredWidth(50);
+			table1.getColumnModel().getColumn(1).setPreferredWidth(100);
+			table1.getColumnModel().getColumn(2).setPreferredWidth(100);
+			table1.getColumnModel().getColumn(3).setPreferredWidth(400);
+
+			panel1 = new JPanel();
+			getContentPane().add(panel1, BorderLayout.SOUTH);
+
+			showSelectedOnlyCheckBox = new JCheckBox();
+			panel1.add(showSelectedOnlyCheckBox);
+			showSelectedOnlyCheckBox.setText("Show selected only");
+
+			setButton = new JButton();
+			panel1.add(setButton);
+			setButton.setText("Set breakpoint");
+			setButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					setButtonActionPerformed(evt);
 				}
-				{
-					jPanel1 = new JPanel();
-					getContentPane().add(jPanel1, BorderLayout.SOUTH);
-					{
-						jShowSelectedOnlyCheckBox = new JCheckBox();
-						jPanel1.add(jShowSelectedOnlyCheckBox);
-						jShowSelectedOnlyCheckBox.setText("Show selected only");
-					}
-					{
-						jSetButton = new JButton();
-						jPanel1.add(jSetButton);
-						jSetButton.setText("Set breakpoint");
-						jSetButton.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent evt) {
-								jSetButtonActionPerformed(evt);
-							}
-						});
-					}
-					{
-						jCancelButton = new JButton();
-						jPanel1.add(jCancelButton);
-						jCancelButton.setText("Cancel");
-						jCancelButton.addActionListener(new ActionListener() {
-							public void actionPerformed(ActionEvent evt) {
-								jCancelButtonActionPerformed(evt);
-							}
-						});
-					}
+			});
+
+			cancelButton = new JButton();
+			panel1.add(cancelButton);
+			cancelButton.setText("Cancel");
+			cancelButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					cancelButtonActionPerformed(evt);
 				}
-			}
+			});
+
 			this.setSize(700, 700);
 			CommonLib.centerDialog(this);
 		} catch (Exception e) {
@@ -97,11 +77,11 @@ public class SystemMapDialog extends javax.swing.JDialog {
 		}
 	}
 
-	private void jSetButtonActionPerformed(ActionEvent evt) {
+	private void setButtonActionPerformed(ActionEvent evt) {
 		System.out.println("jSetButton.actionPerformed, event=" + evt);
 	}
 
-	private void jCancelButtonActionPerformed(ActionEvent evt) {
+	private void cancelButtonActionPerformed(ActionEvent evt) {
 		setVisible(false);
 	}
 

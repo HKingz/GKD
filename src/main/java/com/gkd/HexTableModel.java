@@ -1,7 +1,10 @@
 package com.gkd;
 
+import java.math.BigInteger;
+
 import javax.swing.table.AbstractTableModel;
 
+import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 
 public class HexTableModel extends AbstractTableModel {
@@ -67,7 +70,7 @@ public class HexTableModel extends AbstractTableModel {
 
 	public void setValueAt(Object newVal, int row, int column) {
 		long address = CommonLib.string2long(this.getValueAt(row, 0).toString()) + (column - 1);
-		GKD.sendCommand("setpmem " + address + " 1 " + CommonLib.string2long(newVal.toString()));
+		VMController.getVM().setMemory(BigInteger.valueOf(address), CommonLib.string2int(newVal.toString()));
 		qw[(int) (address - currentAddress)] = (int) (long) CommonLib.string2long(newVal.toString());
 	}
 

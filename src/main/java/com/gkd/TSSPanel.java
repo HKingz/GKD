@@ -4,7 +4,6 @@ import info.clearthought.layout.TableLayout;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -38,30 +37,21 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
 import com.gkd.architecture.IA32PageDirectory;
+import com.gkd.stub.VMController;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.peterswing.CommonLib;
 
-/**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
- */
 public class TSSPanel extends JPanel {
-	private JTable jTable1;
+	private JTable table1;
 	private int gdtNo;
-	private JPanel jPanel1;
-	private JTabbedPane jTabbedPane1;
-	private JTable jPageTableTable;
-	private JTable jPageDirectoryTable;
-	private JLabel jLabel1;
-	private JTable jTSSTable;
-	private JCheckBox jHideIfAddressIsZeroCheckBox;
+	private JPanel panel1;
+	private JTabbedPane tabbedPane1;
+	private JTable pageTableTable;
+	private JTable pageDirectoryTable;
+	private JLabel label1;
+	private JTable tssTable;
+	private JCheckBox hideIfAddressIsZeroCheckBox;
 	private ButtonGroup buttonGroup1;
 	private JButton jButton19;
 	private JButton jRefreshAddressTranslateTableButton;
@@ -91,422 +81,264 @@ public class TSSPanel extends JPanel {
 	private JLabel jTypeLabel;
 	private JTable jTable2;
 	private JScrollPane jScrollPane1;
-	private int b[] = new int[8];
+	private int bytes[];
 	private long value;
 	private long bit[] = new long[64];
-	private GKD peterBochsDebugger;
+	private GKD gkd;
 	private int type;
 	private BigInteger gdtAddress;
 	private BigInteger ldtr;
 	private BigInteger cr3;
 
-	public TSSPanel(GKD peterBochsDebugger, int type, BigInteger gdtAddress, int gdtNo) {
-		this.peterBochsDebugger = peterBochsDebugger;
+	public TSSPanel(GKD gkd, int type, BigInteger gdtAddress, int gdtNo, int bytes[]) {
+		this.gkd = gkd;
 		this.type = type;
 		this.gdtAddress = gdtAddress;
 		this.gdtNo = gdtNo;
+		this.bytes = bytes;
 
-		initGUI();
-	}
-
-	private void initGUI() {
 		try {
-			{
-				BorderLayout thisLayout = new BorderLayout();
-				this.setLayout(thisLayout);
-			}
-			{
-				jTabbedPane1 = new JTabbedPane();
-				this.add(jTabbedPane1, BorderLayout.CENTER);
-				jTabbedPane1.setTabPlacement(JTabbedPane.LEFT);
-				{
-					jSplitPane1 = new JSplitPane();
-					jTabbedPane1.addTab("TSS", null, jSplitPane1, null);
-					jSplitPane1.setDividerLocation(450);
-					{
-						jScrollPane2 = new JScrollPane();
-						jSplitPane1.add(jScrollPane2, JSplitPane.LEFT);
-						jScrollPane2.setPreferredSize(new java.awt.Dimension(449, 600));
-						{
-							TableModel jTable2Model = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
-							jTable2 = new JTable();
-							jScrollPane2.setViewportView(jTable2);
-							jTable2.setModel(jTable2Model);
-						}
-					}
-					{
-						jScrollPane3 = new JScrollPane();
-						jSplitPane1.add(jScrollPane3, JSplitPane.RIGHT);
-						jScrollPane3.setPreferredSize(new java.awt.Dimension(457, 600));
-						{
-							TableModel jTSSTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("Offset"), MyLanguage.getString("Field"),
-									MyLanguage.getString("Value"), "" });
-							jTSSTable = new JTable();
-							jScrollPane3.setViewportView(jTSSTable);
-							jTSSTable.setModel(jTSSTableModel);
-							jTSSTable.getColumn("").setCellRenderer(new ButtonRenderer());
-							jTSSTable.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
-						}
-					}
-				}
-				{
-					jPanel1 = new JPanel();
-					jTabbedPane1.addTab("Info", null, jPanel1, null);
-					BorderLayout jPanel1Layout = new BorderLayout();
-					jPanel1.setLayout(jPanel1Layout);
-					{
-						jScrollPane1 = new JScrollPane();
-						jPanel1.add(jScrollPane1, BorderLayout.CENTER);
-						jScrollPane1.setBounds(12, 38, 667, 60);
-						jScrollPane1.setBorder(new LineBorder(new java.awt.Color(0, 0, 0), 1, false));
-						{
-							DefaultTableModel jTable1Model = new DefaultTableModel(new String[][] { { "" }, { "" } }, new String[] { "31" });
-							for (int x = 30; x >= 0; x--) {
-								jTable1Model.addColumn(x);
-							}
+			BorderLayout thisLayout = new BorderLayout();
+			this.setLayout(thisLayout);
 
-							jTable1 = new JTable();
-							jScrollPane1.setViewportView(jTable1);
-							jTable1.setModel(jTable1Model);
-							jTable1.setBounds(12, 12, 562, 50);
-						}
-					}
-					{
-						jTypeLabel = new JLabel();
-						jPanel1.add(jTypeLabel, BorderLayout.NORTH);
-						jTypeLabel.setText("Type : ");
-						jTypeLabel.setBounds(12, 12, 576, 14);
-					}
-				}
-				{
-					jPanel2 = new JPanel();
-					jTabbedPane1.addTab("Page table", null, jPanel2, null);
-					BorderLayout jPanel2Layout = new BorderLayout();
-					jPanel2.setLayout(jPanel2Layout);
-					{
-						jPanel3 = new JPanel();
-						FormLayout jPanel3Layout = new FormLayout("max(p;5dlu), max(p;5dlu), 80dlu, max(p;5dlu)", "max(p;5dlu), max(p;5dlu), max(p;5dlu), max(p;5dlu)");
-						jPanel3.setLayout(jPanel3Layout);
-						jPanel2.add(jPanel3, BorderLayout.NORTH);
-						jPanel3.setPreferredSize(new java.awt.Dimension(915, 27));
-						{
-							jLabel1 = new JLabel();
-							jPanel3.add(jLabel1, new CellConstraints("2, 1, 1, 1, default, default"));
-							jLabel1.setText(MyLanguage.getString("Linear_address"));
-							jLabel1.setBounds(691, 12, 143, 14);
-						}
-						{
-							jLinearAddressTextField = new JTextField();
-							jPanel3.add(jLinearAddressTextField, new CellConstraints("3, 1, 1, 1, default, default"));
-							jPanel3.add(getJHideIfAddressIsZeroCheckBox(), new CellConstraints("4, 1, 1, 1, default, default"));
-						}
-					}
-					{
-						jSplitPane2 = new JSplitPane();
-						jPanel2.add(jSplitPane2, BorderLayout.CENTER);
-						jSplitPane2.setDividerLocation(400);
-						{
-							jScrollPane4 = new JScrollPane();
-							jSplitPane2.add(jScrollPane4, JSplitPane.LEFT);
-							jScrollPane4.setPreferredSize(new java.awt.Dimension(399, 573));
-							{
-								PageDirectoryTableModel jPageDirectoryTableModel = new PageDirectoryTableModel();
-								jPageDirectoryTable = new JTable();
-								jScrollPane4.setViewportView(jPageDirectoryTable);
-								jPageDirectoryTable.setModel(jPageDirectoryTableModel);
-								jPageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-								jPageDirectoryTable.addMouseListener(new MouseAdapter() {
-									public void mouseClicked(MouseEvent evt) {
-										jPageDirectoryTableMouseClicked(evt);
-									}
-								});
-							}
-						}
-						{
-							jScrollPane5 = new JScrollPane();
-							jSplitPane2.add(jScrollPane5, JSplitPane.RIGHT);
-							jScrollPane5.setPreferredSize(new java.awt.Dimension(507, 573));
-							{
-								PageTableTableModel jPageTableTableModel = new PageTableTableModel();
-								jPageTableTable = new JTable();
-								jScrollPane5.setViewportView(jPageTableTable);
-								jPageTableTable.setModel(jPageTableTableModel);
-								jPageTableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-							}
-						}
-					}
-				}
-				{
-					jAddressTranslatePanel = new JPanel();
-					jTabbedPane1.addTab("Address  translate", null, jAddressTranslatePanel, null);
-					BorderLayout jAddressTranslatePanelLayout = new BorderLayout();
-					jAddressTranslatePanel.setLayout(jAddressTranslatePanelLayout);
-					{
-						jPanel20 = new JPanel();
-						TableLayout jPanel20Layout = new TableLayout(new double[][] { { 8.0, 156.0, 13.0 }, { 25.0, 25.0, 25.0, 22.0, 37.0, TableLayout.FILL } });
-						jPanel20Layout.setHGap(5);
-						jPanel20Layout.setVGap(5);
-						jAddressTranslatePanel.add(jPanel20, BorderLayout.WEST);
-						jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-						jPanel20.setLayout(jPanel20Layout);
-						{
-							jSearchAddressRadioButton1 = new JRadioButton();
-							jSearchAddressRadioButton1.setText(MyLanguage.getString("Virtual_address"));
-							jPanel20.add(jSearchAddressRadioButton1, "1, 0, 2, 0");
-							jSearchAddressRadioButton1.setSelected(true);
-							getButtonGroup1().add(jSearchAddressRadioButton1);
-						}
-						{
-							jSearchAddressRadioButton2 = new JRadioButton();
-							jSearchAddressRadioButton2.setText(MyLanguage.getString("Linear_address"));
-							jPanel20.add(jSearchAddressRadioButton2, "1, 1, 2, 1");
-							getButtonGroup1().add(jSearchAddressRadioButton2);
-						}
-						{
-							jSearchAddressRadioButton3 = new JRadioButton();
-							jPanel20.add(jSearchAddressRadioButton3, "1, 2, 2, 2");
-							jSearchAddressRadioButton3.setVisible(false);
-						}
-						{
-							jPanel21 = new JPanel();
-							jPanel20.add(jPanel21, "1, 4");
-							{
-								jRefreshAddressTranslateButton = new JButton();
-								jRefreshAddressTranslateButton.setText(MyLanguage.getString("Convert"));
-								jPanel21.add(jRefreshAddressTranslateButton);
-								jRefreshAddressTranslateButton.addActionListener(new ActionListener() {
-									public void actionPerformed(ActionEvent evt) {
-										jRefreshAddressTranslateButtonActionPerformed(evt);
-									}
-								});
-							}
-						}
-						{
-							jAddressTextField = new JTextField();
-							jPanel20.add(jAddressTextField, "1, 3");
-							jAddressTextField.addKeyListener(new KeyAdapter() {
-								public void keyTyped(KeyEvent evt) {
-									jAddressTextFieldKeyTyped(evt);
-								}
-							});
-						}
-					}
-					{
-						jPanel22 = new JPanel();
-						BorderLayout jPanel22Layout = new BorderLayout();
-						jAddressTranslatePanel.add(jPanel22, BorderLayout.CENTER);
-						jPanel22.setLayout(jPanel22Layout);
-						{
-							jScrollPane13 = new JScrollPane();
-							jPanel22.add(jScrollPane13, BorderLayout.CENTER);
-							jScrollPane13.setPreferredSize(new java.awt.Dimension(150, 32));
-							{
-								AddressTranslateTableModel addressTranslateTableModel = new AddressTranslateTableModel();
-								jAddressTranslateTable2 = new JTable();
-								jScrollPane13.setViewportView(jAddressTranslateTable2);
-								jAddressTranslateTable2.setModel(addressTranslateTableModel);
-								jAddressTranslateTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-							}
-						}
-					}
-					{
-						jToolBar3 = new JToolBar();
-						jAddressTranslatePanel.add(jToolBar3, BorderLayout.NORTH);
-						{
-							jButton17 = new JButton();
-							jToolBar3.add(jButton17);
-							jButton17.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-							jButton17.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jButton17ActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jButton18 = new JButton();
-							jToolBar3.add(jButton18);
-							jButton18.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-							jButton18.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jButton18ActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jRefreshAddressTranslateTableButton = new JButton();
-							jToolBar3.add(jRefreshAddressTranslateTableButton);
-							jRefreshAddressTranslateTableButton.setText("Refresh");
-							jRefreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader()
-									.getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
-							jRefreshAddressTranslateTableButton.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jRefreshAddressTranslateTableButtonActionPerformed(evt);
-								}
-							});
-						}
-						{
-							jButton19 = new JButton();
-							jToolBar3.add(jButton19);
-							jButton19.setText("Delete");
-							jButton19.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cross.png")));
-							jButton19.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									jButton19ActionPerformed(evt);
-								}
-							});
-						}
-					}
-				}
+			tabbedPane1 = new JTabbedPane();
+			this.add(tabbedPane1, BorderLayout.CENTER);
+			tabbedPane1.setTabPlacement(JTabbedPane.LEFT);
+
+			jSplitPane1 = new JSplitPane();
+			tabbedPane1.addTab("TSS", null, jSplitPane1, null);
+			jSplitPane1.setDividerLocation(450);
+
+			jScrollPane2 = new JScrollPane();
+			jSplitPane1.add(jScrollPane2, JSplitPane.LEFT);
+			jScrollPane2.setPreferredSize(new java.awt.Dimension(449, 600));
+
+			TableModel jTable2Model = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
+			jTable2 = new JTable();
+			jScrollPane2.setViewportView(jTable2);
+			jTable2.setModel(jTable2Model);
+
+			jScrollPane3 = new JScrollPane();
+			jSplitPane1.add(jScrollPane3, JSplitPane.RIGHT);
+			jScrollPane3.setPreferredSize(new java.awt.Dimension(457, 600));
+
+			TableModel jTSSTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("Offset"), MyLanguage.getString("Field"),
+					MyLanguage.getString("Value"), "" });
+			tssTable = new JTable();
+			jScrollPane3.setViewportView(tssTable);
+			tssTable.setModel(jTSSTableModel);
+			tssTable.getColumn("").setCellRenderer(new ButtonRenderer());
+			tssTable.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
+
+			panel1 = new JPanel();
+			tabbedPane1.addTab("Info", null, panel1, null);
+			BorderLayout jPanel1Layout = new BorderLayout();
+			panel1.setLayout(jPanel1Layout);
+
+			jScrollPane1 = new JScrollPane();
+			panel1.add(jScrollPane1, BorderLayout.CENTER);
+			jScrollPane1.setBounds(12, 38, 667, 60);
+			jScrollPane1.setBorder(new LineBorder(new java.awt.Color(0, 0, 0), 1, false));
+
+			DefaultTableModel jTable1Model = new DefaultTableModel(new String[][] { { "" }, { "" } }, new String[] { "31" });
+			for (int x = 30; x >= 0; x--) {
+				jTable1Model.addColumn(x);
 			}
 
-			String result;
-			if (GKD.commandReceiver != null) {
-				if (type == 0) {
-					GKD.sendCommand("info gdt " + gdtNo);
-					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = GKD.commandReceiver.getCommandResult("GDT[" + gdtNoHex + "]");
-				} else if (type == 1) {
-					GKD.sendCommand("info ldt " + gdtNo);
-					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = GKD.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
-				} else if (type == 2) {
-					GKD.sendCommand("info idt " + gdtNo);
-					String gdtNoHex = String.format("0x%02x", gdtNo);
-					result = GKD.commandReceiver.getCommandResult("IDT[" + gdtNoHex + "]");
-					System.out.println(result);
+			table1 = new JTable();
+			jScrollPane1.setViewportView(table1);
+			table1.setModel(jTable1Model);
+			table1.setBounds(12, 12, 562, 50);
+
+			jTypeLabel = new JLabel();
+			panel1.add(jTypeLabel, BorderLayout.NORTH);
+			jTypeLabel.setText("Type : ");
+			jTypeLabel.setBounds(12, 12, 576, 14);
+
+			jPanel2 = new JPanel();
+			tabbedPane1.addTab("Page table", null, jPanel2, null);
+			BorderLayout jPanel2Layout = new BorderLayout();
+			jPanel2.setLayout(jPanel2Layout);
+
+			jPanel3 = new JPanel();
+			FormLayout jPanel3Layout = new FormLayout("max(p;5dlu), max(p;5dlu), 80dlu, max(p;5dlu)", "max(p;5dlu), max(p;5dlu), max(p;5dlu), max(p;5dlu)");
+			jPanel3.setLayout(jPanel3Layout);
+			jPanel2.add(jPanel3, BorderLayout.NORTH);
+			jPanel3.setPreferredSize(new java.awt.Dimension(915, 27));
+
+			label1 = new JLabel();
+			jPanel3.add(label1, new CellConstraints("2, 1, 1, 1, default, default"));
+			label1.setText(MyLanguage.getString("Linear_address"));
+			label1.setBounds(691, 12, 143, 14);
+
+			jLinearAddressTextField = new JTextField();
+			jPanel3.add(jLinearAddressTextField, new CellConstraints("3, 1, 1, 1, default, default"));
+			jPanel3.add(getJHideIfAddressIsZeroCheckBox(), new CellConstraints("4, 1, 1, 1, default, default"));
+
+			jSplitPane2 = new JSplitPane();
+			jPanel2.add(jSplitPane2, BorderLayout.CENTER);
+			jSplitPane2.setDividerLocation(400);
+
+			jScrollPane4 = new JScrollPane();
+			jSplitPane2.add(jScrollPane4, JSplitPane.LEFT);
+			jScrollPane4.setPreferredSize(new java.awt.Dimension(399, 573));
+
+			PageDirectoryTableModel jPageDirectoryTableModel = new PageDirectoryTableModel();
+			pageDirectoryTable = new JTable();
+			jScrollPane4.setViewportView(pageDirectoryTable);
+			pageDirectoryTable.setModel(jPageDirectoryTableModel);
+			pageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			pageDirectoryTable.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent evt) {
+					jPageDirectoryTableMouseClicked(evt);
 				}
+			});
 
-				GKD.commandReceiver.clearBuffer();
-				GKD.sendCommand("x /8bx " + String.format("0x%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
-				result = GKD.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
-				String lines[] = result.split("\n");
+			jScrollPane5 = new JScrollPane();
+			jSplitPane2.add(jScrollPane5, JSplitPane.RIGHT);
+			jScrollPane5.setPreferredSize(new java.awt.Dimension(507, 573));
 
-				String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");
-				for (int x = 0; x < 8; x++) {
-					b[x] = (byte) Long.parseLong(byteStr[x].substring(2), 16);
+			PageTableTableModel jPageTableTableModel = new PageTableTableModel();
+			pageTableTable = new JTable();
+			jScrollPane5.setViewportView(pageTableTable);
+			pageTableTable.setModel(jPageTableTableModel);
+			pageTableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+			jAddressTranslatePanel = new JPanel();
+			tabbedPane1.addTab("Address  translate", null, jAddressTranslatePanel, null);
+			BorderLayout jAddressTranslatePanelLayout = new BorderLayout();
+			jAddressTranslatePanel.setLayout(jAddressTranslatePanelLayout);
+
+			jPanel20 = new JPanel();
+			TableLayout jPanel20Layout = new TableLayout(new double[][] { { 8.0, 156.0, 13.0 }, { 25.0, 25.0, 25.0, 22.0, 37.0, TableLayout.FILL } });
+			jPanel20Layout.setHGap(5);
+			jPanel20Layout.setVGap(5);
+			jAddressTranslatePanel.add(jPanel20, BorderLayout.WEST);
+			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
+			jPanel20.setLayout(jPanel20Layout);
+
+			jSearchAddressRadioButton1 = new JRadioButton();
+			jSearchAddressRadioButton1.setText(MyLanguage.getString("Virtual_address"));
+			jPanel20.add(jSearchAddressRadioButton1, "1, 0, 2, 0");
+			jSearchAddressRadioButton1.setSelected(true);
+			getButtonGroup1().add(jSearchAddressRadioButton1);
+
+			jSearchAddressRadioButton2 = new JRadioButton();
+			jSearchAddressRadioButton2.setText(MyLanguage.getString("Linear_address"));
+			jPanel20.add(jSearchAddressRadioButton2, "1, 1, 2, 1");
+			getButtonGroup1().add(jSearchAddressRadioButton2);
+
+			jSearchAddressRadioButton3 = new JRadioButton();
+			jPanel20.add(jSearchAddressRadioButton3, "1, 2, 2, 2");
+			jSearchAddressRadioButton3.setVisible(false);
+
+			jPanel21 = new JPanel();
+			jPanel20.add(jPanel21, "1, 4");
+
+			jRefreshAddressTranslateButton = new JButton();
+			jRefreshAddressTranslateButton.setText(MyLanguage.getString("Convert"));
+			jPanel21.add(jRefreshAddressTranslateButton);
+			jRefreshAddressTranslateButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					jRefreshAddressTranslateButtonActionPerformed(evt);
 				}
+			});
 
-				value = CommonLib.getLong(b, 0);
+			jAddressTextField = new JTextField();
+			jPanel20.add(jAddressTextField, "1, 3");
+			jAddressTextField.addKeyListener(new KeyAdapter() {
+				public void keyTyped(KeyEvent evt) {
+					jAddressTextFieldKeyTyped(evt);
+				}
+			});
+
+			jPanel22 = new JPanel();
+			BorderLayout jPanel22Layout = new BorderLayout();
+			jAddressTranslatePanel.add(jPanel22, BorderLayout.CENTER);
+			jPanel22.setLayout(jPanel22Layout);
+
+			jScrollPane13 = new JScrollPane();
+			jPanel22.add(jScrollPane13, BorderLayout.CENTER);
+			jScrollPane13.setPreferredSize(new java.awt.Dimension(150, 32));
+
+			AddressTranslateTableModel addressTranslateTableModel = new AddressTranslateTableModel();
+			jAddressTranslateTable2 = new JTable();
+			jScrollPane13.setViewportView(jAddressTranslateTable2);
+			jAddressTranslateTable2.setModel(addressTranslateTableModel);
+			jAddressTranslateTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+			jToolBar3 = new JToolBar();
+			jAddressTranslatePanel.add(jToolBar3, BorderLayout.NORTH);
+
+			jButton17 = new JButton();
+			jToolBar3.add(jButton17);
+			jButton17.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			jButton17.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					jButton17ActionPerformed(evt);
+				}
+			});
+
+			jButton18 = new JButton();
+			jToolBar3.add(jButton18);
+			jButton18.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			jButton18.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					jButton18ActionPerformed(evt);
+				}
+			});
+
+			jRefreshAddressTranslateTableButton = new JButton();
+			jToolBar3.add(jRefreshAddressTranslateTableButton);
+			jRefreshAddressTranslateTableButton.setText("Refresh");
+			jRefreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
+			jRefreshAddressTranslateTableButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					jRefreshAddressTranslateTableButtonActionPerformed(evt);
+				}
+			});
+
+			jButton19 = new JButton();
+			jToolBar3.add(jButton19);
+			jButton19.setText("Delete");
+			jButton19.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cross.png")));
+			jButton19.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					jButton19ActionPerformed(evt);
+				}
+			});
+
+			if (bytes != null) {
+				value = CommonLib.getLong(bytes, 0);
 
 				for (int x = 0; x < 64; x++) {
 					bit[x] = CommonLib.getBit(value, x);
 				}
 
 				for (int x = 0; x < 32; x++) {
-					jTable1.setValueAt(value >> x & 1, 1, 31 - x);
+					table1.setValueAt(value >> x & 1, 1, 31 - x);
 				}
 
 				for (int x = 32; x < 64; x++) {
-					jTable1.setValueAt(value >> x & 1, 0, 63 - x);
-					jTable1.setPreferredSize(new java.awt.Dimension(669, 32));
+					table1.setValueAt(value >> x & 1, 0, 63 - x);
+					table1.setPreferredSize(new java.awt.Dimension(669, 32));
 				}
 
-				// parse descriptor
-				if (bit[44] == 1 && bit[43] == 1) {
-					jTypeLabel.setText("Type : Code descriptor, value=0x" + Long.toHexString(value));
-					parseCodeDescriptor();
-				} else if (bit[44] == 1 && bit[43] == 0) {
-					jTypeLabel.setText("Type : Data descriptor, value=0x" + Long.toHexString(value));
-					parseDataDescriptor();
-				} else if (bit[44] == 0 && bit[43] == 0 && bit[42] == 0 && bit[41] == 1 && bit[40] == 0) {
-					jTypeLabel.setText("Type : LDT descriptor, value=0x" + Long.toHexString(value) + ", base=0x" + Long.toHexString(CommonLib.getInt(b[2], b[3], b[4], b[7]))
-							+ ", limit=0x" + Long.toHexString(CommonLib.getShort(b[0], b[1])));
-					parseLDT();
-				} else if (bit[44] == 0 && bit[42] == 0 && bit[40] == 1) {
-					jTypeLabel.setText("Type : TSS descriptor, value=0x" + Long.toHexString(value));
-					parseTSSDescriptor();
-				}
-				// end parse descriptor
+				jTypeLabel.setText("Type : TSS descriptor, value=0x" + Long.toHexString(value));
+				parseTSSDescriptor();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void parseCodeDescriptor() {
-		try {
-			DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
-			long base = CommonLib.getLong(b[2], b[3], b[4], b[7], 0, 0, 0, 0);
-			model.addRow(new String[] { "base", "0x" + Long.toHexString(base) });
-
-			long limit = CommonLib.getLong(b[0], b[1], b[6] & 0xf, 0, 0, 0, 0, 0);
-			if (bit[55] == 1) {
-				limit *= 4096;
-			}
-			model.addRow(new String[] { "limit", "0x" + Long.toHexString(limit) });
-
-			model.addRow(new String[] { "G", String.valueOf(bit[55]) });
-			model.addRow(new String[] { "D", String.valueOf(bit[54]) });
-			model.addRow(new String[] { "AVL", String.valueOf(bit[52]) });
-			model.addRow(new String[] { "P", String.valueOf(bit[47]) });
-			model.addRow(new String[] { "DPL", String.valueOf(bit[45] + bit[46] << 1) });
-			model.addRow(new String[] { "S", String.valueOf(bit[44]) });
-			model.addRow(new String[] { "X", String.valueOf(bit[43]) });
-			model.addRow(new String[] { "C", String.valueOf(bit[42]) });
-			model.addRow(new String[] { "R", String.valueOf(bit[41]) });
-			model.addRow(new String[] { "A", String.valueOf(bit[40]) });
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private void parseDataDescriptor() {
-		try {
-			DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
-			long base = CommonLib.getLong(b[2], b[3], b[4], b[7], 0, 0, 0, 0);
-			model.addRow(new String[] { "base", "0x" + Long.toHexString(base) });
-
-			long limit = CommonLib.getLong(b[0], b[1], b[6] & 0xf, 0, 0, 0, 0, 0);
-			if (bit[55] == 1) {
-				limit *= 4096;
-			}
-			model.addRow(new String[] { "limit", "0x" + Long.toHexString(limit) });
-
-			model.addRow(new String[] { "G", String.valueOf(bit[55]) });
-			model.addRow(new String[] { "B", String.valueOf(bit[54]) });
-			model.addRow(new String[] { "AVL", String.valueOf(bit[52]) });
-			model.addRow(new String[] { "P", String.valueOf(bit[47]) });
-			model.addRow(new String[] { "DPL", String.valueOf(bit[45] + bit[46] << 1) });
-			model.addRow(new String[] { "S", String.valueOf(bit[44]) });
-			model.addRow(new String[] { "X", String.valueOf(bit[43]) });
-			model.addRow(new String[] { "E", String.valueOf(bit[42]) });
-			model.addRow(new String[] { "W", String.valueOf(bit[41]) });
-			model.addRow(new String[] { "A", String.valueOf(bit[40]) });
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private void parseLDT() {
-		try {
-			jTable2.getColumnModel().getColumn(0).setHeaderValue("No");
-			jTable2.getColumnModel().getColumn(1).setHeaderValue("Type");
-			DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
-			jTable2.getColumnModel().getColumn(0).setMaxWidth(40);
-			jTable2.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
-			jTable2.setPreferredSize(new Dimension(600, 600));
-			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(20);
-			GKD.sendCommand("info ldt 0 20");
-			String result = GKD.commandReceiver.getCommandResult("XX", "XX", null);
-			String lines[] = result.split("\n");
-			for (int x = 1; x < lines.length; x++) {
-				try {
-					model.addRow(new String[] { lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""), lines[x].replaceFirst("^.*]=", "") });
-				} catch (Exception ex) {
-				}
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
-
 	private void parseTSSDescriptor() {
 		try {
 			DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
-			long base = CommonLib.getLong(b[2], b[3], b[4], b[7], 0, 0, 0, 0);
+			long base = CommonLib.getLong(bytes[2], bytes[3], bytes[4], bytes[7], 0, 0, 0, 0);
 			model.addRow(new String[] { "base", "0x" + Long.toHexString(base) });
 
-			long limit = CommonLib.getLong(b[0], b[1], b[6] & 0xf, 0, 0, 0, 0, 0);
+			long limit = CommonLib.getLong(bytes[0], bytes[1], bytes[6] & 0xf, 0, 0, 0, 0, 0);
 			if (bit[55] == 1) {
 				limit *= 4096;
 			}
@@ -524,34 +356,25 @@ public class TSSPanel extends JPanel {
 			model.addRow(new String[] { "V", String.valueOf(bit[40]) });
 
 			// TSS
-			// PeterBochsDebugger.commandReceiver.setCommandNoOfLine(2);
-			GKD.commandReceiver.clearBuffer();
-			GKD.sendCommand("x /" + limit + "bx " + base);
+			//			float totalByte2 = limit - 1;
+			//			totalByte2 = totalByte2 / 8;
+			//			int totalByte3 = (int) Math.floor(totalByte2);
+			//			String realEndAddressStr;
+			//			String realStartAddressStr;
+			//			long realStartAddress = base;
+			//			realStartAddressStr = String.format("%08x", realStartAddress);
+			//			long realEndAddress = realStartAddress + totalByte3 * 8;
+			//			realEndAddressStr = String.format("%08x", realEndAddress);
 
-			float totalByte2 = limit - 1;
-			totalByte2 = totalByte2 / 8;
-			int totalByte3 = (int) Math.floor(totalByte2);
-			String realEndAddressStr;
-			String realStartAddressStr;
-			long realStartAddress = base;
-			realStartAddressStr = String.format("%08x", realStartAddress);
-			long realEndAddress = realStartAddress + totalByte3 * 8;
-			realEndAddressStr = String.format("%08x", realEndAddress);
+			int tssByte[] = VMController.getVM().virtualMemory(BigInteger.valueOf(base), (int) limit);
 
-			String result2 = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-			String[] lines2 = result2.split("\n");
-
-			int tssByte[] = new int[(int) limit];
-			for (int y = 0; y < lines2.length; y++) {
-				String byteStr[] = lines2[y].replaceFirst("^.*>:\t", "").split("\t");
-				for (int x = 0; x < 8 && x < byteStr.length; x++) {
-					tssByte[x + (y * 8)] = (byte) Long.parseLong(byteStr[x].substring(2), 16);
-				}
+			if (tssByte == null) {
+				return;
 			}
 
 			//long tssValue = CommonLib.getLong(b, 0);
 
-			DefaultTableModel tssModel = (DefaultTableModel) jTSSTable.getModel();
+			DefaultTableModel tssModel = (DefaultTableModel) tssTable.getModel();
 			tssModel.addRow(new String[] { "0", "link", "0x" + CommonLib.getBigInteger(tssByte[0], tssByte[1], 0, 0, 0, 0, 0, 0).toString(16) });
 			tssModel.addRow(new String[] { "4", "esp0", "0x" + CommonLib.getBigInteger(tssByte[4], tssByte[5], tssByte[6], tssByte[7], 0, 0, 0, 0).toString(16) });
 			tssModel.addRow(new String[] { "8", "ss0", "0x" + CommonLib.getBigInteger(tssByte[8], tssByte[9], 0, 0, 0, 0, 0, 0).toString(16) });
@@ -593,66 +416,48 @@ public class TSSPanel extends JPanel {
 		this.jLinearAddressTextField.setText("0x" + pageDirectoryBaseAddress.toString(16));
 		Vector<IA32PageDirectory> ia32_pageDirectories = new Vector<IA32PageDirectory>();
 		try {
-			// commandReceiver.setCommandNoOfLine(512);
-			GKD.sendCommand("xp /4096bx " + pageDirectoryBaseAddress);
-			float totalByte2 = 4096 - 1;
-			totalByte2 = totalByte2 / 8;
-			int totalByte3 = (int) Math.floor(totalByte2);
-			String realEndAddressStr;
-			String realStartAddressStr;
-			BigInteger realStartAddress = pageDirectoryBaseAddress;
-			realStartAddressStr = String.format("%08x", realStartAddress);
-			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-			realEndAddressStr = String.format("%08x", realEndAddress);
-			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-			if (result != null) {
-				String[] lines = result.split("\n");
-				DefaultTableModel model = (DefaultTableModel) jPageDirectoryTable.getModel();
-				while (model.getRowCount() > 0) {
-					model.removeRow(0);
-				}
-				// jStatusProgressBar.setMaximum(lines.length - 1);
+			//			float totalByte2 = 4096 - 1;
+			//			totalByte2 = totalByte2 / 8;
+			//			int totalByte3 = (int) Math.floor(totalByte2);
+			//			String realEndAddressStr;
+			//			String realStartAddressStr;
+			//			BigInteger realStartAddress = pageDirectoryBaseAddress;
+			//			realStartAddressStr = String.format("%08x", realStartAddress);
+			//			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
+			//			realEndAddressStr = String.format("%08x", realEndAddress);
 
-				for (int y = 0; y < lines.length; y++) {
-					// jStatusProgressBar.setValue(y);
-					String[] b = lines[y].replaceFirst("^.*:", "").trim().split("\t");
-
-					for (int z = 0; z < 2; z++) {
-						try {
-							int bytes[] = new int[4];
-							for (int x = 0; x < 4; x++) {
-								bytes[x] = CommonLib.string2BigInteger(b[x + z * 4].substring(2).trim()).intValue();
-							}
-							long value = CommonLib.getInt(bytes, 0);
-							// "No.", "PT base", "AVL", "G",
-							// "D", "A", "PCD", "PWT",
-							// "U/S", "W/R", "P"
-
-							long baseL = value & 0xfffff000;
-							// if (baseL != 0) {
-							String base = "0x" + Long.toHexString(baseL);
-							String avl = String.valueOf((value >> 9) & 3);
-							String g = String.valueOf((value >> 8) & 1);
-							String d = String.valueOf((value >> 6) & 1);
-							String a = String.valueOf((value >> 5) & 1);
-							String pcd = String.valueOf((value >> 4) & 1);
-							String pwt = String.valueOf((value >> 3) & 1);
-							String us = String.valueOf((value >> 2) & 1);
-							String wr = String.valueOf((value >> 1) & 1);
-							String p = String.valueOf((value >> 0) & 1);
-
-							ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
-
-							model.addRow(new String[] { String.valueOf(y * 2 + z), base, avl, g, d, a, pcd, pwt, us, wr, p });
-							// }
-						} catch (Exception ex) {
-						}
-					}
-					// jStatusLabel.setText("Updating page table " + (y + 1) +
-					// "/" + lines.length);
-				}
-				jPageDirectoryTable.setModel(model);
+			DefaultTableModel model = (DefaultTableModel) pageDirectoryTable.getModel();
+			while (model.getRowCount() > 0) {
+				model.removeRow(0);
 			}
+
+			int bytes[] = VMController.getVM().physicalMemory(pageDirectoryBaseAddress, 4096);
+
+			if (bytes == null) {
+				return;
+			}
+
+			for (int x = 0; x < bytes.length; x += 4) {
+				long value = CommonLib.getInt(bytes, x);
+
+				long baseL = value & 0xfffff000;
+				String base = "0x" + Long.toHexString(baseL);
+				String avl = String.valueOf((value >> 9) & 3);
+				String g = String.valueOf((value >> 8) & 1);
+				String d = String.valueOf((value >> 6) & 1);
+				String a = String.valueOf((value >> 5) & 1);
+				String pcd = String.valueOf((value >> 4) & 1);
+				String pwt = String.valueOf((value >> 3) & 1);
+				String us = String.valueOf((value >> 2) & 1);
+				String wr = String.valueOf((value >> 1) & 1);
+				String p = String.valueOf((value >> 0) & 1);
+
+				ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
+
+				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p });
+			}
+
+			pageDirectoryTable.setModel(model);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -664,64 +469,50 @@ public class TSSPanel extends JPanel {
 
 	private void jPageDirectoryTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
-			// jStatusProgressBar.setValue(0);
-			String pageTableAddress = jPageDirectoryTable.getValueAt(jPageDirectoryTable.getSelectedRow(), 1).toString();
+			String pageTableAddress = pageDirectoryTable.getValueAt(pageDirectoryTable.getSelectedRow(), 1).toString();
 
-			// commandReceiver.setCommandNoOfLine(512);
-			GKD.sendCommand("xp /4096bx " + pageTableAddress);
-
-			float totalByte2 = 4096 - 1;
-			totalByte2 = totalByte2 / 8;
-			int totalByte3 = (int) Math.floor(totalByte2);
-			String realEndAddressStr;
-			String realStartAddressStr;
+			//			float totalByte2 = 4096 - 1;
+			//			totalByte2 = totalByte2 / 8;
+			//			int totalByte3 = (int) Math.floor(totalByte2);
+			//			String realEndAddressStr;
+			//			String realStartAddressStr;
 			String baseAddress = pageTableAddress;
 			BigInteger realStartAddress = CommonLib.string2BigInteger(baseAddress);
+			//
+			//			realStartAddressStr = String.format("%08x", realStartAddress);
+			//			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
+			//			realEndAddressStr = String.format("%08x", realEndAddress);
 
-			realStartAddressStr = String.format("%08x", realStartAddress);
-			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-			realEndAddressStr = String.format("%08x", realEndAddress);
-
-			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-			String[] lines = result.split("\n");
-			DefaultTableModel model = (DefaultTableModel) jPageTableTable.getModel();
+			DefaultTableModel model = (DefaultTableModel) pageTableTable.getModel();
 			while (model.getRowCount() > 0) {
 				model.removeRow(0);
 			}
-			for (int y = 0; y < lines.length; y++) {
-				// jStatusProgressBar.setValue(y * 100 / lines.length);
-				String[] b = lines[y].replaceFirst("^.*:", "").trim().split("\t");
 
-				for (int z = 0; z < 2; z++) {
-					try {
-						int bytes[] = new int[4];
-						for (int x = 0; x < 4; x++) {
-							bytes[x] = CommonLib.string2BigInteger(b[x + z * 4].substring(2).trim()).intValue();
-						}
-						long value = CommonLib.getInt(bytes, 0);
-						// "No.", "PT base", "AVL", "G",
-						// "D", "A", "PCD", "PWT",
-						// "U/S", "W/R", "P"
+			int bytes[] = VMController.getVM().physicalMemory(realStartAddress, 4096);
 
-						String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
-						String avl = String.valueOf((value >> 9) & 3);
-						String g = String.valueOf((value >> 8) & 1);
-						String pat = String.valueOf((value >> 7) & 1);
-						String d = String.valueOf((value >> 6) & 1);
-						String a = String.valueOf((value >> 5) & 1);
-						String pcd = String.valueOf((value >> 4) & 1);
-						String pwt = String.valueOf((value >> 3) & 1);
-						String us = String.valueOf((value >> 2) & 1);
-						String wr = String.valueOf((value >> 1) & 1);
-						String p = String.valueOf((value >> 0) & 1);
-
-						model.addRow(new String[] { String.valueOf(y * 2 + z), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
-					} catch (Exception ex) {
-					}
-				}
-
-				jPageTableTable.setModel(model);
+			if (bytes == null) {
+				return;
 			}
+
+			for (int x = 0; x < bytes.length; x += 4) {
+				long value = CommonLib.getInt(bytes, x);
+
+				long baseL = value & 0xfffff000;
+				String base = "0x" + Long.toHexString(baseL);
+				String avl = String.valueOf((value >> 9) & 3);
+				String g = String.valueOf((value >> 8) & 1);
+				String d = String.valueOf((value >> 6) & 1);
+				String a = String.valueOf((value >> 5) & 1);
+				String pcd = String.valueOf((value >> 4) & 1);
+				String pwt = String.valueOf((value >> 3) & 1);
+				String us = String.valueOf((value >> 2) & 1);
+				String wr = String.valueOf((value >> 1) & 1);
+				String p = String.valueOf((value >> 0) & 1);
+
+				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p });
+			}
+
+			pageTableTable.setModel(model);
 		}
 	}
 
@@ -784,9 +575,9 @@ public class TSSPanel extends JPanel {
 
 		public Object getCellEditorValue() {
 			if (isPushed) {
-				peterBochsDebugger.jDumpPageDirectoryAddressTextField.setText("0x" + cr3.toString(16));
-				peterBochsDebugger.updatePageTable(cr3);
-				peterBochsDebugger.jTabbedPane2.setSelectedIndex(2);
+				gkd.dumpPageDirectoryAddressTextField.setText("0x" + cr3.toString(16));
+				gkd.updatePageTable(cr3);
+				gkd.bottomTabbedPane.setSelectedIndex(2);
 			}
 			isPushed = false;
 			return button.getText();
@@ -830,7 +621,7 @@ public class TSSPanel extends JPanel {
 			model.segNo.add(segNo);
 
 			// read GDT descriptor
-			int descriptor[] = GKDCommonLib.getMemoryFromBochs(ldtr.add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			int descriptor[] = VMController.getVM().physicalMemory(ldtr.add(segNo.multiply(BigInteger.valueOf(8))), 8);
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
@@ -838,32 +629,25 @@ public class TSSPanel extends JPanel {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[] = VMController.getVM().physicalMemory(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(BigInteger.valueOf(0xfffff000));
-			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[] = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(BigInteger.valueOf(0xfffff000));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			int bytesAtPhysicalAddress[] = VMController.getVM().physicalMemory(physicalAddress, 8);
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
 		} else if (jSearchAddressRadioButton2.isSelected()) {
-			// for (int x = 0; x < model.getRowCount(); x++) {
-			// if (model.searchType.get(x).equals(2) &&
-			// model.searchAddress.get(x).equals(CommonLib.string2BigInteger(this.jAddressTextField.getText())))
-			// {
-			// return;
-			// }
-			// }
 			BigInteger address = CommonLib.string2BigInteger(this.jAddressTextField.getText());
 
 			model.searchType.add(2);
@@ -876,21 +660,21 @@ public class TSSPanel extends JPanel {
 
 			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 			model.pdNo.add(pdNo);
-			int pdeBytes[] = GKDCommonLib.getMemoryFromBochs(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+			int pdeBytes[] = VMController.getVM().physicalMemory(cr3.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 			model.pde.add(pde);
 
 			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 			model.ptNo.add(ptNo);
 			BigInteger pageTableBaseAddress = pde.and(BigInteger.valueOf(0xfffff000));
-			int pteBytes[] = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+			int pteBytes[] = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 			BigInteger pagePhysicalAddress = pte.and(BigInteger.valueOf(0xfffff000));
 			model.pte.add(pte);
 
 			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
+			int bytesAtPhysicalAddress[] = VMController.getVM().physicalMemory(physicalAddress, 8);
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
@@ -950,18 +734,10 @@ public class TSSPanel extends JPanel {
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
-				BigInteger gdtBase = GKDCommonLib.getPhysicalAddress(cr3, ldtr);
+				BigInteger gdtBase = CommonLib.getBigInteger(VMController.getVM().physicalMemory(cr3, 8), 0);
 				System.out.println("gdtBase=" + gdtBase.toString(16));
-				GKD.commandReceiver.clearBuffer();
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
-				GKD.sendCommand("xp /8bx " + gdtBase);
-				String result = GKD.commandReceiver.getCommandResult(String.format("%08x", gdtBase));
-
-				int bytes[] = new int[8];
-				String[] b = result.replaceFirst("^.*:", "").split("\t");
-				for (int y = 1; y <= 8; y++) {
-					bytes[y - 1] = CommonLib.string2BigInteger(b[y]).intValue();
-				}
+				int bytes[] = VMController.getVM().physicalMemory(gdtBase, 8);
 
 				Long gdtDescriptor = CommonLib.getLong(bytes, 0);
 				System.out.println(Long.toHexString(gdtDescriptor));
@@ -988,20 +764,20 @@ public class TSSPanel extends JPanel {
 	}
 
 	private JCheckBox getJHideIfAddressIsZeroCheckBox() {
-		if (jHideIfAddressIsZeroCheckBox == null) {
-			jHideIfAddressIsZeroCheckBox = new JCheckBox();
-			jHideIfAddressIsZeroCheckBox.setText("Hide if address = 0");
-			jHideIfAddressIsZeroCheckBox.addActionListener(new ActionListener() {
+		if (hideIfAddressIsZeroCheckBox == null) {
+			hideIfAddressIsZeroCheckBox = new JCheckBox();
+			hideIfAddressIsZeroCheckBox.setText("Hide if address = 0");
+			hideIfAddressIsZeroCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jHideIfAddressIsZeroCheckBoxActionPerformed(evt);
 				}
 			});
 		}
-		return jHideIfAddressIsZeroCheckBox;
+		return hideIfAddressIsZeroCheckBox;
 	}
 
 	private void jHideIfAddressIsZeroCheckBoxActionPerformed(ActionEvent evt) {
-		((PageDirectoryTableModel) jPageDirectoryTable.getModel()).setShowZeroAddress(!jHideIfAddressIsZeroCheckBox.isSelected());
-		((PageTableTableModel) jPageTableTable.getModel()).setShowZeroAddress(!jHideIfAddressIsZeroCheckBox.isSelected());
+		((PageDirectoryTableModel) pageDirectoryTable.getModel()).setShowZeroAddress(!hideIfAddressIsZeroCheckBox.isSelected());
+		((PageTableTableModel) pageTableTable.getModel()).setShowZeroAddress(!hideIfAddressIsZeroCheckBox.isSelected());
 	}
 }

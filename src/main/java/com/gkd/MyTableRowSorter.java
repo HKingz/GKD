@@ -184,5 +184,5 @@ public class MyTableRowSorter<M extends TableModel> extends MyDefaultRowSorter<M
 			return ((Comparable) o1).compareTo(o2);
 		}
 	}
-	
+
 }

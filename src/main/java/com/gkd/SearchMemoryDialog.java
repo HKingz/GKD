@@ -3,9 +3,11 @@ package com.gkd;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -13,148 +15,119 @@ import javax.swing.JProgressBar;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 
-/**
- * This code was edited or generated using CloudGarden's Jigloo SWT/Swing GUI
- * Builder, which is free for non-commercial use. If Jigloo is being used
- * commercially (ie, by a corporation, company or business for any purpose
- * whatever) then you should purchase a license for each developer using Jigloo.
- * Please visit www.cloudgarden.com for details. Use of Jigloo implies
- * acceptance of these licensing terms. A COMMERCIAL LICENSE HAS NOT BEEN
- * PURCHASED FOR THIS MACHINE, SO JIGLOO OR THIS CODE CANNOT BE USED LEGALLY FOR
- * ANY CORPORATE OR COMMERCIAL PURPOSE.
- */
-public class SearchMemoryDialog extends javax.swing.JDialog {
-	private JProgressBar jProgressBar1;
-	private JPanel jPanel1;
-	private JButton jButton1;
-	JTable jTable;
+public class SearchMemoryDialog extends JDialog {
+	private JProgressBar progressBar1;
+	private JPanel panel1;
+	private JButton button1;
+	JTable table;
 	String pattern;
 	long from;
 	long to;
-	private JTextField jTextField1;
-	private JLabel jLabel1;
-	private JPanel jPanel2;
+	private JTextField textField1;
+	private JLabel label1;
+	private JPanel panel2;
 	private JLabel jAddressLabel;
-	byte patternByte[];
+	int patternByte[];
 	boolean shouldStop;
 	Thread t;
 	SearchThread s = new SearchThread();
 
 	public SearchMemoryDialog(JFrame frame, JTable jTable, String pattern, long from, long to) {
 		super(frame, true);
-		this.jTable = jTable;
+		this.table = jTable;
 		this.pattern = pattern.trim().toLowerCase();
 		this.from = from;
 		this.to = to;
 
-		initGUI();
-		setTitle(MyLanguage.getString("Search") + " " + pattern + " " + MyLanguage.getString("From") + " 0x" + Long.toHexString(from) + " " + MyLanguage.getString("To")
-				+ " 0x" + Long.toHexString(to));
-		t = new Thread(s);
-		t.start();
-	}
-
-	private void initGUI() {
 		try {
-			{
-				jProgressBar1 = new JProgressBar();
-				getContentPane().add(jProgressBar1, BorderLayout.CENTER);
-			}
-			{
-				jPanel1 = new JPanel();
-				getContentPane().add(jPanel1, BorderLayout.SOUTH);
-				{
-					jAddressLabel = new JLabel();
-					jPanel1.add(jAddressLabel);
+			progressBar1 = new JProgressBar();
+			getContentPane().add(progressBar1, BorderLayout.CENTER);
+
+			panel1 = new JPanel();
+			getContentPane().add(panel1, BorderLayout.SOUTH);
+
+			jAddressLabel = new JLabel();
+			panel1.add(jAddressLabel);
+
+			button1 = new JButton();
+			panel1.add(button1);
+			button1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent evt) {
+					button1ActionPerformed(evt);
 				}
-				{
-					jButton1 = new JButton();
-					jPanel1.add(jButton1);
-					jButton1.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent evt) {
-							jButton1ActionPerformed(evt);
-						}
-					});
-					jButton1.setText(MyLanguage.getString("Cancel"));
-				}
-			}
-			{
-				jPanel2 = new JPanel();
-				BorderLayout jPanel2Layout = new BorderLayout();
-				jPanel2.setLayout(jPanel2Layout);
-				getContentPane().add(jPanel2, BorderLayout.NORTH);
-				jPanel2.setPreferredSize(new java.awt.Dimension(290, 35));
-				{
-					jTextField1 = new JTextField();
-					jPanel2.add(jTextField1, BorderLayout.CENTER);
-				}
-				{
-					jLabel1 = new JLabel();
-					jPanel2.add(jLabel1, BorderLayout.NORTH);
-					jLabel1.setText(MyLanguage.getString("Searching_these_bytes"));
-				}
-			}
+			});
+			button1.setText(MyLanguage.getString("Cancel"));
+
+			panel2 = new JPanel();
+			BorderLayout jPanel2Layout = new BorderLayout();
+			panel2.setLayout(jPanel2Layout);
+			getContentPane().add(panel2, BorderLayout.NORTH);
+			panel2.setPreferredSize(new java.awt.Dimension(290, 35));
+
+			textField1 = new JTextField();
+			panel2.add(textField1, BorderLayout.CENTER);
+
+			label1 = new JLabel();
+			panel2.add(label1, BorderLayout.NORTH);
+			label1.setText(MyLanguage.getString("Searching_these_bytes"));
+
 			setSize(350, 130);
 			CommonLib.centerDialog(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		setTitle(MyLanguage.getString("Search") + " " + pattern + " " + MyLanguage.getString("From") + " 0x" + Long.toHexString(from) + " " + MyLanguage.getString("To") + " 0x"
+				+ Long.toHexString(to));
+		t = new Thread(s);
+		t.start();
 	}
 
 	class SearchThread implements Runnable {
 		public void run() {
 			if (pattern.startsWith("0x")) {
-				patternByte = CommonLib.intArrayToByteArray(CommonLib.hexStringToByteArray(pattern.substring(2)));
+				patternByte = CommonLib.hexStringToByteArray(pattern.substring(2));
 			} else if (CommonLib.isNumeric(pattern)) {
-				patternByte = CommonLib.intArrayToByteArray(CommonLib.integerStringToByteArray(pattern));
+				patternByte = CommonLib.integerStringToByteArray(pattern);
 			} else {
-				patternByte = CommonLib.intArrayToByteArray(CommonLib.stringToByteArray(pattern));
+				patternByte = CommonLib.stringToByteArray(pattern);
 			}
 
 			for (int x = 0; x < patternByte.length; x++) {
-				jTextField1.setText(jTextField1.getText() + String.format("0x%02x", patternByte[x]) + " ");
+				textField1.setText(textField1.getText() + String.format("0x%02x", patternByte[x]) + " ");
 			}
 
-			jProgressBar1.setMaximum(100);
+			progressBar1.setMaximum(100);
 			int totalByte = 200;
 			for (long addr = from; addr <= to; addr += (totalByte - patternByte.length + 1)) {
 				jAddressLabel.setText("0x" + Long.toHexString(addr));
-				GKD.commandReceiver.clearBuffer();
-				GKD.sendCommand("xp /" + totalByte + "bx " + addr);
+				//				GKD.commandReceiver.clearBuffer();
+				//				GKD.sendBochsCommand("xp /" + totalByte + "bx " + addr);
 				float totalByte2 = totalByte - 1;
 				totalByte2 = totalByte2 / 8;
 				int totalByte3 = (int) Math.floor(totalByte2);
 				String realEndAddressStr;
 				String realStartAddressStr;
 				long realStartAddress = addr;
-				realStartAddressStr = String.format("%08x", realStartAddress);
+				//				realStartAddressStr = String.format("%08x", realStartAddress);
 				long realEndAddress = realStartAddress + totalByte3 * 8;
-				realEndAddressStr = String.format("%08x", realEndAddress);
+				//				realEndAddressStr = String.format("%08x", realEndAddress);
 
-				String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-				String[] lines = result.split("\n");
-				byte bytes[] = new byte[totalByte];
-				int offset = 0;
-
-				for (int y = 0; y < lines.length; y++) {
-					String[] b = lines[y].replaceFirst("^.*:", "").split("\t");
-					for (int x = 1; x < b.length && x < 200; x++) {
-						bytes[offset] = CommonLib.string2BigInteger(b[x].substring(2).trim()).byteValue();
-						offset++;
-					}
-				}
+				//				String result =  GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
+				//				String[] lines = result.split("\n");
+				int bytes[] = VMController.getVM().physicalMemory(BigInteger.valueOf(realStartAddress), totalByte);
 
 				// search
 				for (int x = 0; x < bytes.length - patternByte.length; x++) {
-					byte temp[] = new byte[patternByte.length];
+					int temp[] = new int[patternByte.length];
 					for (int z = 0; z < temp.length; z++) {
 						temp[z] = bytes[x + z];
 					}
 					if (Arrays.equals(patternByte, temp)) {
 						// System.out.println("match " + (addr + x));
-						((SearchTableModel) jTable.getModel()).addRow(addr + x, patternByte);
+						((SearchTableModel) table.getModel()).addRow(addr + x, patternByte);
 					}
 				}
 				// end search
@@ -163,18 +136,17 @@ public class SearchMemoryDialog extends javax.swing.JDialog {
 					return;
 				}
 
-				jProgressBar1.setValue((int) ((addr - from) * 100 / (to - from)));
+				progressBar1.setValue((int) ((addr - from) * 100 / (to - from)));
 			}
-			jProgressBar1.setValue(100);
-			jButton1.setText(MyLanguage.getString("Finished"));
+			progressBar1.setValue(100);
+			button1.setText(MyLanguage.getString("Finished"));
 		}
 	}
 
-	private void jButton1ActionPerformed(ActionEvent evt) {
+	private void button1ActionPerformed(ActionEvent evt) {
 		shouldStop = true;
 		while (t.isAlive()) {
 		}
-		GKD.commandReceiver.clearBuffer();
 		setVisible(false);
 	}
 }
