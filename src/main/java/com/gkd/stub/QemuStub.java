@@ -5,13 +5,10 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
-
-import org.apache.commons.lang3.StringUtils;
 
 import com.gkd.Disassemble;
 import com.gkd.GKD;
@@ -472,6 +469,7 @@ public class QemuStub implements VMStub {
 	@Override
 	public String getCurrentInstruction() {
 		Hashtable<String, String> registers = registers();
+		System.out.println("ip=" + registers.get("ip"));
 		int bytes[] = virtualMemory(new BigInteger(registers.get("ip")), 40);
 		String result = Disassemble.disassemble(bytes, false, BigInteger.valueOf(0));
 		String instruction = result.split("\n")[0].split("  +")[2];

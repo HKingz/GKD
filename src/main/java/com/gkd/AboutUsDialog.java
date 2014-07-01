@@ -29,7 +29,7 @@ public class AboutUsDialog extends javax.swing.JDialog {
 					jScrollPane1.setViewportView(textArea1);
 					String str = "";
 					str += "Website : http://code.google.com/p/peter-bochs\n";
-					str += "Forum : http://groups.google.com/group/peter-bochs\n";
+					str += "Blog : http://peter.kingofcoders.com\n";
 					str += "Contact : Peter (mcheung63@hotmail.com)\n";
 					str += "Version: " + Global.version;
 					textArea1.setText(str);

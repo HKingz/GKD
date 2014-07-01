@@ -16,6 +16,7 @@
     <string>0xfffff</string>
     <string>0xfffffff0</string>
     <string>0xfffffff000</string>
+    <string>57435</string>
   </memoryCombo>
   <breakpoint/>
   <sbAddress/>
@@ -23,10 +24,10 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>76</x>
-  <y>57</y>
-  <width>1329</width>
-  <height>763</height>
+  <x>22</x>
+  <y>32</y>
+  <width>1039</width>
+  <height>764</height>
   <divX>630</divX>
   <divY>406</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
