@@ -75,8 +75,6 @@ public interface VMStub {
 
 	public String sendVMCommand(String command);
 
-	public String getCurrentInstruction();
-
 	public void setMemory(BigInteger address, int b);
 
 	public void changeReigsterValue(String register, BigInteger value);

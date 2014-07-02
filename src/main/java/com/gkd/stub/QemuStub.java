@@ -466,16 +466,16 @@ public class QemuStub implements VMStub {
 
 	}
 
-	@Override
-	public String getCurrentInstruction() {
-		Hashtable<String, String> registers = registers();
-		System.out.println("ip=" + registers.get("ip"));
-		int bytes[] = virtualMemory(new BigInteger(registers.get("ip")), 40);
-		String result = Disassemble.disassemble(bytes, false, BigInteger.valueOf(0));
-		String instruction = result.split("\n")[0].split("  +")[2];
-		System.out.println("instruction" + instruction);
-		return instruction;
-	}
+//	@Override
+//	public String getInstruction(BigInteger address, BigInteger csBaseAddress, BigInteger eip, boolean is32Bit) {
+//		Hashtable<String, String> registers = registers();
+//		System.out.println("ip=" + registers.get("ip"));
+//		int bytes[] = virtualMemory(new BigInteger(registers.get("ip")), 40);
+//		String result = Disassemble.disassemble(bytes, false, BigInteger.valueOf(0));
+//		String instruction = result.split("\n")[0].split("  +")[2];
+//		System.out.println("instruction=" + instruction);
+//		return instruction;
+//	}
 
 	@Override
 	public void deletePhysicalBreakpoint(BigInteger breakpointNo) {

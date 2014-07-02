@@ -1,5 +1,7 @@
 <Setting>
-  <vmCommandHistory/>
+  <vmCommandHistory>
+    <string>info r</string>
+  </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
     <string>0x10992c</string>
@@ -18,18 +20,26 @@
     <string>0xfffffff000</string>
     <string>57435</string>
   </memoryCombo>
-  <breakpoint/>
+  <breakpoint>
+    <com.gkd.Breakpoint>
+      <no>0</no>
+      <type>pbreakpoint</type>
+      <address>31744</address>
+      <enable>pbreakpoint</enable>
+      <hit>0</hit>
+    </com.gkd.Breakpoint>
+  </breakpoint>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>57</x>
-  <y>43</y>
-  <width>1506</width>
-  <height>933</height>
-  <divX>847</divX>
-  <divY>509</divY>
+  <x>82</x>
+  <y>22</y>
+  <width>1305</width>
+  <height>818</height>
+  <divX>712</divX>
+  <divY>426</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

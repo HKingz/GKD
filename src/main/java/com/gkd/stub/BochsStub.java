@@ -326,7 +326,7 @@ public class BochsStub implements VMStub {
 			//			model.removeNonOrderInstruction();
 			//			model.fireTableDataChanged();
 		}
-		
+
 		/*
 		//commandReceiver.clearBuffer();
 		//commandReceiver.shouldShow = false;
@@ -1016,11 +1016,6 @@ public class BochsStub implements VMStub {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	@Override
-	public String getCurrentInstruction() {
-		return sendBochsCommand("disasm", null, null);
 	}
 
 	@Override
