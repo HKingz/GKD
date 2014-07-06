@@ -382,8 +382,7 @@ public class BochsStub implements VMStub {
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		try {
 			commandReceiver.shouldShow = false;
-			//			sendBochsCommand("r");
-			String result = sendBochsCommand("r");//commandReceiver.getCommandResult("ax:", "eflags", null);
+			String result = sendBochsCommand("r");
 			result = result.replaceAll("r", "\nr");
 			String lines[] = result.split("\n");
 
@@ -783,7 +782,7 @@ public class BochsStub implements VMStub {
 	public Vector<Vector<String>> gdt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
 		commandReceiver.shouldShow = false;
-		String result = sendBochsCommand("info gdt");
+		String result = sendBochsCommand("info gdt " + noOfByte);
 		if (result != null) {
 			String lines[] = result.split("\n");
 			for (int x = 1; x < lines.length; x++) {
@@ -803,7 +802,7 @@ public class BochsStub implements VMStub {
 	public Vector<Vector<String>> idt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
 		commandReceiver.shouldShow = false;
-		String result = sendBochsCommand("info idt");
+		String result = sendBochsCommand("info idt " + noOfByte);
 
 		if (result != null) {
 			String lines[] = result.split("\n");
@@ -820,7 +819,7 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<Vector<String>> ldt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		String result = sendBochsCommand("info ldt");
+		String result = sendBochsCommand("info ldt " + noOfByte);
 		String lines[] = result.split("\n");
 		for (int x = 1; x < lines.length; x++) {
 			Vector<String> v = new Vector<String>();

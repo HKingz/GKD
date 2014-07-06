@@ -50,7 +50,7 @@ public class CommandReceiver {
 			int x;
 			while ((x = br.read()) != -1) {
 				char c = (char) x;
-				//				System.out.print(c);
+				System.out.print(c);
 				line += c;
 				str += c;
 				if (c == '\n') {

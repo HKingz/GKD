@@ -1,6 +1,7 @@
 <Setting>
   <vmCommandHistory>
     <string>info r</string>
+    <string>r</string>
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
@@ -34,7 +35,7 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>82</x>
+  <x>43</x>
   <y>22</y>
   <width>1305</width>
   <height>818</height>
