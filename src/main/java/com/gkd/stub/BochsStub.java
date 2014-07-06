@@ -118,7 +118,7 @@ public class BochsStub implements VMStub {
 
 	}
 
-	private String sendBochsCommand(String command, String startPattern, String endPattern) {
+	private String sendBochsCommand(String command) {
 		try {
 			logger.debug("sendBochsCommand " + command);
 			command = command.toLowerCase().trim();
@@ -127,15 +127,21 @@ public class BochsStub implements VMStub {
 			Global.lastCommand = command;
 			commandOutputStream.write(command + "\n");
 			commandOutputStream.flush();
-			if (!command.equals("6") && !command.equals("c") && !command.startsWith("pb") && !command.startsWith("vb") && !command.startsWith("lb") && !command.startsWith("bpd")
-					&& !command.startsWith("bpe") && !command.startsWith("del") && !command.startsWith("set")) {
-				commandReceiver.waitUntilHaveLine(1);
-				if (startPattern == null || endPattern == null) {
-					return null;
-				} else {
-					return commandReceiver.getCommandResult(startPattern, endPattern);
-				}
+			//			if (!command.equals("6") && !command.equals("c") && !command.startsWith("pb") && !command.startsWith("vb") && !command.startsWith("lb") && !command.startsWith("bpd")
+			//					&& !command.startsWith("bpe") && !command.startsWith("del") && !command.startsWith("set")) {
+			//				commandReceiver.waitUntilHaveLine(1);
+			//				if (startPattern == null || endPattern == null) {
+			//					return null;
+			//				} else {
+			//					return commandReceiver.getCommandResult(startPattern, endPattern);
+			//				}
+			//			}
+			if (command.equals("6") || command.equals("c")) {
+				//				commandReceiver.waitUntilHaveInput();
+				return null;
 			}
+
+			return commandReceiver.getCommandResult();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
@@ -173,7 +179,6 @@ public class BochsStub implements VMStub {
 			p = pb.start();
 			InputStream is = p.getInputStream();
 			commandReceiver = new CommandReceiver(is, gkd);
-			new Thread(commandReceiver, "commandReceiver thread").start();
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 
 			Date date1 = new Date();
@@ -183,7 +188,7 @@ public class BochsStub implements VMStub {
 					break;
 				}
 			}
-			String versionLines[] = commandReceiver.getCommandResultUntilEnd().split("\n");
+			String versionLines[] = commandReceiver.getCommandResult().split("\n");
 			for (String line : versionLines) {
 				if (line.contains("Bochs x86 Emulator")) {
 					version = line.trim();
@@ -230,23 +235,22 @@ public class BochsStub implements VMStub {
 	@Override
 	public void runVM() {
 		logger.debug("runVM");
-		commandReceiver.clearBuffer();
-		sendBochsCommand("c", null, null);
+		sendBochsCommand("c");
 	}
 
 	@Override
 	public void pauseVM() {
 		logger.debug("pauseVM");
 		try {
-			commandReceiver.clearBuffer();
-			commandReceiver.waitUntilNoInput();
+			ProcessBuilder pb;
 			if (GKD.os == OSType.mac || GKD.os == OSType.linux) {
-				ProcessBuilder pb = new ProcessBuilder("killall", "-2", "bochs");
+				pb = new ProcessBuilder("killall", "-2", "bochs");
 				pb.start();
 			} else {
-				ProcessBuilder pb = new ProcessBuilder("PauseBochs.exe");
+				pb = new ProcessBuilder("PauseBochs.exe");
 				pb.start();
 			}
+			pb.wait();
 		} catch (Exception ex) {
 			logger.error(ex.getMessage());
 		}
@@ -266,9 +270,9 @@ public class BochsStub implements VMStub {
 	public Vector<String[]> instruction(BigInteger address, BigInteger csBaseAddress, BigInteger eip, boolean is32Bit) {
 		logger.debug("updateInstruction " + address + ", " + csBaseAddress + ", " + eip);
 		Vector<String[]> r = new Vector<String[]>();
-		final int maximumLine = 400;
+		//		final int maximumLine = 400;
 		//String command;
-		int bits = is32Bit ? 32 : 16;
+		//		int bits = is32Bit ? 32 : 16;
 		if (address == null) {
 			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 			address = csBaseAddress.add(eip);
@@ -379,7 +383,7 @@ public class BochsStub implements VMStub {
 		try {
 			commandReceiver.shouldShow = false;
 			//			sendBochsCommand("r");
-			String result = sendBochsCommand("r", "ax:", "eflags");//commandReceiver.getCommandResult("ax:", "eflags", null);
+			String result = sendBochsCommand("r");//commandReceiver.getCommandResult("ax:", "eflags", null);
 			result = result.replaceAll("r", "\nr");
 			String lines[] = result.split("\n");
 
@@ -499,7 +503,7 @@ public class BochsStub implements VMStub {
 		if (version.contains("2.4.1")) {
 			try {
 				//				sendBochsCommand("sreg");
-				String result = sendBochsCommand("sreg", "00000000000i", "Next");// commandReceiver.getCommandResult("s:", "idtr:", null);
+				String result = sendBochsCommand("sreg");// commandReceiver.getCommandResult("s:", "idtr:", null);
 				// logger.debug(result);
 				String[] lines = result.split("\n");
 
@@ -538,8 +542,7 @@ public class BochsStub implements VMStub {
 			}
 		} else {
 			try {
-				//				sendBochsCommand("sreg");
-				String result = sendBochsCommand("sreg", "es:", "idtr:");//commandReceiver.getCommandResult("s:", "idtr:", null);
+				String result = sendBochsCommand("sreg");
 				// logger.debug(result);
 				String[] lines = result.split("\n");
 
@@ -581,7 +584,7 @@ public class BochsStub implements VMStub {
 		try {
 			// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
 			//			sendBochsCommand("creg");
-			String result = sendBochsCommand("creg", "CR0=", "EFER=");// commandReceiver.getCommandResult("CR0", "CR4", null);
+			String result = sendBochsCommand("creg");
 			String[] lines = result.split("\n");
 
 			for (String line : lines) {
@@ -621,9 +624,7 @@ public class BochsStub implements VMStub {
 		try {
 			if (version.contains("2.4.1")) {
 			} else {
-				// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
-				//				sendBochsCommand("dreg");
-				String result = sendBochsCommand("dreg", "DR0=", "DR7=");// commandReceiver.getCommandResult("DR0", "DR7", null);
+				String result = sendBochsCommand("dreg");
 				String[] lines = result.split("\n");
 
 				for (String line : lines) {
@@ -648,8 +649,7 @@ public class BochsStub implements VMStub {
 
 		try {
 			// fpu
-			//			sendBochsCommand("fpu");
-			String result = sendBochsCommand("fpu", "status  word", "FP7 ST7");//commandReceiver.getCommandResult("status", "FP7", null);
+			String result = sendBochsCommand("fpu");
 			String[] lines = result.split("\n");
 
 			for (String line : lines) {
@@ -694,8 +694,7 @@ public class BochsStub implements VMStub {
 
 		try {
 			// mmx
-			//			sendBochsCommand("mmx");
-			String result = sendBochsCommand("mmx", "MM[0]", "MM[7]");//commandReceiver.getCommandResult("MM[0]", "MM[7]", null);
+			String result = sendBochsCommand("mmx");
 			String[] lines = result.split("\n");
 
 			for (String line : lines) {
@@ -735,26 +734,25 @@ public class BochsStub implements VMStub {
 
 	public int[] getMemory(BigInteger address, int totalByte, boolean isPhysicalAddress) {
 		try {
-			commandReceiver.clearBuffer();
 			commandReceiver.shouldShow = false;
 
 			int bytes[] = new int[totalByte];
 			if (totalByte > 0) {
-				float totalByte2 = totalByte - 1;
-				totalByte2 = totalByte2 / 8;
-				int totalByte3 = (int) Math.floor(totalByte2);
-				String realEndAddressStr;
-				String realStartAddressStr;
-				BigInteger realStartAddress = address;
-				realStartAddressStr = String.format("%08x", realStartAddress);
-				BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-				realEndAddressStr = String.format("%08x", realEndAddress);
+				//				float totalByte2 = totalByte - 1;
+				//				totalByte2 = totalByte2 / 8;
+				//				int totalByte3 = (int) Math.floor(totalByte2);
+				//				String realEndAddressStr;
+				//				String realStartAddressStr;
+				//				BigInteger realStartAddress = address;
+				//				realStartAddressStr = String.format("%08x", realStartAddress);
+				//				BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
+				//				realEndAddressStr = String.format("%08x", realEndAddress);
 
 				String result;
 				if (isPhysicalAddress) {
-					result = sendBochsCommand("xp /" + totalByte + "bx " + address, realStartAddressStr, realEndAddressStr);
+					result = sendBochsCommand("xp /" + totalByte + "bx " + address);
 				} else {
-					result = sendBochsCommand("x /" + totalByte + "bx " + address, realStartAddressStr, realEndAddressStr);
+					result = sendBochsCommand("x /" + totalByte + "bx " + address);
 				}
 
 				if (result != null) {
@@ -785,9 +783,7 @@ public class BochsStub implements VMStub {
 	public Vector<Vector<String>> gdt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
 		commandReceiver.shouldShow = false;
-		//		String limitStr = String.format("0x%02x", noOfByte);
-		String result = sendBochsCommand("info gdt", "GDT", "you can");
-		//		String result = commandReceiver.getCommandResult("GDT[0x00]", "GDT[" + limitStr + "]", null);
+		String result = sendBochsCommand("info gdt");
 		if (result != null) {
 			String lines[] = result.split("\n");
 			for (int x = 1; x < lines.length; x++) {
@@ -806,12 +802,8 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<Vector<String>> idt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		commandReceiver.clearBuffer();
 		commandReceiver.shouldShow = false;
-		//		String limitStr = String.format("0x%02x", noOfByte);
-		String result = sendBochsCommand("info idt", "IDT", "you can");
-
-		//String result = commandReceiver.getCommandResult(, "limit=0)");
+		String result = sendBochsCommand("info idt");
 
 		if (result != null) {
 			String lines[] = result.split("\n");
@@ -828,10 +820,7 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<Vector<String>> ldt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		sendBochsCommand("info ldt", "LDT", "you can");
-		commandReceiver.waitUntilHaveLine(200);
-		String result = commandReceiver.getCommandResultUntilEnd();
-		//String result = commandReceiver.getCommandResultUntilEnd();
+		String result = sendBochsCommand("info ldt");
 		String lines[] = result.split("\n");
 		for (int x = 1; x < lines.length; x++) {
 			Vector<String> v = new Vector<String>();
@@ -845,20 +834,8 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<String[]> pageTable(BigInteger pageDirectoryBaseAddress) {
 		Vector<String[]> r = new Vector<String[]>();
-		commandReceiver.clearBuffer();
 		commandReceiver.shouldShow = false;
-		// commandReceiver.setCommandNoOfLine(512);
-		//		String result = sendBochsCommand("xp /4096bx " + pageDirectoryBaseAddress);
-		float totalByte2 = 4096 - 1;
-		totalByte2 = totalByte2 / 8;
-		int totalByte3 = (int) Math.floor(totalByte2);
-		String realEndAddressStr;
-		String realStartAddressStr;
-		BigInteger realStartAddress = pageDirectoryBaseAddress;
-		realStartAddressStr = realStartAddress.toString(16);
-		BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-		realEndAddressStr = String.format("%08x", realEndAddress);
-		String result = sendBochsCommand("xp /4096bx " + pageDirectoryBaseAddress, realStartAddressStr, realEndAddressStr);
+		String result = sendBochsCommand("xp /4096bx " + pageDirectoryBaseAddress);
 		if (result != null) {
 			String[] lines = result.split("\n");
 
@@ -905,12 +882,8 @@ public class BochsStub implements VMStub {
 	public Vector<String> stack() {
 		Vector<String> r = new Vector<String>();
 		try {
-			commandReceiver.clearBuffer();
 			commandReceiver.shouldShow = false;
-			sendBochsCommand("print-stack 40", null, null);
-			commandReceiver.waitUntilHaveLine(40);
-			String result = commandReceiver.getCommandResultUntilEnd();
-			//			String result = commandReceiver.getCommandResultUntilHaveLines(40);
+			String result = sendBochsCommand("print-stack 40");
 			String[] lines = result.split("\n");
 			for (int y = 1; y < lines.length; y++) {
 				try {
@@ -928,10 +901,7 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<Vector<String>> breakpoint() {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		sendBochsCommand("info break", null, null);
-		commandReceiver.waitUntilHaveLine(1);
-		String result = commandReceiver.getCommandResultUntilEnd();
-		//		String result = commandReceiver.getCommandResultUntilEnd();
+		String result = sendBochsCommand("info break");
 		String[] lines = result.split("\n");
 
 		for (int x = 1; x < lines.length; x++) {
@@ -949,21 +919,14 @@ public class BochsStub implements VMStub {
 
 	@Override
 	public String disasm(BigInteger eip) {
-		sendBochsCommand("disasm " + eip, null, null);
-		commandReceiver.waitUntilHaveLine(1);
-		return commandReceiver.getCommandResultUntilEnd();
+		return sendBochsCommand("disasm " + eip);
 	}
 
 	@Override
 	public Vector<Vector<String>> addressTranslate() {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		commandReceiver.clearBuffer();
 		commandReceiver.shouldShow = false;
-		sendBochsCommand("info tab", null, null);
-		commandReceiver.waitUntilHaveLine(1);
-		String result = commandReceiver.getCommandResultUntilEnd();
-
-		//String result = commandReceiver.getCommandResultUntilEnd();
+		String result = sendBochsCommand("info tab");
 		String[] lines = result.split("\n");
 		for (int x = 1; x < lines.length; x++) {
 			Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split("->")));
@@ -974,44 +937,36 @@ public class BochsStub implements VMStub {
 
 	@Override
 	public void singleStep() {
-		sendBochsCommand("s", null, null);
+		sendBochsCommand("s");
 	}
 
 	@Override
 	public void stepOver() {
-		sendBochsCommand("next", null, null);
+		sendBochsCommand("next");
 	}
 
 	@Override
 	public void addPhysicalBreakpoint(BigInteger address) {
-		sendBochsCommand("pb " + address, null, null);
+		sendBochsCommand("pb " + address);
 	}
 
 	@Override
 	public void addLinearBreakpoint(BigInteger address) {
-		sendBochsCommand("lb " + address, null, null);
+		sendBochsCommand("lb " + address);
 	}
 
 	@Override
 	public void addVirtualBreakpoint(BigInteger segment, BigInteger address) {
-		sendBochsCommand("vb " + segment + ":" + address, null, null);
+		sendBochsCommand("vb " + segment + ":" + address);
 	}
 
 	@Override
 	public String sendVMCommand(String command) {
 		try {
 			command = command.toLowerCase().trim();
-			commandReceiver.clearBuffer();
 			commandOutputStream.write(command + "\n");
 			commandOutputStream.flush();
-			commandReceiver.waitUntilHaveLine(1);
-			return commandReceiver.getCommandResultUntilEnd();
-
-			//			if (!command.equals("6") && !command.equals("c") && !command.startsWith("pb") && !command.startsWith("vb") && !command.startsWith("lb") && !command.startsWith("bpd")
-			//					&& !command.startsWith("bpe") && !command.startsWith("del") && !command.startsWith("set")) {
-			//				commandReceiver.waitUntilHaveInput();
-			//				return;
-			//			}
+			return commandReceiver.getCommandResult();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -1020,17 +975,17 @@ public class BochsStub implements VMStub {
 
 	@Override
 	public void deletePhysicalBreakpoint(BigInteger breakpointNo) {
-		sendBochsCommand("del " + breakpointNo, null, null);
+		sendBochsCommand("del " + breakpointNo);
 	}
 
 	@Override
 	public void enablePhysicalBreakpoint(BigInteger breakpointNo) {
-		sendBochsCommand("bpe " + breakpointNo, null, null);
+		sendBochsCommand("bpe " + breakpointNo);
 	}
 
 	@Override
 	public void disablePhysicalBreakpoint(BigInteger breakpointNo) {
-		sendBochsCommand("bpd " + breakpointNo, null, null);
+		sendBochsCommand("bpd " + breakpointNo);
 	}
 
 	@Override
@@ -1053,12 +1008,12 @@ public class BochsStub implements VMStub {
 
 	@Override
 	public void setMemory(BigInteger address, int b) {
-		sendBochsCommand("setpmem " + address + " 1 " + b, null, null);
+		sendBochsCommand("setpmem " + address + " 1 " + b);
 	}
 
 	@Override
 	public void changeReigsterValue(String register, BigInteger value) {
-		sendBochsCommand("set " + register + "=" + value.toString(), null, null);
+		sendBochsCommand("set " + register + "=" + value.toString());
 	}
 
 	@Override

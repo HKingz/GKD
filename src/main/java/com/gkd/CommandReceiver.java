@@ -7,10 +7,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JEditorPane;
 
-public class CommandReceiver implements Runnable {
+public class CommandReceiver {
 	GKD gkd;
 	private final InputStream is;
 	BufferedReader br;
@@ -23,11 +25,16 @@ public class CommandReceiver implements Runnable {
 	public CommandReceiver(InputStream is, GKD gkd) {
 		this.is = is;
 		this.gkd = gkd;
+		br = new BufferedReader(new InputStreamReader(is), 1024);
 	}
 
-	public void clearBuffer() {
-		synchronized (lines) {
-			lines.clear();
+	private void clearBuffer() {
+		try {
+			while (br.ready()) {
+				int temp = br.read();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -35,121 +42,35 @@ public class CommandReceiver implements Runnable {
 		return lines.size();
 	}
 
-	public void waitUntilNoInput() {
-		int count = lines.size();
-		while (true) {
-			synchronized (lines) {
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				if (count == 0 || count == lines.size()) {
-					return;
-				}
-				count = lines.size();
-			}
-		}
-	}
-
-	public String getCommandAllResult() {
+	public String getCommandResult() {
+		String line = "";
 		String str = "";
-		synchronized (lines) {
-			for (String s : lines) {
-				str += s + "\n";
-			}
-		}
-		return str;
-	}
-
-	public String getCommandResultUntilEnd() {
-		String str = "";
-
-		synchronized (lines) {
-			for (String s : lines) {
-				str += s + "\n";
-			}
-		}
-		return str;
-	}
-
-	public String getCommandResult(String startPattern, String endPattern) {
-		long startTime = new Date().getTime();
-
-		String str = "";
-		boolean startCapture = false;
-
-		while (true) {
-			synchronized (lines) {
-				//System.out.println(" >>>" + lines.size());
-				if (lines.size() > 0) {
-					if (startCapture) {
-						if (lines.get(0).contains(endPattern)) {
-							str += lines.get(0) + "\n";
-							lines.remove(0);
-							startCapture = false;
-							return str;
-						} else {
-							str += lines.get(0) + "\n";
-							lines.remove(0);
-						}
-					} else {
-						if (lines.get(0).contains(startPattern)) {
-							str += lines.get(0) + "\n";
-							lines.remove(0);
-							if (startPattern.equals(endPattern)) {
-								return str;
-							}
-							startCapture = true;
-						} else {
-							lines.remove(0);
-						}
-					}
-					startTime = new Date().getTime();
-				}
-				long diff = new Date().getTime() - startTime;
-				if (diff / 1000 >= timeoutSecond) {
-					return null;
-				}
-			}
-		}
-	}
-
-	public void run() {
+		Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*");
 		try {
-			br = new BufferedReader(new InputStreamReader(is), 1024);
-			String line;
-			JEditorPane bochsEditorPane = null;
-			if (gkd != null) {
-				bochsEditorPane = gkd.getBochsEditorPane();
-			}
-			while ((line = br.readLine()) != null) {
-				if (shouldShow && bochsEditorPane != null) {
-					bochsEditorPane.setText(bochsEditorPane.getText() + "\n" + line);
-					bochsEditorPane.scrollRectToVisible(new Rectangle(0, bochsEditorPane.getHeight() - 1, 1, bochsEditorPane.getHeight() - 1));
+			int x;
+			while ((x = br.read()) != -1) {
+				char c = (char) x;
+				//				System.out.print(c);
+				line += c;
+				str += c;
+				if (c == '\n') {
+					line = "";
 				}
-				if (!line.equals("")) {
-					//System.out.println(line);
-					lines.add(line);
+				Matcher matcher = pattern.matcher(line);
+				if (matcher.matches()) {
+					clearBuffer();
+					//remove first line
+					str = str.substring(str.indexOf('\n') + 1);
+					//remove last line
+					if (str.lastIndexOf('\n') >= 0) {
+						str = str.substring(0, str.lastIndexOf('\n'));
+					}
+					return str;
 				}
 			}
-		} catch (IOException e) {
-			// e.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-	}
-
-	public void waitUntilHaveLine(int i) {
-		long startTime = new Date().getTime();
-
-		while (lines.size() < i) {
-			//			try {
-			//				Thread.currentThread().sleep(20);
-			//			} catch (InterruptedException e) {
-			//			}
-			long diff = new Date().getTime() - startTime;
-			if (diff / 1000 >= timeoutSecond) {
-				return;
-			}
-		}
+		return null;
 	}
 }

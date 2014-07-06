@@ -52,7 +52,7 @@
   <idt/>
   <ldt/>
   <logToPetersoftServer>false</logToPetersoftServer>
-  <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
+  <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
   <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
   <updateAfterGKDCommand>false</updateAfterGKDCommand>
   <updateAfterGKDCommand__register>false</updateAfterGKDCommand__register>

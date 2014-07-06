@@ -1,15 +1,21 @@
 <?xml version='1.0' ?>
   <Setting>
-    <bochsCommandHistory/>
+    <bochsCommandHistory>
+      <bochsCommandHistory>r</bochsCommandHistory>
+      <bochsCommandHistory>info b</bochsCommandHistory>
+      <bochsCommandHistory>info break</bochsCommandHistory>
+      <bochsCommandHistory>pb 0x7c00</bochsCommandHistory>
+      <bochsCommandHistory>pb 0x7c01</bochsCommandHistory>
+    </bochsCommandHistory>
     <breakpoint/>
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
-    <divX>617</divX>
-    <divY>420</divY>
+    <divX>630</divX>
+    <divY>397</divY>
     <fontFamily>DejaVu Sans</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>755</height>
+    <height>736</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -18,10 +24,15 @@
     <lastElfHistoryOpenDir2>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
     <lastMapOpenDir>/Users/peter/Desktop/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
     <ldt/>
-    <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
+    <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
     <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
     <logToPetersoftServer>false</logToPetersoftServer>
-    <memoryCombo/>
+    <memoryCombo>
+      <memoryCombo>0x000000007c00</memoryCombo>
+      <memoryCombo>0x000000007c43</memoryCombo>
+      <memoryCombo>0x7c00</memoryCombo>
+      <memoryCombo>0xf054d</memoryCombo>
+    </memoryCombo>
     <memoryEnd/>
     <memoryProfiling>false</memoryProfiling>
     <memoryStart/>
@@ -56,7 +67,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1258</width>
-    <x>136</x>
-    <y>43</y>
+    <width>1270</width>
+    <x>44</x>
+    <y>54</y>
   </Setting>
