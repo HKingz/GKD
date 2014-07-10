@@ -1,6 +1,6 @@
-00000000000i[      ] Bochs x86 Emulator 2.6.6.svn
-00000000000i[      ]   Built from SVN snapshot after release 2.6.6
-00000000000i[      ] Compiled on Jul  2 2014 at 10:47:55
+00000000000i[      ] Bochs x86 Emulator 2.6.6
+00000000000i[      ]   Built from SVN snapshot on June 15, 2014
+00000000000i[      ] Compiled on Jul  8 2014 at 07:09:55
 00000000000i[      ] System configuration
 00000000000i[      ]   processors: 1 (cores=1, HT threads=1)
 00000000000i[      ]   A20 line support: yes
@@ -31,17 +31,17 @@
 00000000000i[      ]   SB16 support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x109621000. after alignment, vector=0x109621000
+00000000000i[MEM0  ] allocated memory at 0x11411b000. after alignment, vector=0x11411b000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00100000, blocks=32
-00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/Users/peter/install/share/bochs/BIOS-bochs-latest')
+00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/Users/peter/download/bochs-2.6.6-install/share/bochs/BIOS-bochs-latest')
 00000000000i[PLUGIN] init_dev of 'pci' plugin device by virtual method
 00000000000i[DEV   ] i440FX PMC present at device 0, function 0
 00000000000i[PLUGIN] init_dev of 'pci2isa' plugin device by virtual method
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Mon Jul  7 02:42:49 2014 (time0=1404672169)
+00000000000i[CMOS  ] Setting initial clock to: Tue Jul  8 07:12:11 2014 (time0=1404774731)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -51,7 +51,22 @@
 00000000000i[VGA   ] interval=200000
 00000000000i[MEM0  ] Register memory access handlers: 0x0000e0000000 - 0x0000e0ffffff
 00000000000i[BXVGA ] VBE Bochs Display Extension Enabled
-00000000000i[MEM0  ] rom at 0xc0000/41472 ('/Users/peter/install/share/bochs/VGABIOS-lgpl-latest')
+00000000000i[RFB   ] Trying port 5900
+00000000000i[RFB   ] listening for connections on port 5900
+00000000000i[RFB   ] accepted client connection.
+00000000000i[RFB   ] Client protocol version is 'RFB 003.003'
+00000000000i[RFB   ] rfbSetEncodings : client supported encodings:
+00000000000i[RFB   ] 00000007 Tight
+00000000000i[RFB   ] 00000005 Hextile
+00000000000i[RFB   ] 00000010 ZRLE
+00000000000i[RFB   ] 00000006 Zlib
+00000000000i[RFB   ] 00000002 RRE
+00000000000i[RFB   ] 00000001 CopyRect
+00000000000i[RFB   ] ffffffe6 Unknown
+00000000000i[RFB   ] ffffff11 Cursor
+00000000000i[RFB   ] ffffff18 TightOption18
+00000000000i[RFB   ] ffffff21 DesktopSize
+00000000000i[MEM0  ] rom at 0xc0000/41472 ('/Users/peter/download/bochs-2.6.6-install/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA   ] channel 2 used by Floppy Drive
 00000000000i[FLOPPY] tried to open 'floppya.img' read/write: No such file or directory
@@ -186,7 +201,4 @@
 00001876416i[BIOS  ] ata0-0: PCHS=306/4/17 translation=none LCHS=306/4/17
 00005753622i[BIOS  ] IDE time out
 00017844202i[BIOS  ] Booting from 0000:7c00
-00038242010i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
-00038244425i[BIOS  ] KBD: unsupported int 16h function 03
-00038248444i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
-00050749053i[      ] Ctrl-C detected in signal handler.
+00027935002i[      ] Ctrl-C detected in signal handler.

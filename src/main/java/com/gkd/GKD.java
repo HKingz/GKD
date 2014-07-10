@@ -35,6 +35,7 @@ import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -2303,7 +2304,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			lastAddress = s[1];
 		}
-		model.getData().sort(new Comparator<String[]>() {
+		Collections.sort(model.getData(), new Comparator<String[]>() {
 			@Override
 			public int compare(String[] o1, String[] o2) {
 				String s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1[1]).toString(16), 16, '0');

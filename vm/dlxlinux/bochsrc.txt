@@ -26,7 +26,7 @@ boot: c
 
 #display_library: x
 # other choices: win32 sdl wx carbon amigaos beos macintosh nogui rfb term svga
-#display_library: rfb
+display_library: rfb
 
 # where do we send log messages?
 log: bochsout.txt

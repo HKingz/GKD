@@ -2,6 +2,7 @@
   <vmCommandHistory>
     <string>info r</string>
     <string>r</string>
+    <string>sreg</string>
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
