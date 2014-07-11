@@ -7,6 +7,15 @@
 	<name>General Kernel Debugger</name>
 	<description>GKD is a gui debug tool for kernel development. It was originally call &quot;peter-bochs&quot; (http://peter-bochs.googlecode.com). Bochs' command line is not productive, so I make a GUI for it. Now, I adding support to QEMU is rename the project to GKD. Tutorials of peter-bochs can be found in https://code.google.com/p/peter-bochs/w/list</description>
 	<url>http://peter.kingofcoders.com</url>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mvnplugins.fusesource.org</id>
+			<url>http://mvnplugins.fusesource.org/repo/release</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
 	<build>
 		<plugins>
 			<plugin>
@@ -46,6 +55,11 @@
 				<groupId>net.sf</groupId>
 				<artifactId>stat-scm</artifactId>
 				<version>1.2.1-SNAPSHOT</version>
+			</plugin>
+			<plugin>
+				<groupId>org.fusesource.mvnplugins</groupId>
+				<artifactId>maven-graph-plugin</artifactId>
+				<version>1.4</version>
 			</plugin>
 		</plugins>
 	</build>
