@@ -42,76 +42,6 @@ public class BochsStub implements VMStub {
 	}
 
 	public BochsStub() {
-		/*
-		try {
-			path = "/Users/peter/install/bin/bochs";
-			arguments = "-f bochsrc.txt -q";
-			ProcessBuilder pb = new ProcessBuilder((path + " " + arguments).split(" "));
-			pb.redirectErrorStream(true);
-			p = pb.start();
-			InputStream is = p.getInputStream();
-			commandReceiver = new CommandReceiver(is, gkd);
-			new Thread(commandReceiver, "commandReceiver thread").start();
-			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-
-			Date date1 = new Date();
-			while (commandReceiver.getLinesLength() < 9) {
-				Thread.sleep(100);
-				if (new Date().getTime() - date1.getTime() > 4000) {
-					break;
-				}
-			}
-			String versionLines[] = commandReceiver.getCommandAllResult().split("\n");
-			for (String line : versionLines) {
-				if (line.contains("Bochs x86 Emulator")) {
-					version = line.trim();
-				}
-				if (line.contains("Peter-bochs instrument")) {
-					if (Setting.getInstance().memoryProfiling) {
-						if (Global.debug) {
-							logger.debug("Memory profiling port " + Global.profilingMemoryPort);
-						}
-						MemorySocketServerController.start(Global.profilingMemoryPort, null);
-					}
-					if (Setting.getInstance().jmpProfiling) {
-						if (Global.debug) {
-							logger.debug("Jump profiling port " + Global.profilingJmpPort);
-						}
-						JmpSocketServerController.start(Global.profilingJmpPort, GKD.instrumentPanel.getJmpTableModel());
-					}
-					if (Setting.getInstance().interruptProfiling) {
-						if (Global.debug) {
-							logger.debug("Interrupt profiling port " + Global.profilingInterruptPort);
-						}
-						InterruptSocketServerController.start(Global.profilingInterruptPort);
-					}
-				}
-			}
-			for (int x = 0; x < 2; x++) {
-				//				sendBochsCommand("r");
-				String result = sendBochsCommand("r", "eax:", "eflags");//commandReceiver.getCommandResult("ax:", "eflags", null);
-				System.out.println(result);
-
-				//				sendBochsCommand("sreg");
-				result = sendBochsCommand("sreg", "es:", "idtr:");//commandReceiver.getCommandResult("s:", "idtr:", null);
-				System.out.println(result);
-
-				//				sendBochsCommand("creg");
-				result = sendBochsCommand("creg", "CR0=", "EFER=");// commandReceiver.getCommandResult("CR0", "CR4", null);
-				System.out.println(result);
-
-				sendBochsCommand("dreg", "DR0=", "DR7=");
-				//				result = sendBochsCommand("dreg");//commandReceiver.getCommandResult("DR0", "DR7", null);
-				System.out.println(result);
-
-				//				sendBochsCommand("fpu");
-				result = sendBochsCommand("fpu", "status  word", "FP7 ST7");//commandReceiver.getCommandResult("status", "FP7", null);
-				System.out.println(result);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-		*/
 	}
 
 	public void initStub(String para[]) {
@@ -178,16 +108,9 @@ public class BochsStub implements VMStub {
 			pb.redirectErrorStream(true);
 			p = pb.start();
 			InputStream is = p.getInputStream();
-			commandReceiver = new CommandReceiver(is, gkd);
+			commandReceiver = new CommandReceiver(is);
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 
-			Date date1 = new Date();
-			while (commandReceiver.getLinesLength() < 9) {
-				Thread.sleep(100);
-				if (new Date().getTime() - date1.getTime() > 4000) {
-					break;
-				}
-			}
 			String versionLines[] = commandReceiver.getCommandResult().split("\n");
 			for (String line : versionLines) {
 				if (line.contains("Bochs x86 Emulator")) {
@@ -1017,14 +940,7 @@ public class BochsStub implements VMStub {
 
 	@Override
 	public void waitVMStop() {
-		while (commandReceiver.getLinesLength() == 0) {
-			try {
-
-				Thread.sleep(200);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
+		String result = commandReceiver.getCommandResult();
 	}
 
 }

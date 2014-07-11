@@ -6,16 +6,17 @@
       <bochsCommandHistory>info break</bochsCommandHistory>
       <bochsCommandHistory>pb 0x7c00</bochsCommandHistory>
       <bochsCommandHistory>pb 0x7c01</bochsCommandHistory>
+      <bochsCommandHistory>sreg</bochsCommandHistory>
     </bochsCommandHistory>
     <breakpoint/>
     <currentLanguage>en_US</currentLanguage>
     <customZone>false</customZone>
     <divX>630</divX>
-    <divY>397</divY>
+    <divY>395</divY>
     <fontFamily>DejaVu Sans</fontFamily>
     <fontsize>12</fontsize>
     <gdt/>
-    <height>736</height>
+    <height>858</height>
     <hitZone>false</hitZone>
     <idt/>
     <interruptProfiling>false</interruptProfiling>
@@ -67,7 +68,7 @@
     <updateFastStepCommand_ldt>false</updateFastStepCommand_ldt>
     <updateFastStepCommand_memory>true</updateFastStepCommand_memory>
     <updateFastStepCommand_register>true</updateFastStepCommand_register>
-    <width>1270</width>
-    <x>44</x>
-    <y>54</y>
+    <width>1409</width>
+    <x>460</x>
+    <y>73</y>
   </Setting>

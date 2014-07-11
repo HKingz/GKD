@@ -1,6 +1,6 @@
 00000000000i[      ] Bochs x86 Emulator 2.6.6
 00000000000i[      ]   Built from SVN snapshot on June 15, 2014
-00000000000i[      ] Compiled on Jul  8 2014 at 07:09:55
+00000000000i[      ] Compiled on Jul 11 2014 at 18:51:37
 00000000000i[      ] System configuration
 00000000000i[      ]   processors: 1 (cores=1, HT threads=1)
 00000000000i[      ]   A20 line support: yes
@@ -31,7 +31,7 @@
 00000000000i[      ]   SB16 support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x11411b000. after alignment, vector=0x11411b000
+00000000000i[MEM0  ] allocated memory at 0x7f4772152010. after alignment, vector=0x7f4772153000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/Users/peter/download/bochs-2.6.6-install/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Tue Jul  8 07:12:11 2014 (time0=1404774731)
+00000000000i[CMOS  ] Setting initial clock to: Fri Jul 11 19:42:45 2014 (time0=1405078965)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -51,21 +51,6 @@
 00000000000i[VGA   ] interval=200000
 00000000000i[MEM0  ] Register memory access handlers: 0x0000e0000000 - 0x0000e0ffffff
 00000000000i[BXVGA ] VBE Bochs Display Extension Enabled
-00000000000i[RFB   ] Trying port 5900
-00000000000i[RFB   ] listening for connections on port 5900
-00000000000i[RFB   ] accepted client connection.
-00000000000i[RFB   ] Client protocol version is 'RFB 003.003'
-00000000000i[RFB   ] rfbSetEncodings : client supported encodings:
-00000000000i[RFB   ] 00000007 Tight
-00000000000i[RFB   ] 00000005 Hextile
-00000000000i[RFB   ] 00000010 ZRLE
-00000000000i[RFB   ] 00000006 Zlib
-00000000000i[RFB   ] 00000002 RRE
-00000000000i[RFB   ] 00000001 CopyRect
-00000000000i[RFB   ] ffffffe6 Unknown
-00000000000i[RFB   ] ffffff11 Cursor
-00000000000i[RFB   ] ffffff18 TightOption18
-00000000000i[RFB   ] ffffff21 DesktopSize
 00000000000i[MEM0  ] rom at 0xc0000/41472 ('/Users/peter/download/bochs-2.6.6-install/share/bochs/VGABIOS-lgpl-latest')
 00000000000i[PLUGIN] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA   ] channel 2 used by Floppy Drive
@@ -93,7 +78,7 @@
 00000000000i[PLUGIN] init_dev of 'unmapped' plugin device by virtual method
 00000000000i[PLUGIN] init_dev of 'biosdev' plugin device by virtual method
 00000000000i[PLUGIN] init_dev of 'speaker' plugin device by virtual method
-00000000000i[PCSPK ] Forwarding beep to gui
+00000000000i[PCSPK ] Using /dev/console for output
 00000000000i[PLUGIN] init_dev of 'extfpuirq' plugin device by virtual method
 00000000000i[PLUGIN] init_dev of 'parallel' plugin device by virtual method
 00000000000i[PAR   ] parallel port 1 at 0x0378 irq 7
@@ -159,46 +144,21 @@
 00000000000i[PLUGIN] reset of 'serial' plugin device by virtual method
 00000000000i[PLUGIN] reset of 'iodebug' plugin device by virtual method
 00000000000i[      ] set SIGINT handler to bx_debug_ctrlc_handler
-00000004661i[BIOS  ] $Revision: 11761 $ $Date: 2013-08-02 17:59:49 +0200 (Fr, 02. Aug 2013) $
-00000318049i[KBD   ] reset-disable command received
-00000320821i[BIOS  ] Starting rombios32
-00000321255i[BIOS  ] Shutdown flag 0
-00000321850i[BIOS  ] ram_size=0x02000000
-00000322271i[BIOS  ] ram_end=32MB
-00000362764i[BIOS  ] Found 1 cpu(s)
-00000376961i[BIOS  ] bios_table_addr: 0x000fa468 end=0x000fcc00
-00000704758i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001032685i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
-00001032704i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
-00001032723i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
-00001032742i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
-00001032752i[P2ISA ] write: ELCR2 = 0x0a
-00001033518i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
-00001041191i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001043461i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001045570i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001045799i[PIDE  ] new BM-DMA address: 0xc000
-00001046416i[BIOS  ] region 4: 0x0000c000
-00001048441i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001048674i[ACPI  ] new irq line = 11
-00001048686i[ACPI  ] new irq line = 9
-00001048715i[ACPI  ] new PM base address: 0xb000
-00001048729i[ACPI  ] new SM base address: 0xb100
-00001048757i[PCI   ] setting SMRAM control register to 0x4a
-00001212848i[CPU0  ] Enter to System Management Mode
-00001212859i[CPU0  ] RSM: Resuming from System Management Mode
-00001376877i[PCI   ] setting SMRAM control register to 0x0a
-00001391770i[BIOS  ] MP table addr=0x000fa540 MPC table addr=0x000fa470 size=0xc8
-00001393526i[BIOS  ] SMBIOS table addr=0x000fa550
-00001395721i[BIOS  ] ACPI tables: RSDP addr=0x000fa670 ACPI DATA addr=0x01ff0000 size=0xf72
-00001398918i[BIOS  ] Firmware waking vector 0x1ff00cc
-00001400716i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001401444i[BIOS  ] bios_table_cur_addr: 0x000fa694
-00001529061i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
-00001529132i[BXVGA ] VBE known Display Interface b0c0
-00001529164i[BXVGA ] VBE known Display Interface b0c5
-00001532089i[VBIOS ] VBE Bios $Id: vbe.c,v 1.64 2011/07/19 18:25:05 vruppert Exp $
-00001876416i[BIOS  ] ata0-0: PCHS=306/4/17 translation=none LCHS=306/4/17
-00005753622i[BIOS  ] IDE time out
-00017844202i[BIOS  ] Booting from 0000:7c00
-00027935002i[      ] Ctrl-C detected in signal handler.
+00000000000i[      ] dbg: Quit
+00000000000i[CPU0  ] CPU is in real mode (active)
+00000000000i[CPU0  ] CS.mode = 16 bit
+00000000000i[CPU0  ] SS.mode = 16 bit
+00000000000i[CPU0  ] EFER   = 0x00000000
+00000000000i[CPU0  ] | EAX=00000000  EBX=00000000  ECX=00000000  EDX=00000000
+00000000000i[CPU0  ] | ESP=00000000  EBP=00000000  ESI=00000000  EDI=00000000
+00000000000i[CPU0  ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf af pf cf
+00000000000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00000000000i[CPU0  ] |  CS:f000( 1e00| 0|  0) ffff0000 0000ffff 0 0
+00000000000i[CPU0  ] |  DS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
+00000000000i[CPU0  ] |  SS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
+00000000000i[CPU0  ] |  ES:0000( 0000| 0|  0) 00000000 0000ffff 0 0
+00000000000i[CPU0  ] |  FS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
+00000000000i[CPU0  ] |  GS:0000( 0000| 0|  0) 00000000 0000ffff 0 0
+00000000000i[CPU0  ] | EIP=0000fff0 (0000fff0)
+00000000000i[CPU0  ] | CR0=0x60000010 CR2=0x00000000
+00000000000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
