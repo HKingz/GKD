@@ -1,7 +1,5 @@
 package com.gkd.components.segmentregister;
 
-import java.awt.Dimension;
-
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
