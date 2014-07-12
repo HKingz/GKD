@@ -40,7 +40,7 @@ public class Disassemble {
 			p = pb.start();
 			String str = "";
 			InputStream is = p.getInputStream();
-			final BufferedReader br = new BufferedReader(new InputStreamReader(is), 1024);
+			final BufferedReader br = new BufferedReader(new InputStreamReader(is), 1);
 			String line;
 			while ((line = br.readLine()) != null) {
 				str += line + "\n";

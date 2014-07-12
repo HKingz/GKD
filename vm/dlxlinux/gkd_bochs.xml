@@ -4,5 +4,6 @@
 	<vm>/Users/peter/download/bochs-2.6.6-install/bin/bochs</vm>
 	<vmArguments>-f bochsrc.txt -q</vmArguments>
 	<vncPort>5900</vncPort>
+	<ndisasm>/opt/local/bin/ndisasm</ndisasm>
 </gkd>
 

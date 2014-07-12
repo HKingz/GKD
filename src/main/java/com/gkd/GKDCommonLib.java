@@ -599,6 +599,10 @@ public class GKDCommonLib {
 		return buffer.toString();
 	}
 
+	public static String readConfig(CommandLine cmd, String xpath) {
+		return parseXML(cmd.getOptionValue("f"), xpath);
+	}
+
 	public static String parseXML(String file, String xpath) {
 		return parseXML(new File(file), xpath);
 	}
@@ -618,10 +622,6 @@ public class GKDCommonLib {
 			ex.printStackTrace();
 			return null;
 		}
-	}
-
-	public static String readConfig(CommandLine cmd, String xpath) {
-		return parseXML(cmd.getOptionValue("f"), xpath);
 	}
 
 	public static int readConfigInt(CommandLine cmd, String xpath) {

@@ -468,12 +468,16 @@ public class BochsStub implements VMStub {
 				// logger.debug(result);
 				String[] lines = result.split("\n");
 
-				for (String line : lines) {
+				for (int x = 0; x < lines.length; x++) {
+					String line = lines[x];
 					line = line.replaceFirst("<.*>", "");
 					String str[] = line.split(" ");
 
 					if (line.matches(".*cs:.*")) {
 						ht.put("cs", line.split(":")[1].split(",")[0]);
+						x++;
+						line = lines[x];
+						ht.put("cs_base", line.split(",")[1].split("=")[1].trim());
 					} else if (line.matches(".*ds:.*")) {
 						ht.put("ds", line.split(":")[1].split(",")[0]);
 					} else if (line.matches(".*es:.*")) {
