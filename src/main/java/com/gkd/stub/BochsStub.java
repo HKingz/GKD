@@ -175,6 +175,7 @@ public class BochsStub implements VMStub {
 			}
 			pb.wait();
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			logger.error(ex.getMessage());
 		}
 	}

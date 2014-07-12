@@ -31,7 +31,7 @@
 00000000000i[      ]   SB16 support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x10c455000. after alignment, vector=0x10c455000
+00000000000i[MEM0  ] allocated memory at 0x1089de000. after alignment, vector=0x1089de000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/Users/peter/download/bochs-2.6.6-install/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Sat Jul 12 09:28:16 2014 (time0=1405128496)
+00000000000i[CMOS  ] Setting initial clock to: Sat Jul 12 19:59:40 2014 (time0=1405166380)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -201,4 +201,7 @@
 00001876416i[BIOS  ] ata0-0: PCHS=306/4/17 translation=none LCHS=306/4/17
 00005753622i[BIOS  ] IDE time out
 00017844202i[BIOS  ] Booting from 0000:7c00
-00019481427i[      ] Ctrl-C detected in signal handler.
+00038242010i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
+00038244425i[BIOS  ] KBD: unsupported int 16h function 03
+00038248444i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
+00054963505i[      ] Ctrl-C detected in signal handler.
