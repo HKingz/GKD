@@ -11,18 +11,37 @@ import java.util.regex.Pattern;
 public class BochsTests {
 	OutputStreamWriter commandOutputStream;
 	BufferedReader br;
+	Process p = null;
 
 	public static void main(String args[]) {
 		new BochsTests().test();
+
+		//		ProcessBuilder pb = new ProcessBuilder("/Users/peter/download/bochs-2.6.6-install/bin/bochs", "-q", "-f", "bochsrc.txt");
+		//		try {
+		//			pb.redirectErrorStream(true);
+		//			Process p = pb.start();
+		//			System.out.println("s3");
+		//			InputStream is = p.getInputStream();
+		//			BufferedReader br = new BufferedReader(new InputStreamReader(is), 1024);
+		//			
+		//
+		//			OutputStreamWriter commandOutputStream = new OutputStreamWriter(p.getOutputStream());
+		//			commandOutputStream.write("c" + "\n");
+		//			commandOutputStream.flush();
+		//			
+		//			int x;
+		//			while ((x = br.read()) != -1) {
+		//				System.out.print((char) x);
+		//			}
+		//
+		//			p.waitFor();
+		//			System.out.println("s4");
+		//		} catch (Exception e) {
+		//			e.printStackTrace();
+		//		}
 	}
 
 	public void test() {
-		Process p = null;
-
-		if (p != null) {
-			p.destroy();
-		}
-
 		ProcessBuilder pb;
 		pb = new ProcessBuilder("/Users/peter/download/bochs-2.6.6-install/bin/bochs", "-q", "-f", "bochsrc.txt");
 
@@ -46,6 +65,7 @@ public class BochsTests {
 			//			System.out.println("result=" + result);
 
 			System.out.println("result=" + getCommandResult());
+			System.out.println(sendCommand("r"));
 			System.out.println(sendCommand("ptime"));
 			System.out.println(sendCommand("r"));
 			System.out.println(sendCommand("sreg"));
@@ -66,23 +86,36 @@ public class BochsTests {
 			System.out.println(sendCommand("info tab"));
 			System.out.println(sendCommand("info break"));
 			System.out.println(sendCommand("disasm"));
-			System.out.println(sendCommand("pb 0x7c00"));
+			//			System.out.println(sendCommand("pb 0x7c00"));
 			System.out.println(sendCommand("info b"));
 			System.out.println(sendCommand("info eflags"));
+			System.out.println(sendCommand("c"));
+			Thread.sleep(2000);
+			pauseVM();
+			System.out.println("-----------");
+			System.out.println(sendCommand("r"));
+
+			//			Thread.sleep(2000);
+			//			System.out.println(sendCommand("c"));
+			//			Thread.sleep(2000);
+			//			pauseVM();
+			//			System.out.println(sendCommand("r"));
+			//			p.waitFor();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void clearBuffer() {
-		try {
-			while (br.ready()) {
-				int temp = br.read();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//	private void clearBuffer() {
+//		try {
+//			while (br.ready()) {
+//				int temp = br.read();
+//			}
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public String sendCommand(String command) {
 		try {
@@ -92,7 +125,9 @@ public class BochsTests {
 			Global.lastCommand = command;
 			commandOutputStream.write(command + "\n");
 			commandOutputStream.flush();
-
+			if (command.equals("6") || command.equals("c")) {
+				return null;
+			}
 			return getCommandResult();
 		} catch (IOException e) {
 		}
@@ -107,7 +142,7 @@ public class BochsTests {
 			int x;
 			while ((x = br.read()) != -1) {
 				char c = (char) x;
-										System.out.print(c);
+				//				System.out.print(c);
 				line += c;
 				str += c;
 				if (c == '\n') {
@@ -115,7 +150,7 @@ public class BochsTests {
 				}
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
-					clearBuffer();
+//					clearBuffer();
 					//remove first line
 					//					str = str.substring(str.indexOf('\n') + 1);
 					//remove last line
@@ -129,6 +164,30 @@ public class BochsTests {
 			ex.printStackTrace();
 		}
 		return null;
+	}
+
+	public void pauseVM() {
+		try {
+			System.out.println("p1");
+			ProcessBuilder pb;
+			pb = new ProcessBuilder("killall", "-2", "bochs");
+			pb.redirectErrorStream(false);
+			Process p = pb.start();
+			p.waitFor();
+			System.out.println("p2");
+//			clearBuffer();
+			getCommandResult();
+			//			getCommandResult();
+			//			String line = "killall -2 bochs";
+			//			CommandLine cmdLine = CommandLine.parse(line);
+			//			DefaultExecutor executor = new DefaultExecutor();
+			//			executor.setExitValue(1);
+			//			ExecuteWatchdog watchdog = new ExecuteWatchdog(60000);
+			//			executor.setWatchdog(watchdog);
+			//			int exitValue = executor.execute(cmdLine);
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

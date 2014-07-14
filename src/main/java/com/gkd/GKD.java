@@ -1786,7 +1786,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void updateVMStatus(final boolean updateHistoryTable) {
-		System.out.println("updateVMStatus");
+		logger.debug("updateVMStatus");
 		isupdateVMStatusEnd = false;
 		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);
 		final JProgressBarDialog d = new JProgressBarDialog(this, true);

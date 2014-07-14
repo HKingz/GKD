@@ -1,15 +1,8 @@
 package com.gkd.logpanel;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.io.File;
-
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.text.Element;
 
 import com.peterswing.advancedswing.enhancedtextarea.EnhancedTextArea;
 

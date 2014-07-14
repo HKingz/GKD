@@ -7,16 +7,15 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
 
 import com.gkd.CommandReceiver;
+import com.gkd.Disassemble;
 import com.gkd.GKD;
 import com.gkd.GKD.OSType;
-import com.gkd.Disassemble;
 import com.gkd.Global;
 import com.gkd.MyLanguage;
 import com.gkd.Setting;
@@ -166,14 +165,16 @@ public class BochsStub implements VMStub {
 		logger.debug("pauseVM");
 		try {
 			ProcessBuilder pb;
+			Process p;
 			if (GKD.os == OSType.mac || GKD.os == OSType.linux) {
 				pb = new ProcessBuilder("killall", "-2", "bochs");
-				pb.start();
+				p = pb.start();
 			} else {
 				pb = new ProcessBuilder("PauseBochs.exe");
-				pb.start();
+				p = pb.start();
 			}
-			pb.wait();
+			p.waitFor();
+			commandReceiver.getCommandResult();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());

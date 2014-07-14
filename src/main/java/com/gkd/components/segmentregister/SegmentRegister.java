@@ -1,13 +1,10 @@
 package com.gkd.components.segmentregister;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.beans.Transient;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 
 public class SegmentRegister extends JPanel {
 	int x = 0;
