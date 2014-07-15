@@ -31,7 +31,7 @@
 00000000000i[      ]   SB16 support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x10f11b000. after alignment, vector=0x10f11b000
+00000000000i[MEM0  ] allocated memory at 0x10dc15000. after alignment, vector=0x10dc15000
 00000000000i[MEM0  ] 32.00MB
 00000000000i[MEM0  ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/Users/peter/download/bochs-2.6.6-install/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Mon Jul 14 08:47:13 2014 (time0=1405298833)
+00000000000i[CMOS  ] Setting initial clock to: Tue Jul 15 16:30:59 2014 (time0=1405413059)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -185,6 +185,7 @@
 00001532089i[VBIOS ] VBE Bios $Id: vbe.c,v 1.64 2011/07/19 18:25:05 vruppert Exp $
 00001876416i[BIOS  ] ata0-0: PCHS=306/4/17 translation=none LCHS=306/4/17
 00005753622i[BIOS  ] IDE time out
+00007200000i[      ] Ctrl-C detected in signal handler.
 00017844202i[BIOS  ] Booting from 0000:7c00
 00038242010i[BIOS  ] int13_harddisk: function 15, unmapped device for ELDL=81
 00038244425i[BIOS  ] KBD: unsupported int 16h function 03
@@ -193,5 +194,4 @@
 00071594477i[FLOPPY] controller reset in software
 00071625318i[FLOPPY] controller reset in software
 00071745320i[FLOPPY] controller reset in software
-00083864588i[SER   ] com1: FIFO enabled
-330896804000p[SDL   ] >>PANIC<< User requested shutdown.
+00073873803i[      ] Ctrl-C detected in signal handler.

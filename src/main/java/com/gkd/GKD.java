@@ -1362,7 +1362,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				new Thread() {
 					public void run() {
 						VMController.getVM().waitVMStop();
-						updateVMStatus(true);
+						if (runVMButton.getText().equals(MyLanguage.getString("run"))) {
+							updateVMStatus(true);
+						}
 					}
 				}.start();
 			} else {

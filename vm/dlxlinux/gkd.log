@@ -257,3 +257,370 @@
 [DEBUG] [00:20:36,178] [BochsStub.java:165]	 pauseVM
 [DEBUG] [00:20:36,229] [GKD.java:1789]	 updateVMStatus
 [DEBUG] [00:20:36,241] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [00:38:05,347] [BochsStub.java:105]	 startVM
+[DEBUG] [00:38:07,098] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [00:38:07,110] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [00:38:07,141] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [00:38:07,183] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [00:38:07,228] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [00:38:07,308] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [00:38:07,436] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [00:38:07,531] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [00:38:07,651] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [00:38:07,653] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [00:38:08,000] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [00:38:08,032] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [00:38:08,068] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [00:38:08,082] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [00:38:08,128] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [00:38:08,616] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [00:38:08,616] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [00:38:08,686] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [00:38:10,477] [BochsStub.java:159]	 runVM
+[DEBUG] [00:38:10,477] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [00:38:19,625] [BochsStub.java:165]	 pauseVM
+[DEBUG] [01:26:45,854] [BochsStub.java:105]	 startVM
+[DEBUG] [01:26:47,603] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [01:26:47,616] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [01:26:47,646] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [01:26:47,689] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [01:26:47,746] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [01:26:47,808] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [01:26:47,902] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [01:26:48,030] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [01:26:48,181] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [01:26:48,182] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [01:26:48,495] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [01:26:48,534] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [01:26:48,602] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [01:26:48,611] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [01:26:48,691] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [01:26:49,074] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [01:26:49,075] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [01:26:49,159] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [01:26:52,183] [BochsStub.java:146]	 stopVM
+[DEBUG] [01:26:57,593] [BochsStub.java:105]	 startVM
+[DEBUG] [01:26:59,338] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [01:26:59,345] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [01:26:59,372] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [01:26:59,413] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [01:26:59,456] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [01:26:59,509] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [01:26:59,574] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [01:26:59,636] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [01:26:59,747] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [01:26:59,747] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [01:26:59,932] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [01:26:59,971] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [01:27:00,011] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [01:27:00,040] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [01:27:00,077] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [01:27:00,307] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [01:27:00,307] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [01:27:00,389] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [01:27:03,620] [BochsStub.java:159]	 runVM
+[DEBUG] [01:27:03,620] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [01:27:08,693] [BochsStub.java:165]	 pauseVM
+[DEBUG] [02:55:31,201] [BochsStub.java:105]	 startVM
+[DEBUG] [02:55:33,058] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [02:55:33,067] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [02:55:33,099] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [02:55:33,148] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [02:55:33,181] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [02:55:33,227] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [02:55:33,270] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [02:55:33,328] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [02:55:33,391] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [02:55:33,391] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [02:55:33,538] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:55:33,567] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:55:33,607] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [02:55:33,631] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [02:55:33,668] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:55:33,880] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [02:55:33,880] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [02:55:33,954] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [02:55:36,063] [BochsStub.java:159]	 runVM
+[DEBUG] [02:55:36,063] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [02:55:39,152] [BochsStub.java:165]	 pauseVM
+[DEBUG] [02:56:12,344] [BochsStub.java:105]	 startVM
+[DEBUG] [02:56:14,052] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [02:56:14,060] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [02:56:14,091] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [02:56:14,132] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [02:56:14,171] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [02:56:14,214] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [02:56:14,275] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [02:56:14,336] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [02:56:14,384] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [02:56:14,385] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [02:56:14,574] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:56:14,606] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:56:14,647] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [02:56:14,700] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [02:56:14,737] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:56:14,970] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [02:56:14,970] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [02:56:15,033] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [02:56:18,382] [BochsStub.java:159]	 runVM
+[DEBUG] [02:56:18,382] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [02:56:24,711] [BochsStub.java:165]	 pauseVM
+[DEBUG] [02:56:30,121] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [02:56:30,125] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [02:56:30,154] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [02:56:30,178] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [02:56:30,211] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [02:56:30,238] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [02:56:30,270] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [02:56:30,306] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [02:56:30,330] [BochsStub.java:196]	 updateInstruction null, 3221225472, 1087788
+[DEBUG] [02:56:30,331] [BochsStub.java:52]	 sendBochsCommand xp /200bx 3222313260
+[DEBUG] [02:56:30,405] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:56:30,434] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:56:30,454] [GKD.java:2396]	 jumpToRowInstructionTable=c010992c
+[DEBUG] [02:56:30,454] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [02:56:30,478] [BochsStub.java:52]	 sendBochsCommand info idt 96
+[DEBUG] [02:56:30,500] [BochsStub.java:52]	 sendBochsCommand info idt 200
+[DEBUG] [02:56:30,520] [BochsStub.java:52]	 sendBochsCommand xp /4096bx 1052672
+[DEBUG] [02:56:30,980] [BochsStub.java:52]	 sendBochsCommand print-stack 40
+[DEBUG] [02:56:31,004] [BochsStub.java:52]	 sendBochsCommand info tab
+[DEBUG] [02:56:31,059] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:56:31,105] [BochsStub.java:196]	 updateInstruction null, 3221225472, 1087788
+[DEBUG] [02:56:31,105] [BochsStub.java:52]	 sendBochsCommand xp /200bx 3222313260
+[DEBUG] [02:56:31,152] [GKD.java:2396]	 jumpToRowInstructionTable=c010992c
+[DEBUG] [02:56:58,604] [BochsStub.java:105]	 startVM
+[DEBUG] [02:57:00,340] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [02:57:00,346] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [02:57:00,382] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [02:57:00,428] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [02:57:00,471] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [02:57:00,527] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [02:57:00,570] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [02:57:00,643] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [02:57:00,697] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [02:57:00,698] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [02:57:00,870] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:57:00,905] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:57:00,958] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [02:57:00,980] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [02:57:01,014] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:57:01,235] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [02:57:01,236] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [02:57:01,299] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [02:57:03,163] [BochsStub.java:159]	 runVM
+[DEBUG] [02:57:03,163] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [02:57:08,694] [BochsStub.java:165]	 pauseVM
+[DEBUG] [02:57:15,256] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [02:57:15,261] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [02:57:15,288] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [02:57:15,340] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [02:57:15,411] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [02:57:15,441] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [02:57:15,468] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [02:57:15,498] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [02:57:15,525] [BochsStub.java:196]	 updateInstruction null, 3221225472, 1087671
+[DEBUG] [02:57:15,526] [BochsStub.java:52]	 sendBochsCommand xp /200bx 3222313143
+[DEBUG] [02:57:15,612] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:57:15,636] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:57:15,660] [GKD.java:2396]	 jumpToRowInstructionTable=c01098b7
+[DEBUG] [02:57:15,660] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [02:57:15,683] [BochsStub.java:52]	 sendBochsCommand info idt 96
+[DEBUG] [02:57:15,703] [BochsStub.java:52]	 sendBochsCommand info idt 200
+[DEBUG] [02:57:15,723] [BochsStub.java:52]	 sendBochsCommand xp /4096bx 1052672
+[DEBUG] [02:57:16,108] [BochsStub.java:52]	 sendBochsCommand print-stack 40
+[DEBUG] [02:57:16,135] [BochsStub.java:52]	 sendBochsCommand info tab
+[DEBUG] [02:57:16,192] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:57:16,243] [BochsStub.java:196]	 updateInstruction null, 3221225472, 1087671
+[DEBUG] [02:57:16,244] [BochsStub.java:52]	 sendBochsCommand xp /200bx 3222313143
+[DEBUG] [02:57:16,279] [GKD.java:2396]	 jumpToRowInstructionTable=c01098b7
+[DEBUG] [02:59:57,390] [BochsStub.java:105]	 startVM
+[DEBUG] [02:59:59,335] [GKD.java:1789]	 updateVMStatus
+[DEBUG] [02:59:59,345] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [02:59:59,379] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [02:59:59,432] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [02:59:59,474] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [02:59:59,557] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [02:59:59,604] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [02:59:59,684] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [02:59:59,721] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [02:59:59,722] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [02:59:59,861] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:59:59,888] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [02:59:59,925] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [02:59:59,949] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [02:59:59,981] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [03:00:00,227] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [03:00:00,227] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [03:00:00,297] [GKD.java:2396]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [08:21:07,384] [BochsStub.java:146]	 stopVM
+[DEBUG] [16:26:01,254] [BochsStub.java:105]	 startVM
+[DEBUG] [16:26:03,116] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:26:03,121] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:26:03,151] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:26:03,205] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:26:03,258] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:26:03,303] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:26:03,357] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:26:03,422] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:26:03,471] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:26:03,472] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:26:03,664] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:26:03,696] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:26:03,733] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:26:03,756] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [16:26:03,790] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:26:04,019] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:26:04,020] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:26:04,117] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:26:07,561] [BochsStub.java:159]	 runVM
+[DEBUG] [16:26:07,561] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [16:26:13,891] [BochsStub.java:165]	 pauseVM
+[DEBUG] [16:26:31,125] [BochsStub.java:105]	 startVM
+[DEBUG] [16:26:32,809] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:26:32,815] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:26:32,844] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:26:32,903] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:26:32,962] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:26:33,020] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:26:33,076] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:26:33,142] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:26:33,209] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:26:33,210] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:26:33,360] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:26:33,396] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:26:33,446] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:26:33,479] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [16:26:33,512] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:26:33,710] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:26:33,710] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:26:33,781] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:26:35,923] [BochsStub.java:159]	 runVM
+[DEBUG] [16:26:35,923] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [16:26:42,930] [BochsStub.java:165]	 pauseVM
+[DEBUG] [16:27:18,383] [BochsStub.java:105]	 startVM
+[DEBUG] [16:27:20,147] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:27:20,155] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:27:20,188] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:27:20,238] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:27:20,284] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:27:20,340] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:27:20,385] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:27:20,447] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:27:20,504] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:27:20,505] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:27:20,688] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:27:20,721] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:27:20,768] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:27:20,801] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [16:27:20,860] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:27:21,096] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:27:21,097] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:27:21,172] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:27:42,417] [BochsStub.java:159]	 runVM
+[DEBUG] [16:27:42,418] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [16:27:57,031] [BochsStub.java:165]	 pauseVM
+[DEBUG] [16:30:59,830] [BochsStub.java:105]	 startVM
+[DEBUG] [16:31:01,543] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:31:01,554] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:31:01,583] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:31:01,631] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:31:01,682] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:31:01,720] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:31:01,769] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:31:01,838] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:31:01,911] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:31:01,912] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:31:02,045] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:02,075] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:02,126] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:31:02,140] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [16:31:02,185] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:02,432] [BochsStub.java:196]	 updateInstruction null, 4294901760, 65520
+[DEBUG] [16:31:02,433] [BochsStub.java:52]	 sendBochsCommand xp /200bx 4294967280
+[DEBUG] [16:31:02,516] [GKD.java:2398]	 jumpToRowInstructionTable=fffffff0
+[DEBUG] [16:31:04,278] [BochsStub.java:159]	 runVM
+[DEBUG] [16:31:04,278] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [16:31:06,315] [BochsStub.java:165]	 pauseVM
+[DEBUG] [16:31:06,398] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:31:06,402] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:31:06,434] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:31:06,469] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:31:06,507] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:31:06,537] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:31:06,572] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:31:06,614] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:31:06,646] [BochsStub.java:196]	 updateInstruction null, 983040, 2147
+[DEBUG] [16:31:06,646] [BochsStub.java:52]	 sendBochsCommand xp /200bx 985187
+[DEBUG] [16:31:06,755] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:06,778] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:06,823] [GKD.java:2398]	 jumpToRowInstructionTable=f0863
+[DEBUG] [16:31:06,826] [BochsStub.java:52]	 sendBochsCommand info gdt 5
+[DEBUG] [16:31:06,859] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:06,946] [BochsStub.java:196]	 updateInstruction null, 983040, 2147
+[DEBUG] [16:31:06,946] [BochsStub.java:52]	 sendBochsCommand xp /200bx 985187
+[DEBUG] [16:31:06,998] [GKD.java:2398]	 jumpToRowInstructionTable=f0863
+[DEBUG] [16:31:09,544] [BochsStub.java:52]	 sendBochsCommand s
+[DEBUG] [16:31:09,605] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:31:09,614] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:31:09,644] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:31:09,694] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:31:09,728] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:31:09,769] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:31:09,804] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:31:09,849] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:31:09,918] [BochsStub.java:196]	 updateInstruction null, 983040, 65190
+[DEBUG] [16:31:09,919] [BochsStub.java:52]	 sendBochsCommand xp /200bx 1048230
+[DEBUG] [16:31:10,014] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:10,059] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:10,107] [GKD.java:2398]	 jumpToRowInstructionTable=ffea6
+[DEBUG] [16:31:10,108] [BochsStub.java:52]	 sendBochsCommand info gdt 5
+[DEBUG] [16:31:10,158] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:10,236] [BochsStub.java:196]	 updateInstruction null, 983040, 65190
+[DEBUG] [16:31:10,236] [BochsStub.java:52]	 sendBochsCommand xp /200bx 1048230
+[DEBUG] [16:31:10,292] [GKD.java:2398]	 jumpToRowInstructionTable=ffea6
+[DEBUG] [16:31:10,804] [BochsStub.java:52]	 sendBochsCommand s
+[DEBUG] [16:31:10,826] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:31:10,830] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:31:10,878] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:31:10,921] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:31:10,973] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:31:11,004] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:31:11,038] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:31:11,080] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:31:11,107] [BochsStub.java:196]	 updateInstruction null, 983040, 65192
+[DEBUG] [16:31:11,108] [BochsStub.java:52]	 sendBochsCommand xp /200bx 1048232
+[DEBUG] [16:31:11,193] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:11,221] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:11,272] [GKD.java:2398]	 jumpToRowInstructionTable=ffea8
+[DEBUG] [16:31:11,278] [BochsStub.java:52]	 sendBochsCommand info gdt 5
+[DEBUG] [16:31:11,364] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:11,462] [BochsStub.java:196]	 updateInstruction null, 983040, 65192
+[DEBUG] [16:31:11,463] [BochsStub.java:52]	 sendBochsCommand xp /200bx 1048232
+[DEBUG] [16:31:11,512] [GKD.java:2398]	 jumpToRowInstructionTable=ffea8
+[DEBUG] [16:31:12,235] [BochsStub.java:159]	 runVM
+[DEBUG] [16:31:12,235] [BochsStub.java:52]	 sendBochsCommand c
+[DEBUG] [16:31:18,571] [BochsStub.java:165]	 pauseVM
+[DEBUG] [16:31:18,646] [GKD.java:1791]	 updateVMStatus
+[DEBUG] [16:31:18,650] [BochsStub.java:52]	 sendBochsCommand r
+[DEBUG] [16:31:18,675] [BochsStub.java:52]	 sendBochsCommand sreg
+[DEBUG] [16:31:18,709] [BochsStub.java:52]	 sendBochsCommand creg
+[DEBUG] [16:31:18,746] [BochsStub.java:52]	 sendBochsCommand dreg
+[DEBUG] [16:31:18,781] [BochsStub.java:52]	 sendBochsCommand fpu
+[DEBUG] [16:31:18,815] [BochsStub.java:52]	 sendBochsCommand mmx
+[DEBUG] [16:31:18,854] [BochsStub.java:52]	 sendBochsCommand xp /200bx 0
+[DEBUG] [16:31:18,911] [BochsStub.java:196]	 updateInstruction null, 3221225472, 1529217
+[DEBUG] [16:31:18,912] [BochsStub.java:52]	 sendBochsCommand xp /200bx 3222754689
+[DEBUG] [16:31:19,006] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:19,148] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:19,192] [GKD.java:2398]	 jumpToRowInstructionTable=c0175581
+[DEBUG] [16:31:19,200] [BochsStub.java:52]	 sendBochsCommand info gdt 96
+[DEBUG] [16:31:19,235] [BochsStub.java:52]	 sendBochsCommand info idt 96
+[DEBUG] [16:31:19,262] [BochsStub.java:52]	 sendBochsCommand info idt 200
+[DEBUG] [16:31:19,342] [BochsStub.java:52]	 sendBochsCommand xp /4096bx 33263616
+[DEBUG] [16:31:19,857] [BochsStub.java:52]	 sendBochsCommand print-stack 40
+[DEBUG] [16:31:19,884] [BochsStub.java:52]	 sendBochsCommand info tab
+[DEBUG] [16:31:19,965] [BochsStub.java:52]	 sendBochsCommand info break
+[DEBUG] [16:31:20,025] [BochsStub.java:196]	 updateInstruction null, 3221225472, 1529217
+[DEBUG] [16:31:20,025] [BochsStub.java:52]	 sendBochsCommand xp /200bx 3222754689
+[DEBUG] [16:31:20,075] [GKD.java:2398]	 jumpToRowInstructionTable=c0175581
+[DEBUG] [16:31:22,749] [BochsStub.java:146]	 stopVM

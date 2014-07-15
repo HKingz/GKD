@@ -95,12 +95,12 @@ public class BochsTests {
 			System.out.println("-----------");
 			System.out.println(sendCommand("r"));
 
-			//			Thread.sleep(2000);
-			//			System.out.println(sendCommand("c"));
-			//			Thread.sleep(2000);
-			//			pauseVM();
-			//			System.out.println(sendCommand("r"));
-			//			p.waitFor();
+			Thread.sleep(2000);
+			System.out.println(sendCommand("c"));
+			Thread.sleep(2000);
+			pauseVM();
+			System.out.println(sendCommand("r"));
+			p.waitFor();
 
 		} catch (Exception e) {
 			e.printStackTrace();

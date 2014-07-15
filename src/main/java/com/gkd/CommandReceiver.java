@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandReceiver {
-	BufferedReader br;
+	public BufferedReader br;
 	public boolean shouldShow;
 	int timeoutSecond = 5;
 
@@ -16,15 +16,15 @@ public class CommandReceiver {
 		br = new BufferedReader(new InputStreamReader(is), 1024);
 	}
 
-//	public void clearBuffer() {
-//		try {
-//			while (br.ready()) {
-//				int temp = br.read();
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	//	public void clearBuffer() {
+	//		try {
+	//			while (br.ready()) {
+	//				int temp = br.read();
+	//			}
+	//		} catch (IOException e) {
+	//			e.printStackTrace();
+	//		}
+	//	}
 
 	public String getCommandResult() {
 		String line = "";
@@ -34,7 +34,7 @@ public class CommandReceiver {
 			int x;
 			while ((x = br.read()) != -1) {
 				char c = (char) x;
-				System.out.print(c);
+				//				System.out.print(c);
 				line += c;
 				str += c;
 				if (c == '\n') {
@@ -42,7 +42,7 @@ public class CommandReceiver {
 				}
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
-//					clearBuffer();
+					//					clearBuffer();
 					//remove first line
 					//					str = str.substring(str.indexOf('\n') + 1);
 					//remove last line
