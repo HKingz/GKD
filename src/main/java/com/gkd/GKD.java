@@ -2568,12 +2568,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void changeText(JTextField textField, BigInteger value) {
-		if (textField.getText().equals(value)) {
+		String newValue = "0x" + value.toString(16);
+		if (textField.getText().equals(newValue)) {
 			textField.setForeground(Color.black);
 		} else {
 			textField.setForeground(Color.blue);
 		}
-		textField.setText("0x" + value.toString(16));
+		textField.setText(newValue);
 	}
 
 	private void changeText(SegmentRegister segmentRegister, String value, String base, String limit, String flags) {

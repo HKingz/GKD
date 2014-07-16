@@ -3,6 +3,9 @@
     <string>info r</string>
     <string>r</string>
     <string>sreg</string>
+    <string>x //20bx 0xc10b9d3</string>
+    <string>x /20bx 0xc10b9d3</string>
+    <string>xp /20bx 0xc10b9d3</string>
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
@@ -15,6 +18,7 @@
     <string>0x92d</string>
     <string>0xc0106870</string>
     <string>0xc0197770</string>
+    <string>0xc10b9d3</string>
     <string>0xf000</string>
     <string>0xffff0000</string>
     <string>0xfffff</string>
@@ -36,12 +40,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>153</x>
-  <y>22</y>
-  <width>884</width>
-  <height>686</height>
-  <divX>712</divX>
-  <divY>351</divY>
+  <x>283</x>
+  <y>24</y>
+  <width>1230</width>
+  <height>768</height>
+  <divX>617</divX>
+  <divY>422</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
