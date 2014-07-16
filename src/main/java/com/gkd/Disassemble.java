@@ -49,6 +49,8 @@ public class Disassemble {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "";
+		} finally {
+			FileUtils.deleteQuietly(new File("temp"));
 		}
 	}
 }
