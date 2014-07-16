@@ -1,5 +1,7 @@
 package com.gkd.components.segmentregister;
 
+import java.awt.Color;
+
 import javax.swing.JTextField;
 
 import net.miginfocom.swing.MigLayout;
@@ -67,4 +69,12 @@ public class QemuSegmentRegister extends SegmentRegister {
 		return flagsTextField.getText();
 	}
 
+	public void setForeground(Color color) {
+		if (valueTextField != null && baseTextField != null && limitTextField != null) {
+			valueTextField.setForeground(color);
+			baseTextField.setForeground(color);
+			limitTextField.setForeground(color);
+			flagsTextField.setForeground(color);
+		}
+	}
 }

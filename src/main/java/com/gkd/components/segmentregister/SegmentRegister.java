@@ -1,6 +1,7 @@
 package com.gkd.components.segmentregister;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JButton;
@@ -55,4 +56,8 @@ public class SegmentRegister extends JPanel {
 		return new Dimension(10000, 1000);
 	}
 
+	@Override
+	public void setForeground(Color color){
+		
+	}
 }
