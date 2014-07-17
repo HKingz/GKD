@@ -107,15 +107,15 @@ public class BochsTests {
 		}
 	}
 
-//	private void clearBuffer() {
-//		try {
-//			while (br.ready()) {
-//				int temp = br.read();
-//			}
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	//	private void clearBuffer() {
+	//		try {
+	//			while (br.ready()) {
+	//				int temp = br.read();
+	//			}
+	//		} catch (IOException e) {
+	//			e.printStackTrace();
+	//		}
+	//	}
 
 	public String sendCommand(String command) {
 		try {
@@ -150,9 +150,9 @@ public class BochsTests {
 				}
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
-//					clearBuffer();
+					//					clearBuffer();
 					//remove first line
-					//					str = str.substring(str.indexOf('\n') + 1);
+					str = str.substring(str.indexOf('\n') + 1);
 					//remove last line
 					if (str.lastIndexOf('\n') >= 0) {
 						str = str.substring(0, str.lastIndexOf('\n'));
@@ -175,7 +175,7 @@ public class BochsTests {
 			Process p = pb.start();
 			p.waitFor();
 			System.out.println("p2");
-//			clearBuffer();
+			//			clearBuffer();
 			getCommandResult();
 			//			getCommandResult();
 			//			String line = "killall -2 bochs";

@@ -44,7 +44,7 @@ public class CommandReceiver {
 				if (matcher.matches()) {
 					//					clearBuffer();
 					//remove first line
-					//					str = str.substring(str.indexOf('\n') + 1);
+					str = str.substring(str.indexOf('\n') + 1);
 					//remove last line
 					if (str.lastIndexOf('\n') >= 0) {
 						str = str.substring(0, str.lastIndexOf('\n'));

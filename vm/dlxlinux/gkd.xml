@@ -6,6 +6,13 @@
     <string>x //20bx 0xc10b9d3</string>
     <string>x /20bx 0xc10b9d3</string>
     <string>xp /20bx 0xc10b9d3</string>
+    <string>info gdt</string>
+    <string>info gdt 96</string>
+    <string>info gdt 0 96</string>
+    <string>info gdt 0 2</string>
+    <string>info gdt 0 10</string>
+    <string>info gdt 0 0</string>
+    <string>info gdt 0 1</string>
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
@@ -40,12 +47,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>283</x>
-  <y>24</y>
-  <width>1230</width>
-  <height>768</height>
-  <divX>617</divX>
-  <divY>422</divY>
+  <x>112</x>
+  <y>53</y>
+  <width>1210</width>
+  <height>737</height>
+  <divX>630</divX>
+  <divY>402</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
