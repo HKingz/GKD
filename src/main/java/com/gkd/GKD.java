@@ -148,7 +148,7 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 @SuppressWarnings("serial")
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
 	private JMenuItem aboutUsMenuItem;
-	private JPanel jPanel8;
+	private JPanel memoryPanel;
 	private JDropDownButton stepBochsButton;
 	private JMenu jMenu5;
 	private JScrollPane registerPanelScrollPane;
@@ -217,7 +217,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton disassembleCurrentIPButton;
 	private JComboBox<String> instructionComboBox;
 	private JToolBar instructionControlPanel;
-	private JPanel jPanel10;
+	private JPanel instructionPanel;
 	private JDropDownButton loadBreakpointButton;
 	private int commandHistoryIndex;
 	private JScrollPane scrollPane10;
@@ -424,7 +424,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton excelMemoryButton;
 	private JButton excelButton;
 	private JButton exportToExcelButton;
-	private JPanel jPanel17;
+	private JPanel panel17;
 	private JTable searchMemoryTable;
 	private JScrollPane jScrollPane12;
 	private JPanel jPanel18;
@@ -2354,7 +2354,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						// load cCode
 						//						logger.debug("pcStr=" + pcStr);
 						//						if (!pcStr.matches("^[0-9a-fA-F].*")) {
-						//							logger.debug("fuck ar=" + pcStr);
+						//							logger.debug("ar=" + pcStr);
 						//							System.exit(1);
 						//						}
 						String temp[] = lines[x].split("  +");
@@ -3781,18 +3781,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JPanel getJPanel17() {
-		if (jPanel17 == null) {
-			jPanel17 = new JPanel();
+	private JPanel getPanel17() {
+		if (panel17 == null) {
+			panel17 = new JPanel();
 			BorderLayout jPanel17Layout = new BorderLayout();
-			jPanel17.setLayout(jPanel17Layout);
-			jPanel17.add(getJPanel18(), BorderLayout.NORTH);
-			jPanel17.add(getJScrollPane12(), BorderLayout.CENTER);
+			panel17.setLayout(jPanel17Layout);
+			//			panel17.add(getPanel18(), BorderLayout.NORTH);
+			panel17.add(getJScrollPane12(), BorderLayout.CENTER);
 		}
-		return jPanel17;
+		return panel17;
 	}
 
-	private JPanel getJPanel18() {
+	private JPanel getPanel18() {
 		if (jPanel18 == null) {
 			jPanel18 = new JPanel();
 			jPanel18.add(getHexDecStringLabel());
@@ -4006,14 +4006,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				jTabbedPane1StateChanged(evt);
 			}
 		});
-		jPanel10 = new JPanel();
+		instructionPanel = new JPanel();
 		BorderLayout jPanel10Layout = new BorderLayout();
-		jPanel10.setLayout(jPanel10Layout);
+		instructionPanel.setLayout(jPanel10Layout);
 		jTabbedPane1.addTab(MyLanguage.getString("Instruction"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")),
-				jPanel10, null);
-		jPanel10.setPreferredSize(new java.awt.Dimension(604, 452));
+				instructionPanel, null);
+		instructionPanel.setPreferredSize(new java.awt.Dimension(604, 452));
 		instructionControlPanel = new JToolBar();
-		jPanel10.add(instructionControlPanel, BorderLayout.NORTH);
+		instructionPanel.add(instructionControlPanel, BorderLayout.NORTH);
 		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
 		instructionComboBox = new JComboBox<String>();
 		instructionComboBox.setMaximumSize(new Dimension(200, 25));
@@ -4042,7 +4042,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 		instructionTableScrollPane = new JScrollPane();
-		jPanel10.add(instructionTableScrollPane, BorderLayout.CENTER);
+		instructionPanel.add(instructionTableScrollPane, BorderLayout.CENTER);
 		instructionTable = new JTable();
 		instructionTableScrollPane.setViewportView(instructionTable);
 		instructionTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -4196,17 +4196,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		tabbedPane3 = new JMaximizableTabbedPane();
 		jSplitPane1.add(tabbedPane3, JSplitPane.LEFT);
 
-		jPanel8 = new JPanel();
+		memoryPanel = new JPanel();
 		BorderLayout jPanel8Layout = new BorderLayout();
-		jPanel8.setLayout(jPanel8Layout);
+		memoryPanel.setLayout(jPanel8Layout);
 		if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
 			tabbedPane3.addTab("VNC", null, getVncPanel(), null);
 			TightVNC.initVNCPanel(this, getVncPanel(), "localhost", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
 		}
-		tabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), jPanel8, null);
+		tabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), memoryPanel, null);
 
 		jScrollPane2 = new JScrollPane();
-		jPanel8.add(jScrollPane2, BorderLayout.CENTER);
+		memoryPanel.add(jScrollPane2, BorderLayout.CENTER);
 		hexTable = new HexTable();
 		hexTable.getColumnModel().getColumn(0).setPreferredWidth(30);
 		for (int x = 1; x < 9; x++) {
@@ -4224,9 +4224,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 		jPanel9 = new JPanel();
-		FlowLayout jPanel9Layout = new FlowLayout();
-		jPanel9.setLayout(jPanel9Layout);
-		jPanel8.add(jPanel9, BorderLayout.NORTH);
+		memoryPanel.add(jPanel9, BorderLayout.NORTH);
 
 		memoryAddressComboBox = new JComboBox<String>();
 		jPanel9.add(memoryAddressComboBox);
@@ -4352,7 +4350,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		BorderLayout jPanel7Layout = new BorderLayout();
 		jPanel7.setLayout(jPanel7Layout);
 		tabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7, null);
-		tabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), getJPanel17(),
+		tabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), getPanel17(),
 				null);
 		tabbedPane3.addTab(VMController.vmType == VMType.Bochs ? "bochsout.txt" : "qemu log",
 				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);

@@ -25,7 +25,7 @@ public class Disassemble {
 			ProcessBuilder pb;
 			int bits = is32Bit ? 32 : 16;
 
-			if (Global.ndisasmPath == null || Global.ndisasmPath.equals("")) {
+			if (Global.ndisasmPath == null || Global.ndisasmPath.equals("") || !new File(Global.ndisasmPath).exists()) {
 				if (GKD.os == OSType.mac || GKD.os == OSType.linux) {
 					pb = new ProcessBuilder("ndisasm", "-b", String.valueOf(bits), "-o", address.toString(), "temp");
 				} else {
@@ -48,6 +48,7 @@ public class Disassemble {
 			return str;
 		} catch (Exception e) {
 			e.printStackTrace();
+			System.exit(-1);
 			return "";
 		} finally {
 			FileUtils.deleteQuietly(new File("temp"));

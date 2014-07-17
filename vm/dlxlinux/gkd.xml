@@ -47,12 +47,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>112</x>
-  <y>53</y>
-  <width>1210</width>
-  <height>737</height>
-  <divX>630</divX>
-  <divY>402</divY>
+  <x>196</x>
+  <y>77</y>
+  <width>1477</width>
+  <height>831</height>
+  <divX>960</divX>
+  <divY>391</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
