@@ -16,6 +16,7 @@
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
+    <string>0x00000000</string>
     <string>0x10992c</string>
     <string>0x10f558</string>
     <string>0x12</string>
@@ -47,11 +48,11 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>196</x>
-  <y>77</y>
-  <width>1477</width>
-  <height>831</height>
-  <divX>960</divX>
+  <x>134</x>
+  <y>27</y>
+  <width>1221</width>
+  <height>781</height>
+  <divX>519</divX>
   <divY>391</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>

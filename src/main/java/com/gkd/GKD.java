@@ -427,7 +427,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel panel17;
 	private JTable searchMemoryTable;
 	private JScrollPane jScrollPane12;
-	private JPanel jPanel18;
+	private JPanel searchMemoryControlPanel;
 	private JButton searchMemoryButton;
 	private JComboBox<String> searchMemoryToComboBox;
 	private JLabel toLabel;
@@ -3781,33 +3781,33 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JPanel getPanel17() {
+	private JPanel getSearchMemoryPanel() {
 		if (panel17 == null) {
 			panel17 = new JPanel();
 			BorderLayout jPanel17Layout = new BorderLayout();
 			panel17.setLayout(jPanel17Layout);
-			//			panel17.add(getPanel18(), BorderLayout.NORTH);
-			panel17.add(getJScrollPane12(), BorderLayout.CENTER);
+			panel17.add(getSearchMemoryControlPanel(), BorderLayout.NORTH);
+			panel17.add(getSearchMemoryScrollPane(), BorderLayout.CENTER);
 		}
 		return panel17;
 	}
 
-	private JPanel getPanel18() {
-		if (jPanel18 == null) {
-			jPanel18 = new JPanel();
-			jPanel18.add(getHexDecStringLabel());
-			jPanel18.add(getSearchMemoryTextField());
-			jPanel18.add(getFromLabel());
-			jPanel18.add(getSearchMemoryFromComboBox());
-			jPanel18.add(getToLabel());
-			jPanel18.add(getSearchMemoryToComboBox());
-			jPanel18.add(getSearchMemoryButton());
-			jPanel18.add(getJButton15());
+	private JPanel getSearchMemoryControlPanel() {
+		if (searchMemoryControlPanel == null) {
+			searchMemoryControlPanel = new JPanel();
+			searchMemoryControlPanel.add(getHexDecStringLabel());
+			searchMemoryControlPanel.add(getSearchMemoryTextField());
+			searchMemoryControlPanel.add(getFromLabel());
+			searchMemoryControlPanel.add(getSearchMemoryFromComboBox());
+			searchMemoryControlPanel.add(getToLabel());
+			searchMemoryControlPanel.add(getSearchMemoryToComboBox());
+			searchMemoryControlPanel.add(getSearchMemoryButton());
+			searchMemoryControlPanel.add(getJButton15());
 		}
-		return jPanel18;
+		return searchMemoryControlPanel;
 	}
 
-	private JScrollPane getJScrollPane12() {
+	private JScrollPane getSearchMemoryScrollPane() {
 		if (jScrollPane12 == null) {
 			jScrollPane12 = new JScrollPane();
 			jScrollPane12.setViewportView(getSearchMemoryTable());
@@ -4350,8 +4350,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		BorderLayout jPanel7Layout = new BorderLayout();
 		jPanel7.setLayout(jPanel7Layout);
 		tabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7, null);
-		tabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), getPanel17(),
-				null);
+		tabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
+				getSearchMemoryPanel(), null);
 		tabbedPane3.addTab(VMController.vmType == VMType.Bochs ? "bochsout.txt" : "qemu log",
 				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
 
