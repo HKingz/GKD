@@ -4016,7 +4016,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionPanel.add(instructionControlPanel, BorderLayout.NORTH);
 		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
 		instructionComboBox = new JComboBox<String>();
-		instructionComboBox.setMaximumSize(new Dimension(200, 25));
+		instructionComboBox.setMaximumSize(new Dimension(200, 23));
 		instructionComboBox.setOpaque(false);
 		instructionControlPanel.add(instructionComboBox);
 		instructionControlPanel.add(getDisassembleButton());
@@ -5066,8 +5066,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JToolBar getELFToolbar() {
 		if (elfToolbar == null) {
 			elfToolbar = new JToolBar();
-			FlowLayout jPanel23Layout = new FlowLayout();
-			elfToolbar.setLayout(jPanel23Layout);
 			elfToolbar.add(getELFFileComboBox());
 			elfToolbar.add(getOpenELFButton());
 			elfToolbar.add(getShowELFByteCheckBox());
@@ -5094,6 +5092,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			elfFileComboBox = new JComboBox<String>();
 			elfFileComboBox.setModel(elfFileComboBoxModel);
 			elfFileComboBox.setPreferredSize(new java.awt.Dimension(163, 26));
+			elfFileComboBox.setMaximumSize(new Dimension(200, 23));
+			elfFileComboBox.setOpaque(false);
 			elfFileComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					elfFileComboBoxActionPerformed(evt);
