@@ -149,7 +149,7 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
 	private JMenuItem aboutUsMenuItem;
 	private JPanel memoryPanel;
-	private JDropDownButton stepBochsButton;
+	private JDropDownButton stepVMButton;
 	private JMenu jMenu5;
 	private JScrollPane registerPanelScrollPane;
 	private JScrollPane jScrollPane2;
@@ -875,24 +875,24 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					});
 				}
 				{
-					stepBochsButton = new JDropDownButton();
-					jToolBar1.add(stepBochsButton);
+					stepVMButton = new JDropDownButton();
+					jToolBar1.add(stepVMButton);
 					jToolBar1.add(getStepOverDropDownButton());
 					jToolBar1.add(getFastStepBochsButton());
-					stepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
-					stepBochsButton.setText(MyLanguage.getString("Step"));
-					stepBochsButton.setMaximumSize(new java.awt.Dimension(85, 26));
-					stepBochsButton.add(getStep10MenuItem());
-					stepBochsButton.add(getStep100MenuItem());
-					stepBochsButton.add(getStepNMenuItem());
-					stepBochsButton.add(getStepUntilCallOrJumpMenuItem());
-					stepBochsButton.add(getStepUntilRetMenuItem());
-					stepBochsButton.add(getStepUntilIRetMenuItem());
-					stepBochsButton.add(getStepUntilMovMenuItem());
-					stepBochsButton.add(getStepUntilIPBigChangeMenuItem());
-					stepBochsButton.addActionListener(new ActionListener() {
+					stepVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
+					stepVMButton.setText(MyLanguage.getString("Step"));
+					stepVMButton.setMaximumSize(new java.awt.Dimension(85, 26));
+					stepVMButton.add(getStep10MenuItem());
+					stepVMButton.add(getStep100MenuItem());
+					stepVMButton.add(getStepNMenuItem());
+					stepVMButton.add(getStepUntilCallOrJumpMenuItem());
+					stepVMButton.add(getStepUntilRetMenuItem());
+					stepVMButton.add(getStepUntilIRetMenuItem());
+					stepVMButton.add(getStepUntilMovMenuItem());
+					stepVMButton.add(getStepUntilIPBigChangeMenuItem());
+					stepVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							stepBochsButtonActionPerformed(evt);
+							stepVMButtonActionPerformed(evt);
 						}
 					});
 				}
@@ -1112,8 +1112,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								runVMButtonActionPerformed(null);
 							}
 						} else if (keycode == 119) {
-							if (stepBochsButton.isEnabled()) {
-								stepBochsButtonActionPerformed(null);
+							if (stepVMButton.isEnabled()) {
+								stepVMButtonActionPerformed(null);
 							}
 						} else if (keycode == 120) {
 							if (fastStepBochsButton.isEnabled()) {
@@ -1400,16 +1400,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	StepThread untilThread;
 
-	private void stepBochsButtonActionPerformed(ActionEvent evt) {
-		if (stepBochsButton.getEventSource() != null) {
-			untilThread = new StepThread(stepBochsButton.getEventSource());
-			if (stepBochsButton.getEventSource() == stepNMenuItem) {
+	private void stepVMButtonActionPerformed(ActionEvent evt) {
+		if (stepVMButton.getEventSource() != null) {
+			untilThread = new StepThread(stepVMButton.getEventSource());
+			if (stepVMButton.getEventSource() == stepNMenuItem) {
 				String s = JOptionPane.showInputDialog(this, "Please input the instruction count?");
 				if (s == null) {
 					return;
 				}
 				untilThread.instructionCount = Integer.parseInt(s);
-			} else if (stepBochsButton.getEventSource() == stepUntilIPBigChangeMenuItem) {
+			} else if (stepVMButton.getEventSource() == stepUntilIPBigChangeMenuItem) {
 				String s = JOptionPane.showInputDialog("Please input the instruction count?");
 				if (s == null) {
 					return;
@@ -1418,7 +1418,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 
 			CardLayout cl = (CardLayout) (mainPanel.getLayout());
-			cl.show(mainPanel, "Running Label 2");
+			cl.show(mainPanel, "Running Panel");
 			new Thread(untilThread, "Step until thread").start();
 		} else {
 			VMController.getVM().singleStep();
@@ -2223,7 +2223,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (!exceptRunButton) {
 			runVMButton.setEnabled(b);
 		}
-		stepBochsButton.setEnabled(b);
+		stepVMButton.setEnabled(b);
 		stepOverDropDownButton.setEnabled(b);
 		nextButton.setEnabled(b);
 		fastStepBochsButton.setEnabled(b);
@@ -3978,7 +3978,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				mainPanel.add(getJRunningLabel(), "Running Label");
 				mainPanel.add(getOsLogPanel(), "osLogPanel");
-				mainPanel.add(getRunningPanel(), "Running Label 2");
+				mainPanel.add(getRunningPanel(), "Running Panel");
 
 				progressBarDialog.jProgressBar.setValue(56);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.4");
@@ -7923,7 +7923,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			// if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
 			CardLayout cl = (CardLayout) (mainPanel.getLayout());
-			cl.show(mainPanel, "Running Label 2");
+			cl.show(mainPanel, "Running Panel");
 			// }
 			new Thread(untilThread, "Step until thread").start();
 		} else {
