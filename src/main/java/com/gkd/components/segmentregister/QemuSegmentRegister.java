@@ -16,18 +16,22 @@ public class QemuSegmentRegister extends SegmentRegister {
 		setLayout(new MigLayout("insets 0 0 0 0", "[grow][][][]", "[]"));
 
 		valueTextField = new JTextField();
+		valueTextField.putClientProperty("NoBorder", true);
 		add(valueTextField, "cell 0 0,grow");
 		valueTextField.setColumns(10);
 
 		baseTextField = new JTextField();
+		baseTextField.putClientProperty("NoBorder", true);
 		add(baseTextField, "cell 1 0,growy");
 		baseTextField.setColumns(10);
 
 		limitTextField = new JTextField();
+		limitTextField.putClientProperty("NoBorder", true);
 		add(limitTextField, "flowx,cell 2 0,growy");
 		limitTextField.setColumns(10);
 
 		flagsTextField = new JTextField();
+		flagsTextField.putClientProperty("NoBorder", true);
 		add(flagsTextField, "cell 3 0");
 		flagsTextField.setColumns(10);
 	}

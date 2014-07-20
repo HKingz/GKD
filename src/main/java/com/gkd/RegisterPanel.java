@@ -35,6 +35,7 @@ import com.gkd.components.segmentregister.SegmentRegisterFactory;
 import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
+import com.gkd.components.segmentregister.SegmentRegisterHeader;
 
 public class RegisterPanel extends JPanel {
 	private JLabel eaxLabel;
@@ -161,20 +162,24 @@ public class RegisterPanel extends JPanel {
 	private JLabel st1Label;
 	private JPanel panel;
 	private JScrollPane stackScrollPane;
+	private SegmentRegisterHeader segmentRegisterHeader;
 
 	public RegisterPanel() {
 		super();
 		try {
-			this.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+			this.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 			setLayout(new BorderLayout());
 
 			mainPanel = new JPanel();
 			this.add(mainPanel, BorderLayout.CENTER);
-			mainPanel.setLayout(new MigLayout("", "[][48px][grow][10px][30px][120px][10px][36px][100px][10px][30px][120px][10px][64px,grow][10px][30px][120px]",
-					"[][][][][][][][][][][][][grow][][][21.00][][][][][28px][]"));
+			mainPanel.setLayout(new MigLayout("insets 0", "[][48px][grow][10px][30px][120px][10px][36px][100px][10px][30px][120px][10px][64px,grow][10px][30px][120px]",
+					"[][][][][][][][][][][][][][][grow][][][21.00][][][][][28px][]"));
+
+			segmentRegisterHeader = new SegmentRegisterHeader();
+			mainPanel.add(segmentRegisterHeader, "cell 2 1,grow");
 
 			csLabel = new JLabel();
-			mainPanel.add(csLabel, "cell 1 0,growx,aligny center");
+			mainPanel.add(csLabel, "cell 1 2,growx,aligny center");
 			csLabel.setText("cs");
 			csLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -188,10 +193,10 @@ public class RegisterPanel extends JPanel {
 					csTextFieldKeyTyped(evt);
 				}
 			});
-			mainPanel.add(csTextField, "cell 2 0,growx,aligny center,wrap");
+			mainPanel.add(csTextField, "cell 2 2,growx,aligny center");
 
 			panel = new JPanel();
-			mainPanel.add(panel, "cell 0 0 1 3,grow");
+			mainPanel.add(panel, "cell 0 2 1 3,grow");
 			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
 			diskButton = new JButton();
@@ -213,7 +218,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dsLabel = new JLabel();
-			mainPanel.add(dsLabel, "cell 1 2,growx,aligny center");
+			mainPanel.add(dsLabel, "cell 1 4,growx,aligny center");
 			dsLabel.setText("ds");
 			dsLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -222,7 +227,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			esLabel = new JLabel();
-			mainPanel.add(esLabel, "cell 1 3,growx,aligny center");
+			mainPanel.add(esLabel, "cell 1 5,growx,aligny center");
 			esLabel.setText("es");
 			esLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -231,7 +236,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			fsLabel = new JLabel();
-			mainPanel.add(fsLabel, "cell 1 4,growx,aligny center");
+			mainPanel.add(fsLabel, "cell 1 6,growx,aligny center");
 			fsLabel.setText("fs");
 			fsLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -240,14 +245,15 @@ public class RegisterPanel extends JPanel {
 			});
 
 			pTimeLabel = new JLabel();
-			mainPanel.add(pTimeLabel, "cell 10 4,alignx left,aligny center");
+			mainPanel.add(pTimeLabel, "cell 10 6,alignx left,aligny center");
 			pTimeLabel.setText("ptime");
 
 			pTimeTextField = new JTextField();
-			mainPanel.add(pTimeTextField, "cell 11 4 3 1,growx,aligny center");
+			pTimeTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(pTimeTextField, "cell 11 6 3 1,growx,aligny center");
 
 			gsLabel = new JLabel();
-			mainPanel.add(gsLabel, "cell 1 5,growx,aligny center");
+			mainPanel.add(gsLabel, "cell 1 7,growx,aligny center");
 			gsLabel.setText("gs");
 			gsLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -256,7 +262,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eSPLabel = new JLabel();
-			mainPanel.add(eSPLabel, "cell 10 5,growx,aligny center");
+			mainPanel.add(eSPLabel, "cell 10 7,growx,aligny center");
 			eSPLabel.setText("esp");
 			eSPLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -265,7 +271,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			espTextField = new JTextField();
-			mainPanel.add(espTextField, "cell 11 5 3 1,growx,aligny center");
+			espTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(espTextField, "cell 11 7 3 1,growx,aligny center");
 			espTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					espTextFieldKeyTyped(evt);
@@ -273,7 +280,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ssLabel = new JLabel();
-			mainPanel.add(ssLabel, "cell 1 6,growx,aligny center");
+			mainPanel.add(ssLabel, "cell 1 8,growx,aligny center");
 			ssLabel.setText("ss");
 			ssLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -282,7 +289,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dsTextField = SegmentRegisterFactory.createSegmentRegister();
-			mainPanel.add(dsTextField, "cell 2 2,growx,aligny center");
+			mainPanel.add(dsTextField, "cell 2 4,growx,aligny center");
 			dsTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					dsTextFieldKeyTyped(evt);
@@ -290,7 +297,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			esTextField = SegmentRegisterFactory.createSegmentRegister();
-			mainPanel.add(esTextField, "cell 2 3,growx,aligny center");
+			mainPanel.add(esTextField, "cell 2 5,growx,aligny center");
 			esTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					esTextFieldKeyTyped(evt);
@@ -298,7 +305,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			fsTextField = SegmentRegisterFactory.createSegmentRegister();
-			mainPanel.add(fsTextField, "cell 2 4,growx,aligny center");
+			mainPanel.add(fsTextField, "cell 2 6,growx,aligny center");
 			fsTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					fsTextFieldKeyTyped(evt);
@@ -306,7 +313,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			gsTextField = SegmentRegisterFactory.createSegmentRegister();
-			mainPanel.add(gsTextField, "cell 2 5,growx,aligny center");
+			mainPanel.add(gsTextField, "cell 2 7,growx,aligny center");
 			gsTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					gsTextFieldKeyTyped(evt);
@@ -314,7 +321,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ssTextField = SegmentRegisterFactory.createSegmentRegister();
-			mainPanel.add(ssTextField, "cell 2 6,growx,aligny center");
+			mainPanel.add(ssTextField, "cell 2 8,growx,aligny center");
 			ssTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					ssTextFieldKeyTyped(evt);
@@ -322,7 +329,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eIPLabel = new JLabel();
-			mainPanel.add(eIPLabel, "cell 1 1,growx,aligny center");
+			mainPanel.add(eIPLabel, "cell 1 3,growx,aligny center");
 			eIPLabel.setText("eip");
 			eIPLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -331,7 +338,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eipTextField = new JTextField();
-			mainPanel.add(eipTextField, "cell 2 1,growx,aligny center");
+			eipTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(eipTextField, "cell 2 3,growx,aligny center");
 			eipTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					eipTextFieldKeyTyped(evt);
@@ -339,11 +347,11 @@ public class RegisterPanel extends JPanel {
 			});
 
 			jLabel25 = new JLabel();
-			mainPanel.add(jLabel25, "cell 13 6,growx,aligny center");
+			mainPanel.add(jLabel25, "cell 13 8,growx,aligny center");
 			jLabel25.setText(MyLanguage.getString("Stack"));
 
 			eflagsLabel = new JLabel();
-			mainPanel.add(eflagsLabel, "cell 1 7,growx,aligny center");
+			mainPanel.add(eflagsLabel, "cell 1 9,growx,aligny center");
 			eflagsLabel.setText("eflags");
 			eflagsLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -352,181 +360,206 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eflagsTextField = new JTextField();
-			mainPanel.add(eflagsTextField, "cell 2 7,growx,aligny center");
+			eflagsTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(eflagsTextField, "cell 2 9,growx,aligny center");
 
 			eflagLabel = new JLabel("-");
-			mainPanel.add(eflagLabel, "cell 4 7 8 1,growx,aligny center");
+			mainPanel.add(eflagLabel, "cell 4 9 8 1,growx,aligny center");
 
 			stackList = new JList();
+			stackList.putClientProperty("NoBorder", true);
 			stackList.setBorder(new LineBorder(new java.awt.Color(200, 200, 200), 1, false));
 
 			st0Label = new JLabel();
 			st0Label.setText("ST0");
-			mainPanel.add(st0Label, "cell 1 8");
+			mainPanel.add(st0Label, "cell 1 10");
 
 			st0TextField = new JTextField();
-			mainPanel.add(st0TextField, "cell 2 8 4 1,growx,aligny center");
+			st0TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st0TextField, "cell 2 10 4 1,growx,aligny center");
 
 			mm0Label = new JLabel();
-			mainPanel.add(mm0Label, "cell 7 8,growx,aligny center");
+			mainPanel.add(mm0Label, "cell 7 10,growx,aligny center");
 			mm0Label.setText("MM0");
 
 			mmx0TextField = new JTextField();
-			mainPanel.add(mmx0TextField, "cell 8 8 4 1,growx,aligny center");
+			mmx0TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx0TextField, "cell 8 10 4 1,growx,aligny center");
 
 			st1Label = new JLabel();
 			st1Label.setText("ST1");
-			mainPanel.add(st1Label, "flowx,cell 1 9");
+			mainPanel.add(st1Label, "flowx,cell 1 11");
 
 			st1TextField = new JTextField();
-			mainPanel.add(st1TextField, "cell 2 9 4 1,growx,aligny center");
+			st1TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st1TextField, "cell 2 11 4 1,growx,aligny center");
 
 			mm1Label = new JLabel();
-			mainPanel.add(mm1Label, "cell 7 9,growx,aligny center");
+			mainPanel.add(mm1Label, "cell 7 11,growx,aligny center");
 			mm1Label.setText("MM1");
 
 			mmx1TextField = new JTextField();
-			mainPanel.add(mmx1TextField, "cell 8 9 4 1,growx,aligny center");
+			mmx1TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx1TextField, "cell 8 11 4 1,growx,aligny center");
 
 			st2Label = new JLabel();
-			mainPanel.add(st2Label, "cell 1 10,growx,aligny center");
+			mainPanel.add(st2Label, "cell 1 12,growx,aligny center");
 			st2Label.setText("ST2");
 
 			st2TextField = new JTextField();
-			mainPanel.add(st2TextField, "cell 2 10 4 1,growx,aligny center");
+			st2TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st2TextField, "cell 2 12 4 1,growx,aligny center");
 
 			mm2Label = new JLabel();
-			mainPanel.add(mm2Label, "cell 7 10,growx,aligny center");
+			mainPanel.add(mm2Label, "cell 7 12,growx,aligny center");
 			mm2Label.setText("MM2");
 
 			mmx2TextField = new JTextField();
-			mainPanel.add(mmx2TextField, "cell 8 10 4 1,growx,aligny center");
+			mmx2TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx2TextField, "cell 8 12 4 1,growx,aligny center");
 
 			st3Label = new JLabel();
-			mainPanel.add(st3Label, "cell 1 11,growx,aligny center");
+			mainPanel.add(st3Label, "cell 1 13,growx,aligny center");
 			st3Label.setText("ST3");
 
 			st3TextField = new JTextField();
-			mainPanel.add(st3TextField, "cell 2 11 4 1,growx,aligny center");
+			st3TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st3TextField, "cell 2 13 4 1,growx,aligny center");
 
 			mm3Label = new JLabel();
-			mainPanel.add(mm3Label, "cell 7 11,growx,aligny center");
+			mainPanel.add(mm3Label, "cell 7 13,growx,aligny center");
 			mm3Label.setText("MM3");
 
 			mmx3TextField = new JTextField();
-			mainPanel.add(mmx3TextField, "cell 8 11 4 1,growx,aligny center");
+			mmx3TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx3TextField, "cell 8 13 4 1,growx,aligny center");
 
 			st4Label = new JLabel();
-			mainPanel.add(st4Label, "cell 1 12,growx,aligny center");
+			mainPanel.add(st4Label, "cell 1 14,growx,aligny center");
 			st4Label.setText("ST4");
 
 			st4TextField = new JTextField();
-			mainPanel.add(st4TextField, "cell 2 12 4 1,growx,aligny center");
+			st4TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st4TextField, "cell 2 14 4 1,growx,aligny center");
 
 			mm4Label = new JLabel();
-			mainPanel.add(mm4Label, "cell 7 12,growx,aligny center");
+			mainPanel.add(mm4Label, "cell 7 14,growx,aligny center");
 			mm4Label.setText("MM4");
 
 			mmx4TextField = new JTextField();
-			mainPanel.add(mmx4TextField, "cell 8 12 4 1,growx,aligny center");
+			mmx4TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx4TextField, "cell 8 14 4 1,growx,aligny center");
 
 			stackScrollPane = new JScrollPane();
 			stackScrollPane.setViewportView(stackList);
-			mainPanel.add(stackScrollPane, "cell 13 7 4 13,grow");
+			mainPanel.add(stackScrollPane, "cell 13 9 4 13,grow");
 
 			st5Label = new JLabel();
-			mainPanel.add(st5Label, "cell 1 13,growx,aligny center");
+			mainPanel.add(st5Label, "cell 1 15,growx,aligny center");
 			st5Label.setText("ST5");
 
 			st5TextField = new JTextField();
-			mainPanel.add(st5TextField, "cell 2 13 4 1,growx,aligny center");
+			st5TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st5TextField, "cell 2 15 4 1,growx,aligny center");
 
 			mm5Label = new JLabel();
-			mainPanel.add(mm5Label, "cell 7 13,growx,aligny center");
+			mainPanel.add(mm5Label, "cell 7 15,growx,aligny center");
 			mm5Label.setText("MM5");
 
 			mmx5TextField = new JTextField();
-			mainPanel.add(mmx5TextField, "cell 8 13 4 1,growx,aligny center");
+			mmx5TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx5TextField, "cell 8 15 4 1,growx,aligny center");
 
 			st6Label = new JLabel();
-			mainPanel.add(st6Label, "cell 1 14,growx,aligny center");
+			mainPanel.add(st6Label, "cell 1 16,growx,aligny center");
 			st6Label.setText("ST6");
 
 			st6TextField = new JTextField();
-			mainPanel.add(st6TextField, "cell 2 14 4 1,growx,aligny center");
+			st6TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st6TextField, "cell 2 16 4 1,growx,aligny center");
 
 			mm6Label = new JLabel();
-			mainPanel.add(mm6Label, "cell 7 14,growx,aligny center");
+			mainPanel.add(mm6Label, "cell 7 16,growx,aligny center");
 			mm6Label.setText("MM6");
 
 			mmx6TextField = new JTextField();
-			mainPanel.add(mmx6TextField, "cell 8 14 4 1,growx,aligny center");
+			mmx6TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx6TextField, "cell 8 16 4 1,growx,aligny center");
 
 			st7Label = new JLabel();
-			mainPanel.add(st7Label, "cell 1 15,growx,aligny center");
+			mainPanel.add(st7Label, "cell 1 17,growx,aligny center");
 			st7Label.setText("ST7");
 
 			st7TextField = new JTextField();
-			mainPanel.add(st7TextField, "cell 2 15 4 1,growx,aligny center");
+			st7TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(st7TextField, "cell 2 17 4 1,growx,aligny center");
 
 			mm7Label = new JLabel();
-			mainPanel.add(mm7Label, "cell 7 15,growx,aligny center");
+			mainPanel.add(mm7Label, "cell 7 17,growx,aligny center");
 			mm7Label.setText("MM7");
 
 			mmx7TextField = new JTextField();
-			mainPanel.add(mmx7TextField, "cell 8 15 4 1,growx,aligny center");
+			mmx7TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(mmx7TextField, "cell 8 17 4 1,growx,aligny center");
 
 			jLabel1 = new JLabel();
-			mainPanel.add(jLabel1, "cell 1 16,growx,aligny center");
+			mainPanel.add(jLabel1, "cell 1 18,growx,aligny center");
 			jLabel1.setText("Status");
 
 			fpuStatusTextField = new JTextField();
-			mainPanel.add(fpuStatusTextField, "cell 2 16 4 1,growx,aligny center");
+			fpuStatusTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fpuStatusTextField, "cell 2 18 4 1,growx,aligny center");
 
 			fcsLabel = new JLabel();
-			mainPanel.add(fcsLabel, "cell 7 16,growx,aligny center");
+			mainPanel.add(fcsLabel, "cell 7 18,growx,aligny center");
 			fcsLabel.setText("fcs");
 
 			fcsTextField = new JTextField();
-			mainPanel.add(fcsTextField, "cell 8 16 4 1,growx,aligny center");
+			fcsTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fcsTextField, "cell 8 18 4 1,growx,aligny center");
 
 			jLabel2 = new JLabel();
-			mainPanel.add(jLabel2, "cell 1 17,growx,aligny center");
+			mainPanel.add(jLabel2, "cell 1 19,growx,aligny center");
 			jLabel2.setText("Control");
 
 			fpuControlTextField = new JTextField();
-			mainPanel.add(fpuControlTextField, "cell 2 17 4 1,growx,aligny center");
+			fpuControlTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fpuControlTextField, "cell 2 19 4 1,growx,aligny center");
 
 			fdpLabel = new JLabel();
-			mainPanel.add(fdpLabel, "cell 7 17,growx,aligny center");
+			mainPanel.add(fdpLabel, "cell 7 19,growx,aligny center");
 			fdpLabel.setText("fdp");
 
 			fdpTextField = new JTextField();
-			mainPanel.add(fdpTextField, "cell 8 17 4 1,growx,aligny center");
+			fdpTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fdpTextField, "cell 8 19 4 1,growx,aligny center");
 
 			jLabel3 = new JLabel();
-			mainPanel.add(jLabel3, "cell 1 18,growx,aligny center");
+			mainPanel.add(jLabel3, "cell 1 20,growx,aligny center");
 			jLabel3.setText("Tag");
 
 			fpuTagTextField = new JTextField();
-			mainPanel.add(fpuTagTextField, "cell 2 18 4 1,growx,aligny center");
+			fpuTagTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fpuTagTextField, "cell 2 20 4 1,growx,aligny center");
 
 			fdsLabel = new JLabel();
-			mainPanel.add(fdsLabel, "cell 7 18,growx,aligny center");
+			mainPanel.add(fdsLabel, "cell 7 20,growx,aligny center");
 			fdsLabel.setText("fds");
 
 			fdsTextField = new JTextField();
-			mainPanel.add(fdsTextField, "cell 8 18 4 1,growx,aligny center");
+			fdsTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fdsTextField, "cell 8 20 4 1,growx,aligny center");
 
 			jLabel4 = new JLabel();
-			mainPanel.add(jLabel4, "cell 1 19,growx,aligny center");
+			mainPanel.add(jLabel4, "cell 1 21,growx,aligny center");
 			jLabel4.setText("Operand");
 
 			fpuOperandTextField = new JTextField();
-			mainPanel.add(fpuOperandTextField, "cell 2 19 4 1,growx,aligny center");
+			fpuOperandTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fpuOperandTextField, "cell 2 21 4 1,growx,aligny center");
 
 			eaxLabel = new JLabel();
-			mainPanel.add(eaxLabel, "cell 4 0,growx,aligny center");
+			mainPanel.add(eaxLabel, "cell 4 2,growx,aligny center");
 			eaxLabel.setText("eax");
 			eaxLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -535,7 +568,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eBXLabel = new JLabel();
-			mainPanel.add(eBXLabel, "cell 4 1,growx,aligny center");
+			mainPanel.add(eBXLabel, "cell 4 3,growx,aligny center");
 			eBXLabel.setText("ebx");
 			eBXLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -544,7 +577,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ecxLabel = new JLabel();
-			mainPanel.add(ecxLabel, "cell 4 2,growx,aligny center");
+			mainPanel.add(ecxLabel, "cell 4 4,growx,aligny center");
 			ecxLabel.setText("ecx");
 			ecxLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -553,7 +586,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			edxLabel = new JLabel();
-			mainPanel.add(edxLabel, "cell 4 3,growx,aligny center");
+			mainPanel.add(edxLabel, "cell 4 5,growx,aligny center");
 			edxLabel.setText("edx");
 			edxLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -562,7 +595,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			esiLabel = new JLabel();
-			mainPanel.add(esiLabel, "cell 4 4,growx,aligny center");
+			mainPanel.add(esiLabel, "cell 4 6,growx,aligny center");
 			esiLabel.setText("esi");
 			esiLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -571,7 +604,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eDILabel = new JLabel();
-			mainPanel.add(eDILabel, "cell 4 5,growx,aligny center");
+			mainPanel.add(eDILabel, "cell 4 7,growx,aligny center");
 			eDILabel.setText("edi");
 			eDILabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -580,7 +613,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eBPLabel = new JLabel();
-			mainPanel.add(eBPLabel, "cell 4 6,growx,aligny center");
+			mainPanel.add(eBPLabel, "cell 4 8,growx,aligny center");
 			eBPLabel.setText("ebp");
 			eBPLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -589,7 +622,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eaxTextField = new JTextField();
-			mainPanel.add(eaxTextField, "cell 5 0,growx,aligny center");
+			eaxTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(eaxTextField, "cell 5 2,growx,aligny center");
 			eaxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					eaxTextFieldKeyTyped(evt);
@@ -597,7 +631,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ebxTextField = new JTextField();
-			mainPanel.add(ebxTextField, "cell 5 1,growx,aligny center");
+			ebxTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(ebxTextField, "cell 5 3,growx,aligny center");
 			ebxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					ebxTextFieldKeyTyped(evt);
@@ -605,7 +640,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ecxTextField = new JTextField();
-			mainPanel.add(ecxTextField, "cell 5 2,growx,aligny center");
+			ecxTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(ecxTextField, "cell 5 4,growx,aligny center");
 			ecxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					ecxTextFieldKeyTyped(evt);
@@ -613,7 +649,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			edxTextField = new JTextField();
-			mainPanel.add(edxTextField, "cell 5 3,growx,aligny center");
+			edxTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(edxTextField, "cell 5 5,growx,aligny center");
 			edxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					edxTextFieldKeyTyped(evt);
@@ -621,7 +658,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			esiTextField = new JTextField();
-			mainPanel.add(esiTextField, "cell 5 4,growx,aligny center");
+			esiTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(esiTextField, "cell 5 6,growx,aligny center");
 			esiTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					esiTextFieldKeyTyped(evt);
@@ -629,7 +667,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ediTextField = new JTextField();
-			mainPanel.add(ediTextField, "cell 5 5,growx,aligny center");
+			ediTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(ediTextField, "cell 5 7,growx,aligny center");
 			ediTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					ediTextFieldKeyTyped(evt);
@@ -637,7 +676,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ebpTextField = new JTextField();
-			mainPanel.add(ebpTextField, "cell 5 6,growx,aligny center");
+			ebpTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(ebpTextField, "cell 5 8,growx,aligny center");
 			ebpTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					ebpTextFieldKeyTyped(evt);
@@ -645,7 +685,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			jCR0Label = new JLabel();
-			mainPanel.add(jCR0Label, "cell 7 0,growx,aligny center");
+			mainPanel.add(jCR0Label, "cell 7 2,growx,aligny center");
 			jCR0Label.setText("cr0");
 			jCR0Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -654,7 +694,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr0TextField = new JTextField();
-			mainPanel.add(cr0TextField, "cell 8 0,growx,aligny center");
+			cr0TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(cr0TextField, "cell 8 2,growx,aligny center");
 			cr0TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					cr0TextFieldKeyTyped(evt);
@@ -662,7 +703,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			jCR2Label = new JLabel();
-			mainPanel.add(jCR2Label, "cell 7 3,growx,aligny center");
+			mainPanel.add(jCR2Label, "cell 7 5,growx,aligny center");
 			jCR2Label.setText("cr2");
 			jCR2Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -671,7 +712,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr2TextField = new JTextField();
-			mainPanel.add(cr2TextField, "cell 8 3,growx,aligny center");
+			cr2TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(cr2TextField, "cell 8 5,growx,aligny center");
 			cr2TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					cr2TextFieldKeyTyped(evt);
@@ -679,7 +721,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			jCR3Label = new JLabel();
-			mainPanel.add(jCR3Label, "cell 7 4,growx,aligny center");
+			mainPanel.add(jCR3Label, "cell 7 6,growx,aligny center");
 			jCR3Label.setText("cr3");
 			jCR3Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -688,7 +730,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr3TextField = new JTextField();
-			mainPanel.add(cr3TextField, "cell 8 4,growx,aligny center");
+			cr3TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(cr3TextField, "cell 8 6,growx,aligny center");
 			cr3TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					cr3TextFieldKeyTyped(evt);
@@ -696,7 +739,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			jCR4Label = new JLabel();
-			mainPanel.add(jCR4Label, "cell 7 5,growx,aligny center");
+			mainPanel.add(jCR4Label, "cell 7 7,growx,aligny center");
 			jCR4Label.setText("cr4");
 			jCR4Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -705,7 +748,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr4TextField = new JTextField();
-			mainPanel.add(cr4TextField, "cell 8 5,growx,aligny center");
+			cr4TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(cr4TextField, "cell 8 7,growx,aligny center");
 			cr4TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					cr4TextFieldKeyTyped(evt);
@@ -713,7 +757,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			gdtrTextField = new JTextField();
-			mainPanel.add(gdtrTextField, "cell 11 0,growx,aligny center");
+			gdtrTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(gdtrTextField, "cell 11 2,growx,aligny center");
 			gdtrTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					gdtrTextFieldKeyTyped(evt);
@@ -721,7 +766,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			gdtrLabel = new JLabel();
-			mainPanel.add(gdtrLabel, "cell 10 0,growx,aligny center");
+			mainPanel.add(gdtrLabel, "cell 10 2,growx,aligny center");
 			gdtrLabel.setText("gdtr");
 			gdtrLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -730,10 +775,11 @@ public class RegisterPanel extends JPanel {
 			});
 
 			gdtrLimitTextField = new JTextField();
-			mainPanel.add(gdtrLimitTextField, "cell 13 0,growx,aligny center");
+			gdtrLimitTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(gdtrLimitTextField, "cell 13 2,growx,aligny center");
 
 			ldtrLabel = new JLabel();
-			mainPanel.add(ldtrLabel, "cell 10 1,growx,aligny center");
+			mainPanel.add(ldtrLabel, "cell 10 3,growx,aligny center");
 			ldtrLabel.setText("ldtr");
 			ldtrLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -742,7 +788,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ldtrTextField = new JTextField();
-			mainPanel.add(ldtrTextField, "cell 11 1,growx,aligny center");
+			ldtrTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(ldtrTextField, "cell 11 3,growx,aligny center");
 			ldtrTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					ldtrTextFieldKeyTyped(evt);
@@ -750,7 +797,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			idtrLabel = new JLabel();
-			mainPanel.add(idtrLabel, "cell 10 2,growx,aligny center");
+			mainPanel.add(idtrLabel, "cell 10 4,growx,aligny center");
 			idtrLabel.setText("idtr");
 			idtrLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -759,7 +806,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			idtrTextField = new JTextField();
-			mainPanel.add(idtrTextField, "cell 11 2,growx,aligny center");
+			idtrTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(idtrTextField, "cell 11 4,growx,aligny center");
 			idtrTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					idtrTextFieldKeyTyped(evt);
@@ -767,10 +815,11 @@ public class RegisterPanel extends JPanel {
 			});
 
 			idtrLimitTextField = new JTextField();
-			mainPanel.add(idtrLimitTextField, "cell 13 2,growx,aligny center");
+			idtrLimitTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(idtrLimitTextField, "cell 13 4,growx,aligny center");
 
 			trLabel = new JLabel();
-			mainPanel.add(trLabel, "cell 10 3,growx,aligny center");
+			mainPanel.add(trLabel, "cell 10 5,growx,aligny center");
 			trLabel.setText("tr");
 			trLabel.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -779,7 +828,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			trTextField = new JTextField();
-			mainPanel.add(trTextField, "cell 11 3 3 1,growx,aligny center");
+			trTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(trTextField, "cell 11 5 3 1,growx,aligny center");
 			trTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					trTextFieldKeyTyped(evt);
@@ -787,13 +837,13 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr0DetailLabel = new JLabel("");
-			mainPanel.add(cr0DetailLabel, "cell 7 1 2 1,growx,aligny center");
+			mainPanel.add(cr0DetailLabel, "cell 7 3 2 1,growx,aligny center");
 
 			cr0DetailLabel2 = new JLabel();
-			mainPanel.add(cr0DetailLabel2, "cell 7 2 2 1,growx,aligny center");
+			mainPanel.add(cr0DetailLabel2, "cell 7 4 2 1,growx,aligny center");
 
 			dr0Label = new JLabel();
-			mainPanel.add(dr0Label, "cell 15 0,growx,aligny center");
+			mainPanel.add(dr0Label, "cell 15 2,growx,aligny center");
 			dr0Label.setText("DR0");
 			dr0Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -802,7 +852,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr1Label = new JLabel();
-			mainPanel.add(dr1Label, "cell 15 1,growx,aligny center");
+			mainPanel.add(dr1Label, "cell 15 3,growx,aligny center");
 			dr1Label.setText("DR1");
 			dr1Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -811,7 +861,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr2Label = new JLabel();
-			mainPanel.add(dr2Label, "cell 15 2,growx,aligny center");
+			mainPanel.add(dr2Label, "cell 15 4,growx,aligny center");
 			dr2Label.setText("DR2");
 			dr2Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -820,7 +870,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr3Label = new JLabel();
-			mainPanel.add(dr3Label, "cell 15 3,growx,aligny center");
+			mainPanel.add(dr3Label, "cell 15 5,growx,aligny center");
 			dr3Label.setText("DR3");
 			dr3Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -829,7 +879,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr6Label = new JLabel();
-			mainPanel.add(dr6Label, "cell 15 4,growx,aligny center");
+			mainPanel.add(dr6Label, "cell 15 6,growx,aligny center");
 			dr6Label.setText("DR6");
 			dr6Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -838,7 +888,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr7Label = new JLabel();
-			mainPanel.add(dr7Label, "cell 15 5,growx,aligny center");
+			mainPanel.add(dr7Label, "cell 15 7,growx,aligny center");
 			dr7Label.setText("DR7");
 			dr7Label.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -847,7 +897,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr0TextField = new JTextField();
-			mainPanel.add(dr0TextField, "cell 16 0,growx,aligny center");
+			dr0TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(dr0TextField, "cell 16 2,growx,aligny center");
 			dr0TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					dr0TextFieldKeyTyped(evt);
@@ -855,7 +906,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr1TextField = new JTextField();
-			mainPanel.add(dr1TextField, "cell 16 1,growx,aligny center");
+			dr1TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(dr1TextField, "cell 16 3,growx,aligny center");
 			dr1TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					dr1TextFieldKeyTyped(evt);
@@ -863,7 +915,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr2TextField = new JTextField();
-			mainPanel.add(dr2TextField, "cell 16 2,growx,aligny center");
+			dr2TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(dr2TextField, "cell 16 4,growx,aligny center");
 			dr2TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					dr2TextFieldKeyTyped(evt);
@@ -871,7 +924,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr3TextField = new JTextField();
-			mainPanel.add(dr3TextField, "cell 16 3,growx,aligny center");
+			dr3TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(dr3TextField, "cell 16 5,growx,aligny center");
 			dr3TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					dr3TextFieldKeyTyped(evt);
@@ -879,7 +933,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr6TextField = new JTextField();
-			mainPanel.add(dr6TextField, "cell 16 4,growx,aligny center");
+			dr6TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(dr6TextField, "cell 16 6,growx,aligny center");
 			dr6TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					dr6TextFieldKeyTyped(evt);
@@ -887,7 +942,8 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr7TextField = new JTextField();
-			mainPanel.add(dr7TextField, "cell 16 5,growx,aligny center");
+			dr7TextField.putClientProperty("NoBorder", true);
+			mainPanel.add(dr7TextField, "cell 16 7,growx,aligny center");
 			dr7TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
 					dr7TextFieldKeyTyped(evt);
@@ -895,11 +951,12 @@ public class RegisterPanel extends JPanel {
 			});
 
 			fipLabel = new JLabel();
-			mainPanel.add(fipLabel, "cell 7 19,growx,aligny center");
+			mainPanel.add(fipLabel, "cell 7 21,growx,aligny center");
 			fipLabel.setText("fip");
 
 			fipTextField = new JTextField();
-			mainPanel.add(fipTextField, "cell 8 19 4 1,growx,aligny center");
+			fipTextField.putClientProperty("NoBorder", true);
+			mainPanel.add(fipTextField, "cell 8 21 4 1,growx,aligny center");
 
 			for (final Component component : mainPanel.getComponents()) {
 				if (component.getClass() == JTextField.class) {

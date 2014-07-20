@@ -525,7 +525,7 @@ public class BochsStub implements VMStub {
 					} else {
 						ht.put("mode", MyLanguage.getString("Real_mode") + "     ");
 					}
-					String arr[] = line.split(":")[1].split(" ");
+					String arr[] = line.split(":")[1].trim().split(" ");
 
 					//					registerPanel.cr0DetailLabel.setText("");
 					ht.put("cr0Detail", "");

@@ -2612,7 +2612,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		changeText(this.registerPanel.ebpTextField, CommonLib.string2BigInteger(ht.get("bp")));
 		changeText(this.registerPanel.espTextField, CommonLib.string2BigInteger(ht.get("sp")));
 		changeText(this.registerPanel.eipTextField, CommonLib.string2BigInteger(ht.get("ip")));
-		changeText(this.registerPanel.eflagsTextField, CommonLib.string2BigInteger(ht.get("flags")));
+		changeText(this.registerPanel.eflagsTextField, CommonLib.string2BigInteger(ht.get("eflags")));
 		changeText(this.registerPanel.csTextField, ht.get("cs"), ht.get("cs_base"), ht.get("cs_limit"), ht.get("cs_flags"));
 		changeText(this.registerPanel.dsTextField, ht.get("ds"), ht.get("ds_base"), ht.get("ds_limit"), ht.get("ds_flags"));
 		changeText(this.registerPanel.esTextField, ht.get("es"), ht.get("es_base"), ht.get("es_limit"), ht.get("es_flags"));
@@ -2625,8 +2625,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		changeText(this.registerPanel.idtrTextField, CommonLib.string2BigInteger(ht.get("idtr")));
 		changeText(this.registerPanel.idtrLimitTextField, CommonLib.string2BigInteger(ht.get("idtr_limit")));
 		changeText(this.registerPanel.trTextField, CommonLib.string2BigInteger(ht.get("tr")));
-
-		changeText(this.registerPanel.eflagsTextField, CommonLib.string2BigInteger(ht.get("eflags")));
 		registerPanel.eflagLabel.setText(ht.get("eflagsDetail"));
 
 		cpuModeLabel.setText(ht.get("model"));

@@ -15,14 +15,21 @@ public class BochsSegmentRegister extends SegmentRegister {
 		setLayout(new MigLayout("insets 0 0 0 0", "[grow][][]", "[]"));
 
 		valueTextField = new JTextField();
+		valueTextField.setEditable(false);
+		valueTextField.setToolTipText("Value");
+		valueTextField.putClientProperty("NoBorder", true);
 		add(valueTextField, "cell 0 0,grow");
 		valueTextField.setColumns(10);
 
 		baseTextField = new JTextField();
+		valueTextField.setToolTipText("Base");
+		baseTextField.putClientProperty("NoBorder", true);
 		add(baseTextField, "cell 1 0,growy");
 		baseTextField.setColumns(10);
 
 		limitTextField = new JTextField();
+		valueTextField.setToolTipText("Limit");
+		limitTextField.putClientProperty("NoBorder", true);
 		add(limitTextField, "flowx,cell 2 0,growy");
 		limitTextField.setColumns(10);
 	}
