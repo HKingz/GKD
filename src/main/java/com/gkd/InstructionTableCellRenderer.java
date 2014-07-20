@@ -20,7 +20,7 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 	ImageIcon breakpointDisableIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpointDisable.png"));
 	Color darkGreen = new Color(0, 100, 0);
 	Color darkBlue = new Color(0, 0, 100);
-	Color alterRow = new Color(0xf8f8f8);
+	Color alterRow = new Color(0xfafafa);
 
 	public InstructionTableCellRenderer() {
 		this.setOpaque(true);
