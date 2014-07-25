@@ -13,14 +13,21 @@
     <string>info gdt 0 10</string>
     <string>info gdt 0 0</string>
     <string>info gdt 0 1</string>
+    <string>info page</string>
+    <string>info pagetable</string>
+    <string>help</string>
+    <string>page</string>
+    <string>info tab</string>
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
     <string>0x00000000</string>
+    <string>0x000000101000</string>
     <string>0x10992c</string>
     <string>0x10f558</string>
     <string>0x12</string>
     <string>0x18</string>
+    <string>0x400000</string>
     <string>0x60000010</string>
     <string>0x8b00</string>
     <string>0x92d</string>
@@ -48,12 +55,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>78</x>
-  <y>46</y>
+  <x>99</x>
+  <y>22</y>
   <width>1310</width>
-  <height>803</height>
+  <height>842</height>
   <divX>630</divX>
-  <divY>347</divY>
+  <divY>507</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

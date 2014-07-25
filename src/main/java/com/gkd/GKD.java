@@ -200,7 +200,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JScrollPane jScrollPane7;
 	private JTable pageTableTable;
 	private JTable pageDirectoryTable;
-	private JPanel jPanel11;
+	private JPanel pagingPanel;
 	private JTable gdtTable;
 	private JScrollPane jScrollPane3;
 	private JMenuItem jupdateVMStatusMenuItem;
@@ -2246,8 +2246,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void updatePageTable(BigInteger pageDirectoryBaseAddress) {
-		//		Vector<IA32PageDirectory> ia32_pageDirectories = new Vector<IA32PageDirectory>();
-
 		statusLabel.setText("Updating page table");
 		DefaultTableModel model = (DefaultTableModel) pageDirectoryTable.getModel();
 		while (model.getRowCount() > 0) {
@@ -2748,7 +2746,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (!CommonLib.isNumber(pageTableAddress)) {
 				return;
 			}
-
+			System.out.println("pageTableAddress=" + pageTableAddress);
 			int bytes[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(pageTableAddress), 4096);
 			PageTableTableModel model = (PageTableTableModel) pageTableTable.getModel();
 			while (model.getRowCount() > 0) {
@@ -4392,8 +4390,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jPanel3.add(getJPanel13(), BorderLayout.NORTH);
 		jScrollPane6.setViewportView(getJHistoryTable());
 
-		jPanel11 = new JPanel();
-		bottomTabbedPane.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), jPanel11, null);
+		pagingPanel = new JPanel();
+		bottomTabbedPane.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), pagingPanel,
+				null);
 		bottomTabbedPane.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")),
 				getJAddressTranslatePanel(), null);
 		bottomTabbedPane.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
@@ -4409,9 +4408,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				null);
 		bottomTabbedPane.addTab("Log", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getLogPanel(), null);
 		BorderLayout jPanel11Layout = new BorderLayout();
-		jPanel11.setLayout(jPanel11Layout);
-		jPanel11.add(getJSplitPane3(), BorderLayout.CENTER);
-		jPanel11.add(getJPanel19(), BorderLayout.NORTH);
+		pagingPanel.setLayout(jPanel11Layout);
+		pagingPanel.add(getJSplitPane3(), BorderLayout.CENTER);
+		pagingPanel.add(getJPanel19(), BorderLayout.NORTH);
 		return jSplitPane2;
 	}
 

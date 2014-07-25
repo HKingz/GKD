@@ -762,45 +762,32 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<String[]> pageTable(BigInteger pageDirectoryBaseAddress) {
 		Vector<String[]> r = new Vector<String[]>();
-		commandReceiver.shouldShow = false;
-		String result = sendBochsCommand("xp /4096bx " + pageDirectoryBaseAddress);
-		if (result != null) {
-			String[] lines = result.split("\n");
 
-			for (int y = 0; y < lines.length; y++) {
-				String[] b = lines[y].replaceFirst("^.*:", "").trim().split("\t");
+		int[] bytes = physicalMemory(pageDirectoryBaseAddress, 4096);
+		if (bytes != null) {
+			for (int x = 0; x < bytes.length - 4; x += 4) {
+				long value = CommonLib.getInt(bytes, x);
+				// "No.", "PT base", "AVL", "G",
+				// "D", "A", "PCD", "PWT",
+				// "U/S", "W/R", "P"
 
-				for (int z = 0; z < 2; z++) {
-					try {
-						int bytes[] = new int[4];
-						for (int x = 0; x < 4; x++) {
-							bytes[x] = CommonLib.string2BigInteger(b[x + z * 4].substring(2).trim()).intValue();
-						}
-						long value = CommonLib.getInt(bytes, 0);
-						// "No.", "PT base", "AVL", "G",
-						// "D", "A", "PCD", "PWT",
-						// "U/S", "W/R", "P"
+				long baseL = value & 0xfffff000;
+				// if (baseL != 0) {
+				String base = "0x" + Long.toHexString(baseL);
+				String avl = String.valueOf((value >> 9) & 3);
+				String g = String.valueOf((value >> 8) & 1);
+				String d = String.valueOf((value >> 6) & 1);
+				String a = String.valueOf((value >> 5) & 1);
+				String pcd = String.valueOf((value >> 4) & 1);
+				String pwt = String.valueOf((value >> 3) & 1);
+				String us = String.valueOf((value >> 2) & 1);
+				String wr = String.valueOf((value >> 1) & 1);
+				String p = String.valueOf((value >> 0) & 1);
 
-						long baseL = value & 0xfffff000;
-						// if (baseL != 0) {
-						String base = "0x" + Long.toHexString(baseL);
-						String avl = String.valueOf((value >> 9) & 3);
-						String g = String.valueOf((value >> 8) & 1);
-						String d = String.valueOf((value >> 6) & 1);
-						String a = String.valueOf((value >> 5) & 1);
-						String pcd = String.valueOf((value >> 4) & 1);
-						String pwt = String.valueOf((value >> 3) & 1);
-						String us = String.valueOf((value >> 2) & 1);
-						String wr = String.valueOf((value >> 1) & 1);
-						String p = String.valueOf((value >> 0) & 1);
+				//						ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
 
-						//						ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
-
-						r.add(new String[] { String.valueOf(y * 2 + z), base, avl, g, d, a, pcd, pwt, us, wr, p });
-						// }
-					} catch (Exception ex) {
-					}
-				}
+				r.add(new String[] { String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p });
+				// }
 			}
 		}
 		return r;
