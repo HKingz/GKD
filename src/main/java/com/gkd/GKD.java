@@ -2247,12 +2247,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public void updatePageTable(BigInteger pageDirectoryBaseAddress) {
 		statusLabel.setText("Updating page table");
-		DefaultTableModel model = (DefaultTableModel) pageDirectoryTable.getModel();
+		PageDirectoryTableModel model = (PageDirectoryTableModel) pageDirectoryTable.getModel();
 		while (model.getRowCount() > 0) {
 			model.removeRow(0);
 		}
 
-		Vector<String[]> r = VMController.getVM().pageTable(pageDirectoryBaseAddress);
+		Vector<String[]> r = VMController.getVM().pageTable(pageDirectoryBaseAddress, CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
+				CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
 		for (String s[] : r) {
 			model.addRow(s);
 		}
@@ -2632,6 +2633,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		changeText(this.registerPanel.cr2TextField, CommonLib.string2BigInteger(ht.get("cr2")));
 		changeText(this.registerPanel.cr3TextField, CommonLib.string2BigInteger(ht.get("cr3")));
 		changeText(this.registerPanel.cr4TextField, CommonLib.string2BigInteger(ht.get("cr4")));
+		registerPanel.cr4DetailLabel.setText(ht.get("cr4Detail"));
 		changeText(this.registerPanel.dr0TextField, CommonLib.string2BigInteger(ht.get("dr0")));
 		changeText(this.registerPanel.dr1TextField, CommonLib.string2BigInteger(ht.get("dr1")));
 		changeText(this.registerPanel.dr2TextField, CommonLib.string2BigInteger(ht.get("dr2")));
@@ -2740,21 +2742,25 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void pageDirectoryTableMouseClicked(MouseEvent evt) {
-		if (evt.getClickCount() == 2) {
-			statusProgressBar.setValue(0);
-			String pageTableAddress = pageDirectoryTable.getValueAt(pageDirectoryTable.getSelectedRow(), 1).toString();
-			if (!CommonLib.isNumber(pageTableAddress)) {
-				return;
-			}
-			System.out.println("pageTableAddress=" + pageTableAddress);
-			int bytes[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(pageTableAddress), 4096);
-			PageTableTableModel model = (PageTableTableModel) pageTableTable.getModel();
-			while (model.getRowCount() > 0) {
-				model.removeRow(0);
-			}
+		statusProgressBar.setValue(0);
+		String pageTableAddress = pageDirectoryTable.getValueAt(pageDirectoryTable.getSelectedRow(), 1).toString();
+		int ps = Integer.parseInt(pageDirectoryTable.getValueAt(pageDirectoryTable.getSelectedRow(), 4).toString());
+		if (!CommonLib.isNumber(pageTableAddress)) {
+			return;
+		}
+		System.out.println("pageTableAddress=" + pageTableAddress);
+		int bytes[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(pageTableAddress), 4096);
+		PageTableTableModel model = (PageTableTableModel) pageTableTable.getModel();
+		while (model.getRowCount() > 0) {
+			model.removeRow(0);
+		}
 
-			for (int x = 0; x <= bytes.length - 4; x += 4) {
-				long value = CommonLib.getInt(bytes, x);
+		boolean pse = CommonLib.getBit(CommonLib.string2long(registerPanel.cr3TextField.getText()), 4) == 1;
+		boolean pae = CommonLib.getBit(CommonLib.string2long(registerPanel.cr3TextField.getText()), 5) == 1;
+
+		for (int x = 0; x <= bytes.length - 4; x += 4) {
+			long value = CommonLib.getInt(bytes, x);
+			if (!pse && !pae) {
 				String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
 				String avl = String.valueOf((value >> 9) & 3);
 				String g = String.valueOf((value >> 8) & 1);
@@ -2770,10 +2776,29 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				model.setShowZeroAddress(true);
 				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
 				model.setShowZeroAddress(tempB);
+			} else if (pse && !pae) {
+				if (ps == 0) {
+					String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
+					String avl = String.valueOf((value >> 9) & 3);
+					String g = String.valueOf((value >> 8) & 1);
+					String pat = String.valueOf((value >> 7) & 1);
+					String d = String.valueOf((value >> 6) & 1);
+					String a = String.valueOf((value >> 5) & 1);
+					String pcd = String.valueOf((value >> 4) & 1);
+					String pwt = String.valueOf((value >> 3) & 1);
+					String us = String.valueOf((value >> 2) & 1);
+					String wr = String.valueOf((value >> 1) & 1);
+					String p = String.valueOf((value >> 0) & 1);
+					boolean tempB = model.isShowZeroAddress();
+					model.setShowZeroAddress(true);
+					model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+					model.setShowZeroAddress(tempB);
+				} else {
+					// no page table
+				}
 			}
-			pageTableTable.setModel(model);
-
 		}
+		pageTableTable.setModel(model);
 	}
 
 	private void pageTableTableMouseClicked(MouseEvent evt) {

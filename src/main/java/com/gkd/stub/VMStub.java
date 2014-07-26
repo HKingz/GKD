@@ -41,7 +41,7 @@ public interface VMStub {
 
 	public Vector<Vector<String>> ldt(BigInteger gdtAddress, int noOfByte);
 
-	public Vector<String[]> pageTable(BigInteger pageDirectoryBaseAddress);
+	public Vector<String[]> pageTable(BigInteger pageDirectoryBaseAddress, boolean pse, boolean pae);
 
 	public Vector<String> stack();
 

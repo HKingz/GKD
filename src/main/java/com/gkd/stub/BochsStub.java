@@ -510,8 +510,6 @@ public class BochsStub implements VMStub {
 		}
 
 		try {
-			// commandReceiver.setCommandNoOfLine(Integer.parseInt(bochsCommandLength.get(0).get("cregs").toString()));
-			//			sendBochsCommand("creg");
 			String result = sendBochsCommand("creg");
 			String[] lines = result.split("\n");
 
@@ -525,11 +523,9 @@ public class BochsStub implements VMStub {
 					} else {
 						ht.put("mode", MyLanguage.getString("Real_mode") + "     ");
 					}
-					String arr[] = line.split(":")[1].trim().split(" ");
 
-					//					registerPanel.cr0DetailLabel.setText("");
+					String arr[] = line.split(":")[1].trim().split(" ");
 					ht.put("cr0Detail", "");
-					//					registerPanel.cr0DetailLabel2.setText(" ");
 					ht.put("cr0Detail2", "");
 					for (int z = 0; z < 7; z++) {
 						ht.put("cr0Detail", ht.get("cr0Detail") + arr[z] + " ");
@@ -543,6 +539,16 @@ public class BochsStub implements VMStub {
 					ht.put("cr3", line.split(" ")[0].split("=")[1]);
 				} else if (line.matches(".*CR4=.*")) {
 					ht.put("cr4", line.split(" ")[0].split("=")[1].replace(":", ""));
+
+					String arr[] = line.split(":")[1].trim().split(" ");
+					ht.put("cr4Detail", "<html>");
+					for (int z = 0; z < arr.length; z++) {
+						ht.put("cr4Detail", ht.get("cr4Detail") + arr[z] + " ");
+						if (z == 7) {
+							ht.put("cr4Detail", ht.get("cr4Detail") + "<br>");
+						}
+					}
+					ht.put("cr4Detail", ht.get("cr4Detail") + "</html>");
 				}
 			}
 		} catch (Exception ex) {
@@ -760,34 +766,59 @@ public class BochsStub implements VMStub {
 	}
 
 	@Override
-	public Vector<String[]> pageTable(BigInteger pageDirectoryBaseAddress) {
+	public Vector<String[]> pageTable(BigInteger pageDirectoryBaseAddress, boolean pse, boolean pae) {
 		Vector<String[]> r = new Vector<String[]>();
-
-		int[] bytes = physicalMemory(pageDirectoryBaseAddress, 4096);
+		int[] bytes = physicalMemory(pageDirectoryBaseAddress, 8192);
 		if (bytes != null) {
 			for (int x = 0; x < bytes.length - 4; x += 4) {
-				long value = CommonLib.getInt(bytes, x);
+
 				// "No.", "PT base", "AVL", "G",
 				// "D", "A", "PCD", "PWT",
 				// "U/S", "W/R", "P"
 
-				long baseL = value & 0xfffff000;
-				// if (baseL != 0) {
-				String base = "0x" + Long.toHexString(baseL);
-				String avl = String.valueOf((value >> 9) & 3);
-				String g = String.valueOf((value >> 8) & 1);
-				String d = String.valueOf((value >> 6) & 1);
-				String a = String.valueOf((value >> 5) & 1);
-				String pcd = String.valueOf((value >> 4) & 1);
-				String pwt = String.valueOf((value >> 3) & 1);
-				String us = String.valueOf((value >> 2) & 1);
-				String wr = String.valueOf((value >> 1) & 1);
-				String p = String.valueOf((value >> 0) & 1);
+				if (!pae) {
+					if (!pse) {
+						// normal 4k
+						long value = CommonLib.getInt(bytes, x);
+						long baseL = value & 0xfffff000;
+						String base = "0x" + Long.toHexString(baseL);
+						String avl = String.valueOf((value >> 9) & 3);
+						String g = String.valueOf((value >> 8) & 1);
+						String ps = String.valueOf((value >> 7) & 1);
+						String d = String.valueOf((value >> 6) & 1);
+						String a = String.valueOf((value >> 5) & 1);
+						String pcd = String.valueOf((value >> 4) & 1);
+						String pwt = String.valueOf((value >> 3) & 1);
+						String us = String.valueOf((value >> 2) & 1);
+						String wr = String.valueOf((value >> 1) & 1);
+						String p = String.valueOf((value >> 0) & 1);
 
-				//						ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
+						r.add(new String[] { String.valueOf(x / 4), base, avl, g, ps, d, a, pcd, pwt, us, wr, p });
+					} else {
+						long value = CommonLib.getInt(bytes, x);
+						String avl = String.valueOf((value >> 9) & 3);
+						String g = String.valueOf((value >> 8) & 1);
+						String ps = String.valueOf((value >> 7) & 1);
+						String d = String.valueOf((value >> 6) & 1);
+						String a = String.valueOf((value >> 5) & 1);
+						String pcd = String.valueOf((value >> 4) & 1);
+						String pwt = String.valueOf((value >> 3) & 1);
+						String us = String.valueOf((value >> 2) & 1);
+						String wr = String.valueOf((value >> 1) & 1);
+						String p = String.valueOf((value >> 0) & 1);
+						String base = "";
+						if (ps.equals("1")) {
+							long baseL = value & 0xffc00000;
+							base = "0x" + Long.toHexString(baseL);
+						} else {
+							long baseL = value & 0xfffff000;
+							base = "0x" + Long.toHexString(baseL);
+						}
+						r.add(new String[] { String.valueOf(x / 4), base, avl, g, ps, d, a, pcd, pwt, us, wr, p });
+					}
+				} else {
 
-				r.add(new String[] { String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p });
-				// }
+				}
 			}
 		}
 		return r;

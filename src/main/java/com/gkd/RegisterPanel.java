@@ -163,6 +163,7 @@ public class RegisterPanel extends JPanel {
 	private JPanel panel;
 	private JScrollPane stackScrollPane;
 	private SegmentRegisterHeader segmentRegisterHeader;
+	public JLabel cr4DetailLabel;
 
 	public RegisterPanel() {
 		super();
@@ -345,6 +346,9 @@ public class RegisterPanel extends JPanel {
 					eipTextFieldKeyTyped(evt);
 				}
 			});
+
+			cr4DetailLabel = new JLabel();
+			mainPanel.add(cr4DetailLabel, "cell 7 8 5 1,growx");
 
 			jLabel25 = new JLabel();
 			mainPanel.add(jLabel25, "cell 13 8,growx,aligny center");

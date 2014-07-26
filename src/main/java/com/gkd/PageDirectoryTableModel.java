@@ -3,7 +3,7 @@ package com.gkd;
 import javax.swing.table.DefaultTableModel;
 
 public class PageDirectoryTableModel extends DefaultTableModel {
-	String columnNames[] = new String[] { "No.", "PT base", "AVL", "G", "D", "A", "PCD", "PWT", "U/S", "W/R", "P" };
+	String columnNames[] = new String[] { "No.", "PT base", "AVL", "G", "PS", "D", "A", "PCD", "PWT", "U/S", "W/R", "P" };
 	boolean showZeroAddress = true;
 
 	public boolean isShowZeroAddress() {
