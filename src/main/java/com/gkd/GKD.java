@@ -4421,7 +4421,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		bottomTabbedPane.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")),
 				getJAddressTranslatePanel(), null);
 		bottomTabbedPane.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
-				getJPageTableGraphPanel(), null);
+				getPageTableGraphPanel(), null);
 		if (!Global.debug) {
 			bottomTabbedPane.removeTabAt(bottomTabbedPane.getTabCount() - 1);
 		}
@@ -4526,11 +4526,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private JPanel getJPageTableGraphPanel() {
+	private JPanel getPageTableGraphPanel() {
 		if (pageTableGraphPanel == null) {
 			pageTableGraphPanel = new JPanel();
-			BorderLayout jPageTableGraphPanelLayout = new BorderLayout();
-			pageTableGraphPanel.setLayout(jPageTableGraphPanelLayout);
+			BorderLayout pageTableGraphPanelLayout = new BorderLayout();
+			pageTableGraphPanel.setLayout(pageTableGraphPanelLayout);
 			pageTableGraphPanel.add(getJToolBar2(), BorderLayout.NORTH);
 		}
 		return pageTableGraphPanel;
