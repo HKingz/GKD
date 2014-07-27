@@ -814,6 +814,7 @@ public class BochsStub implements VMStub {
 							long baseL = value & 0xfffff000;
 							base = "0x" + Long.toHexString(baseL);
 						}
+						System.out.println((x / 4) + "=" + value);
 						r.add(new String[] { String.valueOf(x / 4), base, avl, g, ps, d, a, pcd, pwt, us, wr, p });
 					}
 				} else {
