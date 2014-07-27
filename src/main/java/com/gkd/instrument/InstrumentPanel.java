@@ -188,7 +188,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JLabel jSegmentFromLabel;
 	private JLabel jSegmentEndLabel;
 	private JLabel jSegmentStartLabel;
-	private JPanel jCallGraphPreviewPanel;
+	private JPanel callGraphPreviewPanel;
 	private JSplitPane jCallGraphSplitPane;
 	private JPanel jCallGraphDetailPanel;
 	private JPanel jPanel3;
@@ -1474,8 +1474,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	public void updateCallGraph() {
 		graph = new mxGraph() {
 			public void drawState(mxICanvas canvas, mxCellState state, String label) {
-				if (getModel().isVertex(state.getCell()) && canvas instanceof PeterSwingCanvas) {
-					PeterSwingCanvas c = (PeterSwingCanvas) canvas;
+				if (getModel().isVertex(state.getCell()) && canvas instanceof InstrumentCanvas) {
+					InstrumentCanvas c = (InstrumentCanvas) canvas;
 					c.drawVertex(state, label);
 				} else {
 					// draw edge, at least
@@ -1543,9 +1543,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		graphOutline = new mxGraphOutline(graphComponent);
 		graphOutline.setBackground(Color.white);
 		graphOutline.setBorder(new LineBorder(Color.LIGHT_GRAY));
-		jCallGraphPreviewPanel.removeAll();
-		jCallGraphPreviewPanel.add(graphOutline, BorderLayout.CENTER);
-		jCallGraphPreviewPanel.setPreferredSize(new Dimension(100, 100));
+		callGraphPreviewPanel.removeAll();
+		callGraphPreviewPanel.add(graphOutline, BorderLayout.CENTER);
+		callGraphPreviewPanel.setPreferredSize(new Dimension(100, 100));
 	}
 
 	private void cellClientEvent(String label) {
@@ -1835,12 +1835,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JPanel getJCallGraphPreviewPanel() {
-		if (jCallGraphPreviewPanel == null) {
-			jCallGraphPreviewPanel = new JPanel();
+		if (callGraphPreviewPanel == null) {
+			callGraphPreviewPanel = new JPanel();
 			BorderLayout jCallGraphPreviewPanelLayout = new BorderLayout();
-			jCallGraphPreviewPanel.setLayout(jCallGraphPreviewPanelLayout);
+			callGraphPreviewPanel.setLayout(jCallGraphPreviewPanelLayout);
 		}
-		return jCallGraphPreviewPanel;
+		return callGraphPreviewPanel;
 	}
 
 	private JLabel getJSegmentStartLabel() {

@@ -22,7 +22,7 @@ public class CallGraphComponent extends mxGraphComponent {
 	}
 
 	public mxInteractiveCanvas createCanvas() {
-		return new PeterSwingCanvas(this);
+		return new InstrumentCanvas(this);
 	}
 
 	// public Component[] createComponents(mxCellState state) {

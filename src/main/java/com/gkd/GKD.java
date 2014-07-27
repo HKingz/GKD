@@ -127,6 +127,7 @@ import com.gkd.logpanel.LogPanel;
 import com.gkd.osdebuginformation.JOSDebugInformationPanel;
 import com.gkd.osdebuginformation.OSDebugInfoHelper;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
+import com.gkd.structurePanel.StructurePanel;
 import com.gkd.stub.VMController;
 import com.gkd.stub.VMType;
 import com.gkd.webservice.WebServiceUtil;
@@ -4532,6 +4533,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			BorderLayout pageTableGraphPanelLayout = new BorderLayout();
 			pageTableGraphPanel.setLayout(pageTableGraphPanelLayout);
 			pageTableGraphPanel.add(getJToolBar2(), BorderLayout.NORTH);
+			pageTableGraphPanel.add(new StructurePanel(), BorderLayout.CENTER);
 		}
 		return pageTableGraphPanel;
 	}

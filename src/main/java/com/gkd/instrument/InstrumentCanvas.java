@@ -11,7 +11,7 @@ import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxInteractiveCanvas;
 import com.mxgraph.view.mxCellState;
 
-public class PeterSwingCanvas extends mxInteractiveCanvas {
+public class InstrumentCanvas extends mxInteractiveCanvas {
 	protected CellRendererPane rendererPane = new CellRendererPane();
 
 	protected JLabel jLabel = new JLabel();
@@ -21,7 +21,7 @@ public class PeterSwingCanvas extends mxInteractiveCanvas {
 	Color borderColor = new Color(0, 102, 255);
 	Color backgroundcolor = new Color(195, 219, 255);
 
-	public PeterSwingCanvas(mxGraphComponent graphComponent) {
+	public InstrumentCanvas(mxGraphComponent graphComponent) {
 		this.graphComponent = graphComponent;
 
 		jLabel.setBorder(BorderFactory.createLineBorder(borderColor));

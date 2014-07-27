@@ -54,7 +54,7 @@ import com.gkd.InstructionTableCellRenderer;
 import com.gkd.InstructionTableModel;
 import com.gkd.MyLanguage;
 import com.gkd.instrument.CallGraphComponent;
-import com.gkd.instrument.PeterSwingCanvas;
+import com.gkd.instrument.InstrumentCanvas;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.view.mxCellState;
@@ -1025,8 +1025,8 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	private void refreshCallGrapphButtonActionPerformed(ActionEvent evt) {
 		graph = new mxGraph() {
 			public void drawState(mxICanvas canvas, mxCellState state, String label) {
-				if (getModel().isVertex(state.getCell()) && canvas instanceof PeterSwingCanvas) {
-					PeterSwingCanvas c = (PeterSwingCanvas) canvas;
+				if (getModel().isVertex(state.getCell()) && canvas instanceof InstrumentCanvas) {
+					InstrumentCanvas c = (InstrumentCanvas) canvas;
 					c.drawVertex(state, label);
 				} else {
 					// draw edge, at least
