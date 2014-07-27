@@ -4849,7 +4849,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					model.pte.add(BigInteger.valueOf(-1));
 
 					BigInteger pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
-					System.out.println("pageDirectoryBaseAddress=" + pageDirectoryBaseAddress);
 					BigInteger physicalAddress = pageDirectoryBaseAddress.add(CommonLib.getBigInteger(linearAddress, 21, 0));
 					model.physicalAddress.add(physicalAddress);
 
