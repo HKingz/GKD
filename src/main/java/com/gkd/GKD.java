@@ -374,9 +374,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JScrollPane jScrollPane13;
 	private JButton refreshAddressTranslateButton;
 	private JPanel jPanel20;
-	private JRadioButton searchAddressRadioButton3;
-	private JRadioButton searchAddressRadioButton2;
-	private JRadioButton searchAddressRadioButton1;
+	private JRadioButton searchPhysicalAddressRadioButton;
+	private JRadioButton searchLinearAddressRadioButton;
+	private JRadioButton searchVirtualAddressRadioButton;
 	private JPanel addressTranslatePanel;
 	private JButton refreshPageTableGraphButton;
 	private JCheckBox autoRefreshPageTableGraphCheckBox;
@@ -2755,8 +2755,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.removeRow(0);
 		}
 
-		boolean pse = CommonLib.getBit(CommonLib.string2long(registerPanel.cr3TextField.getText()), 4) == 1;
-		boolean pae = CommonLib.getBit(CommonLib.string2long(registerPanel.cr3TextField.getText()), 5) == 1;
+		boolean pse = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1;
+		boolean pae = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1;
 
 		for (int x = 0; x <= bytes.length - 4; x += 4) {
 			long value = CommonLib.getInt(bytes, x);
@@ -4581,53 +4581,53 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel20Layout.setVGap(5);
 			jPanel20.setLayout(jPanel20Layout);
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-			jPanel20.add(getJRadioButton3(), "1, 0, 2, 0");
-			jPanel20.add(getJRadioButton4(), "1, 1, 2, 1");
-			jPanel20.add(getJRadioButton5(), "1, 2, 2, 2");
+			jPanel20.add(getSearchVirtualAddressRadioButton(), "1, 0, 2, 0");
+			jPanel20.add(getSearchLinearAddressRadioButton(), "1, 1, 2, 1");
+			jPanel20.add(getSearchPhysicalAddressRadioButton(), "1, 2, 2, 2");
 			jPanel20.add(getJPanel21(), "1, 4");
 			jPanel20.add(getJAddressTextField(), "1, 3");
 		}
 		return jPanel20;
 	}
 
-	private JRadioButton getJRadioButton3() {
-		if (searchAddressRadioButton1 == null) {
-			searchAddressRadioButton1 = new JRadioButton();
-			searchAddressRadioButton1.setText(MyLanguage.getString("Virtual_address"));
-			searchAddressRadioButton1.setSelected(true);
-			getButtonGroup3().add(searchAddressRadioButton1);
+	private JRadioButton getSearchVirtualAddressRadioButton() {
+		if (searchVirtualAddressRadioButton == null) {
+			searchVirtualAddressRadioButton = new JRadioButton();
+			searchVirtualAddressRadioButton.setText(MyLanguage.getString("Virtual_address"));
+			searchVirtualAddressRadioButton.setSelected(true);
+			getButtonGroup3().add(searchVirtualAddressRadioButton);
 		}
-		return searchAddressRadioButton1;
+		return searchVirtualAddressRadioButton;
 	}
 
-	private JRadioButton getJRadioButton4() {
-		if (searchAddressRadioButton2 == null) {
-			searchAddressRadioButton2 = new JRadioButton();
-			searchAddressRadioButton2.setText(MyLanguage.getString("Linear_address"));
-			getButtonGroup3().add(searchAddressRadioButton2);
+	private JRadioButton getSearchLinearAddressRadioButton() {
+		if (searchLinearAddressRadioButton == null) {
+			searchLinearAddressRadioButton = new JRadioButton();
+			searchLinearAddressRadioButton.setText(MyLanguage.getString("Linear_address"));
+			getButtonGroup3().add(searchLinearAddressRadioButton);
 		}
 
-		return searchAddressRadioButton2;
+		return searchLinearAddressRadioButton;
 	}
 
-	private JRadioButton getJRadioButton5() {
-		if (searchAddressRadioButton3 == null) {
-			searchAddressRadioButton3 = new JRadioButton();
-			searchAddressRadioButton3.setVisible(false);
-			searchAddressRadioButton3.setText(MyLanguage.getString("Physical_address"));
-			getButtonGroup3().add(searchAddressRadioButton3);
+	private JRadioButton getSearchPhysicalAddressRadioButton() {
+		if (searchPhysicalAddressRadioButton == null) {
+			searchPhysicalAddressRadioButton = new JRadioButton();
+			searchPhysicalAddressRadioButton.setVisible(false);
+			searchPhysicalAddressRadioButton.setText(MyLanguage.getString("Physical_address"));
+			getButtonGroup3().add(searchPhysicalAddressRadioButton);
 		}
 
-		return searchAddressRadioButton3;
+		return searchPhysicalAddressRadioButton;
 	}
 
-	private JButton getJButton16() {
+	private JButton getRefreshAddressTranslateButton() {
 		if (refreshAddressTranslateButton == null) {
 			refreshAddressTranslateButton = new JButton();
 			refreshAddressTranslateButton.setText(MyLanguage.getString("Convert"));
 			refreshAddressTranslateButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jRefreshAddressTranslateButtonActionPerformed(evt);
+					refreshAddressTranslateButtonActionPerformed(evt);
 				}
 			});
 		}
@@ -4713,7 +4713,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel getJPanel21() {
 		if (jPanel21 == null) {
 			jPanel21 = new JPanel();
-			jPanel21.add(getJButton16());
+			jPanel21.add(getRefreshAddressTranslateButton());
 		}
 		return jPanel21;
 	}
@@ -4730,24 +4730,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return addressTextField;
 	}
 
-	private void jRefreshAddressTranslateButtonActionPerformed(ActionEvent evt) {
+	private void refreshAddressTranslateButtonActionPerformed(ActionEvent evt) {
 		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
 
-		if (searchAddressRadioButton1.isSelected()) {
+		if (searchVirtualAddressRadioButton.isSelected()) {
 			if (!this.addressTextField.getText().contains(":") || this.addressTextField.getText().replaceAll("[^:]", "").length() != 1) {
 				JOptionPane.showMessageDialog(this, "Error, please input <segment selector>:<offset>\n\ne.g. : 0x10:0x12345678", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			BigInteger segSelector = CommonLib.string2BigInteger(this.addressTextField.getText().split(":")[0]);
 			BigInteger address = CommonLib.string2BigInteger(this.addressTextField.getText().split(":")[1]);
-
-			// for (int x = 0; x < model.getRowCount(); x++) {
-			// if (model.searchType.get(x).equals(1) &&
-			// model.searchSegSelector.get(x).equals(segSelector) &&
-			// model.searchAddress.get(x).equals(address)) {
-			// return;
-			// }
-			// }
 
 			model.searchType.add(1);
 			model.searchSegSelector.add(segSelector);
@@ -4759,68 +4751,54 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			// read GDT descriptor
 			int descriptor[];
-			//			if (VMController.vmType == VMType.Bochs) {
-			//				descriptor = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
-			//			} else if (VMController.vmType == VMType.Qemu) {
 			descriptor = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
-			//			} else {
-			//				return;
-			//			}
 			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
 			model.linearAddress.add(linearAddress);
 
-			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
-			model.pdNo.add(pdNo);
-			int pdeBytes[];
-			//			if (VMController.vmType == VMType.Bochs) {
-			//				pdeBytes = GKDCommonLib.getMemoryFromBochs(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
-			//			} else if (VMController.vmType == VMType.Qemu) {
-			pdeBytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
-			//			} else {
-			//				return;
-			//			}
+			boolean pse = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1;
+			boolean pae = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1;
 
-			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
-			model.pde.add(pde);
+			int bytesAtPhysicalAddress[] = null;
+			if (!pae) {
+				BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
+				model.pdNo.add(pdNo);
+				int pdeBytes[];
+				pdeBytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 
-			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
-			model.ptNo.add(ptNo);
-			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
-			int pteBytes[];
-			//			if (VMController.vmType == VMType.Bochs) {
-			//				pteBytes = GKDCommonLib.getMemoryFromBochs(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
-			//			} else if (VMController.vmType == VMType.Qemu) {
-			pteBytes = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
-			//			} else {
-			//				return;
-			//			}
-			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
-			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
-			model.pte.add(pte);
+				BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
+				model.pde.add(pde);
 
-			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
-			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[];
-			//			if (VMController.vmType == VMType.Bochs) {
-			//				bytesAtPhysicalAddress = GKDCommonLib.getMemoryFromBochs(physicalAddress, 8);
-			//			} else if (VMController.vmType == VMType.Qemu) {
-			bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
-			//			} else {
-			//				return;
-			//			}
+				if (!pse) {
+					BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
+					model.ptNo.add(ptNo);
+					BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
+					int pteBytes[];
+					pteBytes = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+
+					BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
+					BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
+					model.pte.add(pte);
+
+					BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
+					model.physicalAddress.add(physicalAddress);
+
+					bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
+				} else {
+					model.ptNo.add(BigInteger.valueOf(-1));
+					model.pte.add(BigInteger.valueOf(-1));
+					BigInteger pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
+					BigInteger physicalAddress = pageDirectoryBaseAddress.add(CommonLib.getBigInteger(linearAddress, 21, 0));
+					model.physicalAddress.add(physicalAddress);
+
+					bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
+				}
+			}
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
-		} else if (searchAddressRadioButton2.isSelected()) {
-			// for (int x = 0; x < model.getRowCount(); x++) {
-			// if (model.searchType.get(x).equals(2) &&
-			// model.searchAddress.get(x).equals(CommonLib.string2long(this.jAddressTextField.getText())))
-			// {
-			// return;
-			// }
-			// }
+		} else if (searchLinearAddressRadioButton.isSelected()) {
 			BigInteger address = CommonLib.string2BigInteger(this.addressTextField.getText());
 
 			model.searchType.add(2);
@@ -4831,28 +4809,57 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.baseAddress.add(baseAddress);
 			model.linearAddress.add(linearAddress);
 
-			BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
-			model.pdNo.add(pdNo);
-			int pdeBytes[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))),
-					4);
-			BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
-			model.pde.add(pde);
+			boolean pse = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1;
+			boolean pae = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1;
 
-			BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
-			model.ptNo.add(ptNo);
-			BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
-			int pteBytes[] = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
-			BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
-			BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
-			model.pte.add(pte);
+			int bytesAtPhysicalAddress[] = null;
+			if (!pae) {
+				BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
+				model.pdNo.add(pdNo);
+				int pdeBytes[];
+				System.out.println("this.registerPanel.cr3TextField.getText()=" + this.registerPanel.cr3TextField.getText());
+				System.out.println("pdNo=" + pdNo);
+				pdeBytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+				System.out.println("CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4)))="
+						+ CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))));
 
-			BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
-			model.physicalAddress.add(physicalAddress);
-			int bytesAtPhysicalAddress[] = VMController.getVM().physicalMemory(physicalAddress, 8);
+				BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
+				model.pde.add(pde);
+
+				long value = CommonLib.getInt(pdeBytes, 0);
+				long ps = (value >> 7) & 1;
+				if (!pse || ps == 0) {
+					BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
+					model.ptNo.add(ptNo);
+					BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
+					System.out.println("pageTableBaseAddress=" + pageTableBaseAddress.toString(16));
+					int pteBytes[];
+					pteBytes = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+
+					BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
+					BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
+					model.pte.add(pte);
+
+					BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
+					model.physicalAddress.add(physicalAddress);
+
+					bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
+				} else {
+					model.ptNo.add(BigInteger.valueOf(-1));
+					model.pte.add(BigInteger.valueOf(-1));
+
+					BigInteger pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
+					System.out.println("pageDirectoryBaseAddress=" + pageDirectoryBaseAddress);
+					BigInteger physicalAddress = pageDirectoryBaseAddress.add(CommonLib.getBigInteger(linearAddress, 21, 0));
+					model.physicalAddress.add(physicalAddress);
+
+					bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
+				}
+			}
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
-		} else if (searchAddressRadioButton3.isSelected()) {
+		} else if (searchPhysicalAddressRadioButton.isSelected()) {
 			for (int x = 0; x < model.getRowCount(); x++) {
 				if (model.searchType.get(x).equals(3) && model.searchAddress.get(x).equals(CommonLib.string2long(this.addressTextField.getText()))) {
 					return;
@@ -5936,7 +5943,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void addressTextFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
-			jRefreshAddressTranslateButtonActionPerformed(null);
+			refreshAddressTranslateButtonActionPerformed(null);
 		}
 	}
 

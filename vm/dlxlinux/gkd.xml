@@ -23,6 +23,7 @@
     <string>0x0</string>
     <string>0x00000000</string>
     <string>0x000000101000</string>
+    <string>0x101C28</string>
     <string>0x10992c</string>
     <string>0x10f558</string>
     <string>0x12</string>
@@ -55,7 +56,7 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>124</x>
+  <x>232</x>
   <y>22</y>
   <width>1558</width>
   <height>956</height>

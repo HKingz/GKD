@@ -62,6 +62,8 @@ public class AddressTranslateTableModel extends DefaultTableModel {
 				} else {
 					return "0x" + searchAddress.get(row).toString(16);
 				}
+			} else if (column == 5 || column == 10) {
+				return "0x" + ((BigInteger) data[column - 2].get(row)).toString(16);
 			} else if (data[column - 2].get(row).getClass() == Long.class) {
 				return "0x" + Long.toHexString((Long) data[column - 2].get(row));
 			} else if (data[column - 2].get(row).getClass() == Integer.class) {
