@@ -488,6 +488,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
 	private JProgressBarDialog progressBarDialog = new JProgressBarDialog();
 
+	StepThread stepThread;
+
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
 			"Disp Enb Address", MyLanguage.getString("Hit") }) {
 		public boolean isCellEditable(int row, int col) {
@@ -1399,28 +1401,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		new AboutUsDialog(this).setVisible(true);
 	}
 
-	StepThread untilThread;
-
 	private void stepVMButtonActionPerformed(ActionEvent evt) {
 		if (stepVMButton.getEventSource() != null) {
-			untilThread = new StepThread(stepVMButton.getEventSource());
+			stepThread = new StepThread(stepVMButton.getEventSource());
 			if (stepVMButton.getEventSource() == stepNMenuItem) {
 				String s = JOptionPane.showInputDialog(this, "Please input the instruction count?");
 				if (s == null) {
 					return;
 				}
-				untilThread.instructionCount = Integer.parseInt(s);
+				stepThread.instructionCount = Integer.parseInt(s);
 			} else if (stepVMButton.getEventSource() == stepUntilIPBigChangeMenuItem) {
 				String s = JOptionPane.showInputDialog("Please input the instruction count?");
 				if (s == null) {
 					return;
 				}
-				untilThread.ipDelta = CommonLib.string2long(s);
+				stepThread.ipDelta = CommonLib.string2long(s);
 			}
 
 			CardLayout cl = (CardLayout) (mainPanel.getLayout());
 			cl.show(mainPanel, "Running Panel");
-			new Thread(untilThread, "Step until thread").start();
+			new Thread(stepThread, "Step until thread").start();
 		} else {
 			VMController.getVM().singleStep();
 			WebServiceUtil.log("gkd", "step", null, null, null);
@@ -1440,15 +1440,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		private String update(String result, DataOutputStream out) {
-			BigInteger cs;
-			if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
-				cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-			} else {
-				cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+			BigInteger address = null;
+			if (registerPanel.csTextField.getBase() != null && !registerPanel.csTextField.getBase().equals("")) {
+				address = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 			}
 			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+			BigInteger cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
 
-			String instruction = VMController.getVM().instruction(null, cs, eip, is32Bits()).get(0)[2];
+			String instruction = VMController.getVM().instruction(address, cs, eip, is32Bits()).get(0)[2];
 			if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
 				if (instruction.endsWith("\n")) {
 					instruction = instruction.substring(0, instruction.length() - 1);
@@ -1460,7 +1459,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			updatePTime(false);
-			updateRegister(false);
+			//			updateRegister(false);
 			updateHistoryTable(instruction);
 			if (saveToRunDotTxt) {
 				try {
@@ -7253,8 +7252,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void pauseButtonActionPerformed(ActionEvent evt) {
-		if (untilThread != null) {
-			untilThread.shouldStop = true;
+		if (stepThread != null) {
+			stepThread.shouldStop = true;
 		}
 	}
 
@@ -7942,20 +7941,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void stepOverDropDownButtonActionPerformed(ActionEvent evt) {
 		if (stepOverDropDownButton.getEventSource() != null) {
-			untilThread = new StepThread(stepOverDropDownButton.getEventSource());
+			stepThread = new StepThread(stepOverDropDownButton.getEventSource());
 			if (stepOverDropDownButton.getEventSource() == stepOverNTimesMenuItem) {
 				String s = JOptionPane.showInputDialog("Please input the instruction count?");
 				if (s == null) {
 					return;
 				}
-				untilThread.instructionCount = Integer.parseInt(s);
+				stepThread.instructionCount = Integer.parseInt(s);
 			}
 
 			// if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
 			CardLayout cl = (CardLayout) (mainPanel.getLayout());
 			cl.show(mainPanel, "Running Panel");
 			// }
-			new Thread(untilThread, "Step until thread").start();
+			new Thread(stepThread, "Step until thread").start();
 		} else {
 			VMController.getVM().stepOver();
 			WebServiceUtil.log("gkd", "step over", null, null, null);

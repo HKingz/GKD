@@ -192,15 +192,15 @@ public class BochsStub implements VMStub {
 	}
 
 	@Override
-	public Vector<String[]> instruction(BigInteger address, BigInteger csBaseAddress, BigInteger eip, boolean is32Bit) {
-		logger.debug("updateInstruction " + address + ", " + csBaseAddress + ", " + eip);
+	public Vector<String[]> instruction(BigInteger address, BigInteger cs, BigInteger eip, boolean is32Bit) {
+		logger.debug("updateInstruction " + address + ", " + cs + ", " + eip);
 		Vector<String[]> r = new Vector<String[]>();
 		//		final int maximumLine = 400;
 		//String command;
 		//		int bits = is32Bit ? 32 : 16;
 		if (address == null) {
 			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
-			address = csBaseAddress.add(eip);
+			address = cs.add(eip);
 			//command = "disasm -b " + bits + " " + address + " " + address.add(BigInteger.valueOf(0x400));
 			//command = "disasm -b " + bits + " cs:0x" + eip.toString(16) + " 0x" + csOrBaseAddress.toString(16) + ":0x" + eip.add(BigInteger.valueOf(0x400)).toString(16);
 		} else {
