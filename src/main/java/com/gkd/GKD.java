@@ -1446,7 +1446,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 			BigInteger cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-
+			System.out.println(address.toString(16) + " = " + eip.toString(16));
 			String instruction = VMController.getVM().instruction(address, cs, eip, is32Bits()).get(0)[2];
 			if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
 				if (instruction.endsWith("\n")) {
@@ -1459,7 +1459,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			updatePTime(false);
-			//			updateRegister(false);
+			updateRegister(false);
 			updateHistoryTable(instruction);
 			if (saveToRunDotTxt) {
 				try {
@@ -1490,6 +1490,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					result = "";
 				}
 			}
+			System.out.println("-----------------------------------------------------------------------------");
 			return result;
 		}
 
@@ -2602,6 +2603,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (ht == null) {
 			return;
 		}
+		System.out.println("ht.get(ip)=" + ht.get("ip"));
 		changeText(this.registerPanel.eaxTextField, CommonLib.string2BigInteger(ht.get("ax")));
 		changeText(this.registerPanel.ebxTextField, CommonLib.string2BigInteger(ht.get("bx")));
 		changeText(this.registerPanel.ecxTextField, CommonLib.string2BigInteger(ht.get("cx")));
