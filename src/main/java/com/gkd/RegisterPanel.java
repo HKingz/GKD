@@ -250,7 +250,7 @@ public class RegisterPanel extends JPanel {
 			pTimeLabel.setText("ptime");
 
 			pTimeTextField = new JTextField();
-			pTimeTextField.putClientProperty("NoBorder", true);
+			pTimeTextField.putClientProperty("brighter", true);
 			mainPanel.add(pTimeTextField, "cell 11 6 3 1,growx,aligny center");
 
 			gsLabel = new JLabel();
@@ -272,7 +272,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			espTextField = new JTextField();
-			espTextField.putClientProperty("NoBorder", true);
+			espTextField.putClientProperty("brighter", true);
 			mainPanel.add(espTextField, "cell 11 7 3 1,growx,aligny center");
 			espTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -339,7 +339,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eipTextField = new JTextField();
-			eipTextField.putClientProperty("NoBorder", true);
+			eipTextField.putClientProperty("brighter", true);
 			mainPanel.add(eipTextField, "cell 2 3,growx,aligny center");
 			eipTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -364,14 +364,14 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eflagsTextField = new JTextField();
-			eflagsTextField.putClientProperty("NoBorder", true);
+			eflagsTextField.putClientProperty("brighter", true);
 			mainPanel.add(eflagsTextField, "cell 2 9,growx,aligny center");
 
 			eflagLabel = new JLabel("-");
 			mainPanel.add(eflagLabel, "cell 4 9 8 1,growx,aligny center");
 
 			stackList = new JList();
-			stackList.putClientProperty("NoBorder", true);
+			stackList.putClientProperty("brighter", true);
 			stackList.setBorder(new LineBorder(new java.awt.Color(200, 200, 200), 1, false));
 
 			st0Label = new JLabel();
@@ -379,7 +379,7 @@ public class RegisterPanel extends JPanel {
 			mainPanel.add(st0Label, "cell 1 10");
 
 			st0TextField = new JTextField();
-			st0TextField.putClientProperty("NoBorder", true);
+			st0TextField.putClientProperty("brighter", true);
 			mainPanel.add(st0TextField, "cell 2 10 4 1,growx,aligny center");
 
 			mm0Label = new JLabel();
@@ -387,7 +387,7 @@ public class RegisterPanel extends JPanel {
 			mm0Label.setText("MM0");
 
 			mmx0TextField = new JTextField();
-			mmx0TextField.putClientProperty("NoBorder", true);
+			mmx0TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx0TextField, "cell 8 10 4 1,growx,aligny center");
 
 			st1Label = new JLabel();
@@ -395,7 +395,7 @@ public class RegisterPanel extends JPanel {
 			mainPanel.add(st1Label, "flowx,cell 1 11");
 
 			st1TextField = new JTextField();
-			st1TextField.putClientProperty("NoBorder", true);
+			st1TextField.putClientProperty("brighter", true);
 			mainPanel.add(st1TextField, "cell 2 11 4 1,growx,aligny center");
 
 			mm1Label = new JLabel();
@@ -403,7 +403,7 @@ public class RegisterPanel extends JPanel {
 			mm1Label.setText("MM1");
 
 			mmx1TextField = new JTextField();
-			mmx1TextField.putClientProperty("NoBorder", true);
+			mmx1TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx1TextField, "cell 8 11 4 1,growx,aligny center");
 
 			st2Label = new JLabel();
@@ -411,7 +411,7 @@ public class RegisterPanel extends JPanel {
 			st2Label.setText("ST2");
 
 			st2TextField = new JTextField();
-			st2TextField.putClientProperty("NoBorder", true);
+			st2TextField.putClientProperty("brighter", true);
 			mainPanel.add(st2TextField, "cell 2 12 4 1,growx,aligny center");
 
 			mm2Label = new JLabel();
@@ -419,7 +419,7 @@ public class RegisterPanel extends JPanel {
 			mm2Label.setText("MM2");
 
 			mmx2TextField = new JTextField();
-			mmx2TextField.putClientProperty("NoBorder", true);
+			mmx2TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx2TextField, "cell 8 12 4 1,growx,aligny center");
 
 			st3Label = new JLabel();
@@ -427,7 +427,7 @@ public class RegisterPanel extends JPanel {
 			st3Label.setText("ST3");
 
 			st3TextField = new JTextField();
-			st3TextField.putClientProperty("NoBorder", true);
+			st3TextField.putClientProperty("brighter", true);
 			mainPanel.add(st3TextField, "cell 2 13 4 1,growx,aligny center");
 
 			mm3Label = new JLabel();
@@ -435,7 +435,7 @@ public class RegisterPanel extends JPanel {
 			mm3Label.setText("MM3");
 
 			mmx3TextField = new JTextField();
-			mmx3TextField.putClientProperty("NoBorder", true);
+			mmx3TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx3TextField, "cell 8 13 4 1,growx,aligny center");
 
 			st4Label = new JLabel();
@@ -443,7 +443,7 @@ public class RegisterPanel extends JPanel {
 			st4Label.setText("ST4");
 
 			st4TextField = new JTextField();
-			st4TextField.putClientProperty("NoBorder", true);
+			st4TextField.putClientProperty("brighter", true);
 			mainPanel.add(st4TextField, "cell 2 14 4 1,growx,aligny center");
 
 			mm4Label = new JLabel();
@@ -451,7 +451,7 @@ public class RegisterPanel extends JPanel {
 			mm4Label.setText("MM4");
 
 			mmx4TextField = new JTextField();
-			mmx4TextField.putClientProperty("NoBorder", true);
+			mmx4TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx4TextField, "cell 8 14 4 1,growx,aligny center");
 
 			stackScrollPane = new JScrollPane();
@@ -463,7 +463,7 @@ public class RegisterPanel extends JPanel {
 			st5Label.setText("ST5");
 
 			st5TextField = new JTextField();
-			st5TextField.putClientProperty("NoBorder", true);
+			st5TextField.putClientProperty("brighter", true);
 			mainPanel.add(st5TextField, "cell 2 15 4 1,growx,aligny center");
 
 			mm5Label = new JLabel();
@@ -471,7 +471,7 @@ public class RegisterPanel extends JPanel {
 			mm5Label.setText("MM5");
 
 			mmx5TextField = new JTextField();
-			mmx5TextField.putClientProperty("NoBorder", true);
+			mmx5TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx5TextField, "cell 8 15 4 1,growx,aligny center");
 
 			st6Label = new JLabel();
@@ -479,7 +479,7 @@ public class RegisterPanel extends JPanel {
 			st6Label.setText("ST6");
 
 			st6TextField = new JTextField();
-			st6TextField.putClientProperty("NoBorder", true);
+			st6TextField.putClientProperty("brighter", true);
 			mainPanel.add(st6TextField, "cell 2 16 4 1,growx,aligny center");
 
 			mm6Label = new JLabel();
@@ -487,7 +487,7 @@ public class RegisterPanel extends JPanel {
 			mm6Label.setText("MM6");
 
 			mmx6TextField = new JTextField();
-			mmx6TextField.putClientProperty("NoBorder", true);
+			mmx6TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx6TextField, "cell 8 16 4 1,growx,aligny center");
 
 			st7Label = new JLabel();
@@ -495,7 +495,7 @@ public class RegisterPanel extends JPanel {
 			st7Label.setText("ST7");
 
 			st7TextField = new JTextField();
-			st7TextField.putClientProperty("NoBorder", true);
+			st7TextField.putClientProperty("brighter", true);
 			mainPanel.add(st7TextField, "cell 2 17 4 1,growx,aligny center");
 
 			mm7Label = new JLabel();
@@ -503,7 +503,7 @@ public class RegisterPanel extends JPanel {
 			mm7Label.setText("MM7");
 
 			mmx7TextField = new JTextField();
-			mmx7TextField.putClientProperty("NoBorder", true);
+			mmx7TextField.putClientProperty("brighter", true);
 			mainPanel.add(mmx7TextField, "cell 8 17 4 1,growx,aligny center");
 
 			jLabel1 = new JLabel();
@@ -511,7 +511,7 @@ public class RegisterPanel extends JPanel {
 			jLabel1.setText("Status");
 
 			fpuStatusTextField = new JTextField();
-			fpuStatusTextField.putClientProperty("NoBorder", true);
+			fpuStatusTextField.putClientProperty("brighter", true);
 			mainPanel.add(fpuStatusTextField, "cell 2 18 4 1,growx,aligny center");
 
 			fcsLabel = new JLabel();
@@ -519,7 +519,7 @@ public class RegisterPanel extends JPanel {
 			fcsLabel.setText("fcs");
 
 			fcsTextField = new JTextField();
-			fcsTextField.putClientProperty("NoBorder", true);
+			fcsTextField.putClientProperty("brighter", true);
 			mainPanel.add(fcsTextField, "cell 8 18 4 1,growx,aligny center");
 
 			jLabel2 = new JLabel();
@@ -527,7 +527,7 @@ public class RegisterPanel extends JPanel {
 			jLabel2.setText("Control");
 
 			fpuControlTextField = new JTextField();
-			fpuControlTextField.putClientProperty("NoBorder", true);
+			fpuControlTextField.putClientProperty("brighter", true);
 			mainPanel.add(fpuControlTextField, "cell 2 19 4 1,growx,aligny center");
 
 			fdpLabel = new JLabel();
@@ -535,7 +535,7 @@ public class RegisterPanel extends JPanel {
 			fdpLabel.setText("fdp");
 
 			fdpTextField = new JTextField();
-			fdpTextField.putClientProperty("NoBorder", true);
+			fdpTextField.putClientProperty("brighter", true);
 			mainPanel.add(fdpTextField, "cell 8 19 4 1,growx,aligny center");
 
 			jLabel3 = new JLabel();
@@ -543,7 +543,7 @@ public class RegisterPanel extends JPanel {
 			jLabel3.setText("Tag");
 
 			fpuTagTextField = new JTextField();
-			fpuTagTextField.putClientProperty("NoBorder", true);
+			fpuTagTextField.putClientProperty("brighter", true);
 			mainPanel.add(fpuTagTextField, "cell 2 20 4 1,growx,aligny center");
 
 			fdsLabel = new JLabel();
@@ -551,7 +551,7 @@ public class RegisterPanel extends JPanel {
 			fdsLabel.setText("fds");
 
 			fdsTextField = new JTextField();
-			fdsTextField.putClientProperty("NoBorder", true);
+			fdsTextField.putClientProperty("brighter", true);
 			mainPanel.add(fdsTextField, "cell 8 20 4 1,growx,aligny center");
 
 			jLabel4 = new JLabel();
@@ -559,7 +559,7 @@ public class RegisterPanel extends JPanel {
 			jLabel4.setText("Operand");
 
 			fpuOperandTextField = new JTextField();
-			fpuOperandTextField.putClientProperty("NoBorder", true);
+			fpuOperandTextField.putClientProperty("brighter", true);
 			mainPanel.add(fpuOperandTextField, "cell 2 21 4 1,growx,aligny center");
 
 			eaxLabel = new JLabel();
@@ -626,7 +626,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			eaxTextField = new JTextField();
-			eaxTextField.putClientProperty("NoBorder", true);
+			eaxTextField.putClientProperty("brighter", true);
 			mainPanel.add(eaxTextField, "cell 5 2,growx,aligny center");
 			eaxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -635,7 +635,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ebxTextField = new JTextField();
-			ebxTextField.putClientProperty("NoBorder", true);
+			ebxTextField.putClientProperty("brighter", true);
 			mainPanel.add(ebxTextField, "cell 5 3,growx,aligny center");
 			ebxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -644,7 +644,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ecxTextField = new JTextField();
-			ecxTextField.putClientProperty("NoBorder", true);
+			ecxTextField.putClientProperty("brighter", true);
 			mainPanel.add(ecxTextField, "cell 5 4,growx,aligny center");
 			ecxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -653,7 +653,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			edxTextField = new JTextField();
-			edxTextField.putClientProperty("NoBorder", true);
+			edxTextField.putClientProperty("brighter", true);
 			mainPanel.add(edxTextField, "cell 5 5,growx,aligny center");
 			edxTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -662,7 +662,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			esiTextField = new JTextField();
-			esiTextField.putClientProperty("NoBorder", true);
+			esiTextField.putClientProperty("brighter", true);
 			mainPanel.add(esiTextField, "cell 5 6,growx,aligny center");
 			esiTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -671,7 +671,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ediTextField = new JTextField();
-			ediTextField.putClientProperty("NoBorder", true);
+			ediTextField.putClientProperty("brighter", true);
 			mainPanel.add(ediTextField, "cell 5 7,growx,aligny center");
 			ediTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -680,7 +680,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ebpTextField = new JTextField();
-			ebpTextField.putClientProperty("NoBorder", true);
+			ebpTextField.putClientProperty("brighter", true);
 			mainPanel.add(ebpTextField, "cell 5 8,growx,aligny center");
 			ebpTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -698,7 +698,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr0TextField = new JTextField();
-			cr0TextField.putClientProperty("NoBorder", true);
+			cr0TextField.putClientProperty("brighter", true);
 			mainPanel.add(cr0TextField, "cell 8 2,growx,aligny center");
 			cr0TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -716,7 +716,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr2TextField = new JTextField();
-			cr2TextField.putClientProperty("NoBorder", true);
+			cr2TextField.putClientProperty("brighter", true);
 			mainPanel.add(cr2TextField, "cell 8 5,growx,aligny center");
 			cr2TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -734,7 +734,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr3TextField = new JTextField();
-			cr3TextField.putClientProperty("NoBorder", true);
+			cr3TextField.putClientProperty("brighter", true);
 			mainPanel.add(cr3TextField, "cell 8 6,growx,aligny center");
 			cr3TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -752,7 +752,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			cr4TextField = new JTextField();
-			cr4TextField.putClientProperty("NoBorder", true);
+			cr4TextField.putClientProperty("brighter", true);
 			mainPanel.add(cr4TextField, "cell 8 7,growx,aligny center");
 			cr4TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -761,7 +761,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			gdtrTextField = new JTextField();
-			gdtrTextField.putClientProperty("NoBorder", true);
+			gdtrTextField.putClientProperty("brighter", true);
 			mainPanel.add(gdtrTextField, "cell 11 2,growx,aligny center");
 			gdtrTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -779,7 +779,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			gdtrLimitTextField = new JTextField();
-			gdtrLimitTextField.putClientProperty("NoBorder", true);
+			gdtrLimitTextField.putClientProperty("brighter", true);
 			mainPanel.add(gdtrLimitTextField, "cell 13 2,growx,aligny center");
 
 			ldtrLabel = new JLabel();
@@ -792,7 +792,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			ldtrTextField = new JTextField();
-			ldtrTextField.putClientProperty("NoBorder", true);
+			ldtrTextField.putClientProperty("brighter", true);
 			mainPanel.add(ldtrTextField, "cell 11 3,growx,aligny center");
 			ldtrTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -810,7 +810,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			idtrTextField = new JTextField();
-			idtrTextField.putClientProperty("NoBorder", true);
+			idtrTextField.putClientProperty("brighter", true);
 			mainPanel.add(idtrTextField, "cell 11 4,growx,aligny center");
 			idtrTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -819,7 +819,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			idtrLimitTextField = new JTextField();
-			idtrLimitTextField.putClientProperty("NoBorder", true);
+			idtrLimitTextField.putClientProperty("brighter", true);
 			mainPanel.add(idtrLimitTextField, "cell 13 4,growx,aligny center");
 
 			trLabel = new JLabel();
@@ -832,7 +832,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			trTextField = new JTextField();
-			trTextField.putClientProperty("NoBorder", true);
+			trTextField.putClientProperty("brighter", true);
 			mainPanel.add(trTextField, "cell 11 5 3 1,growx,aligny center");
 			trTextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -901,7 +901,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr0TextField = new JTextField();
-			dr0TextField.putClientProperty("NoBorder", true);
+			dr0TextField.putClientProperty("brighter", true);
 			mainPanel.add(dr0TextField, "cell 16 2,growx,aligny center");
 			dr0TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -910,7 +910,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr1TextField = new JTextField();
-			dr1TextField.putClientProperty("NoBorder", true);
+			dr1TextField.putClientProperty("brighter", true);
 			mainPanel.add(dr1TextField, "cell 16 3,growx,aligny center");
 			dr1TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -919,7 +919,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr2TextField = new JTextField();
-			dr2TextField.putClientProperty("NoBorder", true);
+			dr2TextField.putClientProperty("brighter", true);
 			mainPanel.add(dr2TextField, "cell 16 4,growx,aligny center");
 			dr2TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -928,7 +928,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr3TextField = new JTextField();
-			dr3TextField.putClientProperty("NoBorder", true);
+			dr3TextField.putClientProperty("brighter", true);
 			mainPanel.add(dr3TextField, "cell 16 5,growx,aligny center");
 			dr3TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -937,7 +937,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr6TextField = new JTextField();
-			dr6TextField.putClientProperty("NoBorder", true);
+			dr6TextField.putClientProperty("brighter", true);
 			mainPanel.add(dr6TextField, "cell 16 6,growx,aligny center");
 			dr6TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -946,7 +946,7 @@ public class RegisterPanel extends JPanel {
 			});
 
 			dr7TextField = new JTextField();
-			dr7TextField.putClientProperty("NoBorder", true);
+			dr7TextField.putClientProperty("brighter", true);
 			mainPanel.add(dr7TextField, "cell 16 7,growx,aligny center");
 			dr7TextField.addKeyListener(new KeyAdapter() {
 				public void keyTyped(KeyEvent evt) {
@@ -959,7 +959,7 @@ public class RegisterPanel extends JPanel {
 			fipLabel.setText("fip");
 
 			fipTextField = new JTextField();
-			fipTextField.putClientProperty("NoBorder", true);
+			fipTextField.putClientProperty("brighter", true);
 			mainPanel.add(fipTextField, "cell 8 21 4 1,growx,aligny center");
 
 			for (final Component component : mainPanel.getComponents()) {

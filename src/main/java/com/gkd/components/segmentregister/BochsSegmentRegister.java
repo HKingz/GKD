@@ -17,19 +17,19 @@ public class BochsSegmentRegister extends SegmentRegister {
 		valueTextField = new JTextField();
 		valueTextField.setEditable(false);
 		valueTextField.setToolTipText("Value");
-		valueTextField.putClientProperty("NoBorder", true);
+		valueTextField.putClientProperty("brighter", true);
 		add(valueTextField, "cell 0 0,grow");
 		valueTextField.setColumns(10);
 
 		baseTextField = new JTextField();
 		valueTextField.setToolTipText("Base");
-		baseTextField.putClientProperty("NoBorder", true);
+		baseTextField.putClientProperty("brighter", true);
 		add(baseTextField, "cell 1 0,growy");
 		baseTextField.setColumns(10);
 
 		limitTextField = new JTextField();
 		valueTextField.setToolTipText("Limit");
-		limitTextField.putClientProperty("NoBorder", true);
+		limitTextField.putClientProperty("brighter", true);
 		add(limitTextField, "flowx,cell 2 0,growy");
 		limitTextField.setColumns(10);
 	}
