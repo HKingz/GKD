@@ -2246,6 +2246,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void updatePageTable(BigInteger pageDirectoryBaseAddress) {
+		if (CommonLib.getBit(CommonLib.string2long(registerPanel.cr0TextField.getText()), 31) == 0) {
+			return;
+		}
 		statusLabel.setText("Updating page table");
 		PageDirectoryTableModel model = (PageDirectoryTableModel) pageDirectoryTable.getModel();
 		while (model.getRowCount() > 0) {
