@@ -56,12 +56,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>125</x>
-  <y>66</y>
-  <width>1650</width>
-  <height>902</height>
+  <x>12</x>
+  <y>35</y>
+  <width>1167</width>
+  <height>628</height>
   <divX>637</divX>
-  <divY>407</divY>
+  <divY>268</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
