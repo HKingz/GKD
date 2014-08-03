@@ -2628,7 +2628,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		changeText(this.registerPanel.trTextField, CommonLib.string2BigInteger(ht.get("tr")));
 		registerPanel.eflagLabel.setText(ht.get("eflagsDetail"));
 
-		cpuModeLabel.setText(ht.get("model"));
+		cpuModeLabel.setText(ht.get("mode"));
 		changeText(this.registerPanel.cr0TextField, CommonLib.string2BigInteger(ht.get("cr0")));
 		registerPanel.cr0DetailLabel.setText(ht.get("cr0Detail"));
 		registerPanel.cr0DetailLabel2.setText(ht.get("cr0Detail2"));
