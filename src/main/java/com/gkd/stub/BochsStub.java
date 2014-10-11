@@ -112,6 +112,7 @@ public class BochsStub implements VMStub {
 
 			String versionLines[] = commandReceiver.getCommandResult().split("\n");
 			for (String line : versionLines) {
+				line = line.trim(); // string::matches will break is string contains \r
 				if (line.contains("Bochs x86 Emulator")) {
 					version = line.trim();
 				}
@@ -312,6 +313,7 @@ public class BochsStub implements VMStub {
 			String lines[] = result.split("\n");
 
 			for (String line : lines) {
+				line = line.trim(); // string::matches will break is string contains \r
 				if (line.matches(".*.ax:.*")) {
 					ht.put("ax", line.replaceAll(":", "").replaceAll("^.*ax", "").split(" ")[1].replaceAll("_", ""));
 				} else if (line.matches(".*.bx:.*")) {
@@ -432,6 +434,7 @@ public class BochsStub implements VMStub {
 				String[] lines = result.split("\n");
 
 				for (String line : lines) {
+					line = line.trim(); // string::matches will break is string contains \r
 					line = line.replaceFirst("<.*>", "");
 					String str[] = line.split(" ");
 
@@ -472,6 +475,7 @@ public class BochsStub implements VMStub {
 
 				for (int x = 0; x < lines.length; x++) {
 					String line = lines[x];
+					line = line.trim(); // string::matches will break is string contains \r
 					line = line.replaceFirst("<.*>", "");
 					String str[] = line.split(" ");
 
@@ -515,6 +519,7 @@ public class BochsStub implements VMStub {
 
 			for (String line : lines) {
 				if (line.matches(".*CR0=.*")) {
+					line = line.trim(); // string::matches will break is string contains \r
 					line = line.replaceFirst("^.*CR0", "CR0");
 					ht.put("cr0", line.split(" ")[0].split("=")[1].replace(":", ""));
 
@@ -562,6 +567,7 @@ public class BochsStub implements VMStub {
 				String[] lines = result.split("\n");
 
 				for (String line : lines) {
+					line = line.trim(); // string::matches will break is string contains \r
 					if (line.matches(".*DR0=0x.*")) {
 						ht.put("dr0", line.split("=")[1].split(":")[0]);
 					} else if (line.matches(".*DR1=0x.*")) {
@@ -587,6 +593,7 @@ public class BochsStub implements VMStub {
 			String[] lines = result.split("\n");
 
 			for (String line : lines) {
+				line = line.trim(); // string::matches will break is string contains \r
 				if (line.matches(".*ST0.*")) {
 					ht.put("st0", line.replaceAll("^.*raw", "").split(":")[0]);
 				} else if (line.matches(".*ST1.*")) {
@@ -632,6 +639,7 @@ public class BochsStub implements VMStub {
 			String[] lines = result.split("\n");
 
 			for (String line : lines) {
+				line = line.trim(); // string::matches will break is string contains \r
 				if (line.matches(".*MM\\[0\\].*")) {
 					ht.put("mm0", line.replaceAll("^.*]:", "").trim().replaceAll("_", ""));
 				} else if (line.matches(".*MM\\[1\\].*")) {
