@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gkd>
 	<vmType>bochs</vmType>
-	<vm>/Users/peter/download/bochs-2.6.6-install/bin/bochs</vm>
+	<vm>C:\Program Files (x86)\Bochs-2.6.6\bochsdbg.exe</vm>
 	<vmArguments>-f bochsrc.txt -q</vmArguments>
 	<vncPort>5900</vncPort>
 	<ndisasm>/opt/local/bin/ndisasm</ndisasm>

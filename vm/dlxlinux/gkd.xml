@@ -18,6 +18,9 @@
     <string>help</string>
     <string>page</string>
     <string>info tab</string>
+    <string>cregs</string>
+    <string></string>
+    <string>creg</string>
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
@@ -56,12 +59,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>289</x>
-  <y>71</y>
+  <x>125</x>
+  <y>59</y>
   <width>1381</width>
   <height>893</height>
-  <divX>637</divX>
-  <divY>468</divY>
+  <divX>747</divX>
+  <divY>542</divY>
   <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

@@ -518,9 +518,9 @@ public class BochsStub implements VMStub {
 			String[] lines = result.split("\n");
 
 			for (String line : lines) {
+				line = line.trim(); // string::matches will break is string contains \r
+				line = line.replaceFirst("^.*CR0", "CR0");
 				if (line.matches(".*CR0=.*")) {
-					line = line.trim(); // string::matches will break is string contains \r
-					line = line.replaceFirst("^.*CR0", "CR0");
 					ht.put("cr0", line.split(" ")[0].split("=")[1].replace(":", ""));
 
 					if (CommonLib.getBit(CommonLib.string2long(ht.get("cr0")), 0) == 1) {
