@@ -174,8 +174,11 @@ public class BochsStub implements VMStub {
 				pb = new ProcessBuilder("PauseBochs.exe");
 				p = pb.start();
 			}
+			logger.debug("pauseVM 1");
 			p.waitFor();
+			logger.debug("pauseVM 2");
 			commandReceiver.getCommandResult();
+			logger.debug("pauseVM 3");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
@@ -859,7 +862,7 @@ public class BochsStub implements VMStub {
 		String result = sendBochsCommand("info break");
 		String[] lines = result.split("\n");
 
-		for (int x = 1; x < lines.length; x++) {
+		for (int x = 0; x < lines.length; x++) {
 			if (lines[x].contains("breakpoint")) {
 				Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
 				strs.add("0"); // hit count
@@ -973,13 +976,14 @@ public class BochsStub implements VMStub {
 
 	@Override
 	public void waitVMStop() {
-		//		String result = commandReceiver.getCommandResult();
-		try {
-			while (!commandReceiver.br.ready())
-				;
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		String result = commandReceiver.getCommandResult();
+		//		try {
+		//			while (!commandReceiver.br.ready()) {
+		//				Thread.sleep(100);
+		//			}
+		//		} catch (Exception e) {
+		//			e.printStackTrace();
+		//		}
 	}
 
 }

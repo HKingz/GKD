@@ -16,15 +16,15 @@ public class CommandReceiver {
 		br = new BufferedReader(new InputStreamReader(is), 1024);
 	}
 
-	//	public void clearBuffer() {
-	//		try {
-	//			while (br.ready()) {
-	//				int temp = br.read();
-	//			}
-	//		} catch (IOException e) {
-	//			e.printStackTrace();
-	//		}
-	//	}
+	// public void clearBuffer() {
+	// try {
+	// while (br.ready()) {
+	// int temp = br.read();
+	// }
+	// } catch (IOException e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	public String getCommandResult() {
 		String line = "";
@@ -38,14 +38,15 @@ public class CommandReceiver {
 				line += c;
 				str += c;
 				if (c == '\n') {
+					//					System.out.println(line);
 					line = "";
 				}
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
-					//					clearBuffer();
-					//remove first line
+					// clearBuffer();
+					// remove first line
 					str = str.substring(str.indexOf('\n') + 1);
-					//remove last line
+					// remove last line
 					if (str.lastIndexOf('\n') >= 0) {
 						str = str.substring(0, str.lastIndexOf('\n'));
 					}
