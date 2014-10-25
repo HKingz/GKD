@@ -976,14 +976,7 @@ public class BochsStub implements VMStub {
 
 	@Override
 	public void waitVMStop() {
-		String result = commandReceiver.getCommandResult();
-		//		try {
-		//			while (!commandReceiver.br.ready()) {
-		//				Thread.sleep(100);
-		//			}
-		//		} catch (Exception e) {
-		//			e.printStackTrace();
-		//		}
+		commandReceiver.getCommandResult();
 	}
 
 }

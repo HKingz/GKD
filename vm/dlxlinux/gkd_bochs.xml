@@ -5,5 +5,6 @@
 	<vmArguments>-f bochsrc.txt -q</vmArguments>
 	<vncPort>5900</vncPort>
 	<ndisasm>/opt/local/bin/ndisasm</ndisasm>
+	<loadBreakpoint>true</loadBreakpoint>
 </gkd>
 

@@ -21,6 +21,8 @@
     <string>cregs</string>
     <string></string>
     <string>creg</string>
+    <string>info b</string>
+    <string>sregs</string>
   </vmCommandHistory>
   <memoryCombo>
     <string>0x0</string>
@@ -48,9 +50,9 @@
   <breakpoint>
     <com.gkd.Breakpoint>
       <no>0</no>
-      <type>pbreakpoint</type>
+      <type>keep y</type>
       <address>31744</address>
-      <enable>pbreakpoint</enable>
+      <enable>keep y</enable>
       <hit>0</hit>
     </com.gkd.Breakpoint>
   </breakpoint>
@@ -59,8 +61,8 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>14</fontsize>
   <fontFamily>Serif</fontFamily>
-  <x>125</x>
-  <y>59</y>
+  <x>269</x>
+  <y>53</y>
   <width>1381</width>
   <height>893</height>
   <divX>747</divX>
@@ -77,7 +79,7 @@
   <idt/>
   <ldt/>
   <logToPetersoftServer>false</logToPetersoftServer>
-  <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
+  <loadBreakpointAtStartup>true</loadBreakpointAtStartup>
   <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
   <updateAfterGKDCommand>false</updateAfterGKDCommand>
   <updateAfterGKDCommand__register>false</updateAfterGKDCommand__register>
