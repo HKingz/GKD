@@ -14,6 +14,15 @@ public class BochsTests {
 	Process p = null;
 
 	public static void main(String args[]) {
+		String content = "<bochs:36> ";
+		Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*", Pattern.DOTALL);
+		Matcher matcher = pattern.matcher(content);
+		if (matcher.matches()) {
+			System.out.println("yes");
+		} else {
+			System.out.println("no");
+		}
+		System.exit(0);
 		new BochsTests().test();
 
 		//		ProcessBuilder pb = new ProcessBuilder("/Users/peter/download/bochs-2.6.6-install/bin/bochs", "-q", "-f", "bochsrc.txt");
