@@ -1,73 +1,19 @@
 <Setting>
-  <vmCommandHistory>
-    <string>info r</string>
-    <string>r</string>
-    <string>sreg</string>
-    <string>x //20bx 0xc10b9d3</string>
-    <string>x /20bx 0xc10b9d3</string>
-    <string>xp /20bx 0xc10b9d3</string>
-    <string>info gdt</string>
-    <string>info gdt 96</string>
-    <string>info gdt 0 96</string>
-    <string>info gdt 0 2</string>
-    <string>info gdt 0 10</string>
-    <string>info gdt 0 0</string>
-    <string>info gdt 0 1</string>
-    <string>info page</string>
-    <string>info pagetable</string>
-    <string>help</string>
-    <string>page</string>
-    <string>info tab</string>
-    <string>cregs</string>
-    <string></string>
-    <string>creg</string>
-    <string>info b</string>
-    <string>sregs</string>
-  </vmCommandHistory>
-  <memoryCombo>
-    <string>0x0</string>
-    <string>0x00000000</string>
-    <string>0x000000101000</string>
-    <string>0x101C28</string>
-    <string>0x10992c</string>
-    <string>0x10f558</string>
-    <string>0x12</string>
-    <string>0x18</string>
-    <string>0x400000</string>
-    <string>0x60000010</string>
-    <string>0x8b00</string>
-    <string>0x92d</string>
-    <string>0xc0106870</string>
-    <string>0xc0197770</string>
-    <string>0xc10b9d3</string>
-    <string>0xf000</string>
-    <string>0xffff0000</string>
-    <string>0xfffff</string>
-    <string>0xfffffff0</string>
-    <string>0xfffffff000</string>
-    <string>57435</string>
-  </memoryCombo>
-  <breakpoint>
-    <com.gkd.Breakpoint>
-      <no>0</no>
-      <type>keep y</type>
-      <address>31744</address>
-      <enable>keep y</enable>
-      <hit>0</hit>
-    </com.gkd.Breakpoint>
-  </breakpoint>
+  <vmCommandHistory/>
+  <memoryCombo/>
+  <breakpoint/>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
-  <fontsize>14</fontsize>
-  <fontFamily>Serif</fontFamily>
-  <x>269</x>
-  <y>53</y>
-  <width>1381</width>
-  <height>893</height>
-  <divX>747</divX>
-  <divY>542</divY>
-  <osDebugSplitPane__DividerLocation>-1</osDebugSplitPane__DividerLocation>
+  <fontsize>12</fontsize>
+  <fontFamily>Dialog</fontFamily>
+  <x>492</x>
+  <y>48</y>
+  <width>1330</width>
+  <height>919</height>
+  <divX>630</divX>
+  <divY>200</divY>
+  <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
   <physicalAddress/>
@@ -107,7 +53,7 @@
   <jmpProfiling>false</jmpProfiling>
   <interruptProfiling>false</interruptProfiling>
   <profilingUpdateGraph>false</profilingUpdateGraph>
-  <lastElfHistoryOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
-  <lastElfHistoryOpenDir2>/root/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
-  <lastMapOpenDir>/root/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
+  <lastElfHistoryOpenDir>/Users/peter/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir>
+  <lastElfHistoryOpenDir2>/Users/peter/workspace/GKD/vm/dlxlinux/.</lastElfHistoryOpenDir2>
+  <lastMapOpenDir>/Users/peter/workspace/GKD/vm/dlxlinux/.</lastMapOpenDir>
 </Setting>

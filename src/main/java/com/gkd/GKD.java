@@ -740,6 +740,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		progressBarDialog.jProgressBar.setString("Starting VM");
 
 		VMController.getVM().startVM();
+		System.exit(-1);
 
 		progressBarDialog.jProgressBar.setValue(90);
 		progressBarDialog.jProgressBar.setString("Init font");

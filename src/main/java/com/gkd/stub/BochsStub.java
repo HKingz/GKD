@@ -109,7 +109,7 @@ public class BochsStub implements VMStub {
 			InputStream is = p.getInputStream();
 			commandReceiver = new CommandReceiver(is);
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-
+			
 			String versionLines[] = commandReceiver.getCommandResult().split("\n");
 			for (String line : versionLines) {
 				line = line.trim(); // string::matches will break is string contains \r

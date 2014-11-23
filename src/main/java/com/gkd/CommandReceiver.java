@@ -9,14 +9,13 @@ import java.util.regex.Pattern;
 import org.apache.log4j.Logger;
 
 public class CommandReceiver {
-	public InputStream br;
+	public BufferedReader br;
 	public boolean shouldShow;
 	int timeoutSecond = 5;
 	public static Logger logger = Logger.getLogger(CommandReceiver.class);
 
 	public CommandReceiver(InputStream is) {
-		//		br = new BufferedReader(new InputStreamReader(is), 1024);
-		br = is;
+		br = new BufferedReader(new InputStreamReader(is), 1024);
 	}
 
 	// public void clearBuffer() {
@@ -46,11 +45,11 @@ public class CommandReceiver {
 				//					content = "";
 				//				}
 
-				System.out.println("+++" + content + "---");
-				System.out.flush();
+				//				System.out.println("++++" + content + "---");
+				//				System.out.flush();
 				Matcher matcher = pattern.matcher(content);
 				if (matcher.matches()) {
-					System.out.println("\n>>match");
+					System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>match");
 					System.out.flush();
 					// clearBuffer();
 					// remove first line
@@ -59,9 +58,12 @@ public class CommandReceiver {
 					if (str.lastIndexOf('\n') >= 0) {
 						str = str.substring(0, str.lastIndexOf('\n'));
 					}
+					System.out.println("end 1");
 					return str;
 				}
 			}
+
+			System.out.println("end 3");
 
 			//			String line;
 			//			while ((line = br.readLine()) != null) {
@@ -75,6 +77,7 @@ public class CommandReceiver {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
+		System.out.println("end 2");
 		return null;
 	}
 }
