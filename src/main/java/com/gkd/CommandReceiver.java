@@ -49,8 +49,6 @@ public class CommandReceiver {
 				//				System.out.flush();
 				Matcher matcher = pattern.matcher(content);
 				if (matcher.matches()) {
-					System.out.println("\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>match");
-					System.out.flush();
 					// clearBuffer();
 					// remove first line
 					//str = str.substring(str.indexOf('\n') + 1);
@@ -58,7 +56,6 @@ public class CommandReceiver {
 					if (str.lastIndexOf('\n') >= 0) {
 						str = str.substring(0, str.lastIndexOf('\n'));
 					}
-					System.out.println("end 1");
 					return str;
 				}
 			}
