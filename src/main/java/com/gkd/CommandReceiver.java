@@ -19,21 +19,38 @@ public class CommandReceiver {
 	}
 
 	public String getCommandResult() {
-		String content = "";
-		String str = "";
 		Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*", Pattern.DOTALL);
 		try {
 			int x;
+			//			while ((x = br.read()) != -1) {
+			//				char c = (char) x;
+			//				content += c;
+			//				str += c;
+			//				Matcher matcher = pattern.matcher(content);
+			//				if (matcher.matches()) {
+			//					if (str.lastIndexOf('\n') >= 0) {
+			//						str = str.substring(0, str.lastIndexOf('\n'));
+			//					}
+			//					return str;
+			//				}
+			//			}
+
+			StringBuffer content = new StringBuffer(4096);
+
+			String line = "";
 			while ((x = br.read()) != -1) {
 				char c = (char) x;
-				content += c;
-				str += c;
-				Matcher matcher = pattern.matcher(content);
+				content.append(c);
+				line += c;
+				if (content.length() % 10000 == 0) {
+					System.out.println(content.length());
+				}
+				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
-					if (str.lastIndexOf('\n') >= 0) {
-						str = str.substring(0, str.lastIndexOf('\n'));
-					}
-					return str;
+					return content.toString();
+				}
+				if (c == '\n') {
+					line = "";
 				}
 			}
 		} catch (Exception ex) {

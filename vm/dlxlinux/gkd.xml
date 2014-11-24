@@ -1,6 +1,7 @@
 <Setting>
   <vmCommandHistory>
     <string>show &quot;cpu0&quot;</string>
+    <string>cpu &quot;cpu0&quot;</string>
   </vmCommandHistory>
   <memoryCombo/>
   <breakpoint/>
@@ -9,10 +10,10 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>492</x>
-  <y>48</y>
+  <x>44</x>
+  <y>23</y>
   <width>1330</width>
-  <height>919</height>
+  <height>840</height>
   <divX>630</divX>
   <divY>352</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
