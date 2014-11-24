@@ -1,9 +1,15 @@
 package com.gkd;
 
 import java.awt.BorderLayout;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -32,52 +38,60 @@ public class TestBochsCommandParser {
 		}.start();
 		VMController.vmType = VMType.Bochs;
 
-		if (3 > 2) {
+		try {
+			ProcessBuilder pb = new ProcessBuilder(("/toolchain/bin/bochs" + " " + "-q -f bochsrc.txt").split(" "));
+			pb.redirectErrorStream(true);
+			Process p = pb.start();
+			final InputStream is = p.getInputStream();
+			final BufferedWriter commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+
 			try {
-				ProcessBuilder pb = new ProcessBuilder(("/toolchain/bin/bochs" + " " + "-q -f bochsrc.txt").split(" "));
-				pb.redirectErrorStream(true);
-				Process p = pb.start();
-				final InputStream is = p.getInputStream();
-				//				final OutputStream os = p.getOutputStream();
-
-				//			BufferedReader br = new BufferedReader(new InputStreamReader(is), 1024);
-				//			BufferedWriter commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-
-				//			new Thread() {
-				//				public void run() {
-				//					try {
-				//						Thread.sleep(2000);
-				//					} catch (InterruptedException e) {
-				//						e.printStackTrace();
-				//					}
-				//					try {
-				//						System.out.println("r");
-				//						os.write('r');
-				//						os.write('\n');
-				//					} catch (IOException e) {
-				//						e.printStackTrace();
-				//					}
-				//				}
-				//			}.start();
-
-				new Thread() {
-					public void run() {
-						try {
-							int x;
-							byte[] b = new byte[1];
-							while ((x = is.read(b)) != -1) {
-								System.out.print((char) b[0]);
-							}
-						} catch (Exception ex) {
-							ex.printStackTrace();
-						}
+				BufferedReader br = new BufferedReader(new InputStreamReader(is), 1024);
+				int x;
+				StringBuffer content = new StringBuffer(4096);
+				Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*", Pattern.DOTALL);
+				while ((x = br.read()) != -1) {
+					char c = (char) x;
+					content.append(c);
+					Matcher matcher = pattern.matcher(content);
+					if (matcher.matches()) {
+						System.out.println("match");
+						break;
 					}
-				}.start();
-				p.waitFor();
+				}
 
+				commandOutputStream.write("show \"cpu0\"" + "\n");
+				commandOutputStream.flush();
+
+				System.out.println("send r");
+
+				content = new StringBuffer(4096);
+				String line = "";
+				while ((x = is.read()) != -1) {
+					char c = (char) x;
+					content.append(c);
+					line += c;
+					if (content.length() % 10000 == 0) {
+						System.out.println(content.length());
+					}
+					Matcher matcher = pattern.matcher(line);
+					if (matcher.matches()) {
+						System.out.println(content);
+						break;
+					}
+					if (c == '\n') {
+						line = "";
+					}
+				}
+				System.out.println("end=" + content.length());
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}
+
+			p.waitFor();
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
+
 	}
 }

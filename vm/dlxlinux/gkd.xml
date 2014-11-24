@@ -1,5 +1,7 @@
 <Setting>
-  <vmCommandHistory/>
+  <vmCommandHistory>
+    <string>show &quot;cpu0&quot;</string>
+  </vmCommandHistory>
   <memoryCombo/>
   <breakpoint/>
   <sbAddress/>

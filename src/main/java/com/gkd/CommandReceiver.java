@@ -18,16 +18,6 @@ public class CommandReceiver {
 		br = new BufferedReader(new InputStreamReader(is), 1024);
 	}
 
-	// public void clearBuffer() {
-	// try {
-	// while (br.ready()) {
-	// int temp = br.read();
-	// }
-	// } catch (IOException e) {
-	// e.printStackTrace();
-	// }
-	// }
-
 	public String getCommandResult() {
 		String content = "";
 		String str = "";
@@ -36,41 +26,16 @@ public class CommandReceiver {
 			int x;
 			while ((x = br.read()) != -1) {
 				char c = (char) x;
-				System.out.print(c);
-				System.out.flush();
 				content += c;
 				str += c;
-				//				if (c == '\n') {
-				//					System.out.println("\n>>>" + content);
-				//					content = "";
-				//				}
-
-				//				System.out.println("++++" + content + "---");
-				//				System.out.flush();
 				Matcher matcher = pattern.matcher(content);
 				if (matcher.matches()) {
-					// clearBuffer();
-					// remove first line
-					//str = str.substring(str.indexOf('\n') + 1);
-					// remove last line
 					if (str.lastIndexOf('\n') >= 0) {
 						str = str.substring(0, str.lastIndexOf('\n'));
 					}
 					return str;
 				}
 			}
-
-			System.out.println("end 3");
-
-			//			String line;
-			//			while ((line = br.readLine()) != null) {
-			//				str += line + "\n";
-			//				System.out.println(">>>" + line);
-			//				Matcher matcher = pattern.matcher(line);
-			//				if (matcher.matches()) {
-			//					return str;
-			//				}
-			//			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
