@@ -1168,6 +1168,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		try {
 			String command = vmCommandTextField.getText().trim();
 			Global.lastCommand = command;
+			if (Setting.getInstance().vmCommandHistory.contains(command)) {
+				Setting.getInstance().vmCommandHistory.remove(command);
+			}
 			Setting.getInstance().vmCommandHistory.add(command);
 			Setting.getInstance().save();
 
@@ -1179,70 +1182,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				VMController.getVM().stopVM();
 			} else {
 				String r = VMController.getVM().sendVMCommand(command);
-				System.out.println("r="+r);
+				System.out.println("r=" + r);
 				if (r != null) {
 					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + "\n" + r);
 				}
 			}
-
-			//			if (VMController.vmType == VMType.Bochs) {
-			//				if (command.equals("clear")) {
-			//					this.vmCommandEditorPane.setText("");
-			//				} else if (command.equals("c")) {
-			//					runVM();
-			//				} else if (command.equals("q")) {
-			//					VMController.getVM().stopVM();
-			//				} else {
-			//					Setting.getInstance().vmCommandHistory.add(command);
-			//					Setting.getInstance().save();
-			//
-			//
-			//					sendBochsCommand(command);
-			//					if (Setting.getInstance().updateAfterGKDCommand) {
-			//						updateVMStatusForBochsCommand(true);
-			//					}
-			//					commandHistoryIndex = 0;
-			//				}
-			//			} else if (VMController.vmType == VMType.Qemu) {
-			//				String qmpHost = GKDCommonLib.readConfig(cmd, "/gkd/qmpHost/text()");
-			//				int qmpPort = GKDCommonLib.readConfigInt(cmd, "/gkd/qmpPort/text()");
-			//				if (qmpHost == null || qmpPort == -1) {
-			//					return;
-			//				}
-			//				Setting.getInstance().vmCommandHistory.add(command);
-			//				Setting.getInstance().save();
-			//				String r = null;
-			//				if (command.equals("?")) {
-			//					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
-			//					qmpCommand += "{ \"execute\": \"query-commands\" }";
-			//					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
-			//					r = r.replaceAll("[,\\[\\]]", "\n");
-			//					r = r.replaceFirst("^.*\n", "");
-			//					List<String> list = Arrays.asList(r.split("\n"));
-			//					Collections.sort(list);
-			//					r = "";
-			//					for (String temp : list) {
-			//						if (temp.split(":").length > 1) {
-			//							r += temp.split(":")[1].replaceAll("\"", "").replaceAll("}", "").trim() + "\n";
-			//						}
-			//					}
-			//				} else if (command.equals("gkd g")) {
-			//					r = libGDB.sendSocketCommand("g");
-			//				} else {
-			//					String qmpCommand = "{ \"execute\": \"qmp_capabilities\" }";
-			//					if (command.contains(" ")) {
-			//						qmpCommand += "{ \"execute\": \"" + command.split(" ")[0] + "\", \"arguments\": { \"command-line\": \"" + command.replaceFirst("^[^ ]*", "") + "\" }}";
-			//					} else {
-			//						qmpCommand += "{ \"execute\": \"" + command + "\" }";
-			//					}
-			//					r = QemuMonitor.sendCommand(qmpCommand, qmpHost, qmpPort);
-			//					r = r.replaceAll("\\\\r\\\\n", "\n");
-			//				}
-			//				if (r != null) {
-			//					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + "\n" + r);
-			//				}
-			//			}
-
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -1272,23 +1216,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void startVMButtonActionPerformed(ActionEvent evt) {
 		VMController.getVM().startVM();
-		//		if (GKDVMStubController.vmType == VMType.Bochs) {
-		//			if (Global.debug) {
-		//				logger.debug("startBochs()");
-		//			}
-		//			startBochs();
-		//			if (Global.debug) {
-		//				logger.debug("end startBochs()");
-		//			}
-		//		} else if (GKDVMStubController.vmType == VMType.Qemu) {
-		//			if (Global.debug) {
-		//				logger.debug("startQemu()");
-		//			}
-		//			startQemu();
-		//			if (Global.debug) {
-		//				logger.debug("end startQemu()");
-		//			}
-		//		}
 	}
 
 	private void stopVMButtonActionPerformed(ActionEvent evt) {

@@ -8,6 +8,16 @@
     <string>info r</string>
     <string>sreg</string>
     <string>q</string>
+    <string>show cs</string>
+    <string>show cs xml</string>
+    <string>show &quot;cs&quot;</string>
+    <string>show &quot;cs&quot; xml</string>
+    <string>show &quot;rax&quot; xml</string>
+    <string>show &quot;eip&quot; xml</string>
+    <string>show &quot;eip&quot;</string>
+    <string>show &quot;gdtr&quot;</string>
+    <string>show &quot;eax&quot; xml</string>
+    <string>show &quot;eax&quot;</string>
   </vmCommandHistory>
   <memoryCombo/>
   <breakpoint/>
@@ -16,10 +26,10 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>200</x>
-  <y>65</y>
-  <width>1499</width>
-  <height>944</height>
+  <x>0</x>
+  <y>23</y>
+  <width>1440</width>
+  <height>840</height>
   <divX>630</divX>
   <divY>423</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>

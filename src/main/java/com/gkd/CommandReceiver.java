@@ -22,20 +22,7 @@ public class CommandReceiver {
 		Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*", Pattern.DOTALL);
 		try {
 			int x;
-			//			while ((x = br.read()) != -1) {
-			//				char c = (char) x;
-			//				content += c;
-			//				str += c;
-			//				Matcher matcher = pattern.matcher(content);
-			//				if (matcher.matches()) {
-			//					if (str.lastIndexOf('\n') >= 0) {
-			//						str = str.substring(0, str.lastIndexOf('\n'));
-			//					}
-			//					return str;
-			//				}
-			//			}
-
-			StringBuffer content = new StringBuffer(4096);
+			StringBuffer content = new StringBuffer(40960);
 
 			String line = "";
 			char c;
@@ -44,10 +31,13 @@ public class CommandReceiver {
 				if (line.equals("") && c == ' ') {
 					continue;
 				}
+				System.out.print(c);
+				System.out.flush();
 				content.append(c);
 				line += c;
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
+					System.out.println("MATCH");
 					return content.toString();
 				}
 				if (c == '\n') {
