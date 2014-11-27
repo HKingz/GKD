@@ -1,7 +1,13 @@
 <Setting>
   <vmCommandHistory>
+    <string>r</string>
     <string>show &quot;cpu0&quot;</string>
-    <string>cpu &quot;cpu0&quot;</string>
+    <string>show eax</string>
+    <string>info eazx</string>
+    <string>info eax</string>
+    <string>info r</string>
+    <string>sreg</string>
+    <string>q</string>
   </vmCommandHistory>
   <memoryCombo/>
   <breakpoint/>
@@ -10,12 +16,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>44</x>
-  <y>23</y>
-  <width>1330</width>
-  <height>840</height>
+  <x>200</x>
+  <y>65</y>
+  <width>1499</width>
+  <height>944</height>
   <divX>630</divX>
-  <divY>352</divY>
+  <divY>423</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

@@ -1179,6 +1179,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				VMController.getVM().stopVM();
 			} else {
 				String r = VMController.getVM().sendVMCommand(command);
+				System.out.println("r="+r);
 				if (r != null) {
 					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + "\n" + r);
 				}

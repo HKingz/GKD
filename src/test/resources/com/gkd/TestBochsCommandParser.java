@@ -3,10 +3,8 @@ package com.gkd;
 import java.awt.BorderLayout;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -60,7 +58,8 @@ public class TestBochsCommandParser {
 					}
 				}
 
-				commandOutputStream.write("show \"cpu0\"" + "\n");
+				//commandOutputStream.write("show \"cpu0\"" + "\n");
+				commandOutputStream.write("r" + "\n");
 				commandOutputStream.flush();
 
 				System.out.println("send r");
@@ -76,7 +75,31 @@ public class TestBochsCommandParser {
 					}
 					Matcher matcher = pattern.matcher(line);
 					if (matcher.matches()) {
-						System.out.println(content);
+						System.out.println(">"+content);
+						break;
+					}
+					if (c == '\n') {
+						line = "";
+					}
+				}
+				
+				commandOutputStream.write("r" + "\n");
+				commandOutputStream.flush();
+
+				System.out.println("send r");
+
+				content = new StringBuffer(4096);
+				 line = "";
+				while ((x = is.read()) != -1) {
+					char c = (char) x;
+					content.append(c);
+					line += c;
+					if (content.length() % 10000 == 0) {
+						System.out.println(content.length());
+					}
+					Matcher matcher = pattern.matcher(line);
+					if (matcher.matches()) {
+						System.out.println(">"+content);
 						break;
 					}
 					if (c == '\n') {

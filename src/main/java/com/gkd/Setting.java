@@ -125,6 +125,9 @@ public class Setting {
 			XStream xstream = new XStream();
 			xstream.alias("Setting", Setting.class);
 			Setting setting = (Setting) xstream.fromXML(new FileInputStream(new File("gkd.xml")));
+			if (setting.vmCommandHistory == null) {
+				setting.vmCommandHistory = new LinkedHashSet<String>();
+			}
 			return setting;
 		} catch (Exception ex) {
 			new File("gkd.xml").delete();

@@ -38,13 +38,14 @@ public class CommandReceiver {
 			StringBuffer content = new StringBuffer(4096);
 
 			String line = "";
+			char c;
 			while ((x = br.read()) != -1) {
-				char c = (char) x;
+				c = (char) x;
+				if (line.equals("") && c == ' ') {
+					continue;
+				}
 				content.append(c);
 				line += c;
-				if (content.length() % 10000 == 0) {
-					System.out.println(content.length());
-				}
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
 					return content.toString();
@@ -56,7 +57,6 @@ public class CommandReceiver {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		System.out.println("end 2");
 		return null;
 	}
 }
