@@ -18,6 +18,7 @@
     <string>show &quot;gdtr&quot;</string>
     <string>show &quot;eax&quot; xml</string>
     <string>show &quot;eax&quot;</string>
+    <string>print-stack 40</string>
   </vmCommandHistory>
   <memoryCombo/>
   <breakpoint/>
@@ -26,8 +27,8 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>0</x>
-  <y>23</y>
+  <x>35</x>
+  <y>99</y>
   <width>1440</width>
   <height>840</height>
   <divX>630</divX>

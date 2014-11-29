@@ -1293,7 +1293,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				new Thread() {
 					public void run() {
 						VMController.getVM().waitVMStop();
-						System.out.println("fuck1");
+						System.out.println("waitVMStop finished");
 						//						if (runVMButton.getText().equals(MyLanguage.getString("run"))) {
 						runVMButton.setText(MyLanguage.getString("run"));
 						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
@@ -1303,11 +1303,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}.start();
 			} else {
 				VMController.getVM().pauseVM();
-				updateVMStatus(true);
-				waitUpdateFinish();
-
-				runVMButton.setText(MyLanguage.getString("run"));
-				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+//				updateVMStatus(true);
+//				waitUpdateFinish();
+//
+//				runVMButton.setText(MyLanguage.getString("run"));
+//				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 			}
 		}
 	}
@@ -1718,7 +1718,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateVMStatus(true);
 	}
 
-	public void updateVMStatus(final boolean updateHistoryTable) {
+	public synchronized void updateVMStatus(final boolean updateHistoryTable) {
 		logger.debug("updateVMStatus");
 		isupdateVMStatusEnd = false;
 		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);

@@ -109,7 +109,7 @@ public class BochsStub implements VMStub {
 			InputStream is = p.getInputStream();
 			commandReceiver = new CommandReceiver(is);
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-			
+
 			String versionLines[] = commandReceiver.getCommandResult().split("\n");
 			for (String line : versionLines) {
 				line = line.trim(); // string::matches will break is string contains \r
@@ -177,7 +177,7 @@ public class BochsStub implements VMStub {
 			logger.debug("pauseVM 1");
 			p.waitFor();
 			logger.debug("pauseVM 2");
-			commandReceiver.getCommandResult();
+			//			commandReceiver.getCommandResult();
 			logger.debug("pauseVM 3");
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -782,11 +782,9 @@ public class BochsStub implements VMStub {
 		int[] bytes = physicalMemory(pageDirectoryBaseAddress, 8192);
 		if (bytes != null) {
 			for (int x = 0; x < bytes.length - 4; x += 4) {
-
 				// "No.", "PT base", "AVL", "G",
 				// "D", "A", "PCD", "PWT",
 				// "U/S", "W/R", "P"
-
 				if (!pae) {
 					if (!pse) {
 						// normal 4k
@@ -825,7 +823,7 @@ public class BochsStub implements VMStub {
 							long baseL = value & 0xfffff000;
 							base = "0x" + Long.toHexString(baseL);
 						}
-						System.out.println((x / 4) + "=" + value);
+						//						System.out.println((x / 4) + "=" + value);
 						r.add(new String[] { String.valueOf(x / 4), base, avl, g, ps, d, a, pcd, pwt, us, wr, p });
 					}
 				} else {
@@ -833,6 +831,7 @@ public class BochsStub implements VMStub {
 				}
 			}
 		}
+		System.out.println("pageTable() end");
 		return r;
 	}
 
