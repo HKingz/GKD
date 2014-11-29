@@ -1303,11 +1303,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}.start();
 			} else {
 				VMController.getVM().pauseVM();
-//				updateVMStatus(true);
-//				waitUpdateFinish();
-//
-//				runVMButton.setText(MyLanguage.getString("run"));
-//				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+				//				updateVMStatus(true);
+				//				waitUpdateFinish();
+				//
+				//				runVMButton.setText(MyLanguage.getString("run"));
+				//				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 			}
 		}
 	}
@@ -1718,7 +1718,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateVMStatus(true);
 	}
 
-	public synchronized void updateVMStatus(final boolean updateHistoryTable) {
+	public void updateVMStatus(final boolean updateHistoryTable) {
 		logger.debug("updateVMStatus");
 		isupdateVMStatusEnd = false;
 		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);
@@ -2196,10 +2196,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void updateStack() {
 		try {
+			System.out.println("updateStack 1");
 			statusLabel.setText("Updating stack");
 			registerPanel.stackList.removeAll();
+			System.out.println("updateStack 2");
 			DefaultListModel model = new DefaultListModel();
 			Vector<String> r = VMController.getVM().stack();
+			System.out.println("updateStack 3");
 			for (String s : r) {
 				model.addElement(s);
 			}
@@ -2334,6 +2337,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		sourceLevelDebugger.instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow + 10, 1, true));
 		instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow, 1, true));
 		sourceLevelDebugger.instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow, 1, true));
+
+		logger.debug("jumpToRowInstructionTable end=" + eip.toString(16));
 	}
 
 	private String getASMCode(BigInteger pc) {
