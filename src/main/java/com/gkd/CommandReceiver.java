@@ -10,12 +10,14 @@ import org.apache.log4j.Logger;
 
 public class CommandReceiver {
 	public BufferedReader br;
+	InputStream is;
 	public boolean shouldShow;
 	int timeoutSecond = 5;
 	public static Logger logger = Logger.getLogger(CommandReceiver.class);
 
 	public CommandReceiver(InputStream is) {
-		br = new BufferedReader(new InputStreamReader(is), 1024);
+//		br = new BufferedReader(new InputStreamReader(is), 1024);
+		this.is=is;
 	}
 
 	public String getCommandResult() {
@@ -26,16 +28,21 @@ public class CommandReceiver {
 
 			String line = "";
 			char c;
-			while ((x = br.read()) != -1) {
+			while ((x = is.read()) != -1) {
 				c = (char) x;
-				if (line.equals("") && c == ' ') {
-					continue;
-				}
-				System.out.print(c);
-				System.out.flush();
+//				if (line == null && c == ' ') {
+//					continue;
+//				}
+				//				System.out.print(c);
+				//				System.out.flush();
 				content.append(c);
 				line += c;
+				System.out.println("line=" + line);
+				System.out.flush();
 				Matcher matcher = pattern.matcher(line);
+				if (content.toString().contains("<bochs")) {
+					System.out.println("shit");
+				}
 				if (matcher.matches()) {
 					System.out.println("MATCH");
 					return content.toString();
