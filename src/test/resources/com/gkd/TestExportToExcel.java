@@ -1,4 +1,4 @@
-package com.gkd.test;
+package com.gkd;
 
 import java.io.File;
 import java.io.FileOutputStream;

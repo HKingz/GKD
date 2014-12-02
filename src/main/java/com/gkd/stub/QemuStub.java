@@ -530,4 +530,5 @@ public class QemuStub implements VMStub {
 		while (isRunning())
 			;
 	}
+
 }

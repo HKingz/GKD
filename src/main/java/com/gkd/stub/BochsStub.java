@@ -106,8 +106,7 @@ public class BochsStub implements VMStub {
 			ProcessBuilder pb = new ProcessBuilder((path + " " + arguments).split(" "));
 			pb.redirectErrorStream(true);
 			p = pb.start();
-			InputStream is = p.getInputStream();
-			commandReceiver = new CommandReceiver(is);
+			commandReceiver = new CommandReceiver(p.getInputStream());
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 
 			String versionLines[] = commandReceiver.getCommandResult().split("\n");
@@ -310,7 +309,6 @@ public class BochsStub implements VMStub {
 	public Hashtable<String, String> registers() {
 		Hashtable<String, String> ht = new Hashtable<String, String>();
 		try {
-			commandReceiver.shouldShow = false;
 			String result = sendBochsCommand("r");
 			result = result.replaceAll("r", "\nr");
 			String lines[] = result.split("\n");
@@ -679,8 +677,6 @@ public class BochsStub implements VMStub {
 
 	public int[] getMemory(BigInteger address, int totalByte, boolean isPhysicalAddress) {
 		try {
-			commandReceiver.shouldShow = false;
-
 			int bytes[] = new int[totalByte];
 			if (totalByte > 0) {
 				//				float totalByte2 = totalByte - 1;
@@ -727,7 +723,6 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<Vector<String>> gdt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		commandReceiver.shouldShow = false;
 		String result = sendBochsCommand("info gdt 0 " + noOfByte / 8);
 		if (result != null) {
 			String lines[] = result.split("\n");
@@ -747,7 +742,6 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<Vector<String>> idt(BigInteger gdtAddress, int noOfByte) {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		commandReceiver.shouldShow = false;
 		String result = sendBochsCommand("info idt 0 " + noOfByte / 8);
 
 		if (result != null) {
@@ -839,7 +833,6 @@ public class BochsStub implements VMStub {
 	public Vector<String> stack() {
 		Vector<String> r = new Vector<String>();
 		try {
-			commandReceiver.shouldShow = false;
 			String result = sendBochsCommand("print-stack 40");
 			String[] lines = result.split("\n");
 			for (int y = 1; y < lines.length; y++) {
@@ -882,7 +875,6 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<Vector<String>> addressTranslate() {
 		Vector<Vector<String>> r = new Vector<Vector<String>>();
-		commandReceiver.shouldShow = false;
 		String result = sendBochsCommand("info tab");
 		String[] lines = result.split("\n");
 		for (int x = 1; x < lines.length; x++) {

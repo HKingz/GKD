@@ -1,4 +1,4 @@
-package com.gkd.test;
+package com.gkd;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

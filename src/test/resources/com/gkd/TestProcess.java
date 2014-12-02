@@ -1,4 +1,4 @@
-package com.gkd.test;
+package com.gkd;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

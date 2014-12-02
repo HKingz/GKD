@@ -31,14 +31,22 @@
     <string>show &quot;gdtr&quot; xml</string>
   </vmCommandHistory>
   <memoryCombo/>
-  <breakpoint/>
+  <breakpoint>
+    <com.gkd.Breakpoint>
+      <no>0</no>
+      <type>keep y</type>
+      <address>31744</address>
+      <enable>keep y</enable>
+      <hit>0</hit>
+    </com.gkd.Breakpoint>
+  </breakpoint>
   <sbAddress/>
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>95</x>
-  <y>54</y>
+  <x>150</x>
+  <y>45</y>
   <width>1632</width>
   <height>966</height>
   <divX>630</divX>
