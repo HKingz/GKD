@@ -1171,8 +1171,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (Setting.getInstance().vmCommandHistory.contains(command)) {
 				Setting.getInstance().vmCommandHistory.remove(command);
 			}
-			Setting.getInstance().vmCommandHistory.add(command);
-			Setting.getInstance().save();
+			if (!command.equals("")) {
+				Setting.getInstance().vmCommandHistory.add(command);
+				Setting.getInstance().save();
+			}
 
 			if (command.equals("clear")) {
 				this.vmCommandEditorPane.setText("");

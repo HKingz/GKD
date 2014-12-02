@@ -1,8 +1,6 @@
 <Setting>
   <vmCommandHistory>
     <string>r</string>
-    <string>show &quot;cpu0&quot;</string>
-    <string>show eax</string>
     <string>info eazx</string>
     <string>info eax</string>
     <string>info r</string>
@@ -13,12 +11,24 @@
     <string>show &quot;cs&quot;</string>
     <string>show &quot;cs&quot; xml</string>
     <string>show &quot;rax&quot; xml</string>
-    <string>show &quot;eip&quot; xml</string>
     <string>show &quot;eip&quot;</string>
     <string>show &quot;gdtr&quot;</string>
-    <string>show &quot;eax&quot; xml</string>
-    <string>show &quot;eax&quot;</string>
     <string>print-stack 40</string>
+    <string>show &quot;cpu0&quot;</string>
+    <string>show eax</string>
+    <string>show &quot;eax&quot;</string>
+    <string>show &quot;eax&quot; xml</string>
+    <string>show &quot;rip&quot; xml</string>
+    <string>show &quot;eip&quot; xml</string>
+    <string>show &quot;st0&quot; xml</string>
+    <string>1</string>
+    <string>2</string>
+    <string>3</string>
+    <string>5</string>
+    <string>show &quot;st0&quot;</string>
+    <string>show &quot;cr0&quot;</string>
+    <string>show &quot;cr0&quot; xml</string>
+    <string>show &quot;gdtr&quot; xml</string>
   </vmCommandHistory>
   <memoryCombo/>
   <breakpoint/>
@@ -27,12 +37,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>35</x>
-  <y>99</y>
-  <width>1440</width>
-  <height>840</height>
+  <x>95</x>
+  <y>54</y>
+  <width>1632</width>
+  <height>966</height>
   <divX>630</divX>
-  <divY>423</divY>
+  <divY>489</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>
