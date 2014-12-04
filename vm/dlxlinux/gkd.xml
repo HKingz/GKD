@@ -44,13 +44,13 @@
   <sbaAddress/>
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
-  <fontFamily>Dialog</fontFamily>
-  <x>150</x>
-  <y>45</y>
-  <width>1632</width>
-  <height>966</height>
+  <fontFamily>Monospaced</fontFamily>
+  <x>59</x>
+  <y>46</y>
+  <width>1314</width>
+  <height>794</height>
   <divX>630</divX>
-  <divY>489</divY>
+  <divY>422</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

@@ -324,7 +324,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem setPhysicalBreakpointMenuItem;
 	private JPopupMenu instructionPanelPopupMenu;
 	private JCheckBox hideIfAddressIsZeroCheckBox;
-	private JMaximizableTabbedPane_BasePanel maximizableTabbedPane_BasePanel1;
+	private JMaximizableTabbedPane_BasePanel maximizableTabbedPane_BasePanel;
 	private DiskPanel diskPanel;
 	private JButton goLinearButton;
 	private JButton clearBochsButton;
@@ -1131,8 +1131,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					return discardEvent;
 				}
 			});
-			System.out.println("started GKD " + new SimpleDateFormat("m:s S").format(new Date()));
-			System.out.println("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");
+			logger.info("started GKD " + new SimpleDateFormat("m:s S").format(new Date()));
+			logger.info("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(ERROR);
@@ -3927,7 +3927,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				progressBarDialog.jProgressBar.setValue(51);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.1");
 
-				mainPanel.add(getMaximizableTabbedPane_BasePanel1(), "jMaximizableTabbedPane_BasePanel1");
+				mainPanel.add(getMaximizableTabbedPane_BasePanel(), "jMaximizableTabbedPane_BasePanel1");
 
 				progressBarDialog.jProgressBar.setValue(52);
 				progressBarDialog.jProgressBar.setString("Init GUI - 3.2");
@@ -3950,6 +3950,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JSplitPane getSplitPane2() {
+		logger.info(new Date().getSeconds());
 		//longest task
 		jSplitPane2 = new JSplitPane();
 
@@ -4117,6 +4118,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			//$hide>>$
 		}
 		//$hide<<$
+
+		logger.info(new Date().getSeconds());
 		jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
 		DiskPanel diskPanel = getDiskPanel();
 		if (diskPanel.getFile() != null) {
@@ -4263,6 +4266,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		});
 		getButtonGroup1().add(hexRadioButton);
 
+		logger.info(new Date().getSeconds());
 		jPanel5 = new JPanel();
 		tabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5, null);
 		BorderLayout jPanel5Layout = new BorderLayout();
@@ -4307,6 +4311,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 
+		logger.info(new Date().getSeconds());
 		jPanel7 = new JPanel();
 		BorderLayout jPanel7Layout = new BorderLayout();
 		jPanel7.setLayout(jPanel7Layout);
@@ -4343,7 +4348,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		registerPanel = new RegisterPanel(this);
 		registerPanelScrollPane.setViewportView(registerPanel);
-
+		logger.info(new Date().getSeconds());
 		jPanel3 = new JPanel();
 		bottomTabbedPane.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")), jPanel3,
 				null);
@@ -4376,6 +4381,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		pagingPanel.setLayout(jPanel11Layout);
 		pagingPanel.add(getJSplitPane3(), BorderLayout.CENTER);
 		pagingPanel.add(getJPanel19(), BorderLayout.NORTH);
+
+		logger.info(new Date().getSeconds());
 		return jSplitPane2;
 	}
 
@@ -5971,12 +5978,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return diskPanel;
 	}
 
-	private JMaximizableTabbedPane_BasePanel getMaximizableTabbedPane_BasePanel1() {
-		if (maximizableTabbedPane_BasePanel1 == null) {
-			maximizableTabbedPane_BasePanel1 = new JMaximizableTabbedPane_BasePanel();
-			maximizableTabbedPane_BasePanel1.add(getSplitPane2(), "MAIN");
+	private JMaximizableTabbedPane_BasePanel getMaximizableTabbedPane_BasePanel() {
+		if (maximizableTabbedPane_BasePanel == null) {
+			maximizableTabbedPane_BasePanel = new JMaximizableTabbedPane_BasePanel();
+			maximizableTabbedPane_BasePanel.add(getSplitPane2(), "MAIN");
 		}
-		return maximizableTabbedPane_BasePanel1;
+		return maximizableTabbedPane_BasePanel;
 	}
 
 	private JCheckBox getHideIfAddressIsZeroCheckBox() {

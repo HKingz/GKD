@@ -29,7 +29,6 @@ public class CommandReceiver {
 				line += c;
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
-					System.out.println("MATCH");
 					return content.toString();
 				}
 				if (c == '\n') {
