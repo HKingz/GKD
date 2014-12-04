@@ -254,50 +254,6 @@ public class BochsStub implements VMStub {
 			//			model.removeNonOrderInstruction();
 			//			model.fireTableDataChanged();
 		}
-
-		/*
-		//commandReceiver.clearBuffer();
-		//commandReceiver.shouldShow = false;
-		//sendBochsCommand(command, null, null);
-		//commandReceiver.waitUntilHaveLine(10);
-		//String result = commandReceiver.getCommandResultUntilEnd();
-		String lines[] = result.split("\n");
-		if (lines.length > 0) {
-			//			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-			//			jStatusProgressBar.setMaximum(lines.length - 1);
-			for (int x = 1; x < lines.length && x < maximumLine; x++) {
-				//				jStatusProgressBar.setValue(x);
-				try {
-					lines[x] = lines[x].replaceFirst("\\<.*\\>", "");
-					String strs[] = lines[x].split(":");
-					int secondColon = lines[x].indexOf(":", lines[x].indexOf(":") + 1);
-
-					// load cCode
-					String pcStr = strs[0].trim();
-					BigInteger pc = CommonLib.string2BigInteger("0x" + pcStr);
-					if (pc == null) {
-						continue;
-					}
-					String s[] = gkd.getCCode(pc, false);
-					String lineNo[] = gkd.getCCode(pc, true);
-					if (s != null && lineNo != null) {
-						for (int index = 0; index < s.length; index++) {
-							//							model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
-							r.add(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
-						}
-					}
-					// end load cCode
-					//					model.addRow(new String[] { "", "0x" + pc.toString(16), lines[x].substring(secondColon + 1).trim().split(";")[0].trim(), lines[x].split(";")[1] });
-					r.add(new String[] { "", "0x" + pc.toString(16), lines[x].substring(secondColon + 1).trim().split(";")[0].trim(), lines[x].split(";")[1] });
-				} catch (Exception ex) {
-					//ex.printStackTrace();
-					logger.error("Error line : " + lines[x]);
-				}
-			}
-
-			//			model.removeNonOrderInstruction();
-			//			model.fireTableDataChanged();
-		}*/
 		return r;
 	}
 

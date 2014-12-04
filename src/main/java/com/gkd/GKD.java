@@ -2129,6 +2129,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			((HistoryTableModel) this.historyTable.getModel()).fireTableDataChanged();
 			historyTable.scrollRectToVisible(historyTable.getCellRect(historyTable.getRowCount() - 1, 0, true));
+			CommonLib.resizeColumnWidth(historyTable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

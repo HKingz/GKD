@@ -30,6 +30,11 @@ public class HistoryTableCellRenderer extends JLabel implements TableCellRendere
 				this.setBackground(new Color(0xf4f4f4));
 			}
 		}
+		if (column >= 5) {
+			setHorizontalAlignment(JLabel.CENTER);
+		} else {
+			setHorizontalAlignment(JLabel.LEFT);
+		}
 		return this;
 	}
 
