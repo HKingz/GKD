@@ -1373,13 +1373,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		private String update(String result, DataOutputStream out) {
-			BigInteger address = null;
+			BigInteger csBaseAddress = null;
 			if (registerPanel.csTextField.getBase() != null && !registerPanel.csTextField.getBase().equals("")) {
-				address = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+				csBaseAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 			}
 			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 			BigInteger cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-			String instruction = VMController.getVM().instruction(address, cs, eip, is32Bits()).get(0)[2];
+			String instruction = VMController.getVM().instruction(csBaseAddress, cs, eip, is32Bits()).get(0)[2];
 			if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
 				if (instruction.endsWith("\n")) {
 					instruction = instruction.substring(0, instruction.length() - 1);
