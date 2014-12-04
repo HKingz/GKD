@@ -34,6 +34,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -3951,7 +3952,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JSplitPane getSplitPane2() {
-		logger.info(new Date().getSeconds());
+		logger.info(Calendar.getInstance().getTimeInMillis());
 		//longest task
 		jSplitPane2 = new JSplitPane();
 
@@ -4120,7 +4121,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 		//$hide<<$
 
-		logger.info(new Date().getSeconds());
+		logger.info(Calendar.getInstance().getTimeInMillis());
 		jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
 		DiskPanel diskPanel = getDiskPanel();
 		if (diskPanel.getFile() != null) {
@@ -4267,7 +4268,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		});
 		getButtonGroup1().add(hexRadioButton);
 
-		logger.info(new Date().getSeconds());
+		logger.info(Calendar.getInstance().getTimeInMillis());
 		jPanel5 = new JPanel();
 		tabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5, null);
 		BorderLayout jPanel5Layout = new BorderLayout();
@@ -4312,7 +4313,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 
-		logger.info(new Date().getSeconds());
+		logger.info(Calendar.getInstance().getTimeInMillis());
 		jPanel7 = new JPanel();
 		BorderLayout jPanel7Layout = new BorderLayout();
 		jPanel7.setLayout(jPanel7Layout);
@@ -4349,7 +4350,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		registerPanel = new RegisterPanel(this);
 		registerPanelScrollPane.setViewportView(registerPanel);
-		logger.info(new Date().getSeconds());
+		logger.info(Calendar.getInstance().getTimeInMillis());
 		jPanel3 = new JPanel();
 		bottomTabbedPane.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")), jPanel3,
 				null);
@@ -4383,7 +4384,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		pagingPanel.add(getJSplitPane3(), BorderLayout.CENTER);
 		pagingPanel.add(getJPanel19(), BorderLayout.NORTH);
 
-		logger.info(new Date().getSeconds());
+		logger.info(Calendar.getInstance().getTimeInMillis());
 		return jSplitPane2;
 	}
 
