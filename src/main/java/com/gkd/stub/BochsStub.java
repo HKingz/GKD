@@ -51,22 +51,10 @@ public class BochsStub implements VMStub {
 		try {
 			logger.debug("sendBochsCommand " + command);
 			command = command.toLowerCase().trim();
-			//			commandReceiver.waitUntilNoInput();
-			//			commandReceiver.clearBuffer();
 			Global.lastCommand = command;
 			commandOutputStream.write(command + "\n");
 			commandOutputStream.flush();
-			//			if (!command.equals("6") && !command.equals("c") && !command.startsWith("pb") && !command.startsWith("vb") && !command.startsWith("lb") && !command.startsWith("bpd")
-			//					&& !command.startsWith("bpe") && !command.startsWith("del") && !command.startsWith("set")) {
-			//				commandReceiver.waitUntilHaveLine(1);
-			//				if (startPattern == null || endPattern == null) {
-			//					return null;
-			//				} else {
-			//					return commandReceiver.getCommandResult(startPattern, endPattern);
-			//				}
-			//			}
 			if (command.equals("6") || command.equals("c")) {
-				//				commandReceiver.waitUntilHaveInput();
 				return null;
 			}
 

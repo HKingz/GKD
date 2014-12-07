@@ -1,5 +1,10 @@
 <Setting>
-  <vmCommandHistory/>
+  <vmCommandHistory>
+    <string>si</string>
+    <string>next</string>
+    <string>r</string>
+    <string>info gdt</string>
+  </vmCommandHistory>
   <memoryCombo/>
   <breakpoint/>
   <sbAddress/>
@@ -7,12 +12,12 @@
   <currentLanguage>en_US</currentLanguage>
   <fontsize>12</fontsize>
   <fontFamily>Dialog</fontFamily>
-  <x>173</x>
-  <y>24</y>
+  <x>159</x>
+  <y>26</y>
   <width>1536</width>
   <height>974</height>
   <divX>767</divX>
-  <divY>433</divY>
+  <divY>532</divY>
   <osDebugSplitPane__DividerLocation>150</osDebugSplitPane__DividerLocation>
   <profileMemoryFromAddress/>
   <profileMemoryToAddress/>

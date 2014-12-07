@@ -34,7 +34,6 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -116,7 +115,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.ApplicationListener;
@@ -425,7 +423,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton exportHistoryToExcelButton;
 	private JButton excelMemoryButton;
 	private JButton excelButton;
-	private JButton exportToExcelButton;
 	private JPanel panel17;
 	private JTable searchMemoryTable;
 	private JScrollPane jScrollPane12;
@@ -916,7 +913,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				{
 					updateBochsButton = new JButton();
 					jToolBar1.add(updateBochsButton);
-					jToolBar1.add(getExportToExcelButton());
 					jToolBar1.add(getSettingButton());
 					jToolBar1.add(getRegisterToggleButton());
 					jToolBar1.add(getSourceLevelDebuggerButton());
@@ -2163,7 +2159,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		nextButton.setEnabled(b);
 		fastStepBochsButton.setEnabled(b);
 		updateBochsButton.setEnabled(b);
-		exportToExcelButton.setEnabled(b);
 		settingButton.setEnabled(b);
 		registerToggleButton.setEnabled(b);
 		sourceLevelDebuggerToggleButton.setEnabled(b);
@@ -3686,61 +3681,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + this.instructionComboBox.getSelectedItem().toString());
-		}
-	}
-
-	private JButton getExportToExcelButton() {
-		if (exportToExcelButton == null) {
-			exportToExcelButton = new JButton();
-			exportToExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			exportToExcelButton.setText("Excel");
-			exportToExcelButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent evt) {
-					excelActionPerformed(evt);
-				}
-			});
-		}
-		return exportToExcelButton;
-	}
-
-	private void excelActionPerformed(ActionEvent evt) {
-		JFileChooser fc = new JFileChooser();
-		int returnVal = fc.showSaveDialog(this);
-		if (returnVal == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
-			final JProgressBarDialog d = new JProgressBarDialog(this, "Exporting to XLS", true);
-			d.jProgressBar.setIndeterminate(true);
-			d.jProgressBar.setStringPainted(true);
-
-			class MyThread extends Thread {
-				File file;
-				GKD gkd;
-
-				public MyThread(GKD gkd, File file) {
-					this.gkd = gkd;
-					this.file = file;
-				}
-
-				public void run() {
-					XSSFWorkbook wb = new XSSFWorkbook();// Write the output to
-															// a file
-					GKDCommonLib.exportRegisterHistory(wb, d);
-					GKDCommonLib.exportTableModelToExcel(file, gkd.gdtTable.getModel(), "GDT", wb);
-					GKDCommonLib.exportTableModelToExcel(file, gkd.idtTable.getModel(), "IDT", wb);
-					GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + gkd.instructionComboBox.getSelectedItem().toString(), wb);
-					GKDCommonLib.exportTableModelToExcel(file, gkd.hexTable.getModel(), memoryAddressComboBox.getSelectedItem().toString(), wb);
-					FileOutputStream fileOut;
-					try {
-						fileOut = new FileOutputStream(file);
-						wb.write(fileOut);
-						fileOut.close();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			d.thread = new MyThread(this, file);
-			d.setVisible(true);
 		}
 	}
 
