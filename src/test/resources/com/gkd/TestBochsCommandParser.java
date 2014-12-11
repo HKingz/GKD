@@ -41,26 +41,13 @@ public class TestBochsCommandParser {
 
 		if (debug) {
 			try {
-				ProcessBuilder pb = new ProcessBuilder(("/toolchain/bin/bochs" + " " + "-q -f bochsrc.txt").split(" "));
+				ProcessBuilder pb = new ProcessBuilder(("/toolchain/bin/bochs" + " " + "-q -f bochsrc.bxrc").split(" "));
 				pb.redirectErrorStream(true);
 				Process p = pb.start();
 				final InputStream is = p.getInputStream();
 				final BufferedWriter commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 
 				try {
-					//					BufferedReader br = new BufferedReader(new InputStreamReader(is), 1024);
-					//					int x;
-					//					StringBuffer content = new StringBuffer(4096);
-					//					Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*", Pattern.DOTALL);
-					//					while ((x = br.read()) != -1) {
-					//						char c = (char) x;
-					//						content.append(c);
-					//						Matcher matcher = pattern.matcher(content);
-					//						if (matcher.matches()) {
-					//							System.out.println("match");
-					//							break;
-					//						}
-					//					}
 					int x;
 					Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*", Pattern.DOTALL);
 					StringBuffer content = new StringBuffer(4096);
