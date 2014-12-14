@@ -1,8 +1,8 @@
 /////////////////////////////////////////////////////////////////////////
-// $Id: instrument.h 10491 2011-07-23 19:58:38Z sshwarts $
+// $Id: instrument.h 11908 2013-10-23 21:18:19Z sshwarts $
 /////////////////////////////////////////////////////////////////////////
 //
-//   Copyright (c) 2006-2009 Stanislav Shwartsman
+//   Copyright (c) 2006-2012 Stanislav Shwartsman
 //          Written by Stanislav Shwartsman [sshwarts at sourceforge net]
 //
 //  This library is free software; you can redistribute it and/or
@@ -18,39 +18,6 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with this library; if not, write to the Free Software
 //  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
-
-
-// possible types passed to BX_INSTR_TLB_CNTRL()
-#define BX_INSTR_MOV_CR0        10
-#define BX_INSTR_MOV_CR3        11
-#define BX_INSTR_MOV_CR4        12
-#define BX_INSTR_TASK_SWITCH    13
-#define BX_INSTR_CONTEXT_SWITCH 14
-#define BX_INSTR_INVLPG         15
-#define BX_INSTR_INVEPT         16
-#define BX_INSTR_INVVPID        17
-
-// possible types passed to BX_INSTR_CACHE_CNTRL()
-#define BX_INSTR_INVD           20
-#define BX_INSTR_WBINVD         21
-
-// possible types passed to BX_INSTR_FAR_BRANCH()
-#define BX_INSTR_IS_CALL        10
-#define BX_INSTR_IS_RET         11
-#define BX_INSTR_IS_IRET        12
-#define BX_INSTR_IS_JMP         13
-#define BX_INSTR_IS_INT         14
-#define BX_INSTR_IS_SYSCALL     15
-#define BX_INSTR_IS_SYSRET      16
-#define BX_INSTR_IS_SYSENTER    17
-#define BX_INSTR_IS_SYSEXIT     18
-
-// possible types passed to BX_INSTR_PREFETCH_HINT()
-#define BX_INSTR_PREFETCH_NTA   0
-#define BX_INSTR_PREFETCH_T0    1
-#define BX_INSTR_PREFETCH_T1    2
-#define BX_INSTR_PREFETCH_T2    3
-
 
 #if BX_INSTRUMENTATION
 
@@ -72,65 +39,63 @@ void bx_instr_initialize(unsigned cpu);
 class bxInstrumentation {
 public:
 
-  bx_bool ready;          // is current instruction ready to be printed
-  bx_bool active;
+	bx_bool ready;          // is current instruction ready to be printed
+	bx_bool active;
 
-  unsigned cpu_id;
+	unsigned cpu_id;
 
-  /* decoding */
-  unsigned opcode_length;
-  Bit8u    opcode[MAX_OPCODE_LENGTH];
-  bx_bool  is32, is64;
+	/* decoding */
+	unsigned opcode_length;
+	Bit8u opcode[MAX_OPCODE_LENGTH];
+	bx_bool is32, is64;
 
-  /* memory accesses */
-  unsigned num_data_accesses;
-  struct {
-    bx_address laddr;     // linear address
-    bx_phy_address paddr; // physical address
-    unsigned op;          // BX_READ, BX_WRITE or BX_RW
-    unsigned size;        // 1 .. 32
-    bx_address eip;
-  } data_access[MAX_DATA_ACCESSES];
+	/* memory accesses */
+	unsigned num_data_accesses;
+	struct {
+		bx_address laddr;     // linear address
+		bx_phy_address paddr;// physical address
+		unsigned rw;// BX_READ, BX_WRITE or BX_RW
+		unsigned size;// 1 .. 32
+	}data_access[MAX_DATA_ACCESSES];
 
-  /* branch resolution and target */
-  bx_bool is_branch;
-  bx_bool is_taken;
-  bx_address target_linear;
-  bx_address phyAddress;
+	/* branch resolution and target */
+	bx_bool is_branch;
+	bx_bool is_taken;
+	bx_address target_linear;
 
 public:
-  bxInstrumentation(): ready(0), active(0) {}
+	bxInstrumentation(): ready(0), active(0) {}
 
-  void set_cpu_id(unsigned cpu) { cpu_id = cpu; }
+	void set_cpu_id(unsigned cpu) {cpu_id = cpu;}
 
-  void activate() { active = 1; }
-  void deactivate() { active = 0; }
-  void toggle_active() { active = !active; }
-  bx_bool is_active() const { return active; }
+	void activate() {active = 1;}
+	void deactivate() {active = 0;}
+	void toggle_active() {active = !active;}
+	bx_bool is_active() const {return active;}
 
-  void bx_instr_reset(unsigned type);
+	void bx_instr_reset(unsigned type);
 
-  void bx_instr_cnear_branch_taken(bx_address new_eip);
-  void bx_instr_cnear_branch_not_taken();
-  void bx_instr_ucnear_branch(unsigned what, bx_address new_eip);
-  void bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip);
+	void bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip);
+	void bx_instr_cnear_branch_not_taken(bx_address branch_eip);
+	void bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip);
+	void bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip);
 
-  void bx_instr_before_execution(bxInstruction_c *i);
-  void bx_instr_after_execution(bxInstruction_c *i);
+	void bx_instr_before_execution(bxInstruction_c *i);
+	void bx_instr_after_execution(bxInstruction_c *i);
 
-  void bx_instr_interrupt(unsigned vector);
-  void bx_instr_exception(unsigned vector, unsigned error_code);
-  void bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip);
+	void bx_instr_interrupt(unsigned vector);
+	void bx_instr_exception(unsigned vector, unsigned error_code);
+	void bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip);
 
-  void bx_instr_mem_data_access(unsigned seg, bx_address offset, unsigned len, unsigned rw);
+	void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw);
 
-  void memorySampling(bx_phy_address, bx_address);
-  void jmpSampling(bx_address);
+	void memorySampling(bx_phy_address);
+	void jmpSampling(bx_address);
 
 private:
-  void branch_taken(bx_address new_eip);
+	void branch_taken(bx_address new_eip);
 
-  void bx_print_instruction(void);
+	void bx_print_instruction(void);
 };
 
 void bx_instr_init(unsigned cpu);
@@ -152,10 +117,10 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_DEBUG_PROMPT()
 #define BX_INSTR_DEBUG_CMD(cmd)
 
-/* branch resoultion */
-#define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, new_eip)       icpu[cpu_id].bx_instr_cnear_branch_taken(new_eip)
-#define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id)   icpu[cpu_id].bx_instr_cnear_branch_not_taken()
-#define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, new_eip)      icpu[cpu_id].bx_instr_ucnear_branch(what, new_eip)
+/* branch resolution */
+#define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, branch_eip, new_eip) icpu[cpu_id].bx_instr_cnear_branch_taken(branch_eip, new_eip)
+#define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id, branch_eip) icpu[cpu_id].bx_instr_cnear_branch_not_taken(branch_eip)
+#define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, branch_eip, new_eip) icpu[cpu_id].bx_instr_ucnear_branch(what, branch_eip, new_eip)
 #define BX_INSTR_FAR_BRANCH(cpu_id, what, new_cs, new_eip) icpu[cpu_id].bx_instr_far_branch(what, new_cs, new_eip)
 
 /* decoding completed */
@@ -180,14 +145,10 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
 
 /* memory access */
-#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, rw)
+#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, rw) \
+                    icpu[cpu_id].bx_instr_lin_access(lin, phy, len, rw)
 
-#define BX_INSTR_MEM_DATA_ACCESS(cpu_id, seg, offset, len, rw) \
-                    icpu[cpu_id].bx_instr_mem_data_access(seg, offset, len, rw)
-
-/* called from memory object */
-#define BX_INSTR_PHY_WRITE(cpu_id, addr, len)
-#define BX_INSTR_PHY_READ(cpu_id, addr, len)
+#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, rw)
 
 /* feedback from device units */
 #define BX_INSTR_INP(addr, len)
@@ -196,6 +157,9 @@ extern bxInstrumentation *icpu;
 
 /* wrmsr callback */
 #define BX_INSTR_WRMSR(cpu_id, addr, value)
+
+/* vmexit callback */
+#define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
 
 #else // BX_INSTRUMENTATION
 
@@ -214,10 +178,10 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_DEBUG_PROMPT()
 #define BX_INSTR_DEBUG_CMD(cmd)
 
-/* branch resoultion */
-#define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, new_eip)
-#define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id)
-#define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, new_eip)
+/* branch resolution */
+#define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, branch_eip, new_eip)
+#define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id, branch_eip)
+#define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, branch_eip, new_eip)
 #define BX_INSTR_FAR_BRANCH(cpu_id, what, new_cs, new_eip)
 
 /* decoding completed */
@@ -239,15 +203,11 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_AFTER_EXECUTION(cpu_id, i)
 #define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
 
-/* memory access */
+/* linear memory access */
 #define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, rw)
 
-/* memory access */
-#define BX_INSTR_MEM_DATA_ACCESS(cpu_id, seg, offset, len, rw)
-
-/* called from memory object */
-#define BX_INSTR_PHY_WRITE(cpu_id, addr, len)
-#define BX_INSTR_PHY_READ(cpu_id, addr, len)
+/* physical memory access */
+#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, rw)
 
 /* feedback from device units */
 #define BX_INSTR_INP(addr, len)
@@ -256,5 +216,8 @@ extern bxInstrumentation *icpu;
 
 /* wrmsr callback */
 #define BX_INSTR_WRMSR(cpu_id, addr, value)
+
+/* vmexit callback */
+#define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
 
 #endif // BX_INSTRUMENTATION
