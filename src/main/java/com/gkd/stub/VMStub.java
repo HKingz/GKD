@@ -27,7 +27,7 @@ public interface VMStub {
 
 	public void setVMArguments(String arguments);
 
-	public Vector<String[]> instruction(BigInteger address, BigInteger cs, BigInteger eip, boolean is32Bit);
+	public Vector<String[]> instruction(BigInteger physicalAddress, boolean is32Bit);
 
 	public Hashtable<String, String> registers();
 

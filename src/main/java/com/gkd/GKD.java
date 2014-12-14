@@ -1370,13 +1370,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		private String update(String result, DataOutputStream out) {
-			BigInteger csBaseAddress = null;
-			if (registerPanel.csTextField.getBase() != null && !registerPanel.csTextField.getBase().equals("")) {
-				csBaseAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-			}
+			//			BigInteger physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+
+			BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
-			BigInteger cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-			String instruction = VMController.getVM().instruction(csBaseAddress, cs, eip, is32Bits()).get(0)[2];
+
+			//			if (registerPanel.csTextField.getBase() != null && !registerPanel.csTextField.getBase().equals("")) {
+			//				physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+			//			}
+			//			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+			//			BigInteger cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
+			String instruction = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 			if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
 				if (instruction.endsWith("\n")) {
 					instruction = instruction.substring(0, instruction.length() - 1);
@@ -1431,13 +1435,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				out = new DataOutputStream(new FileOutputStream("run.txt", true));
 
 				if (eventSource != null) {
-					BigInteger cs;
-					if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
-						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-					} else {
-						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-					}
-					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+					//					BigInteger cs;
+					//					if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
+					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
+					//					} else {
+					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+					//					}
+					//					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 
 					if (eventSource == step10MenuItem) {
 						String result = "";
@@ -1503,11 +1507,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							statusLabel.setText("Step over " + x + " / " + instructionCount);
 							stepCountLabel.setText("Step over " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
 
-							//							if (VMController.vmType == VMType.Bochs) {
 							VMController.getVM().stepOver();
-							//							} else if (VMController.vmType == VMType.Bochs) {
-							//								libGDB.singleStep();
-							//							}
+
 							result = update(result, out);
 							vmCommandEditorPane.setText("");
 
@@ -1521,11 +1522,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else if (eventSource == stepUntilCallOrJumpMenuItem) {
 						boolean notMatch = true;
 						do {
-							//							sendBochsCommand("s");
-							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
-
 							VMController.getVM().singleStep();
-							String result = VMController.getVM().instruction(null, cs, eip, is32Bits()).get(0)[2];
+							updateVMStatus(true);
+							BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+							BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+							String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 							if (result.contains("jmp") || result.contains("je") || result.contains("jne") || result.contains("jg") || result.contains("jge")
 									|| result.contains("ja") || result.contains("jae") || result.contains("jl") || result.contains("jle") || result.contains("jb")
 									|| result.contains("jbe") || result.contains("jo") || result.contains("jno") || result.contains("jz") || result.contains("jnz")
@@ -1533,14 +1534,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								notMatch = false;
 							}
 						} while (notMatch && !shouldStop);
-						updateVMStatus(true);
 					} else if (eventSource == stepUntilRetMenuItem) {
 						boolean notMatch = true;
 						do {
-							//							sendBochsCommand("s");
-							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
 							VMController.getVM().singleStep();
-							String result = VMController.getVM().instruction(null, cs, eip, is32Bits()).get(0)[2];
+							updateVMStatus(true);
+							BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+							BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+							String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 							if (result.contains("ret")) {
 								notMatch = false;
 							}
@@ -1549,10 +1550,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else if (eventSource == stepUntilIRetMenuItem) {
 						boolean notMatch = true;
 						do {
-							//							sendBochsCommand("s");
-							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
 							VMController.getVM().singleStep();
-							String result = VMController.getVM().instruction(null, cs, eip, is32Bits()).get(0)[2];
+							updateVMStatus(true);
+							BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+							BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+							String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 							if (result.contains("iret")) {
 								notMatch = false;
 							}
@@ -1561,10 +1563,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else if (eventSource == stepUntilMovMenuItem) {
 						boolean notMatch = true;
 						do {
-							//							sendBochsCommand("s");
-							//							String result = commandReceiver.getCommandResult("(").toLowerCase();
 							VMController.getVM().singleStep();
-							String result = VMController.getVM().instruction(null, cs, eip, is32Bits()).get(0)[2];
+							updateVMStatus(true);
+							BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+							BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+							String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 							if (result.contains("mov")) {
 								notMatch = false;
 							}
@@ -1584,7 +1587,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							double secondDiff = 0;
 							VMController.getVM().singleStep();
 
-							String re = VMController.getVM().instruction(null, cs, eip, is32Bits()).get(0)[2];
+							updateVMStatus(true);
+							BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+							BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+
+							String re = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 							long ip = CommonLib.string2long(re.replaceAll("\\].*$", "").replaceAll("^.*\\[", ""));
 
 							if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
@@ -1757,7 +1764,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (Global.debug) {
 					logger.debug("updateInstruction");
 				}
-				updateInstruction(null);
+				BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+				BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+				updateInstruction(csBase.add(eip));
 
 				d.jProgressBar.setString("updateGDT");
 				if (Global.debug) {
@@ -1838,14 +1847,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 
 					//					String result = VMController.getVM().disasm(getRealEIP());
-					BigInteger cs;
-					if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
-						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-					} else {
-						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-					}
-					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
-					String result = VMController.getVM().instruction(null, cs, eip, is32Bits()).get(0)[2];
+					//					BigInteger cs;
+					//					if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
+					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
+					//					} else {
+					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+					//					}
+//					BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+//					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+					String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 					updateHistoryTable(result);
 				}
 
@@ -2220,19 +2230,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateInstruction(address, is32Bits());
 	}
 
-	public void updateInstruction(BigInteger address, boolean is32Bits) {
+	public void updateInstruction(BigInteger physicalAddress, boolean is32Bits) {
 		statusLabel.setText("Updating instruction");
 		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 
-		BigInteger cs;
-		if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
-			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-		} else {
-			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-		}
-		BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+		//		BigInteger cs;
+		//		if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
+		//			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
+		//		} else {
+		//			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+		//		}
+		//		BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 
-		Vector<String[]> r = VMController.getVM().instruction(address, cs, eip, is32Bits);
+		Vector<String[]> r = VMController.getVM().instruction(physicalAddress, is32Bits);
 		String lastAddress = null;
 		for (String[] s : r) {
 			if (lastAddress != s[1]) {

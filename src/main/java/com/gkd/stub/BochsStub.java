@@ -183,19 +183,20 @@ public class BochsStub implements VMStub {
 	}
 
 	@Override
-	public Vector<String[]> instruction(BigInteger csBaseAddress, BigInteger cs, BigInteger eip, boolean is32Bit) {
-		logger.debug("updateInstruction " + csBaseAddress + ", " + cs + ", " + eip);
+	public Vector<String[]> instruction(BigInteger physicalAddress, boolean is32Bit) {
+		logger.debug("updateInstruction " + physicalAddress);
 		Vector<String[]> r = new Vector<String[]>();
-		if (csBaseAddress == null) {
-			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
-			csBaseAddress = cs.add(eip);
-		} else {
-			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
-			csBaseAddress = csBaseAddress.add(eip);
-		}
+		//		if (csBaseAddress == null) {
+		//			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
+		//			csBaseAddress = cs.add(eip);
+		//		} else {
+		//			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
+		//			csBaseAddress = csBaseAddress.add(eip);
+		//		}
+		//		System.out.println("csBaseAddress=" + csBaseAddress.toString());
 
-		int bytes[] = physicalMemory(csBaseAddress, 200);
-		String result = Disassemble.disassemble(bytes, is32Bit, csBaseAddress);
+		int bytes[] = physicalMemory(physicalAddress, 200);
+		String result = Disassemble.disassemble(bytes, is32Bit, physicalAddress);
 
 		String lines[] = result.split("\n");
 		if (lines.length > 0) {
