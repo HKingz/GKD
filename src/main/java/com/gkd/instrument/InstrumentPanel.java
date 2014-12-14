@@ -156,7 +156,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JScrollPane interruptTableScrollPane;
 	private ChartPanel jInterruptChart;
 	private JPanel interruptChartPanel;
-	private JTabbedPane jInterruptTabbedPane;
+	private JTabbedPane interruptTabbedPane;
 	private JPanel jPanel11;
 	private JLabel jLabel12;
 	private JLabel jLabel11;
@@ -167,8 +167,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JPanel jPanel8;
 	private JPanel jPanel7;
 	private JPanel jPanel6;
-	private JTabbedPane jTabbedPane4;
-	private JTextField jCallGraphScaleTextField;
+	private JTabbedPane tabbedPane4;
+	private JTextField callGraphScaleTextField;
 	private JComboBox trackDistanceComboBox;
 	private JComboBox trackUnitComboBox;
 	private JButton callGraphZoomOutButton;
@@ -178,23 +178,23 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JPanel jPanel5;
 	private JTable callGraphConfigTable;
 	private JScrollPane jScrollPane4;
-	private JPanel jCallGraphConfigPanel;
-	private JTextField jSegmentToTextField;
-	private JTextField jSegmentFromTextField;
-	private JTextField jSegmentEndTextField;
-	private JTextField jSegmentStartTextField;
+	private JPanel callGraphConfigPanel;
+	private JTextField segmentToTextField;
+	private JTextField segmentFromTextField;
+	private JTextField segmentEndTextField;
+	private JTextField segmentStartTextField;
 	private JPanel jPanel4;
-	private JLabel jSegmentToLabel;
-	private JLabel jSegmentFromLabel;
-	private JLabel jSegmentEndLabel;
-	private JLabel jSegmentStartLabel;
+	private JLabel segmentToLabel;
+	private JLabel segmentFromLabel;
+	private JLabel segmentEndLabel;
+	private JLabel segmentStartLabel;
 	private JPanel callGraphPreviewPanel;
-	private JSplitPane jCallGraphSplitPane;
-	private JPanel jCallGraphDetailPanel;
+	private JSplitPane callGraphSplitPane;
+	private JPanel callGraphDetailPanel;
 	private JPanel jPanel3;
-	private JTable jCallGraphRawTable;
+	private JTable callGraphRawTable;
 	private JScrollPane jScrollPane1;
-	private JPanel jCallGraphTablePanel;
+	private JPanel callGraphTablePanel;
 	private JTabbedPane jTabbedPane3;
 	private JButton layoutHierarchicalButton;
 	private JButton layoutOrganicButton;
@@ -202,19 +202,19 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton layoutTreeButton;
 	private JButton refreshCallGraphButton;
 	private JButton saveGraphButton;
-	private JToolBar jToolBar1;
-	private JPanel jCallGraphPanel;
-	private JTable jTable1;
-	private JCheckBox jGroupCheckBox;
+	private JToolBar toolBar1;
+	private JPanel callGraphPanel;
+	private JTable table1;
+	private JCheckBox groupCheckBox;
 	private JLabel jLabel10;
-	private JComboBox jNoOfLineComboBox;
+	private JComboBox noOfLineComboBox;
 	private JPanel jPanel2;
 	private JScrollPane jScrollPane3;
 	private JPanel jmpPanel;
-	private JButton jDeleteZoneButton;
-	private JButton jAddZoneButton;
+	private JButton deleteZoneButton;
+	private JButton addZoneButton;
 	private JScrollPane jScrollPane2;
-	private JTable jProfilingTable;
+	private JTable profilingTable;
 	private JComboBox jProfilingToComboBox;
 	private JLabel jLabel9;
 	private JComboBox jProfilingFromComboBox;
@@ -1214,14 +1214,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JTable getJProfilingTable() {
-		if (jProfilingTable == null) {
-			jProfilingTable = new JTable();
+		if (profilingTable == null) {
+			profilingTable = new JTable();
 			ProfilingTableModel profilingTableModel = new ProfilingTableModel();
-			jProfilingTable.setModel(profilingTableModel);
-			jProfilingTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			jProfilingTable.getColumnModel().getColumn(4).setPreferredWidth(3000);
-			jProfilingTable.getTableHeader().setReorderingAllowed(false);
-			jProfilingTable.addMouseListener(new MouseAdapter() {
+			profilingTable.setModel(profilingTableModel);
+			profilingTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			profilingTable.getColumnModel().getColumn(4).setPreferredWidth(3000);
+			profilingTable.getTableHeader().setReorderingAllowed(false);
+			profilingTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					jProfilingTableMouseClicked(evt);
 				}
@@ -1234,13 +1234,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				Iterator<Long> fromIterator = fromVector.iterator();
 				Iterator<Long> toIterator = toVector.iterator();
 				while (fromIterator.hasNext()) {
-					((ProfilingTableModel) this.jProfilingTable.getModel()).addZone(fromIterator.next(), toIterator.next());
+					((ProfilingTableModel) this.profilingTable.getModel()).addZone(fromIterator.next(), toIterator.next());
 				}
 			} catch (Exception ex) {
 
 			}
 		}
-		return jProfilingTable;
+		return profilingTable;
 	}
 
 	private JScrollPane getJScrollPane2() {
@@ -1252,16 +1252,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JButton getJAddZoneButton() {
-		if (jAddZoneButton == null) {
-			jAddZoneButton = new JButton();
-			jAddZoneButton.setText("Add");
-			jAddZoneButton.addActionListener(new ActionListener() {
+		if (addZoneButton == null) {
+			addZoneButton = new JButton();
+			addZoneButton.setText("Add");
+			addZoneButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jAddZoneButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jAddZoneButton;
+		return addZoneButton;
 	}
 
 	private void jAddZoneButtonActionPerformed(ActionEvent evt) {
@@ -1273,7 +1273,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				to = from;
 				from = x;
 			}
-			((ProfilingTableModel) this.jProfilingTable.getModel()).addZone(from, to);
+			((ProfilingTableModel) this.profilingTable.getModel()).addZone(from, to);
 			jProfilingFromComboBox.setSelectedItem("");
 			jProfilingToComboBox.setSelectedItem("");
 
@@ -1306,30 +1306,30 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JButton getJDeleteZoneButton() {
-		if (jDeleteZoneButton == null) {
-			jDeleteZoneButton = new JButton();
-			jDeleteZoneButton.setText("Delete");
-			jDeleteZoneButton.addActionListener(new ActionListener() {
+		if (deleteZoneButton == null) {
+			deleteZoneButton = new JButton();
+			deleteZoneButton.setText("Delete");
+			deleteZoneButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jDeleteZoneButtonActionPerformed(evt);
 				}
 			});
 		}
-		return jDeleteZoneButton;
+		return deleteZoneButton;
 	}
 
 	private void jDeleteZoneButtonActionPerformed(ActionEvent evt) {
-		Setting.getInstance().profileMemoryToAddress.remove(jProfilingTable.getSelectedRow());
-		Setting.getInstance().profileMemoryFromAddress.remove(jProfilingTable.getSelectedRow());
+		Setting.getInstance().profileMemoryToAddress.remove(profilingTable.getSelectedRow());
+		Setting.getInstance().profileMemoryFromAddress.remove(profilingTable.getSelectedRow());
 
-		((ProfilingTableModel) this.jProfilingTable.getModel()).removeAll();
+		((ProfilingTableModel) this.profilingTable.getModel()).removeAll();
 
 		LinkedList<Long> fromVector = Setting.getInstance().profileMemoryFromAddress;
 		LinkedList<Long> toVector = Setting.getInstance().profileMemoryToAddress;
 		Iterator<Long> fromIterator = fromVector.iterator();
 		Iterator<Long> toIterator = toVector.iterator();
 		while (fromIterator.hasNext()) {
-			((ProfilingTableModel) this.jProfilingTable.getModel()).addZone(fromIterator.next(), toIterator.next());
+			((ProfilingTableModel) this.profilingTable.getModel()).addZone(fromIterator.next(), toIterator.next());
 		}
 	}
 
@@ -1366,19 +1366,19 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JComboBox getJNoOfLineComboBox() {
-		if (jNoOfLineComboBox == null) {
+		if (noOfLineComboBox == null) {
 			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "20", "50", "100", "200" });
-			jNoOfLineComboBox = new JComboBox();
-			jNoOfLineComboBox.setModel(jNoOfLineComboBoxModel);
-			jNoOfLineComboBox.setEditable(true);
-			jNoOfLineComboBox.setPreferredSize(new java.awt.Dimension(153, 22));
-			jNoOfLineComboBox.addActionListener(new ActionListener() {
+			noOfLineComboBox = new JComboBox();
+			noOfLineComboBox.setModel(jNoOfLineComboBoxModel);
+			noOfLineComboBox.setEditable(true);
+			noOfLineComboBox.setPreferredSize(new java.awt.Dimension(153, 22));
+			noOfLineComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jNoOfLineComboBoxActionPerformed(evt);
 				}
 			});
 		}
-		return jNoOfLineComboBox;
+		return noOfLineComboBox;
 	}
 
 	private JLabel getJLabel10() {
@@ -1390,37 +1390,37 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void jNoOfLineComboBoxActionPerformed(ActionEvent evt) {
-		jmpTableModel.setRowCount(Integer.parseInt(jNoOfLineComboBox.getSelectedItem().toString()));
+		jmpTableModel.setRowCount(Integer.parseInt(noOfLineComboBox.getSelectedItem().toString()));
 	}
 
 	private JCheckBox getJGroupCheckBox() {
-		if (jGroupCheckBox == null) {
-			jGroupCheckBox = new JCheckBox();
-			jGroupCheckBox.setText("Group");
-			jGroupCheckBox.addActionListener(new ActionListener() {
+		if (groupCheckBox == null) {
+			groupCheckBox = new JCheckBox();
+			groupCheckBox.setText("Group");
+			groupCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jGroupCheckBoxActionPerformed(evt);
 				}
 			});
 		}
-		return jGroupCheckBox;
+		return groupCheckBox;
 	}
 
 	private void jGroupCheckBoxActionPerformed(ActionEvent evt) {
-		jmpTableModel.setGroup(jGroupCheckBox.isSelected());
+		jmpTableModel.setGroup(groupCheckBox.isSelected());
 	}
 
 	private JTable getJTable1() {
-		if (jTable1 == null) {
-			jTable1 = new JTable();
-			jTable1.setModel(jmpTableModel);
-			jTable1.getTableHeader().setReorderingAllowed(false);
-			jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int x = 0; x < jTable1.getColumnCount(); x++) {
-				jTable1.getColumnModel().getColumn(x).setPreferredWidth(100);
+		if (table1 == null) {
+			table1 = new JTable();
+			table1.setModel(jmpTableModel);
+			table1.getTableHeader().setReorderingAllowed(false);
+			table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			for (int x = 0; x < table1.getColumnCount(); x++) {
+				table1.getColumnModel().getColumn(x).setPreferredWidth(100);
 			}
 		}
-		return jTable1;
+		return table1;
 	}
 
 	public JmpTableModel getJmpTableModel() {
@@ -1428,34 +1428,34 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JPanel getJCallGraphPanel() {
-		if (jCallGraphPanel == null) {
-			jCallGraphPanel = new JPanel();
+		if (callGraphPanel == null) {
+			callGraphPanel = new JPanel();
 			BorderLayout jCallGraphPanelLayout = new BorderLayout();
-			jCallGraphPanel.setLayout(jCallGraphPanelLayout);
-			jCallGraphPanel.add(getJToolBar1(), BorderLayout.NORTH);
-			jCallGraphPanel.add(getJCallGraphSplitPane(), BorderLayout.CENTER);
+			callGraphPanel.setLayout(jCallGraphPanelLayout);
+			callGraphPanel.add(getJToolBar1(), BorderLayout.NORTH);
+			callGraphPanel.add(getJCallGraphSplitPane(), BorderLayout.CENTER);
 		}
-		return jCallGraphPanel;
+		return callGraphPanel;
 	}
 
 	private JToolBar getJToolBar1() {
-		if (jToolBar1 == null) {
-			jToolBar1 = new JToolBar();
-			jToolBar1.add(getJSaveGraphButton());
-			jToolBar1.add(getJRefreshCallGraphButton());
-			jToolBar1.add(getJLayoutTreeButton());
-			jToolBar1.add(getJLayoutCircleButton());
-			jToolBar1.add(getJLayoutOrganicButton());
-			jToolBar1.add(getJLayoutHierarchicalButton());
-			jToolBar1.add(getJCallGraphZoomInButton());
-			jToolBar1.add(getJCallGraphScaleTextField());
-			jToolBar1.add(getJCallGraphZoomOutButton());
-			jToolBar1.add(getJLabel11());
-			jToolBar1.add(getJTrackUnitComboBox());
-			jToolBar1.add(getJLabel12());
-			jToolBar1.add(getJTrackDistanceComboBox());
+		if (toolBar1 == null) {
+			toolBar1 = new JToolBar();
+			toolBar1.add(getJSaveGraphButton());
+			toolBar1.add(getJRefreshCallGraphButton());
+			toolBar1.add(getJLayoutTreeButton());
+			toolBar1.add(getJLayoutCircleButton());
+			toolBar1.add(getJLayoutOrganicButton());
+			toolBar1.add(getJLayoutHierarchicalButton());
+			toolBar1.add(getJCallGraphZoomInButton());
+			toolBar1.add(getJCallGraphScaleTextField());
+			toolBar1.add(getJCallGraphZoomOutButton());
+			toolBar1.add(getJLabel11());
+			toolBar1.add(getJTrackUnitComboBox());
+			toolBar1.add(getJLabel12());
+			toolBar1.add(getJTrackDistanceComboBox());
 		}
-		return jToolBar1;
+		return toolBar1;
 	}
 
 	private JButton getJSaveGraphButton() {
@@ -1550,8 +1550,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private void cellClientEvent(String label) {
 		String str[] = label.split("->");
-		this.jSegmentStartTextField.setText(str[0]);
-		this.jSegmentEndTextField.setText(str[1]);
+		this.segmentStartTextField.setText(str[0]);
+		this.segmentEndTextField.setText(str[1]);
 	}
 
 	private void setMarkerMaxAndMinSize() {
@@ -1775,13 +1775,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JPanel getJCallGraphTablePanel() {
-		if (jCallGraphTablePanel == null) {
-			jCallGraphTablePanel = new JPanel();
+		if (callGraphTablePanel == null) {
+			callGraphTablePanel = new JPanel();
 			BorderLayout jCallGraphTablePanelLayout = new BorderLayout();
-			jCallGraphTablePanel.setLayout(jCallGraphTablePanelLayout);
-			jCallGraphTablePanel.add(getJScrollPane1x(), BorderLayout.CENTER);
+			callGraphTablePanel.setLayout(jCallGraphTablePanelLayout);
+			callGraphTablePanel.add(getJScrollPane1x(), BorderLayout.CENTER);
 		}
-		return jCallGraphTablePanel;
+		return callGraphTablePanel;
 	}
 
 	private JScrollPane getJScrollPane1x() {
@@ -1793,13 +1793,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JTable getJCallGraphRawTable() {
-		if (jCallGraphRawTable == null) {
-			jCallGraphRawTable = new JTable();
-			jCallGraphRawTable.setModel(callGraphRawTableModel);
-			jCallGraphRawTable.getTableHeader().setReorderingAllowed(false);
-			jCallGraphRawTable.getTableHeader().setReorderingAllowed(false);
+		if (callGraphRawTable == null) {
+			callGraphRawTable = new JTable();
+			callGraphRawTable.setModel(callGraphRawTableModel);
+			callGraphRawTable.getTableHeader().setReorderingAllowed(false);
+			callGraphRawTable.getTableHeader().setReorderingAllowed(false);
 		}
-		return jCallGraphRawTable;
+		return callGraphRawTable;
 	}
 
 	private JPanel getJPanel3() {
@@ -1812,26 +1812,26 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JPanel getJCallGraphDetailPanel() {
-		if (jCallGraphDetailPanel == null) {
-			jCallGraphDetailPanel = new JPanel();
+		if (callGraphDetailPanel == null) {
+			callGraphDetailPanel = new JPanel();
 			BorderLayout jCallGraphDetailPanelLayout = new BorderLayout();
-			jCallGraphDetailPanel.setLayout(jCallGraphDetailPanelLayout);
-			jCallGraphDetailPanel.setPreferredSize(new java.awt.Dimension(760, 184));
-			jCallGraphDetailPanel.add(getJCallGraphPreviewPanel(), BorderLayout.WEST);
-			jCallGraphDetailPanel.add(getJTabbedPane4(), BorderLayout.CENTER);
+			callGraphDetailPanel.setLayout(jCallGraphDetailPanelLayout);
+			callGraphDetailPanel.setPreferredSize(new java.awt.Dimension(760, 184));
+			callGraphDetailPanel.add(getJCallGraphPreviewPanel(), BorderLayout.WEST);
+			callGraphDetailPanel.add(getJTabbedPane4(), BorderLayout.CENTER);
 		}
-		return jCallGraphDetailPanel;
+		return callGraphDetailPanel;
 	}
 
 	private JSplitPane getJCallGraphSplitPane() {
-		if (jCallGraphSplitPane == null) {
-			jCallGraphSplitPane = new JSplitPane();
-			jCallGraphSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
-			jCallGraphSplitPane.setDividerLocation(300);
-			jCallGraphSplitPane.add(getJPanel3(), JSplitPane.TOP);
-			jCallGraphSplitPane.add(getJCallGraphDetailPanel(), JSplitPane.BOTTOM);
+		if (callGraphSplitPane == null) {
+			callGraphSplitPane = new JSplitPane();
+			callGraphSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			callGraphSplitPane.setDividerLocation(300);
+			callGraphSplitPane.add(getJPanel3(), JSplitPane.TOP);
+			callGraphSplitPane.add(getJCallGraphDetailPanel(), JSplitPane.BOTTOM);
 		}
-		return jCallGraphSplitPane;
+		return callGraphSplitPane;
 	}
 
 	private JPanel getJCallGraphPreviewPanel() {
@@ -1844,39 +1844,39 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JLabel getJSegmentStartLabel() {
-		if (jSegmentStartLabel == null) {
-			jSegmentStartLabel = new JLabel();
-			jSegmentStartLabel.setText("Segment start");
-			jSegmentStartLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		if (segmentStartLabel == null) {
+			segmentStartLabel = new JLabel();
+			segmentStartLabel.setText("Segment start");
+			segmentStartLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
-		return jSegmentStartLabel;
+		return segmentStartLabel;
 	}
 
 	private JLabel getJSegmentEndLabel() {
-		if (jSegmentEndLabel == null) {
-			jSegmentEndLabel = new JLabel();
-			jSegmentEndLabel.setText("Segment end");
-			jSegmentEndLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		if (segmentEndLabel == null) {
+			segmentEndLabel = new JLabel();
+			segmentEndLabel.setText("Segment end");
+			segmentEndLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
-		return jSegmentEndLabel;
+		return segmentEndLabel;
 	}
 
 	private JLabel getJSegmentFromLabel() {
-		if (jSegmentFromLabel == null) {
-			jSegmentFromLabel = new JLabel();
-			jSegmentFromLabel.setText("Segment jump from");
-			jSegmentFromLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		if (segmentFromLabel == null) {
+			segmentFromLabel = new JLabel();
+			segmentFromLabel.setText("Segment jump from");
+			segmentFromLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
-		return jSegmentFromLabel;
+		return segmentFromLabel;
 	}
 
 	private JLabel getJSegmentToLabel() {
-		if (jSegmentToLabel == null) {
-			jSegmentToLabel = new JLabel();
-			jSegmentToLabel.setText("Segment jump to");
-			jSegmentToLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		if (segmentToLabel == null) {
+			segmentToLabel = new JLabel();
+			segmentToLabel.setText("Segment jump to");
+			segmentToLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		}
-		return jSegmentToLabel;
+		return segmentToLabel;
 	}
 
 	private JPanel getJPanel4() {
@@ -1937,31 +1937,31 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JTextField getJSegmentStartTextField() {
-		if (jSegmentStartTextField == null) {
-			jSegmentStartTextField = new JTextField();
+		if (segmentStartTextField == null) {
+			segmentStartTextField = new JTextField();
 		}
-		return jSegmentStartTextField;
+		return segmentStartTextField;
 	}
 
 	private JTextField getJSegmentEndTextField() {
-		if (jSegmentEndTextField == null) {
-			jSegmentEndTextField = new JTextField();
+		if (segmentEndTextField == null) {
+			segmentEndTextField = new JTextField();
 		}
-		return jSegmentEndTextField;
+		return segmentEndTextField;
 	}
 
 	private JTextField getJSegmentFromTextField() {
-		if (jSegmentFromTextField == null) {
-			jSegmentFromTextField = new JTextField();
+		if (segmentFromTextField == null) {
+			segmentFromTextField = new JTextField();
 		}
-		return jSegmentFromTextField;
+		return segmentFromTextField;
 	}
 
 	private JTextField getJSegmentToTextField() {
-		if (jSegmentToTextField == null) {
-			jSegmentToTextField = new JTextField();
+		if (segmentToTextField == null) {
+			segmentToTextField = new JTextField();
 		}
-		return jSegmentToTextField;
+		return segmentToTextField;
 	}
 
 	private void jSaveGraphButtonActionPerformed(ActionEvent evt) {
@@ -2011,14 +2011,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JPanel getJCallGraphConfigPanel() {
-		if (jCallGraphConfigPanel == null) {
-			jCallGraphConfigPanel = new JPanel();
+		if (callGraphConfigPanel == null) {
+			callGraphConfigPanel = new JPanel();
 			BorderLayout jCallGraphConfigPanelLayout = new BorderLayout();
-			jCallGraphConfigPanel.setLayout(jCallGraphConfigPanelLayout);
-			jCallGraphConfigPanel.add(getJScrollPane4(), BorderLayout.CENTER);
-			jCallGraphConfigPanel.add(getJPanel5(), BorderLayout.SOUTH);
+			callGraphConfigPanel.setLayout(jCallGraphConfigPanelLayout);
+			callGraphConfigPanel.add(getJScrollPane4(), BorderLayout.CENTER);
+			callGraphConfigPanel.add(getJPanel5(), BorderLayout.SOUTH);
 		}
-		return jCallGraphConfigPanel;
+		return callGraphConfigPanel;
 	}
 
 	private JScrollPane getJScrollPane4() {
@@ -2131,17 +2131,17 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void jCallGraphZoomInButtonActionPerformed(ActionEvent evt) {
-		int scale = Integer.parseInt(jCallGraphScaleTextField.getText().replaceAll("%", ""));
+		int scale = Integer.parseInt(callGraphScaleTextField.getText().replaceAll("%", ""));
 		scale += 20;
 		graphComponent.zoomTo((double) scale / 100, true);
-		jCallGraphScaleTextField.setText(scale + "%");
+		callGraphScaleTextField.setText(scale + "%");
 	}
 
 	private void jCallGraphZoomOutButtonActionPerformed(ActionEvent evt) {
-		int scale = Integer.parseInt(jCallGraphScaleTextField.getText().replaceAll("%", ""));
+		int scale = Integer.parseInt(callGraphScaleTextField.getText().replaceAll("%", ""));
 		scale -= 20;
 		graphComponent.zoomTo((double) scale / 100, true);
-		jCallGraphScaleTextField.setText(scale + "%");
+		callGraphScaleTextField.setText(scale + "%");
 	}
 
 	private void jTrackUnitComboBoxActionPerformed(ActionEvent evt) {
@@ -2157,22 +2157,22 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JTextField getJCallGraphScaleTextField() {
-		if (jCallGraphScaleTextField == null) {
-			jCallGraphScaleTextField = new JTextField();
-			jCallGraphScaleTextField.setText("100%");
-			jCallGraphScaleTextField.setMaximumSize(new java.awt.Dimension(50, 25));
-			jCallGraphScaleTextField.addFocusListener(new FocusAdapter() {
+		if (callGraphScaleTextField == null) {
+			callGraphScaleTextField = new JTextField();
+			callGraphScaleTextField.setText("100%");
+			callGraphScaleTextField.setMaximumSize(new java.awt.Dimension(50, 25));
+			callGraphScaleTextField.addFocusListener(new FocusAdapter() {
 				public void focusLost(FocusEvent evt) {
 					jCallGraphScaleTextFieldFocusLost(evt);
 				}
 			});
-			jCallGraphScaleTextField.addKeyListener(new KeyAdapter() {
+			callGraphScaleTextField.addKeyListener(new KeyAdapter() {
 				public void keyPressed(KeyEvent evt) {
 					jCallGraphScaleTextFieldKeyPressed(evt);
 				}
 			});
 		}
-		return jCallGraphScaleTextField;
+		return callGraphScaleTextField;
 	}
 
 	private void jCallGraphScaleTextFieldKeyPressed(KeyEvent evt) {
@@ -2182,22 +2182,22 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void jCallGraphScaleTextFieldFocusLost(FocusEvent evt) {
-		int scale = Integer.parseInt(jCallGraphScaleTextField.getText().replaceAll("%", ""));
+		int scale = Integer.parseInt(callGraphScaleTextField.getText().replaceAll("%", ""));
 		graphComponent.zoomTo((double) scale / 100, true);
 	}
 
 	private JTabbedPane getJTabbedPane4() {
-		if (jTabbedPane4 == null) {
-			jTabbedPane4 = new JTabbedPane();
-			jTabbedPane4.setPreferredSize(new java.awt.Dimension(660, 184));
-			jTabbedPane4.addTab("Information", null, getJPanel4(), null);
-			jTabbedPane4.addTab("Register", null, getJPanel6(), null);
-			jTabbedPane4.addTab("TSS", null, getJPanel7(), null);
-			jTabbedPane4.addTab("GDT", null, getJPanel8(), null);
-			jTabbedPane4.addTab("IDT", null, getJPanel9(), null);
-			jTabbedPane4.addTab("LDT", null, getJPanel10(), null);
+		if (tabbedPane4 == null) {
+			tabbedPane4 = new JTabbedPane();
+			tabbedPane4.setPreferredSize(new java.awt.Dimension(660, 184));
+			tabbedPane4.addTab("Information", null, getJPanel4(), null);
+			tabbedPane4.addTab("Register", null, getJPanel6(), null);
+			tabbedPane4.addTab("TSS", null, getJPanel7(), null);
+			tabbedPane4.addTab("GDT", null, getJPanel8(), null);
+			tabbedPane4.addTab("IDT", null, getJPanel9(), null);
+			tabbedPane4.addTab("LDT", null, getJPanel10(), null);
 		}
-		return jTabbedPane4;
+		return tabbedPane4;
 	}
 
 	private JPanel getJPanel6() {
@@ -2284,11 +2284,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JTabbedPane getJInterruptTabbedPane() {
-		if (jInterruptTabbedPane == null) {
-			jInterruptTabbedPane = new JTabbedPane();
-			jInterruptTabbedPane.addTab("Chart", null, getJPanel12(), null);
+		if (interruptTabbedPane == null) {
+			interruptTabbedPane = new JTabbedPane();
+			interruptTabbedPane.addTab("Chart", null, getJPanel12(), null);
 		}
-		return jInterruptTabbedPane;
+		return interruptTabbedPane;
 	}
 
 	private JPanel getJInterruptChartPanel() {
@@ -2610,7 +2610,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void jProfilingTableMouseClicked(MouseEvent evt) {
-		loadInformation(sortCheckBox.isSelected(), jProfilingTable.getValueAt(jProfilingTable.getSelectedRow(), 4).toString());
+		loadInformation(sortCheckBox.isSelected(), profilingTable.getValueAt(profilingTable.getSelectedRow(), 4).toString());
 	}
 
 	private JCheckBox getJSortCheckBox() {
@@ -2657,7 +2657,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void jSortCheckBoxActionPerformed(ActionEvent evt) {
-		loadInformation(sortCheckBox.isSelected(), jProfilingTable.getValueAt(jProfilingTable.getSelectedRow(), 4).toString());
+		loadInformation(sortCheckBox.isSelected(), profilingTable.getValueAt(profilingTable.getSelectedRow(), 4).toString());
 	}
 
 	private JPanel getJPanel14() {

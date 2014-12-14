@@ -787,7 +787,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void initGUI() {
 		Date startDate = new Date();
-		System.out.println("starting GKD " + new SimpleDateFormat("m:s S").format(startDate));
+		logger.info("starting GKD " + new SimpleDateFormat("m:s S").format(startDate));
 		try {
 			language = Utf8ResourceBundle.getBundle("language_" + Setting.getInstance().currentLanguage);
 

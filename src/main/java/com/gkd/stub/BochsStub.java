@@ -3,7 +3,6 @@ package com.gkd.stub;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -103,7 +102,7 @@ public class BochsStub implements VMStub {
 				if (line.contains("Bochs x86 Emulator")) {
 					version = line.trim();
 				}
-				if (line.contains("Peter-bochs instrument")) {
+				if (line.contains("GKD instrument")) {
 					if (Setting.getInstance().memoryProfiling) {
 						if (Global.debug) {
 							logger.debug("Memory profiling port " + Global.profilingMemoryPort);
