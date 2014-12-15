@@ -538,3 +538,4 @@ void bxInstrumentation::jmpSampling(bx_address new_eip) {
 		}
 	}
 }
+
