@@ -122,12 +122,12 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-ar</artifactId>
-			<version>20140129</version>
+			<version>20141215</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-dwarf</artifactId>
-			<version>20140717</version>
+			<version>20141215</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -147,7 +147,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>JLibGDB</artifactId>
-			<version>20140701</version>
+			<version>20141215</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-discovery</groupId>
@@ -172,7 +172,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>tightvncpanel</artifactId>
-			<version>20140701</version>
+			<version>20141215</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
