@@ -46,7 +46,7 @@ int jmpPortNo = 1981;
 int interruptPortNo = 1982;
 
 int oslogPort = 0xffff;
-char *oslogFile = "os.log";
+char oslogFile[] = "os.log";
 ofstream oslogStream(oslogFile, ios::app);
 
 #define printHeader
@@ -416,7 +416,7 @@ void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, 
 	// If linear translation doesn't exist, a paging exception will occur.
 	// Invalidate physical address data for now.
 	if (!page_valid)
-		phy = (bx_phy_address)(-1);
+		phy = (bx_phy_address) (-1);
 
 	data_access[num_data_accesses].laddr = lin;
 	data_access[num_data_accesses].paddr = phy;
