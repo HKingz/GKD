@@ -1020,6 +1020,7 @@ public class RegisterPanel extends JPanel {
 			d.jProgressBar.setStringPainted(true);
 
 			class MyThread extends Thread {
+
 				File file;
 
 				public MyThread(File file) {
