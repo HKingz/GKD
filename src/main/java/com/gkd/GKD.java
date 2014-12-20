@@ -153,7 +153,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenu jMenu5;
 	private JScrollPane registerPanelScrollPane;
 	private JScrollPane jScrollPane2;
-	private JMaximizableTabbedPane jTabbedPane1;
+	private JMaximizableTabbedPane upperRightTabbedPane;
 	private HexTable hexTable;
 	private JEditorPane vmCommandEditorPane;
 	private JSplitPane jSplitPane1;
@@ -1302,30 +1302,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}.start();
 			} else {
 				VMController.getVM().pauseVM();
-				//				updateVMStatus(true);
-				//				waitUpdateFinish();
-				//
-				//				runVMButton.setText(MyLanguage.getString("run"));
-				//				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 			}
 		}
 	}
-
-	//	public static void sendBochsCommand(String command) {
-	//		try {
-	//			command = command.toLowerCase().trim();
-	//			commandReceiver.clearBuffer();
-	//			Global.lastCommand = command;
-	//			commandOutputStream.write(command + "\n");
-	//			commandOutputStream.flush();
-	//			if (!command.equals("6") && !command.equals("c") && !command.startsWith("pb") && !command.startsWith("vb") && !command.startsWith("lb") && !command.startsWith("bpd")
-	//					&& !command.startsWith("bpe") && !command.startsWith("del") && !command.startsWith("set")) {
-	//				commandReceiver.waitUntilHaveInput();
-	//				return;
-	//			}
-	//		} catch (IOException e) {
-	//		}
-	//	}
 
 	private void aboutUsMenuItemActionPerformed(ActionEvent evt) {
 		new AboutUsDialog(this).setVisible(true);
@@ -3913,9 +3892,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jSplitPane2.add(jSplitPane1, JSplitPane.TOP);
 		jSplitPane1.setDividerLocation(400);
 
-		jTabbedPane1 = new JMaximizableTabbedPane();
-		jSplitPane1.add(jTabbedPane1, JSplitPane.RIGHT);
-		jTabbedPane1.addChangeListener(new ChangeListener() {
+		upperRightTabbedPane = new JMaximizableTabbedPane();
+		jSplitPane1.add(upperRightTabbedPane, JSplitPane.RIGHT);
+		upperRightTabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent evt) {
 				jTabbedPane1StateChanged(evt);
 			}
@@ -3923,7 +3902,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionPanel = new JPanel();
 		BorderLayout jPanel10Layout = new BorderLayout();
 		instructionPanel.setLayout(jPanel10Layout);
-		jTabbedPane1.addTab(MyLanguage.getString("Instruction"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")),
+		upperRightTabbedPane.addTab(MyLanguage.getString("Instruction"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")),
 				instructionPanel, null);
 		instructionPanel.setPreferredSize(new java.awt.Dimension(604, 452));
 		instructionControlPanel = new JToolBar();
@@ -3974,7 +3953,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 		jPanel4 = new JPanel();
-		jTabbedPane1.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")), jPanel4, null);
+		upperRightTabbedPane.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")), jPanel4, null);
 		BorderLayout jPanel4Layout = new BorderLayout();
 		jPanel4.setLayout(jPanel4Layout);
 
@@ -4060,22 +4039,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		//$hide>>$
 		if (VMController.vmType == VMType.Bochs) {
 			//$hide><<$
-			jTabbedPane1.addTab(MyLanguage.getString("Bochs"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
+			upperRightTabbedPane.addTab(MyLanguage.getString("Bochs"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
 					vmPanel, null);
 			//$hide>>$
 		} else if (VMController.vmType == VMType.Qemu) {
 			//$hide<<$
-			jTabbedPane1.addTab(MyLanguage.getString("Qemu"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
+			upperRightTabbedPane.addTab(MyLanguage.getString("Qemu"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
 					vmPanel, null);
 			//$hide>>$
 		}
 		//$hide<<$
 
 		logger.info(new SimpleDateFormat("mm:ss.SSS").format(new Date()));
-		jTabbedPane1.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
+		upperRightTabbedPane.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
 		DiskPanel diskPanel = getDiskPanel();
 		if (diskPanel.getFile() != null) {
-			jTabbedPane1.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")), diskPanel, null);
+			upperRightTabbedPane.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")), diskPanel, null);
 		}
 		BorderLayout jPanel1Layout = new BorderLayout();
 		vmPanel.setLayout(jPanel1Layout);
@@ -4976,7 +4955,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void jDisassemble32MenuItemActionPerformed(ActionEvent evt) {
 		this.instructionComboBox.setSelectedItem(currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)));
 		disassembleButtonActionPerformed(null);
-		jTabbedPane1.setSelectedIndex(0);
+		upperRightTabbedPane.setSelectedIndex(0);
 	}
 
 	private JPanel getJELFBreakpointPanel() {
@@ -6105,7 +6084,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void disassembleMenuItemActionPerformed(ActionEvent evt) {
 		this.instructionComboBox.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
 		disassembleButtonActionPerformed(null);
-		jTabbedPane1.setSelectedIndex(0);
+		upperRightTabbedPane.setSelectedIndex(0);
 	}
 
 	private void searchMemoryTableMouseClicked(MouseEvent evt) {
