@@ -276,7 +276,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JLabel maximumRowLabel;
 	private JCheckBox saveToRunDotTxtCheckBox;
 	private JCheckBox autoUpdateEvery20LinesCheckBox;
-	private JCheckBox jDisableAutoUpdateCheckBox;
+	private JCheckBox disableAutoUpdateCheckBox;
 	private JLabel stepCountLabel;
 	private JButton pauseButton;
 	private EnhancedTextArea jTextArea1;
@@ -1358,7 +1358,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			//			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 			//			BigInteger cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
 			String instruction = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
-			if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
+			if (saveToRunDotTxt || !disableAutoUpdateCheckBox.isSelected()) {
 				if (instruction.endsWith("\n")) {
 					instruction = instruction.substring(0, instruction.length() - 1);
 				}
@@ -1379,7 +1379,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					e.printStackTrace();
 				}
 			}
-			if (!jDisableAutoUpdateCheckBox.isSelected()) {
+			if (!disableAutoUpdateCheckBox.isSelected()) {
 				if (maxRowComboBox.getSelectedItem().equals("infinite")) {
 					jTextArea1.setMaxRow(-1);
 				} else {
@@ -1571,7 +1571,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							String re = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 							long ip = CommonLib.string2long(re.replaceAll("\\].*$", "").replaceAll("^.*\\[", ""));
 
-							if (saveToRunDotTxt || !jDisableAutoUpdateCheckBox.isSelected()) {
+							if (saveToRunDotTxt || !disableAutoUpdateCheckBox.isSelected()) {
 								if (re.endsWith("\n")) {
 									re = re.substring(0, re.length() - 1);
 								}
@@ -1588,7 +1588,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								out.writeBytes(result + "\n");
 								out.flush();
 							}
-							if (!jDisableAutoUpdateCheckBox.isSelected()) {
+							if (!disableAutoUpdateCheckBox.isSelected()) {
 								if (maxRowComboBox.getSelectedItem().equals("infinite")) {
 									jTextArea1.setMaxRow(-1);
 								} else {
@@ -1625,7 +1625,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							lastIP = ip;
 
 							if (secondDiff > 0) {
-								if (!jDisableAutoUpdateCheckBox.isSelected()) {
+								if (!disableAutoUpdateCheckBox.isSelected()) {
 									if (autoUpdateEvery20LinesCheckBox.isSelected()) {
 										stepCountLabel.setText(String.valueOf(count) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
 												+ Math.round(20 / secondDiff) + " instructions executed per second");
@@ -7145,11 +7145,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JCheckBox getJCheckBox1() {
-		if (jDisableAutoUpdateCheckBox == null) {
-			jDisableAutoUpdateCheckBox = new JCheckBox();
-			jDisableAutoUpdateCheckBox.setText("Disable auto update, so bochs runs faster");
+		if (disableAutoUpdateCheckBox == null) {
+			disableAutoUpdateCheckBox = new JCheckBox();
+			disableAutoUpdateCheckBox.setText("Disable auto update, so bochs runs faster");
 		}
-		return jDisableAutoUpdateCheckBox;
+		return disableAutoUpdateCheckBox;
 	}
 
 	private JCheckBox getAutoUpdateEvery20LinesCheckBox() {
