@@ -1209,7 +1209,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void pauseVMMenuItemActionPerformed(ActionEvent evt) {
 		skipBreakpointTime = 0;
-		//		pauseVM(true, true);
 		VMController.getVM().pauseVM();
 	}
 
@@ -1230,6 +1229,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					return;
 				}
 				skipBreakpointTime = Integer.parseInt(s);
+
+				CommonLib.enableJComponent(upperRightTabbedPane, false);
+				CommonLib.enableJComponent(bottomTabbedPane, true);
 				VMController.getVM().runVM();
 
 				runVMButton.setText(MyLanguage.getString("pause"));
@@ -1273,8 +1275,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 
 					skipBreakpointTime = 0;
-					//					commandReceiver.shouldShow = false;
-					//					runVM();
+
+					CommonLib.enableJComponent(upperRightTabbedPane, false);
+					CommonLib.enableJComponent(bottomTabbedPane, false);
 					VMController.getVM().runVM();
 
 					runVMButton.setText(MyLanguage.getString("pause"));
@@ -1285,6 +1288,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			customCommandQueue.clear();
 			if (runVMButton.getText().equals(MyLanguage.getString("run"))) {
 				enableAllButtons(false, true);
+				CommonLib.enableJComponent(upperRightTabbedPane, false);
+				CommonLib.enableJComponent(bottomTabbedPane, false);
 				VMController.getVM().runVM();
 
 				runVMButton.setText(MyLanguage.getString("pause"));
@@ -1292,7 +1297,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				new Thread() {
 					public void run() {
 						VMController.getVM().waitVMStop();
-						System.out.println("waitVMStop finished");
+						logger.debug("waitVMStop finished");
+						CommonLib.enableJComponent(upperRightTabbedPane, true);
+						CommonLib.enableJComponent(bottomTabbedPane, true);
 						runVMButton.setText(MyLanguage.getString("run"));
 						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 						updateVMStatus(true);
@@ -1300,6 +1307,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}.start();
 			} else {
 				VMController.getVM().pauseVM();
+				CommonLib.enableJComponent(upperRightTabbedPane, true);
+				CommonLib.enableJComponent(bottomTabbedPane, true);
 			}
 		}
 	}
