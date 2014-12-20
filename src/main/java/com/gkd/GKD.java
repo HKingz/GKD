@@ -1293,11 +1293,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					public void run() {
 						VMController.getVM().waitVMStop();
 						System.out.println("waitVMStop finished");
-						//						if (runVMButton.getText().equals(MyLanguage.getString("run"))) {
 						runVMButton.setText(MyLanguage.getString("run"));
 						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 						updateVMStatus(true);
-						//						}
 					}
 				}.start();
 			} else {
@@ -1832,8 +1830,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					//					} else {
 					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 					//					}
-//					BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-//					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+					//					BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+					//					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 					String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 					updateHistoryTable(result);
 				}
@@ -3953,7 +3951,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 		jPanel4 = new JPanel();
-		upperRightTabbedPane.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")), jPanel4, null);
+		upperRightTabbedPane.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")), jPanel4,
+				null);
 		BorderLayout jPanel4Layout = new BorderLayout();
 		jPanel4.setLayout(jPanel4Layout);
 
@@ -4039,13 +4038,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		//$hide>>$
 		if (VMController.vmType == VMType.Bochs) {
 			//$hide><<$
-			upperRightTabbedPane.addTab(MyLanguage.getString("Bochs"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
-					vmPanel, null);
+			upperRightTabbedPane.addTab(MyLanguage.getString("Bochs"),
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
 			//$hide>>$
 		} else if (VMController.vmType == VMType.Qemu) {
 			//$hide<<$
-			upperRightTabbedPane.addTab(MyLanguage.getString("Qemu"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
-					vmPanel, null);
+			upperRightTabbedPane.addTab(MyLanguage.getString("Qemu"),
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
 			//$hide>>$
 		}
 		//$hide<<$
@@ -4054,7 +4053,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		upperRightTabbedPane.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
 		DiskPanel diskPanel = getDiskPanel();
 		if (diskPanel.getFile() != null) {
-			upperRightTabbedPane.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")), diskPanel, null);
+			upperRightTabbedPane.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")), diskPanel,
+					null);
 		}
 		BorderLayout jPanel1Layout = new BorderLayout();
 		vmPanel.setLayout(jPanel1Layout);
