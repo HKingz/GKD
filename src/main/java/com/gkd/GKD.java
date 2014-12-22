@@ -2228,6 +2228,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		//		}
 		//		BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 
+		if (physicalAddress == null) {
+			physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase()).add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
+		}
+
 		Vector<String[]> r = VMController.getVM().instruction(physicalAddress, is32Bits);
 		String lastAddress = null;
 		for (String[] s : r) {
