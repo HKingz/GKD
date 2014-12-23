@@ -114,6 +114,7 @@ void safeRead(int socketFD, unsigned char *inBuffer, unsigned int size) {
 }
 
 void initMemorySocket() {
+	/*
 	oslogStream << "initMemorySocket" << endl;
 	oslogStream.flush();
 	memorySockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -149,9 +150,11 @@ void initMemorySocket() {
 	fflush(log);
 	oslogStream << "initMemorySocket2" << endl;
 	oslogStream.flush();
+	*/
 }
 
 void initJmpSocket() {
+	/*
 	jmpSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (jmpSockfd < 0) {
 		fprintf(log, "Jmp socket server : ERROR opening socket\n");
@@ -186,9 +189,11 @@ void initJmpSocket() {
 	}
 
 	fflush(log);
+	*/
 }
 
 void initInterruptSocket() {
+	/*
 	interruptSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (interruptSockfd < 0) {
 		fprintf(log, "Interrupt socket server : ERROR opening socket\n");
@@ -223,6 +228,7 @@ void initInterruptSocket() {
 	}
 
 	fflush(log);
+	*/
 }
 
 void bx_instr_init_env(void) {
@@ -231,6 +237,7 @@ void bx_instr_exit_env(void) {
 }
 
 void bx_instr_initialize(unsigned cpu) {
+	/*
 	assert(cpu < BX_SMP_PROCESSORS);
 
 	if (icpu == NULL)
@@ -253,6 +260,7 @@ void bx_instr_initialize(unsigned cpu) {
 			zonesHit[x] = 0;
 		}
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_reset(unsigned type) {
@@ -262,6 +270,7 @@ void bxInstrumentation::bx_instr_reset(unsigned type) {
 }
 
 void bxInstrumentation::bx_print_instruction(void) {
+	/*
 	char disasm_tbuf[512];	// buffer for instruction disassembly
 	bx_disassembler.disasm(is32, is64, 0, 0, opcode, disasm_tbuf);
 
@@ -284,11 +293,11 @@ void bxInstrumentation::bx_print_instruction(void) {
 		//fprintf(stderr, "\n");
 		if (connectedToMemoryServer) {
 			for (n = 0; n < num_data_accesses; n++) {
-				/*fprintf(stderr, "MEM ACCESS[%u]: 0x" FMT_ADDRX " (linear) 0x" FMT_PHY_ADDRX " (physical) %s SIZE: %d\n", n,
+				fprintf(stderr, "MEM ACCESS[%u]: 0x" FMT_ADDRX " (linear) 0x" FMT_PHY_ADDRX " (physical) %s SIZE: %d\n", n,
 				 data_access[n].laddr,
 				 data_access[n].paddr,
 				 data_access[n].op == BX_READ ? "RD":"WR",
-				 data_access[n].size);*/
+				 data_access[n].size);
 
 				//memorySampling(data_access[n].paddr, data_access[n].eip);
 			}
@@ -296,9 +305,11 @@ void bxInstrumentation::bx_print_instruction(void) {
 
 		//fprintf(stderr, "\n");
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
+	/*
 	if (!active)
 		return;
 
@@ -327,9 +338,11 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 	if (phyAddress == startRecordJumpAddress) {
 		startRecordJump = true;
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_after_execution(bxInstruction_c *i) {
+	/*
 	if (!active)
 		return;
 
@@ -337,9 +350,11 @@ void bxInstrumentation::bx_instr_after_execution(bxInstruction_c *i) {
 		bx_print_instruction();
 		ready = 0;
 	}
+	*/
 }
 
 void bxInstrumentation::branch_taken(bx_address new_eip) {
+	/*
 	if (!active || !ready)
 		return;
 
@@ -349,44 +364,55 @@ void bxInstrumentation::branch_taken(bx_address new_eip) {
 	is_branch = 1;
 	is_taken = 1;
 	target_linear = laddr;
+	*/
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip) {
+	/*
 	branch_taken(new_eip);
 	if (connectedToJmpServer) {
 		jmpSampling(new_eip);
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
+	/*
 	if (!active || !ready)
 		return;
 
 	is_branch = 1;
 	is_taken = 0;
+	*/
 }
 
 void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip) {
+	/*
 	branch_taken(new_eip);
 	if (connectedToJmpServer) {
 		jmpSampling(new_eip);
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip) {
+	/*
 	branch_taken(new_eip);
 	if (connectedToJmpServer) {
 		jmpSampling(new_eip);
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_interrupt(unsigned vector) {
+	/*
 	if (active) {
 		//fprintf(stderr, "CPU %u: interrupt %02xh\n", cpu_id, vector);
 		if (connectedToInterruptServer) {
 			write(interruptSockfd, &vector, sizeof(vector));
 		}
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code) {
@@ -402,6 +428,7 @@ void bxInstrumentation::bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_addr
 }
 
 void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw) {
+	/*
 	if (!active || !ready)
 		return;
 
@@ -425,21 +452,17 @@ void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, 
 
 	num_data_accesses++;
 
-	/*if (phy==0x9898){
-	 fprintf(log, "%x\n",phy);
-	 fflush(log);
-	 }*/
-
 	if (connectedToMemoryServer) {
 		memorySampling(phy);
 	}
-
+	*/
 }
 
 unsigned int buffer[MAX_SEND_BYTE];
 int pointer = 0;
 
 void bxInstrumentation::memorySampling(bx_phy_address paddr) {
+	/*
 	if (!connectedToMemoryServer) {
 		return;
 	}
@@ -508,9 +531,11 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 		}
 		pointer = 0;
 	}
+	*/
 }
 
 void bxInstrumentation::jmpSampling(bx_address new_eip) {
+	/*
 	if (connectedToJmpServer) {
 		if (startRecordJump) {
 			write(jmpSockfd, &new_eip, sizeof(bx_address));
@@ -537,5 +562,6 @@ void bxInstrumentation::jmpSampling(bx_address new_eip) {
 			segmentBegin = new_eip;
 		}
 	}
+	*/
 }
 
