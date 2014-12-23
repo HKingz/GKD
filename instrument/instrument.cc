@@ -367,6 +367,7 @@ void bxInstrumentation::branch_taken(bx_address new_eip) {
 	is_taken = 1;
 	target_linear = laddr;
 	*/
+	printf("branch_taken=%x\n",new_eip);
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip) {
@@ -376,6 +377,7 @@ void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_ad
 		jmpSampling(new_eip);
 	}
 	*/
+	printf("bx_instr_cnear_branch_taken=%x, %x\n",branch_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
@@ -386,6 +388,7 @@ void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
 	is_branch = 1;
 	is_taken = 0;
 	*/
+	printf("bx_instr_cnear_branch_not_taken=%x\n",branch_eip);
 }
 
 void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip) {
@@ -395,6 +398,7 @@ void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_
 		jmpSampling(new_eip);
 	}
 	*/
+	printf("bx_instr_ucnear_branch=%x, %x\n",branch_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip) {
