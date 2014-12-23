@@ -39,63 +39,60 @@ void bx_instr_initialize(unsigned cpu);
 class bxInstrumentation {
 public:
 
-	bx_bool ready;          // is current instruction ready to be printed
-	bx_bool active;
+  bx_bool ready;          // is current instruction ready to be printed
+  bx_bool active;
 
-	unsigned cpu_id;
+  unsigned cpu_id;
 
-	/* decoding */
-	unsigned opcode_length;
-	Bit8u opcode[MAX_OPCODE_LENGTH];
-	bx_bool is32, is64;
+  /* decoding */
+  unsigned opcode_length;
+  Bit8u    opcode[MAX_OPCODE_LENGTH];
+  bx_bool  is32, is64;
 
-	/* memory accesses */
-	unsigned num_data_accesses;
-	struct {
-		bx_address laddr;     // linear address
-		bx_phy_address paddr;// physical address
-		unsigned rw;// BX_READ, BX_WRITE or BX_RW
-		unsigned size;// 1 .. 32
-	}data_access[MAX_DATA_ACCESSES];
+  /* memory accesses */
+  unsigned num_data_accesses;
+  struct {
+    bx_address laddr;     // linear address
+    bx_phy_address paddr; // physical address
+    unsigned rw;          // BX_READ, BX_WRITE or BX_RW
+    unsigned size;        // 1 .. 32
+  } data_access[MAX_DATA_ACCESSES];
 
-	/* branch resolution and target */
-	bx_bool is_branch;
-	bx_bool is_taken;
-	bx_address target_linear;
+  /* branch resolution and target */
+  bx_bool is_branch;
+  bx_bool is_taken;
+  bx_address target_linear;
 
 public:
-	bxInstrumentation(): ready(0), active(0) {}
+  bxInstrumentation(): ready(0), active(0) {}
 
-	void set_cpu_id(unsigned cpu) {cpu_id = cpu;}
+  void set_cpu_id(unsigned cpu) { cpu_id = cpu; }
 
-	void activate() {active = 1;}
-	void deactivate() {active = 0;}
-	void toggle_active() {active = !active;}
-	bx_bool is_active() const {return active;}
+  void activate() { active = 1; }
+  void deactivate() { active = 0; }
+  void toggle_active() { active = !active; }
+  bx_bool is_active() const { return active; }
 
-	void bx_instr_reset(unsigned type);
+  void bx_instr_reset(unsigned type);
 
-	void bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip);
-	void bx_instr_cnear_branch_not_taken(bx_address branch_eip);
-	void bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip);
-	void bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip);
+  void bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip);
+  void bx_instr_cnear_branch_not_taken(bx_address branch_eip);
+  void bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip);
+  void bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip);
 
-	void bx_instr_before_execution(bxInstruction_c *i);
-	void bx_instr_after_execution(bxInstruction_c *i);
+  void bx_instr_before_execution(bxInstruction_c *i);
+  void bx_instr_after_execution(bxInstruction_c *i);
 
-	void bx_instr_interrupt(unsigned vector);
-	void bx_instr_exception(unsigned vector, unsigned error_code);
-	void bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip);
+  void bx_instr_interrupt(unsigned vector);
+  void bx_instr_exception(unsigned vector, unsigned error_code);
+  void bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip);
 
-	void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw);
-
-	void memorySampling(bx_phy_address);
-	void jmpSampling(bx_address);
+  void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw);
 
 private:
-	void branch_taken(bx_address new_eip);
+  void branch_taken(bx_address new_eip);
 
-	void bx_print_instruction(void);
+  void bx_print_instruction(void);
 };
 
 void bx_instr_init(unsigned cpu);

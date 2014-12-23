@@ -264,9 +264,11 @@ void bx_instr_initialize(unsigned cpu) {
 }
 
 void bxInstrumentation::bx_instr_reset(unsigned type) {
+	/*
 	ready = is_branch = 0;
 	num_data_accesses = 0;
 	active = 1;
+	*/
 }
 
 void bxInstrumentation::bx_print_instruction(void) {
@@ -278,7 +280,7 @@ void bxInstrumentation::bx_print_instruction(void) {
 		unsigned n;
 
 		//fprintf(stderr, "----------------------------------------------------------\n");
-		//fprintf(stderr, "CPU: %d: %s\n", cpu_id, disasm_tbuf);
+		printf("CPU: %d: %s\n", cpu_id, disasm_tbuf);
 		//fprintf(stderr, "LEN: %d\tBYTES: ", opcode_length);
 		for (n = 0; n < opcode_length; n++) //fprintf(stderr, "%02x", opcode[n]);
 			if (is_branch) {
