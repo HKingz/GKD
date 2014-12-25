@@ -65,7 +65,7 @@ bx_bool connectedToJmpServer;
 bx_bool connectedToInterruptServer;
 bx_bool triedToContectToServer;
 
-bx_address startRecordJumpAddress = 0x7c00;
+bx_address startRecordJumpAddress = 0x1600000;
 bx_bool startRecordJump;
 
 bx_address segmentBegin = startRecordJumpAddress;
@@ -114,6 +114,7 @@ void safeRead(int socketFD, unsigned char *inBuffer, unsigned int size) {
 }
 
 void initMemorySocket() {
+	logPeterBochs("initMemorySocket\n");
 	oslogStream << "initMemorySocket" << endl;
 	oslogStream.flush();
 	memorySockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -152,6 +153,7 @@ void initMemorySocket() {
 }
 
 void initJmpSocket() {
+	logPeterBochs("initJmpSocket\n");
 	jmpSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (jmpSockfd < 0) {
 		fprintf(log, "Jmp socket server : ERROR opening socket\n");
@@ -231,7 +233,6 @@ void bx_instr_exit_env(void) {
 }
 
 void bx_instr_initialize(unsigned cpu) {
-	/*
 	assert(cpu < BX_SMP_PROCESSORS);
 
 	if (icpu == NULL)
@@ -244,9 +245,12 @@ void bx_instr_initialize(unsigned cpu) {
 	// GKD
 	log = fopen("gkd.log", "a+");
 
-	fprintf(stderr, "GKD instrument %s - Initialize cpu %d\n",
-	GKD_INSTRUMENT_VERSION, cpu);
+	fprintf(stderr, "GKD instrument %s - Initialize cpu %d\n", GKD_INSTRUMENT_VERSION, cpu);
+	logPeterBochs("GKD instrument\n");
 
+	initMemorySocket();
+	initJmpSocket();
+	initInterruptSocket();
 	if (connectedToMemoryServer) {
 		for (int x = 0; x < MAX_SEND_BYTE; x++) {
 			zonesFrom[x] = -1;
@@ -254,15 +258,12 @@ void bx_instr_initialize(unsigned cpu) {
 			zonesHit[x] = 0;
 		}
 	}
-	*/
 }
 
 void bxInstrumentation::bx_instr_reset(unsigned type) {
-	/*
 	ready = is_branch = 0;
 	num_data_accesses = 0;
 	active = 1;
-	*/
 }
 
 void bxInstrumentation::bx_print_instruction(void) {
@@ -305,21 +306,13 @@ void bxInstrumentation::bx_print_instruction(void) {
 }
 
 void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
-	/*
 	if (!active)
 		return;
 
-	if (ready)
-		bx_print_instruction();
+	//if (ready)
+	//	bx_print_instruction();
 
-	if (!triedToContectToServer) {
-		initMemorySocket();
-		initJmpSocket();
-		initInterruptSocket();
-		triedToContectToServer = true;
-	}
-
-// prepare instruction_t structure for new instruction
+	// prepare instruction_t structure for new instruction
 	ready = 1;
 	num_data_accesses = 0;
 	is_branch = 0;
@@ -334,136 +327,152 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 	if (phyAddress == startRecordJumpAddress) {
 		startRecordJump = true;
 	}
-	*/
+
+	/*
+	 if (!triedToContectToServer) {
+	 initMemorySocket();
+	 initJmpSocket();
+	 initInterruptSocket();
+	 triedToContectToServer = true;
+	 }
+
+	 // prepare instruction_t structure for new instruction
+	 ready = 1;
+	 num_data_accesses = 0;
+	 is_branch = 0;
+
+	 is32 = BX_CPU(cpu_id)->sregs[BX_SEG_REG_CS].cache.u.segment.d_b;
+	 is64 = BX_CPU(cpu_id)->long64_mode();
+	 opcode_length = i->ilen();
+	 memcpy(opcode, i->get_opcode_bytes(), opcode_length);
+
+	 bx_phy_address phyAddress = BX_CPU(cpu_id)->get_instruction_pointer();
+	 segmentEnd = phyAddress;
+	 if (phyAddress == startRecordJumpAddress) {
+	 startRecordJump = true;
+	 }
+	 */
 }
 
 void bxInstrumentation::bx_instr_after_execution(bxInstruction_c *i) {
 	/*
-	if (!active)
-		return;
+	 if (!active)
+	 return;
 
-	if (ready) {
-		bx_print_instruction();
-		ready = 0;
-	}
-	*/
+	 if (ready) {
+	 bx_print_instruction();
+	 ready = 0;
+	 }
+	 */
 }
 
-void bxInstrumentation::branch_taken(bx_address new_eip) {
-	/*
+void bxInstrumentation::branch_taken(bx_address branch_eip, bx_address new_eip) {
 	if (!active || !ready)
 		return;
 
 	// find linear address
-	bx_address laddr = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
+	target_linear = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
+	jmpSampling(branch_eip, new_eip);
+	/*
+	 // find linear address
+	 bx_address laddr = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
 
-	is_branch = 1;
-	is_taken = 1;
-	target_linear = laddr;
+	 is_branch = 1;
+	 is_taken = 1;
+	 target_linear = laddr;
 
-	//printf("branch_taken=%x\n", new_eip);
-	*/
+	 //printf("branch_taken=%x\n", new_eip);
+	 */
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip) {
-	/*
-	branch_taken(new_eip);
-	if (connectedToJmpServer) {
-		jmpSampling(new_eip);
-	}
-
-	//printf("bx_instr_cnear_branch_taken=%x, %x\n", branch_eip, new_eip);
-	*/
+	branch_taken(branch_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
 	/*
-	if (!active || !ready)
-		return;
+	 if (!active || !ready)
+	 return;
 
-	is_branch = 1;
-	is_taken = 0;
+	 is_branch = 1;
+	 is_taken = 0;
 
-	//printf("bxif _instr_cnear_branch_not_taken=%x\n", branch_eip);
-	*/
+	 //printf("bxif _instr_cnear_branch_not_taken=%x\n", branch_eip);
+	 */
 }
 
 void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip) {
+	branch_taken((bx_address)what, new_eip);
 	/*
-	branch_taken(new_eip);
-	if (connectedToJmpServer) {
-		jmpSampling(new_eip);
-	}
+	 branch_taken(new_eip);
+	 if (connectedToJmpServer) {
+	 jmpSampling(new_eip);
+	 }
 
-	//printf("bx_instr_ucnear_branch=%x, %x\n", branch_eip, new_eip);
-	*/
+	 //printf("bx_instr_ucnear_branch=%x, %x\n", branch_eip, new_eip);
+	 */
 }
 
 void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip) {
-	/*
-	branch_taken(new_eip);
-	if (connectedToJmpServer) {
-		jmpSampling(new_eip);
-	}
-	*/
+	branch_taken((bx_address)what, new_eip);
 }
 
 void bxInstrumentation::bx_instr_interrupt(unsigned vector) {
 	/*
-	if (active) {
-		//fprintf(stderr, "CPU %u: interrupt %02xh\n", cpu_id, vector);
-		if (connectedToInterruptServer) {
-			write(interruptSockfd, &vector, sizeof(vector));
-		}
-	}
-	*/
+	 if (active) {
+	 //fprintf(stderr, "CPU %u: interrupt %02xh\n", cpu_id, vector);
+	 if (connectedToInterruptServer) {
+	 write(interruptSockfd, &vector, sizeof(vector));
+	 }
+	 }
+	 */
 }
 
 void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code) {
 	/*
-	if (active) {
-		//fprintf(stderr, "CPU %u: exception %02xh error_code=%x\n", cpu_id, vector, error_code);
-	}
-	*/
+	 if (active) {
+	 //fprintf(stderr, "CPU %u: exception %02xh error_code=%x\n", cpu_id, vector, error_code);
+	 }
+	 */
 }
 
 void bxInstrumentation::bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip) {
 	/*
-	if (active) {
-		//fprintf(stderr, "CPU %u: hardware interrupt %02xh\n", cpu_id, vector);
-	}
-	*/
+	 if (active) {
+	 //fprintf(stderr, "CPU %u: hardware interrupt %02xh\n", cpu_id, vector);
+	 }
+	 */
 }
 
 void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw) {
 	/*
-	if (!active || !ready)
-		return;
+	 if (!active || !ready)
+	 return;
 
-	if (num_data_accesses >= MAX_DATA_ACCESSES) {
-		return;
-	}
+	 if (num_data_accesses >= MAX_DATA_ACCESSES) {
+	 return;
+	 }
 
-//bx_address lin = BX_CPU(cpu)->get_laddr(seg, offset);
-	bx_bool page_valid = BX_CPU(cpu)->dbg_xlate_linear2phy(lin, &phy);
-	phy = A20ADDR(phy);
+	 //bx_address lin = BX_CPU(cpu)->get_laddr(seg, offset);
+	 bx_bool page_valid = BX_CPU(cpu)->dbg_xlate_linear2phy(lin, &phy);
+	 phy = A20ADDR(phy);
 
-// If linear translation doesn't exist, a paging exception will occur.
-// Invalidate physical address data for now.
-	if (!page_valid)
-		phy = (bx_phy_address) (-1);
+	 // If linear translation doesn't exist, a paging exception will occur.
+	 // Invalidate physical address data for now.
+	 if (!page_valid)
+	 phy = (bx_phy_address) (-1);
 
-	data_access[num_data_accesses].laddr = lin;
-	data_access[num_data_accesses].paddr = phy;
-	data_access[num_data_accesses].rw = rw;
-	data_access[num_data_accesses].size = len;
+	 data_access[num_data_accesses].laddr = lin;
+	 data_access[num_data_accesses].paddr = phy;
+	 data_access[num_data_accesses].rw = rw;
+	 data_access[num_data_accesses].size = len;
 
-	num_data_accesses++;
+	 num_data_accesses++;
 
-	if (connectedToMemoryServer) {
-		memorySampling(phy);
-	}
-	*/
+	 if (connectedToMemoryServer) {
+	 memorySampling(phy);
+	 }
+	 */
 }
 
 void bxInstrumentation::memorySampling(bx_phy_address paddr) {
@@ -537,32 +546,30 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 	}
 }
 
-void bxInstrumentation::jmpSampling(bx_address new_eip) {
-	if (connectedToJmpServer) {
-		if (startRecordJump) {
-			write(jmpSockfd, &new_eip, sizeof(bx_address));
-			write(jmpSockfd, &new_eip, sizeof(bx_address));
-			write(jmpSockfd, &segmentBegin, sizeof(segmentBegin));
-			write(jmpSockfd, &segmentEnd, sizeof(segmentBegin));
+void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
+	if (connectedToJmpServer && startRecordJump) {
+		write(jmpSockfd, &branch_eip, sizeof(bx_address));
+		write(jmpSockfd, &new_eip, sizeof(bx_address));
+		write(jmpSockfd, &segmentBegin, sizeof(segmentBegin));
+		write(jmpSockfd, &segmentEnd, sizeof(segmentBegin));
 
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, sizeof(Bit32u));
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, sizeof(Bit32u));
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, sizeof(Bit32u));
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, sizeof(Bit32u));
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, sizeof(Bit32u));
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, sizeof(Bit32u));
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, sizeof(Bit32u));
-			write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, sizeof(Bit32u));
 
-			write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, sizeof(Bit16u));
-			write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, sizeof(Bit16u));
-			write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, sizeof(Bit16u));
-			write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, sizeof(Bit16u));
-			write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, sizeof(Bit16u));
-			write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, sizeof(Bit16u));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, sizeof(Bit16u));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, sizeof(Bit16u));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, sizeof(Bit16u));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, sizeof(Bit16u));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, sizeof(Bit16u));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, sizeof(Bit16u));
 
-			segmentBegin = new_eip;
-		}
+		segmentBegin = new_eip;
 	}
 }
 
