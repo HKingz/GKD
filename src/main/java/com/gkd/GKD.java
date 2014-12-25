@@ -1298,8 +1298,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					public void run() {
 						VMController.getVM().waitVMStop();
 						logger.debug("waitVMStop finished");
-						CommonLib.enableJComponent(upperRightTabbedPane, true);
-						CommonLib.enableJComponent(bottomTabbedPane, true);
+						CommonLib.enableJComponent(upperRightTabbedPane, true);logger.debug("waitVMStop finished 2");
+						CommonLib.enableJComponent(bottomTabbedPane, true);logger.debug("waitVMStop finished 3");
 						runVMButton.setText(MyLanguage.getString("run"));
 						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 						updateVMStatus(true);

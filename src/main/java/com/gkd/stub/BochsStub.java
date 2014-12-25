@@ -160,11 +160,9 @@ public class BochsStub implements VMStub {
 				pb = new ProcessBuilder("PauseBochs.exe");
 				p = pb.start();
 			}
-			logger.debug("pauseVM 1");
 			p.waitFor();
-			logger.debug("pauseVM 2");
+			logger.debug("pauseVM end");
 			//			commandReceiver.getCommandResult();
-			logger.debug("pauseVM 3");
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			logger.error(ex.getMessage());
