@@ -384,7 +384,7 @@ void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
 	is_branch = 1;
 	is_taken = 0;
 
-	//printf("bx_instr_cnear_branch_not_taken=%x\n", branch_eip);
+	//printf("bxif _instr_cnear_branch_not_taken=%x\n", branch_eip);
 	*/
 }
 
