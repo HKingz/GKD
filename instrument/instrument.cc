@@ -36,7 +36,9 @@ using namespace std;
 using std::set;
 
 #define GKD_INSTRUMENT_VERSION "20141215"
+bxInstrumentation *icpu = NULL;
 
+#define MAX_SEND_BYTE 500
 int memorySockfd;
 int jmpSockfd;
 int interruptSockfd;
@@ -49,14 +51,9 @@ int oslogPort = 0xffff;
 char oslogFile[] = "os.log";
 ofstream oslogStream(oslogFile, ios::app);
 
-#define printHeader
-
-bxInstrumentation *icpu = NULL;
-
 static disassembler bx_disassembler;
 
-#define MAX_SEND_BYTE 500
-FILE *log;
+static FILE *log;
 unsigned int zonesFrom[MAX_SEND_BYTE];
 unsigned int zonesTo[MAX_SEND_BYTE];
 unsigned int zonesHit[MAX_SEND_BYTE];
@@ -73,6 +70,9 @@ bx_bool startRecordJump;
 
 bx_address segmentBegin = startRecordJumpAddress;
 bx_address segmentEnd;
+
+unsigned int buffer[MAX_SEND_BYTE];
+int pointer = 0;
 
 void logPeterBochs(char *str) {
 	fprintf(log, str);
@@ -114,7 +114,6 @@ void safeRead(int socketFD, unsigned char *inBuffer, unsigned int size) {
 }
 
 void initMemorySocket() {
-	/*
 	oslogStream << "initMemorySocket" << endl;
 	oslogStream.flush();
 	memorySockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -150,11 +149,9 @@ void initMemorySocket() {
 	fflush(log);
 	oslogStream << "initMemorySocket2" << endl;
 	oslogStream.flush();
-	*/
 }
 
 void initJmpSocket() {
-	/*
 	jmpSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (jmpSockfd < 0) {
 		fprintf(log, "Jmp socket server : ERROR opening socket\n");
@@ -189,11 +186,9 @@ void initJmpSocket() {
 	}
 
 	fflush(log);
-	*/
 }
 
 void initInterruptSocket() {
-	/*
 	interruptSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (interruptSockfd < 0) {
 		fprintf(log, "Interrupt socket server : ERROR opening socket\n");
@@ -228,7 +223,6 @@ void initInterruptSocket() {
 	}
 
 	fflush(log);
-	*/
 }
 
 void bx_instr_init_env(void) {
@@ -272,42 +266,42 @@ void bxInstrumentation::bx_instr_reset(unsigned type) {
 }
 
 void bxInstrumentation::bx_print_instruction(void) {
-	/*
+	printf("bx_print_instruction\n");
 	char disasm_tbuf[512];	// buffer for instruction disassembly
 	bx_disassembler.disasm(is32, is64, 0, 0, opcode, disasm_tbuf);
 
 	if (opcode_length != 0) {
 		unsigned n;
 
-		//fprintf(stderr, "----------------------------------------------------------\n");
-		printf("CPU: %d: %s\n", cpu_id, disasm_tbuf);
-		//fprintf(stderr, "LEN: %d\tBYTES: ", opcode_length);
-		for (n = 0; n < opcode_length; n++) //fprintf(stderr, "%02x", opcode[n]);
-			if (is_branch) {
-				//fprintf(stderr, "\tBRANCH ");
+		/*
+		 //fprintf(stderr, "----------------------------------------------------------\n");
+		 printf("CPU: %d: %s\n", cpu_id, disasm_tbuf);
+		 //fprintf(stderr, "LEN: %d\tBYTES: ", opcode_length);
+		 for (n = 0; n < opcode_length; n++){
+		 fprintf(stderr, "%02x", opcode[n]);
+		 }
+		 if (is_branch) {
+		 //fprintf(stderr, "\tBRANCH ");
 
-				if (is_taken) {
-					//fprintf(stderr, "TARGET " FMT_ADDRX " (TAKEN)", target_linear);
-				} else {
-					//fprintf(stderr, "(NOT TAKEN)");
-				}
-			}
-		//fprintf(stderr, "\n");
+		 if (is_taken) {
+		 //fprintf(stderr, "TARGET " FMT_ADDRX " (TAKEN)", target_linear);
+		 } else {
+		 //fprintf(stderr, "(NOT TAKEN)");
+		 }
+		 }
+		 //fprintf(stderr, "\n");
+		 */
 		if (connectedToMemoryServer) {
 			for (n = 0; n < num_data_accesses; n++) {
-				fprintf(stderr, "MEM ACCESS[%u]: 0x" FMT_ADDRX " (linear) 0x" FMT_PHY_ADDRX " (physical) %s SIZE: %d\n", n,
-				 data_access[n].laddr,
-				 data_access[n].paddr,
-				 data_access[n].op == BX_READ ? "RD":"WR",
-				 data_access[n].size);
+				//fprintf(stderr, "MEM ACCESS[%u]: 0x" FMT_ADDRX " (linear) 0x" FMT_PHY_ADDRX " (physical) %s SIZE: %d\n", n, data_access[n].laddr, data_access[n].paddr,
+				//		data_access[n].op == BX_READ ? "RD" : "WR", data_access[n].size);
 
-				//memorySampling(data_access[n].paddr, data_access[n].eip);
+				memorySampling(data_access[n].paddr);
 			}
 		}
 
 		//fprintf(stderr, "\n");
 	}
-	*/
 }
 
 void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
@@ -325,7 +319,7 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 		triedToContectToServer = true;
 	}
 
-	// prepare instruction_t structure for new instruction
+// prepare instruction_t structure for new instruction
 	ready = 1;
 	num_data_accesses = 0;
 	is_branch = 0;
@@ -366,8 +360,9 @@ void bxInstrumentation::branch_taken(bx_address new_eip) {
 	is_branch = 1;
 	is_taken = 1;
 	target_linear = laddr;
+
+	//printf("branch_taken=%x\n", new_eip);
 	*/
-	printf("branch_taken=%x\n",new_eip);
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip) {
@@ -376,8 +371,9 @@ void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_ad
 	if (connectedToJmpServer) {
 		jmpSampling(new_eip);
 	}
+
+	//printf("bx_instr_cnear_branch_taken=%x, %x\n", branch_eip, new_eip);
 	*/
-	printf("bx_instr_cnear_branch_taken=%x, %x\n",branch_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
@@ -387,8 +383,9 @@ void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
 
 	is_branch = 1;
 	is_taken = 0;
+
+	//printf("bx_instr_cnear_branch_not_taken=%x\n", branch_eip);
 	*/
-	printf("bx_instr_cnear_branch_not_taken=%x\n",branch_eip);
 }
 
 void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip) {
@@ -397,8 +394,9 @@ void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_
 	if (connectedToJmpServer) {
 		jmpSampling(new_eip);
 	}
+
+	//printf("bx_instr_ucnear_branch=%x, %x\n", branch_eip, new_eip);
 	*/
-	printf("bx_instr_ucnear_branch=%x, %x\n",branch_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip) {
@@ -422,15 +420,19 @@ void bxInstrumentation::bx_instr_interrupt(unsigned vector) {
 }
 
 void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code) {
+	/*
 	if (active) {
 		//fprintf(stderr, "CPU %u: exception %02xh error_code=%x\n", cpu_id, vector, error_code);
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip) {
+	/*
 	if (active) {
 		//fprintf(stderr, "CPU %u: hardware interrupt %02xh\n", cpu_id, vector);
 	}
+	*/
 }
 
 void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw) {
@@ -442,12 +444,12 @@ void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, 
 		return;
 	}
 
-	//bx_address lin = BX_CPU(cpu)->get_laddr(seg, offset);
+//bx_address lin = BX_CPU(cpu)->get_laddr(seg, offset);
 	bx_bool page_valid = BX_CPU(cpu)->dbg_xlate_linear2phy(lin, &phy);
 	phy = A20ADDR(phy);
 
-	// If linear translation doesn't exist, a paging exception will occur.
-	// Invalidate physical address data for now.
+// If linear translation doesn't exist, a paging exception will occur.
+// Invalidate physical address data for now.
 	if (!page_valid)
 		phy = (bx_phy_address) (-1);
 
@@ -464,25 +466,21 @@ void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, 
 	*/
 }
 
-unsigned int buffer[MAX_SEND_BYTE];
-int pointer = 0;
-
 void bxInstrumentation::memorySampling(bx_phy_address paddr) {
-	/*
 	if (!connectedToMemoryServer) {
 		return;
 	}
 	buffer[pointer] = paddr;
 	pointer++;
 
-	// check zone
+// check zone
 	for (int x = 0; x < zonesTail; x++) {
 		if (zonesFrom[x] <= paddr && paddr <= zonesTo[x]) {
 			zonesHit[x]++;
 			zonesHitAddress[x].insert(paddr);
 		}
 	}
-	// end check zone
+// end check zone
 	if (pointer == MAX_SEND_BYTE) {
 		send(memorySockfd, (char *) buffer, MAX_SEND_BYTE * sizeof(unsigned int), 0);
 
@@ -537,11 +535,9 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 		}
 		pointer = 0;
 	}
-	*/
 }
 
 void bxInstrumentation::jmpSampling(bx_address new_eip) {
-	/*
 	if (connectedToJmpServer) {
 		if (startRecordJump) {
 			write(jmpSockfd, &new_eip, sizeof(bx_address));
@@ -568,6 +564,5 @@ void bxInstrumentation::jmpSampling(bx_address new_eip) {
 			segmentBegin = new_eip;
 		}
 	}
-	*/
 }
 
