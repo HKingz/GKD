@@ -402,7 +402,7 @@ void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
 }
 
 void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip) {
-	branch_taken((bx_address)what, new_eip);
+	branch_taken((bx_address) what, new_eip);
 	/*
 	 branch_taken(new_eip);
 	 if (connectedToJmpServer) {
@@ -414,7 +414,7 @@ void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_
 }
 
 void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip) {
-	branch_taken((bx_address)what, new_eip);
+	branch_taken((bx_address) what, new_eip);
 }
 
 void bxInstrumentation::bx_instr_interrupt(unsigned vector) {
@@ -547,9 +547,19 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 }
 
 void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
+	bx_phy_address fromPhysicalAddress;
+	bx_phy_address toPhysicalAddress;
+
+	if (startRecordJump) {
+		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
+		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
+		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> print %llx, %llx, %llx\n", branch_eip, fromPhysicalAddress, toPhysicalAddress);
+	}
+
 	if (connectedToJmpServer && startRecordJump) {
-		write(jmpSockfd, &branch_eip, sizeof(bx_address));
-		write(jmpSockfd, &new_eip, sizeof(bx_address));
+
+		write(jmpSockfd, &fromPhysicalAddress, sizeof(bx_phy_address));
+		write(jmpSockfd, &toPhysicalAddress, sizeof(bx_phy_address));
 		write(jmpSockfd, &segmentBegin, sizeof(segmentBegin));
 		write(jmpSockfd, &segmentEnd, sizeof(segmentBegin));
 
