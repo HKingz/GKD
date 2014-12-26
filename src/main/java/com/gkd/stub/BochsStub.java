@@ -90,6 +90,26 @@ public class BochsStub implements VMStub {
 	public void startVM() {
 		try {
 			logger.debug("startVM");
+
+			if (Setting.getInstance().memoryProfiling) {
+				if (Global.debug) {
+					logger.debug("Memory profiling port " + Global.profilingMemoryPort);
+				}
+				MemorySocketServerController.start(Global.profilingMemoryPort, null);
+			}
+			if (Setting.getInstance().jmpProfiling) {
+				if (Global.debug) {
+					logger.debug("Jump profiling port " + Global.profilingJmpPort);
+				}
+				JmpSocketServerController.start(Global.profilingJmpPort, GKD.instrumentPanel.getJmpTableModel());
+			}
+			if (Setting.getInstance().interruptProfiling) {
+				if (Global.debug) {
+					logger.debug("Interrupt profiling port " + Global.profilingInterruptPort);
+				}
+				InterruptSocketServerController.start(Global.profilingInterruptPort);
+			}
+
 			ProcessBuilder pb = new ProcessBuilder((path + " " + arguments).split(" "));
 			pb.redirectErrorStream(true);
 			p = pb.start();
@@ -101,26 +121,6 @@ public class BochsStub implements VMStub {
 				line = line.trim(); // string::matches will break is string contains \r
 				if (line.contains("Bochs x86 Emulator")) {
 					version = line.trim();
-				}
-				if (line.contains("GKD instrument")) {
-					if (Setting.getInstance().memoryProfiling) {
-						if (Global.debug) {
-							logger.debug("Memory profiling port " + Global.profilingMemoryPort);
-						}
-						MemorySocketServerController.start(Global.profilingMemoryPort, null);
-					}
-					if (Setting.getInstance().jmpProfiling) {
-						if (Global.debug) {
-							logger.debug("Jump profiling port " + Global.profilingJmpPort);
-						}
-						JmpSocketServerController.start(Global.profilingJmpPort, GKD.instrumentPanel.getJmpTableModel());
-					}
-					if (Setting.getInstance().interruptProfiling) {
-						if (Global.debug) {
-							logger.debug("Interrupt profiling port " + Global.profilingInterruptPort);
-						}
-						InterruptSocketServerController.start(Global.profilingInterruptPort);
-					}
 				}
 			}
 		} catch (Exception ex) {
