@@ -425,6 +425,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private static JFreeChart createChart(XYZDataset dataset) {
+		//$hide>>$
 		NumberAxis xAxis = new NumberAxis("address (" + blockSizeComboBox.getSelectedItem() + ")");
 		xAxis.setLowerMargin(0.0);
 		xAxis.setUpperMargin(0.0);
@@ -462,11 +463,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		JFreeChart chart = new JFreeChart("Memory read/write hot zone", plot);
 		chart.removeLegend();
 		chart.setBackgroundPaint(Color.white);
-
+		//$hide<<$
 		return chart;
 	}
 
 	private static JFreeChart createEmptyChart(XYZDataset dataset) {
+		//$hide>>$
 		NumberAxis xAxis = new NumberAxis("address");
 		xAxis.setLowerMargin(0.0);
 		xAxis.setUpperMargin(0.0);
@@ -493,7 +495,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		JFreeChart chart = new JFreeChart("Memory read/write hot zone", new Font("Serif", Font.PLAIN, 12), plot, true);
 		chart.removeLegend();
 		chart.setBackgroundPaint(Color.white);
-
+		//$hide<<$
 		return chart;
 	}
 
@@ -556,6 +558,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	public void update2DChart() {
+		//$hide>>$
 		// jfcMemory.getCategoryPlot().setDataset(createMemoryDataset());
 		jfcMemory.getXYPlot().setDataset(createDataset());
 		MyXYBlockRenderer renderer = (MyXYBlockRenderer) jfcMemory.getXYPlot().getRenderer();
@@ -593,9 +596,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		renderer.setBaseToolTipGenerator(new MyXYToolTipGenerator());
 		jfcMemory.getXYPlot().setForegroundAlpha(1f);
 		zoomOutAutoRangeButtonActionPerformed(null);
+		//$hide<<$
 	}
 
 	public void update3DChart() {
+		//$hide>>$
 		try {
 			long rowCount = Data.getRowCount(CommonLib.convertFilesize((String) fromComboBox.getSelectedItem()), CommonLib.convertFilesize((String) toComboBox.getSelectedItem()),
 					CommonLib.convertFilesize((String) blockSizeComboBox.getSelectedItem()));
@@ -634,6 +639,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			memory3dChart.getScene().getGraph().add(surface);
 		} catch (Exception ex) {
 		}
+		//$hide<<$
 	}
 
 	public ArrayList<Color> allColors() {
@@ -641,18 +647,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		for (int b = 0; b <= 255; b++) {
 			allColors.add(new Color(b, 0, 255 - b));
 		}
-		// for (int b = 0; b <= 255; b++) {
-		// allColors.add(new Color(0, 255, b));
-		// }
-		// for (int g = 255; g >= 0; g--) {
-		// allColors.add(new Color(255, g, 255));
-		// }
-		// for (int r = 0; r <= 255; r++) {
-		// allColors.add(new Color(r, 0, 255));
-		// }
-		// for (int b = 255; b >= 0; b--) {
-		// allColors.add(new Color(255, 0, b));
-		// }
 		return allColors;
 	}
 
@@ -687,6 +681,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JPanel getJMemory3DPanel() {
+		//$hide>>$
 		if (jMemory3DPanel == null) {
 			jMemory3DPanel = new JPanel();
 			GroupLayout jMemory3DPanelLayout = new GroupLayout((JComponent) jMemory3DPanel);
@@ -725,6 +720,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				jMemory3DPanel.add(new JLabel("Error : no gluegen-rt in java.library.path, to fix it, please add -Djava.library.path=<directory that contains libgluegen-rt.so>"));
 			}
 		}
+		//$hide<<$
 		return jMemory3DPanel;
 	}
 
@@ -864,6 +860,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	@Override
 	public void chartMouseClicked(ChartMouseEvent event) {
 		try {
+			//$hide>>$
 			// System.out.println(event.getTrigger().getX());
 			JFreeChart chart = event.getChart();
 			XYPlot xyplot = chart.getXYPlot();
@@ -893,6 +890,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 			this.jAddressLabel.setText("Address=0x" + Long.toHexString(address));
 			this.jRWCountLabel.setText("R/W count=" + (int) dataset.getZValue(series, item));
+			//$hide<<$
 		} catch (Exception ex) {
 
 		}
@@ -1043,7 +1041,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTabbedPane getJTabbedPane2() {
 		if (jTabbedPane2 == null) {
 			jTabbedPane2 = new JTabbedPane();
-
+			//$hide>>$
 			jfcMemory = createEmptyChart(createEmptyDataset());
 			memoryChartPanel = new ChartPanel(jfcMemory);
 			jTabbedPane2.addTab("Chart", null, memoryChartPanel, null);
@@ -1051,6 +1049,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			memoryChartPanel.setDisplayToolTips(true);
 			jfcMemory.addChangeListener(this);
 			memoryChartPanel.addChartMouseListener(this);
+			//$hide<<$
 		}
 		return jTabbedPane2;
 	}
@@ -2372,6 +2371,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JFreeChart createInterruptChart(final XYDataset dataset) {
+		//$hide>>$
 		final JFreeChart chart = ChartFactory.createTimeSeriesChart("Interrupt Chart", "Time", "Count", dataset, true, true, false);
 
 		chart.setBackgroundPaint(Color.white);
@@ -2386,6 +2386,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		final DateAxis axis = (DateAxis) plot.getDomainAxis();
 		axis.setDateFormatOverride(new SimpleDateFormat("s.SS"));
+		//$hide<<$
 		return chart;
 	}
 
