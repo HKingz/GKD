@@ -31,8 +31,9 @@
 #include <netdb.h>
 #include <netinet/tcp.h>
 #include <fstream>
-using namespace std;
 #include <set>
+#include <strings.h>
+using namespace std;
 using std::set;
 
 #define GKD_INSTRUMENT_VERSION "20141215"
@@ -355,15 +356,13 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 }
 
 void bxInstrumentation::bx_instr_after_execution(bxInstruction_c *i) {
-	/*
-	 if (!active)
-	 return;
+	if (!active)
+		return;
 
-	 if (ready) {
-	 bx_print_instruction();
-	 ready = 0;
-	 }
-	 */
+	if (ready) {
+		//bx_print_instruction();
+		ready = 0;
+	}
 }
 
 void bxInstrumentation::branch_taken(bx_address branch_eip, bx_address new_eip) {
