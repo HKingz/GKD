@@ -133,7 +133,7 @@ public class GKDCommonLib {
 		for (int x = 0; x < columnNames.length; x++) {
 			cell = row.createCell(x);
 			cell.setCellValue(columnNames[x]);
-			d.jProgressBar.setString("General register worksheet, creating column : " + columnNames[x]);
+			d.progressBar.setString("General register worksheet, creating column : " + columnNames[x]);
 		}
 
 		//		CellStyle style = wb.createCellStyle();
@@ -184,7 +184,7 @@ public class GKDCommonLib {
 
 		// data
 		for (int rowY = 0; rowY < AllRegisters.time.size() && rowY < max_row_limit_in_xls; rowY++) {
-			d.jProgressBar.setString("General register worksheet, exporting row: " + rowY);
+			d.progressBar.setString("General register worksheet, exporting row: " + rowY);
 			row = sheet.createRow(rowY + 1);
 			cell = row.createCell(0);
 			cell.setCellValue("'" + (rowY + 1));
@@ -235,11 +235,11 @@ public class GKDCommonLib {
 		for (int x = 0; x < columnNames.length; x++) {
 			cell = row.createCell(x);
 			cell.setCellValue(columnNames[x]);
-			d.jProgressBar.setString("FPU worksheet, creating column : " + columnNames[x]);
+			d.progressBar.setString("FPU worksheet, creating column : " + columnNames[x]);
 		}
 
 		for (int rowY = 0; rowY < AllRegisters.time.size() && rowY < max_row_limit_in_xls; rowY++) {
-			d.jProgressBar.setString("General register worksheet, exporting row: " + rowY);
+			d.progressBar.setString("General register worksheet, exporting row: " + rowY);
 			row = sheet.createRow(rowY + 1);
 			cell = row.createCell(0);
 			if (rowY % 2 == 0) {

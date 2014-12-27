@@ -12,4 +12,22 @@ public class JmpData {
 		this.from = from;
 		this.to = to;
 	}
+
+	public boolean contains(String s) {
+		s = s.toLowerCase();
+		System.out.println(s + " = " + segmentStart);
+		if (Long.toHexString(segmentStart).toLowerCase().contains(s)) {
+			return true;
+		}
+		if (Long.toHexString(segmentEnd).toLowerCase().contains(s)) {
+			return true;
+		}
+		if (Long.toHexString(from).toLowerCase().contains(s)) {
+			return true;
+		}
+		if (Long.toHexString(to).toLowerCase().contains(s)) {
+			return true;
+		}
+		return false;
+	}
 }

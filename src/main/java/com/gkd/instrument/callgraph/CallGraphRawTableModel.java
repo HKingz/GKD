@@ -4,16 +4,16 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
-
 public class CallGraphRawTableModel extends AbstractTableModel {
 	String columnNames[] = { "Segment begin", "Segment end", "From address", "To Address" };
-	Vector<JmpData> data = new Vector<JmpData>();
+	Vector<JmpData> originalData = new Vector<JmpData>();
+	Vector<JmpData> data;
 
 	public boolean needToTellBochsToUpdateZone = false;
 
-	public void addRow(JmpData data) {
-		this.data.add(data);
-	}
+	//	public void addRow(JmpData data) {
+	//		this.data.add(data);
+	//	}
 
 	public String getColumnName(int column) {
 		return columnNames[column];
@@ -53,12 +53,25 @@ public class CallGraphRawTableModel extends AbstractTableModel {
 	}
 
 	public void add(JmpData data) {
-		this.data.add(data);
-		this.fireTableDataChanged();
+		this.originalData.add(data);
 	}
 
 	public void removeAll() {
-		data.removeAllElements();
+		originalData.clear();
+		this.fireTableDataChanged();
+	}
+
+	public void filter(String filter) {
+		if (filter.equals("")) {
+			data = (Vector<JmpData>) originalData.clone();
+		} else {
+			data.clear();
+			for (JmpData d : originalData) {
+				if (d.contains(filter)) {
+					data.add(d);
+				}
+			}
+		}
 		this.fireTableDataChanged();
 	}
 }

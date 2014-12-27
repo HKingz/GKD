@@ -1015,8 +1015,8 @@ public class RegisterPanel extends JPanel {
 				}
 			}
 			final JProgressBarDialog d = new JProgressBarDialog(gkd, "Exporting to XLS", true);
-			d.jProgressBar.setIndeterminate(true);
-			d.jProgressBar.setStringPainted(true);
+			d.progressBar.setIndeterminate(true);
+			d.progressBar.setStringPainted(true);
 
 			class MyThread extends Thread {
 

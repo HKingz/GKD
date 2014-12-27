@@ -71,8 +71,13 @@ public class JmpSocketServer implements Runnable {
 				int lineNo = 1;
 
 				while (!shouldStop) {
-					long fromAddress = CommonLib.readLongFromInputStream(in);
-					long toAddress = CommonLib.readLongFromInputStream(in);
+					//					int length = (int) CommonLib.readLongFromInputStream(in);
+					//					byte bytes[] = new byte[length];
+					//					in.read(bytes);
+					//					//System.out.println(new String(bytes));
+
+					long fromAddress = CommonLib.readLong64BitsFromInputStream(in);
+					long toAddress = CommonLib.readLong64BitsFromInputStream(in);
 					long segmentStart = CommonLib.readLongFromInputStream(in);
 					long segmentEnd = CommonLib.readLongFromInputStream(in);
 

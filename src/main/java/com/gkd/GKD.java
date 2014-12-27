@@ -524,9 +524,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 		};
-		progressBarDialog.jProgressBar.setMinimum(0);
-		progressBarDialog.jProgressBar.setMaximum(100);
-		progressBarDialog.jProgressBar.setStringPainted(true);
+		progressBarDialog.progressBar.setMinimum(0);
+		progressBarDialog.progressBar.setMaximum(100);
+		progressBarDialog.progressBar.setStringPainted(true);
 		progressBarDialog.thread = loadThread;
 		progressBarDialog.addCancelEventListener(this);
 		progressBarDialog.setVisible(true);
@@ -714,8 +714,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void init() {
-		progressBarDialog.jProgressBar.setValue(0);
-		progressBarDialog.jProgressBar.setString("Loading GUI");
+		progressBarDialog.progressBar.setValue(0);
+		progressBarDialog.progressBar.setString("Loading GUI");
 		if (Global.debug) {
 			logger.debug(new Date());
 		}
@@ -724,8 +724,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			logger.debug("initGUI()");
 		}
 
-		progressBarDialog.jProgressBar.setValue(10);
-		progressBarDialog.jProgressBar.setString("Init GUI");
+		progressBarDialog.progressBar.setValue(10);
+		progressBarDialog.progressBar.setString("Init GUI");
 		initGUI();
 		if (Global.debug) {
 			logger.debug("end initGUI()");
@@ -734,13 +734,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			bochsMenu.setVisible(false);
 		}
 
-		progressBarDialog.jProgressBar.setValue(80);
-		progressBarDialog.jProgressBar.setString("Starting VM");
+		progressBarDialog.progressBar.setValue(80);
+		progressBarDialog.progressBar.setString("Starting VM");
 
 		VMController.getVM().startVM();
 
-		progressBarDialog.jProgressBar.setValue(90);
-		progressBarDialog.jProgressBar.setString("Init font");
+		progressBarDialog.progressBar.setValue(90);
+		progressBarDialog.progressBar.setString("Init font");
 		initChineseFont();
 		new Thread("checkLatestVersion thread") {
 			public void run() {
@@ -766,8 +766,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			bochsoutTextArea.addTrailListener(new File("."), new File("bochsout.txt"), 0, true);
 		}
 
-		progressBarDialog.jProgressBar.setValue(100);
-		progressBarDialog.jProgressBar.setString("Fnished");
+		progressBarDialog.progressBar.setValue(100);
+		progressBarDialog.progressBar.setString("Fnished");
 
 		if (Global.debug) {
 			logger.debug(new Date());
@@ -808,8 +808,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		try {
-			progressBarDialog.jProgressBar.setValue(30);
-			progressBarDialog.jProgressBar.setString("Init GUI - 1");
+			progressBarDialog.progressBar.setValue(30);
+			progressBarDialog.progressBar.setString("Init GUI - 1");
 			{
 				this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				if (Global.isBeta) {
@@ -833,8 +833,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				});
 			}
-			progressBarDialog.jProgressBar.setValue(40);
-			progressBarDialog.jProgressBar.setString("Init GUI - 2");
+			progressBarDialog.progressBar.setValue(40);
+			progressBarDialog.progressBar.setString("Init GUI - 2");
 			{
 				jToolBar1 = new JToolBar();
 				getContentPane().add(jToolBar1, BorderLayout.NORTH);
@@ -928,8 +928,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					});
 				}
 			}
-			progressBarDialog.jProgressBar.setValue(50);
-			progressBarDialog.jProgressBar.setString("Init GUI - 3");
+			progressBarDialog.progressBar.setValue(50);
+			progressBarDialog.progressBar.setString("Init GUI - 3");
 			{
 				statusPanel = new JPanel();
 				BorderLayout jStatusPanelLayout = new BorderLayout();
@@ -943,8 +943,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					statusPanel.add(getJPanel25(), BorderLayout.CENTER);
 				}
 			}
-			progressBarDialog.jProgressBar.setValue(60);
-			progressBarDialog.jProgressBar.setString("Init GUI - 4");
+			progressBarDialog.progressBar.setValue(60);
+			progressBarDialog.progressBar.setString("Init GUI - 4");
 			{
 				jMenuBar1 = new JMenuBar();
 				setJMenuBar(jMenuBar1);
@@ -1051,8 +1051,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				}
 			}
-			progressBarDialog.jProgressBar.setValue(70);
-			progressBarDialog.jProgressBar.setString("Init GUI - 5");
+			progressBarDialog.progressBar.setValue(70);
+			progressBarDialog.progressBar.setString("Init GUI - 5");
 			if (Setting.getInstance().width == 0 || Setting.getInstance().height == 0) {
 				Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 				setSize(screenSize.width * 2 / 3, screenSize.height * 4 / 5);
@@ -1067,8 +1067,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				setLocation(x, y);
 			}
 
-			progressBarDialog.jProgressBar.setValue(71);
-			progressBarDialog.jProgressBar.setString("Init GUI - 5.1");
+			progressBarDialog.progressBar.setValue(71);
+			progressBarDialog.progressBar.setString("Init GUI - 5.1");
 
 			jSplitPane1.setDividerLocation(Setting.getInstance().divX);
 			jSplitPane2.setDividerLocation(Setting.getInstance().divY);
@@ -1077,15 +1077,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 			instrumentPanel.setThing(statusProgressBar, statusLabel);
 
-			progressBarDialog.jProgressBar.setValue(72);
-			progressBarDialog.jProgressBar.setString("Init GUI - 5.2");
+			progressBarDialog.progressBar.setValue(72);
+			progressBarDialog.progressBar.setString("Init GUI - 5.2");
 
 			// prevent null jmenuitem
 			getInstructionPanelPopupMenu();
 			// end prevent null jmenuitem
 
-			progressBarDialog.jProgressBar.setValue(73);
-			progressBarDialog.jProgressBar.setString("Init GUI - 5.3");
+			progressBarDialog.progressBar.setValue(73);
+			progressBarDialog.progressBar.setString("Init GUI - 5.3");
 
 			KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 				public boolean dispatchKeyEvent(KeyEvent e) {
@@ -1298,8 +1298,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					public void run() {
 						VMController.getVM().waitVMStop();
 						logger.debug("waitVMStop finished");
-						CommonLib.enableJComponent(upperRightTabbedPane, true);logger.debug("waitVMStop finished 2");
-						CommonLib.enableJComponent(bottomTabbedPane, true);logger.debug("waitVMStop finished 3");
+						CommonLib.enableJComponent(upperRightTabbedPane, true);
+						logger.debug("waitVMStop finished 2");
+						CommonLib.enableJComponent(bottomTabbedPane, true);
+						logger.debug("waitVMStop finished 3");
 						runVMButton.setText(MyLanguage.getString("run"));
 						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 						updateVMStatus(true);
@@ -1722,31 +1724,31 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					logger.debug("updateVMStatus thread start");
 				}
 
-				d.jProgressBar.setString("update ptime");
+				d.progressBar.setString("update ptime");
 				if (Global.debug) {
 					logger.debug("update ptime");
 				}
 				updatePTime(true);
 
-				d.jProgressBar.setString("updateRegister");
+				d.progressBar.setString("updateRegister");
 				if (Global.debug) {
 					logger.debug("updateRegister");
 				}
 				updateRegister(true);
 
-				d.jProgressBar.setString("updateEFlag");
+				d.progressBar.setString("updateEFlag");
 				if (Global.debug) {
 					logger.debug("updateEFlag");
 				}
 				updateEFlags();
 
-				d.jProgressBar.setString("updateMemory");
+				d.progressBar.setString("updateMemory");
 				if (Global.debug) {
 					logger.debug("updateMemory");
 				}
 				updateMemory(true);
 
-				d.jProgressBar.setString("updateInstruction");
+				d.progressBar.setString("updateInstruction");
 				if (Global.debug) {
 					logger.debug("updateInstruction");
 				}
@@ -1754,7 +1756,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 				updateInstruction(csBase.add(eip));
 
-				d.jProgressBar.setString("updateGDT");
+				d.progressBar.setString("updateGDT");
 				if (Global.debug) {
 					logger.debug("updateGDT");
 				}
@@ -1763,71 +1765,71 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				String cr0 = registerPanel.cr0TextField.getText();
 				int cr0Byte0 = CommonLib.string2int(cr0.substring(cr0.length() - 1));
 				if ((cr0Byte0 & 1) == 1) {
-					d.jProgressBar.setString("updateIDT");
+					d.progressBar.setString("updateIDT");
 					if (Global.debug) {
 						logger.debug("updateIDT");
 					}
 					updateIDT();
 
-					d.jProgressBar.setString("updateLDT");
+					d.progressBar.setString("updateLDT");
 					if (Global.debug) {
 						logger.debug("updateLDT");
 					}
 					updateLDT();
 
-					d.jProgressBar.setString("updatePageTable");
+					d.progressBar.setString("updatePageTable");
 					if (Global.debug) {
 						logger.debug("updatePageTable");
 					}
 					updatePageTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()));
 
-					d.jProgressBar.setString("updateStack");
+					d.progressBar.setString("updateStack");
 					if (Global.debug) {
 						logger.debug("updateStack");
 					}
 					updateStack();
 
-					d.jProgressBar.setString("updateAddressTranslate");
+					d.progressBar.setString("updateAddressTranslate");
 					if (Global.debug) {
 						logger.debug("updateAddressTranslate");
 					}
 					updateAddressTranslate();
 				}
 
-				d.jProgressBar.setString("updateBreakpoint");
+				d.progressBar.setString("updateBreakpoint");
 				if (Global.debug) {
 					logger.debug("updateBreakpoint");
 				}
 				updateBreakpoint();
 
-				d.jProgressBar.setString("updateBreakpointTableColor");
+				d.progressBar.setString("updateBreakpointTableColor");
 				if (Global.debug) {
 					logger.debug("updateBreakpointTableColor");
 				}
 				updateBreakpointTableColor();
 
 				if (Global.osDebug.compareTo(BigInteger.valueOf(-1)) != 0) {
-					d.jProgressBar.setString("update OS debug informations");
+					d.progressBar.setString("update OS debug informations");
 					if (Global.debug) {
 						logger.debug("update OS debug informations");
 					}
 					updateOSDebugInfo();
 				}
 
-				d.jProgressBar.setString("update instrument chart");
+				d.progressBar.setString("update instrument chart");
 				if (Global.debug) {
 					logger.debug("update instrument chart");
 				}
 				instrumentPanel.updateChart();
 
-				d.jProgressBar.setString("update call graph");
+				d.progressBar.setString("update call graph");
 				if (Global.debug) {
 					logger.debug("update call graph");
 				}
 				instrumentPanel.updateCallGraph();
 
 				if (updateHistoryTable) {
-					d.jProgressBar.setString("updateHistoryTable");
+					d.progressBar.setString("updateHistoryTable");
 					if (Global.debug) {
 						logger.debug("updateHistoryTable");
 					}
@@ -1858,7 +1860,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				}
 				jumpToRowInstructionTable(getRealEIP());
-				d.jProgressBar.setString("updateVMStatus end");
+				d.progressBar.setString("updateVMStatus end");
 				d.setVisible(false);
 
 				enableAllButtons(true, skipBreakpointTime > 0 || customCommandQueue.size() > 0);
@@ -1872,8 +1874,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		d.thread = updateThread;
 		//updateThread.setDaemon(true);
 		d.setTitle("Updating gkd status");
-		d.jProgressBar.setIndeterminate(true);
-		d.jProgressBar.setStringPainted(true);
+		d.progressBar.setIndeterminate(true);
+		d.progressBar.setStringPainted(true);
 		d.jCancelButton.setVisible(false);
 		d.setVisible(true);
 		//updateThread.start();
@@ -2643,7 +2645,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Setting.getInstance().save();
 	}
 
-	private void jGDTTableMouseClicked(MouseEvent evt) {
+	private void gdtTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
 			int gdtNo = CommonLib.string2int((String) gdtTable.getValueAt(gdtTable.getSelectedRow(), 0));
 			String tabTitle = "GDT " + String.format("0x%02x", gdtNo);
@@ -3457,8 +3459,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			final JProgressBarDialog d = new JProgressBarDialog(this, "Exporting to XLSX", true);
-			d.jProgressBar.setIndeterminate(true);
-			d.jProgressBar.setStringPainted(true);
+			d.progressBar.setIndeterminate(true);
+			d.progressBar.setStringPainted(true);
 
 			class MyThread extends Thread {
 				File file;
@@ -3513,7 +3515,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel14 = new JPanel();
 			jPanel14.add(getSaveGDTImageButton());
 			jPanel14.add(getExcelGDTButton());
-			jPanel14.add(getJGDTGraphButton());
+			jPanel14.add(getGDTGraphButton());
 		}
 		return jPanel14;
 	}
@@ -3866,25 +3868,25 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			CardLayout jMainPanelLayout = new CardLayout();
 			mainPanel.setLayout(jMainPanelLayout);
 			{
-				progressBarDialog.jProgressBar.setValue(51);
-				progressBarDialog.jProgressBar.setString("Init GUI - 3.1");
+				progressBarDialog.progressBar.setValue(51);
+				progressBarDialog.progressBar.setString("Init GUI - 3.1");
 
 				mainPanel.add(getMaximizableTabbedPane_BasePanel(), "jMaximizableTabbedPane_BasePanel1");
 
-				progressBarDialog.jProgressBar.setValue(52);
-				progressBarDialog.jProgressBar.setString("Init GUI - 3.2");
+				progressBarDialog.progressBar.setValue(52);
+				progressBarDialog.progressBar.setString("Init GUI - 3.2");
 
 				mainPanel.add(getJInstrumentPanel(), "instrumentPanel");
 
-				progressBarDialog.jProgressBar.setValue(53);
-				progressBarDialog.jProgressBar.setString("Init GUI - 3.3");
+				progressBarDialog.progressBar.setValue(53);
+				progressBarDialog.progressBar.setString("Init GUI - 3.3");
 
 				mainPanel.add(getJRunningLabel(), "Running Label");
 				mainPanel.add(getOsLogPanel(), "osLogPanel");
 				mainPanel.add(getRunningPanel(), "Running Panel");
 
-				progressBarDialog.jProgressBar.setValue(56);
-				progressBarDialog.jProgressBar.setString("Init GUI - 3.4");
+				progressBarDialog.progressBar.setValue(56);
+				progressBarDialog.progressBar.setString("Init GUI - 3.4");
 				mainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
 			}
 		}
@@ -4128,7 +4130,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		hexTable.setDefaultRenderer(String.class, new MemoryTableCellRenderer());
 		hexTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
-				jHexTable1MouseClicked(evt);
+				hexTableMouseClicked(evt);
 			}
 		});
 		jPanel9 = new JPanel();
@@ -4140,7 +4142,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		memoryAddressComboBox.setEditable(true);
 		memoryAddressComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				jMemoryAddressComboBoxActionPerformed(evt);
+				memoryAddressComboBoxActionPerformed(evt);
 			}
 		});
 		new Thread("addMemoryAddressComboBox thread") {
@@ -4229,7 +4231,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		gdtTable.getTableHeader().setReorderingAllowed(false);
 		gdtTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
-				jGDTTableMouseClicked(evt);
+				gdtTableMouseClicked(evt);
 			}
 		});
 
@@ -4361,20 +4363,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jRunningLabel;
 	}
 
-	private JButton getJGDTGraphButton() {
+	private JButton getGDTGraphButton() {
 		if (gdtGraphButton == null) {
 			gdtGraphButton = new JButton();
 			gdtGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/map.png")));
 			gdtGraphButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jGDTGraphButtonActionPerformed(evt);
+					gdtGraphButtonActionPerformed(evt);
 				}
 			});
 		}
 		return gdtGraphButton;
 	}
 
-	private void jGDTGraphButtonActionPerformed(ActionEvent evt) {
+	private void gdtGraphButtonActionPerformed(ActionEvent evt) {
 
 	}
 
@@ -4383,7 +4385,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			panel19 = new JToolBar();
 			FlowLayout jPanel19Layout = new FlowLayout();
 			jPanel19Layout.setAlignment(FlowLayout.LEFT);
-			panel19.add(getJPagingGraphButton());
+			panel19.add(getPagingGraphButton());
 			panel19.add(getJButton21x());
 			panel19.add(getDumpCR3Button());
 			panel19.add(getDumpPageDirectoryAddressTextField());
@@ -4393,7 +4395,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return panel19;
 	}
 
-	private JButton getJPagingGraphButton() {
+	private JButton getPagingGraphButton() {
 		if (pagingGraphButton == null) {
 			pagingGraphButton = new JButton();
 			pagingGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
@@ -4812,7 +4814,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		model.fireTableDataChanged();
 	}
 
-	private void jHexTable1MouseClicked(MouseEvent evt) {
+	private void hexTableMouseClicked(MouseEvent evt) {
 		if (SwingUtilities.isRightMouseButton(evt)) {
 			// select
 			Point p = evt.getPoint();
@@ -4946,7 +4948,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "PTE").setVisible(true);
 	}
 
-	private void jMemoryAddressComboBoxActionPerformed(ActionEvent evt) {
+	private void memoryAddressComboBoxActionPerformed(ActionEvent evt) {
 		if (this.isVisible()) {
 			goMemoryButtonActionPerformed(evt);
 		}

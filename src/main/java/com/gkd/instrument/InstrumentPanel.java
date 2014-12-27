@@ -129,6 +129,7 @@ import com.mxgraph.view.mxGraph;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.combo_color_renderer.ComboBoxRenderer;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
+import com.peterswing.advancedswing.pager.Pager;
 
 public class InstrumentPanel extends JPanel implements ChartChangeListener, ChartMouseListener {
 	private JTabbedPane tabbedPane1;
@@ -157,7 +158,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private ChartPanel jInterruptChart;
 	private JPanel interruptChartPanel;
 	private JTabbedPane interruptTabbedPane;
-	private JPanel jPanel11;
+	private JPanel interruptPanel;
 	private JLabel jLabel12;
 	private JLabel jLabel11;
 	private JScrollPane jScrollPane5;
@@ -195,7 +196,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTable callGraphRawTable;
 	private JScrollPane jScrollPane1;
 	private JPanel callGraphTablePanel;
-	private JTabbedPane jTabbedPane3;
+	private JTabbedPane callGraphTabbedPane;
 	private JButton layoutHierarchicalButton;
 	private JButton layoutOrganicButton;
 	private JButton layoutCircleButton;
@@ -206,7 +207,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JPanel callGraphPanel;
 	private JTable table1;
 	private JCheckBox groupCheckBox;
-	private JLabel jLabel10;
+	private JLabel noOfLineLabel10;
 	private JComboBox noOfLineComboBox;
 	private JPanel jPanel2;
 	private JScrollPane jScrollPane3;
@@ -220,7 +221,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JComboBox jProfilingFromComboBox;
 	private JLabel jLabel8;
 	private JLabel jLabel7;
-	private JPanel jMemoryProfilingPanel;
+	private JPanel memoryProfilingPanel;
 	private JTabbedPane jTabbedPane2;
 	private JLabel jLabel4;
 	public static JComboBox fromComboBox;
@@ -228,7 +229,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton zoomOutButton;
 	private ChartPanel memoryChartPanel;
 	private JFreeChart jfcMemory;
-	private JPanel jMemory3DPanel;
+	private JPanel memory3DPanel;
 	private JButton zoomOutAutoRangeButton;
 	private JLabel jRWCountLabel;
 	private JLabel jAddressLabel;
@@ -250,9 +251,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	CallGraphComponent graphComponent;
 	CallGraphConfigTableModel callGraphConfigTableModel = new CallGraphConfigTableModel();
 	mxGraphOutline graphOutline;
-	private final int MAX_NUMBER_OF_VERTEX = 100;
-	JProgressBar jStatusProgressBar;
-	JLabel jStatusLabel;
+	private final int MAX_NUMBER_OF_VERTEX = 1000;
+	JProgressBar statusProgressBar;
+	JLabel statusLabel;
 	CallGraphRawTableModel callGraphRawTableModel = new CallGraphRawTableModel();
 	JFreeChart interruptChart;
 	TimeSeriesCollection interruptDataset;
@@ -275,8 +276,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					tabbedPane1.addTab("Memory", null, memoryPanel, null);
 					tabbedPane1.addTab("Profiling", null, getJMemoryProfilingPanel(), null);
 					tabbedPane1.addTab("Jmp", null, getJmpPanel(), null);
-					tabbedPane1.addTab("Call graph", null, getJTabbedPane3(), null);
-					tabbedPane1.addTab("Interrupt", null, getJPanel11(), null);
+					tabbedPane1.addTab("Call graph", null, getCallGraphTabbedPane(), null);
+					tabbedPane1.addTab("Interrupt", null, getInterruptPanel(), null);
 					jMemoryPanelLayout
 							.setVerticalGroup(jMemoryPanelLayout
 									.createSequentialGroup()
@@ -682,12 +683,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private JPanel getJMemory3DPanel() {
 		//$hide>>$
-		if (jMemory3DPanel == null) {
-			jMemory3DPanel = new JPanel();
-			GroupLayout jMemory3DPanelLayout = new GroupLayout((JComponent) jMemory3DPanel);
-			jMemory3DPanel.setLayout(jMemory3DPanelLayout);
-			jMemory3DPanel.setPreferredSize(new java.awt.Dimension(890, 242));
-			jMemory3DPanel.setVisible(false);
+		if (memory3DPanel == null) {
+			memory3DPanel = new JPanel();
+			GroupLayout jMemory3DPanelLayout = new GroupLayout((JComponent) memory3DPanel);
+			memory3DPanel.setLayout(jMemory3DPanelLayout);
+			memory3DPanel.setPreferredSize(new java.awt.Dimension(890, 242));
+			memory3DPanel.setVisible(false);
 
 			try {
 				memory3dChart = createEmptyMemory3DChart();
@@ -716,12 +717,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				// glCapabilities.setHardwareAccelerated(true);
 
 			} catch (UnsatisfiedLinkError e) {
-				jMemory3DPanel = new JPanel();
-				jMemory3DPanel.add(new JLabel("Error : no gluegen-rt in java.library.path, to fix it, please add -Djava.library.path=<directory that contains libgluegen-rt.so>"));
+				memory3DPanel = new JPanel();
+				memory3DPanel.add(new JLabel("Error : no gluegen-rt in java.library.path, to fix it, please add -Djava.library.path=<directory that contains libgluegen-rt.so>"));
 			}
 		}
 		//$hide<<$
-		return jMemory3DPanel;
+		return memory3DPanel;
 	}
 
 	public static Chart createEmptyMemory3DChart() {
@@ -1055,18 +1056,18 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private JPanel getJMemoryProfilingPanel() {
-		if (jMemoryProfilingPanel == null) {
-			jMemoryProfilingPanel = new JPanel();
-			GroupLayout jMemoryProfilingPanelLayout = new GroupLayout((JComponent) jMemoryProfilingPanel);
-			jMemoryProfilingPanel.setLayout(jMemoryProfilingPanelLayout);
-			jMemoryProfilingPanelLayout
-					.setVerticalGroup(jMemoryProfilingPanelLayout
+		if (memoryProfilingPanel == null) {
+			memoryProfilingPanel = new JPanel();
+			GroupLayout memoryProfilingPanelLayout = new GroupLayout((JComponent) memoryProfilingPanel);
+			memoryProfilingPanel.setLayout(memoryProfilingPanelLayout);
+			memoryProfilingPanelLayout
+					.setVerticalGroup(memoryProfilingPanelLayout
 							.createSequentialGroup()
 							.addContainerGap()
 							.addComponent(getJLabel7(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 							.addGroup(
-									jMemoryProfilingPanelLayout
+									memoryProfilingPanelLayout
 											.createParallelGroup(GroupLayout.Alignment.BASELINE)
 											.addComponent(getJProfilingFromComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 													GroupLayout.PREFERRED_SIZE)
@@ -1082,7 +1083,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 							.addComponent(getJScrollPane2(), GroupLayout.PREFERRED_SIZE, 254, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 							.addGroup(
-									jMemoryProfilingPanelLayout
+									memoryProfilingPanelLayout
 											.createParallelGroup(GroupLayout.Alignment.BASELINE)
 											.addComponent(getJSortCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 													GroupLayout.PREFERRED_SIZE)
@@ -1091,36 +1092,36 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 							.addComponent(getJScrollPane6(), GroupLayout.PREFERRED_SIZE, 214, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 							.addComponent(getJDeleteZoneButton(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-			jMemoryProfilingPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] { getJProfilingFromComboBox(), getJProfilingToComboBox() });
-			jMemoryProfilingPanelLayout.setHorizontalGroup(jMemoryProfilingPanelLayout
+			memoryProfilingPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] { getJProfilingFromComboBox(), getJProfilingToComboBox() });
+			memoryProfilingPanelLayout.setHorizontalGroup(memoryProfilingPanelLayout
 					.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(
-							jMemoryProfilingPanelLayout
+							memoryProfilingPanelLayout
 									.createParallelGroup()
 									.addGroup(
 											GroupLayout.Alignment.LEADING,
-											jMemoryProfilingPanelLayout.createSequentialGroup()
+											memoryProfilingPanelLayout.createSequentialGroup()
 													.addComponent(getJLabel7(), GroupLayout.PREFERRED_SIZE, 608, GroupLayout.PREFERRED_SIZE).addGap(0, 156, Short.MAX_VALUE))
 									.addGroup(
 											GroupLayout.Alignment.LEADING,
-											jMemoryProfilingPanelLayout
+											memoryProfilingPanelLayout
 													.createSequentialGroup()
 													.addGroup(
-															jMemoryProfilingPanelLayout
+															memoryProfilingPanelLayout
 																	.createParallelGroup()
 																	.addGroup(
 																			GroupLayout.Alignment.LEADING,
-																			jMemoryProfilingPanelLayout
+																			memoryProfilingPanelLayout
 																					.createSequentialGroup()
 																					.addGroup(
-																							jMemoryProfilingPanelLayout
+																							memoryProfilingPanelLayout
 																									.createParallelGroup()
 																									.addComponent(getJLabel17(), GroupLayout.Alignment.LEADING,
 																											GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
 																									.addGroup(
 																											GroupLayout.Alignment.LEADING,
-																											jMemoryProfilingPanelLayout
+																											memoryProfilingPanelLayout
 																													.createSequentialGroup()
 																													.addComponent(getJDeleteZoneButton(),
 																															GroupLayout.PREFERRED_SIZE, 62,
@@ -1129,7 +1130,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 																					.addComponent(getJSortCheckBox(), GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE))
 																	.addGroup(
 																			GroupLayout.Alignment.LEADING,
-																			jMemoryProfilingPanelLayout
+																			memoryProfilingPanelLayout
 																					.createSequentialGroup()
 																					.addComponent(getJLabel8(), GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
 																					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
@@ -1142,9 +1143,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 													.addComponent(getJAddZoneButton(), GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE).addGap(0, 275, Short.MAX_VALUE))
 									.addComponent(getJScrollPane2(), GroupLayout.Alignment.LEADING, 0, 764, Short.MAX_VALUE)
 									.addComponent(getJScrollPane6(), GroupLayout.Alignment.LEADING, 0, 764, Short.MAX_VALUE)).addContainerGap());
-			jMemoryProfilingPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] { getJProfilingFromComboBox(), getJProfilingToComboBox() });
+			memoryProfilingPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] { getJProfilingFromComboBox(), getJProfilingToComboBox() });
 		}
-		return jMemoryProfilingPanel;
+		return memoryProfilingPanel;
 	}
 
 	private JLabel getJLabel7() {
@@ -1357,14 +1358,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			FlowLayout jPanel2Layout = new FlowLayout();
 			jPanel2Layout.setAlignment(FlowLayout.LEFT);
 			jPanel2.setLayout(jPanel2Layout);
-			jPanel2.add(getJLabel10());
-			jPanel2.add(getJNoOfLineComboBox());
+			jPanel2.add(getNoOfLineLabel());
+			jPanel2.add(getNoOfLineComboBox());
 			jPanel2.add(getJGroupCheckBox());
 		}
 		return jPanel2;
 	}
 
-	private JComboBox getJNoOfLineComboBox() {
+	private JComboBox getNoOfLineComboBox() {
 		if (noOfLineComboBox == null) {
 			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "20", "50", "100", "200" });
 			noOfLineComboBox = new JComboBox();
@@ -1373,23 +1374,24 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			noOfLineComboBox.setPreferredSize(new java.awt.Dimension(153, 22));
 			noOfLineComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jNoOfLineComboBoxActionPerformed(evt);
+					noOfLineComboBoxActionPerformed(evt);
 				}
 			});
 		}
 		return noOfLineComboBox;
 	}
 
-	private JLabel getJLabel10() {
-		if (jLabel10 == null) {
-			jLabel10 = new JLabel();
-			jLabel10.setText("No of line");
+	private JLabel getNoOfLineLabel() {
+		if (noOfLineLabel10 == null) {
+			noOfLineLabel10 = new JLabel();
+			noOfLineLabel10.setText("No of line");
 		}
-		return jLabel10;
+		return noOfLineLabel10;
 	}
 
-	private void jNoOfLineComboBoxActionPerformed(ActionEvent evt) {
+	private void noOfLineComboBoxActionPerformed(ActionEvent evt) {
 		jmpTableModel.setRowCount(Integer.parseInt(noOfLineComboBox.getSelectedItem().toString()));
+		jmpTableModel.fireTableStructureChanged();
 	}
 
 	private JCheckBox getJGroupCheckBox() {
@@ -1398,15 +1400,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			groupCheckBox.setText("Group");
 			groupCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jGroupCheckBoxActionPerformed(evt);
+					groupCheckBoxActionPerformed(evt);
 				}
 			});
 		}
 		return groupCheckBox;
 	}
 
-	private void jGroupCheckBoxActionPerformed(ActionEvent evt) {
+	private void groupCheckBoxActionPerformed(ActionEvent evt) {
 		jmpTableModel.setGroup(groupCheckBox.isSelected());
+		jmpTableModel.fireTableStructureChanged();
 	}
 
 	private JTable getJTable1() {
@@ -1426,38 +1429,38 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jmpTableModel;
 	}
 
-	private JPanel getJCallGraphPanel() {
+	private JPanel getCallGraphPanel() {
 		if (callGraphPanel == null) {
 			callGraphPanel = new JPanel();
-			BorderLayout jCallGraphPanelLayout = new BorderLayout();
-			callGraphPanel.setLayout(jCallGraphPanelLayout);
-			callGraphPanel.add(getJToolBar1(), BorderLayout.NORTH);
+			BorderLayout callGraphPanelLayout = new BorderLayout();
+			callGraphPanel.setLayout(callGraphPanelLayout);
+			callGraphPanel.add(getToolBar1(), BorderLayout.NORTH);
 			callGraphPanel.add(getJCallGraphSplitPane(), BorderLayout.CENTER);
 		}
 		return callGraphPanel;
 	}
 
-	private JToolBar getJToolBar1() {
+	private JToolBar getToolBar1() {
 		if (toolBar1 == null) {
 			toolBar1 = new JToolBar();
-			toolBar1.add(getJSaveGraphButton());
-			toolBar1.add(getJRefreshCallGraphButton());
-			toolBar1.add(getJLayoutTreeButton());
-			toolBar1.add(getJLayoutCircleButton());
-			toolBar1.add(getJLayoutOrganicButton());
-			toolBar1.add(getJLayoutHierarchicalButton());
-			toolBar1.add(getJCallGraphZoomInButton());
-			toolBar1.add(getJCallGraphScaleTextField());
-			toolBar1.add(getJCallGraphZoomOutButton());
+			toolBar1.add(getSaveGraphButton());
+			toolBar1.add(getRefreshCallGraphButton());
+			toolBar1.add(getLayoutTreeButton());
+			toolBar1.add(getLayoutCircleButton());
+			toolBar1.add(getLayoutOrganicButton());
+			toolBar1.add(getLayoutHierarchicalButton());
+			toolBar1.add(getCallGraphZoomInButton());
+			toolBar1.add(getCallGraphScaleTextField());
+			toolBar1.add(getCallGraphZoomOutButton());
 			toolBar1.add(getJLabel11());
-			toolBar1.add(getJTrackUnitComboBox());
+			toolBar1.add(getTrackUnitComboBox());
 			toolBar1.add(getJLabel12());
-			toolBar1.add(getJTrackDistanceComboBox());
+			toolBar1.add(getTrackDistanceComboBox());
 		}
 		return toolBar1;
 	}
 
-	private JButton getJSaveGraphButton() {
+	private JButton getSaveGraphButton() {
 		if (saveGraphButton == null) {
 			saveGraphButton = new JButton();
 			saveGraphButton.setText("Save");
@@ -1509,7 +1512,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		graphComponent = new CallGraphComponent(graph);
 		Object parent = graph.getDefaultParent();
 
-		addCells(parent);
+		addCallGraphCells(parent);
 		graph.setCellsDisconnectable(false);
 
 		graphComponent.setGridVisible(true);
@@ -1569,7 +1572,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		graphComponent.markerEnd = largestSegmentEnd;
 	}
 
-	private void addCells(Object parent) {
+	private void addCallGraphCells(Object parent) {
 		setMarkerMaxAndMinSize();
 
 		final int minX = 50;
@@ -1584,14 +1587,15 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		graph.getModel().beginUpdate();
 		try {
 			mxCell lastPort = null;
-			jStatusProgressBar.setMaximum(MAX_NUMBER_OF_VERTEX);
+			statusProgressBar.setMaximum(MAX_NUMBER_OF_VERTEX);
 			for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
-				jStatusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
-				jStatusProgressBar.setValue(counter);
+				statusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
+				statusProgressBar.setValue(counter);
 				JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
 				callGraphRawTableModel.add(jumpData);
 				int positionX = (int) ((jumpData.segmentStart - graphComponent.markerOffset) / graphComponent.addressPerPixel);
 				positionX += minX;
+
 				mxCell node = (mxCell) graph.insertVertex(parent, null, "0x" + Long.toHexString(jumpData.segmentStart) + " -> " + "0x" + Long.toHexString(jumpData.segmentEnd),
 						positionX, minY + (counter * 30), (jumpData.segmentEnd - jumpData.segmentStart) / graphComponent.addressPerPixel, cellHeight);
 
@@ -1606,10 +1610,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				}
 				lastPort = ports[1];
 			}
-			jStatusProgressBar.setValue(jStatusProgressBar.getMaximum());
+			statusProgressBar.setValue(statusProgressBar.getMaximum());
 		} finally {
 			graph.getModel().endUpdate();
 		}
+		callGraphRawTableModel.filter(filterRawTableTextField.getText());
 	}
 
 	private mxCell[] addPort(mxCell node) {
@@ -1645,80 +1650,80 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	// return vector;
 	// }
 
-	private JButton getJRefreshCallGraphButton() {
+	private JButton getRefreshCallGraphButton() {
 		if (refreshCallGraphButton == null) {
 			refreshCallGraphButton = new JButton();
 			refreshCallGraphButton.setText("Refresh");
 			refreshCallGraphButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jRefreshCallGraphButtonActionPerformed(evt);
+					refreshCallGraphButtonActionPerformed(evt);
 				}
 			});
 		}
 		return refreshCallGraphButton;
 	}
 
-	private void jRefreshCallGraphButtonActionPerformed(ActionEvent evt) {
-		this.updateCallGraph();
+	private void refreshCallGraphButtonActionPerformed(ActionEvent evt) {
+		updateCallGraph();
 	}
 
-	private JButton getJLayoutTreeButton() {
+	private JButton getLayoutTreeButton() {
 		if (layoutTreeButton == null) {
 			layoutTreeButton = new JButton();
 			layoutTreeButton.setText("Tree");
 			layoutTreeButton.setVisible(false);
 			layoutTreeButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jLayoutTreeButtonActionPerformed(evt);
+					layoutTreeButtonActionPerformed(evt);
 				}
 			});
 		}
 		return layoutTreeButton;
 	}
 
-	private JButton getJLayoutCircleButton() {
+	private JButton getLayoutCircleButton() {
 		if (layoutCircleButton == null) {
 			layoutCircleButton = new JButton();
 			layoutCircleButton.setText("Circle");
 			layoutCircleButton.setVisible(false);
 			layoutCircleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jLayoutCircleButtonActionPerformed(evt);
+					layoutCircleButtonActionPerformed(evt);
 				}
 			});
 		}
 		return layoutCircleButton;
 	}
 
-	private JButton getJLayoutOrganicButton() {
+	private JButton getLayoutOrganicButton() {
 		if (layoutOrganicButton == null) {
 			layoutOrganicButton = new JButton();
 			layoutOrganicButton.setText("Organic");
 			layoutOrganicButton.setVisible(false);
 			layoutOrganicButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jLayoutOrganicButtonActionPerformed(evt);
+					layoutOrganicButtonActionPerformed(evt);
 				}
 			});
 		}
 		return layoutOrganicButton;
 	}
 
-	private JButton getJLayoutHierarchicalButton() {
+	private JButton getLayoutHierarchicalButton() {
 		if (layoutHierarchicalButton == null) {
 			layoutHierarchicalButton = new JButton();
 			layoutHierarchicalButton.setText("Hierarchical");
 			layoutHierarchicalButton.setVisible(false);
 			layoutHierarchicalButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jLayoutHierarchicalButtonActionPerformed(evt);
+					layoutHierarchicalButtonActionPerformed(evt);
 				}
 			});
 		}
 		return layoutHierarchicalButton;
 	}
 
-	private void jLayoutTreeButtonActionPerformed(ActionEvent evt) {
+	private void layoutTreeButtonActionPerformed(ActionEvent evt) {
 		mxCompactTreeLayout layout = new mxCompactTreeLayout(graph);
 		if (layout != null) {
 			Object cell = graphComponent.getGraph().getSelectionCell();
@@ -1729,7 +1734,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		}
 	}
 
-	private void jLayoutCircleButtonActionPerformed(ActionEvent evt) {
+	private void layoutCircleButtonActionPerformed(ActionEvent evt) {
 		mxCircleLayout layout = new mxCircleLayout(graph);
 		if (layout != null) {
 			Object cell = graphComponent.getGraph().getSelectionCell();
@@ -1740,7 +1745,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		}
 	}
 
-	private void jLayoutOrganicButtonActionPerformed(ActionEvent evt) {
+	private void layoutOrganicButtonActionPerformed(ActionEvent evt) {
 		mxOrganicLayout layout = new mxOrganicLayout(graph);
 		if (layout != null) {
 			Object cell = graphComponent.getGraph().getSelectionCell();
@@ -1751,7 +1756,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		}
 	}
 
-	private void jLayoutHierarchicalButtonActionPerformed(ActionEvent evt) {
+	private void layoutHierarchicalButtonActionPerformed(ActionEvent evt) {
 		mxHierarchicalLayout layout = new mxHierarchicalLayout(graph);
 		if (layout != null) {
 			Object cell = graphComponent.getGraph().getSelectionCell();
@@ -1762,23 +1767,23 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		}
 	}
 
-	private JTabbedPane getJTabbedPane3() {
-		if (jTabbedPane3 == null) {
-			jTabbedPane3 = new JTabbedPane();
-			jTabbedPane3.setPreferredSize(new java.awt.Dimension(730, 443));
-			jTabbedPane3.addTab("Config", null, getJCallGraphConfigPanel(), null);
-			jTabbedPane3.addTab("Call graph", null, getJCallGraphPanel(), null);
-			jTabbedPane3.addTab("Raw data", null, getJCallGraphTablePanel(), null);
+	private JTabbedPane getCallGraphTabbedPane() {
+		if (callGraphTabbedPane == null) {
+			callGraphTabbedPane = new JTabbedPane();
+			callGraphTabbedPane.addTab("Config", null, getCallGraphConfigPanel(), null);
+			callGraphTabbedPane.addTab("Call graph", null, getCallGraphPanel(), null);
+			callGraphTabbedPane.addTab("Raw data", null, getCallGraphTablePanel(), null);
+			callGraphTabbedPane.setOpaque(true);
 		}
-		return jTabbedPane3;
+		return callGraphTabbedPane;
 	}
 
-	private JPanel getJCallGraphTablePanel() {
+	private JPanel getCallGraphTablePanel() {
 		if (callGraphTablePanel == null) {
 			callGraphTablePanel = new JPanel();
-			BorderLayout jCallGraphTablePanelLayout = new BorderLayout();
-			callGraphTablePanel.setLayout(jCallGraphTablePanelLayout);
-			callGraphTablePanel.add(getJScrollPane1x(), BorderLayout.CENTER);
+			callGraphTablePanel.setLayout(new BorderLayout(0, 0));
+			callGraphTablePanel.add(getJScrollPane1x());
+			callGraphTablePanel.add(getToolBar(), BorderLayout.NORTH);
 		}
 		return callGraphTablePanel;
 	}
@@ -1786,12 +1791,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JScrollPane getJScrollPane1x() {
 		if (jScrollPane1 == null) {
 			jScrollPane1 = new JScrollPane();
-			jScrollPane1.setViewportView(getJCallGraphRawTable());
+			jScrollPane1.setViewportView(getCallGraphRawTable());
 		}
 		return jScrollPane1;
 	}
 
-	private JTable getJCallGraphRawTable() {
+	private JTable getCallGraphRawTable() {
 		if (callGraphRawTable == null) {
 			callGraphRawTable = new JTable();
 			callGraphRawTable.setModel(callGraphRawTableModel);
@@ -2005,11 +2010,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	public void setThing(JProgressBar jStatusProgressBar, JLabel jStatusLabel) {
-		this.jStatusProgressBar = jStatusProgressBar;
-		this.jStatusLabel = jStatusLabel;
+		this.statusProgressBar = jStatusProgressBar;
+		this.statusLabel = jStatusLabel;
 	}
 
-	private JPanel getJCallGraphConfigPanel() {
+	private JPanel getCallGraphConfigPanel() {
 		if (callGraphConfigPanel == null) {
 			callGraphConfigPanel = new JPanel();
 			BorderLayout jCallGraphConfigPanelLayout = new BorderLayout();
@@ -2068,7 +2073,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return deleteButton;
 	}
 
-	private JButton getJCallGraphZoomInButton() {
+	private JButton getCallGraphZoomInButton() {
 		if (callGraphZoomInButton == null) {
 			callGraphZoomInButton = new JButton();
 			callGraphZoomInButton.setText("+");
@@ -2081,7 +2086,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return callGraphZoomInButton;
 	}
 
-	private JButton getJCallGraphZoomOutButton() {
+	private JButton getCallGraphZoomOutButton() {
 		if (callGraphZoomOutButton == null) {
 			callGraphZoomOutButton = new JButton();
 			callGraphZoomOutButton.setText("-");
@@ -2094,7 +2099,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return callGraphZoomOutButton;
 	}
 
-	private JComboBox getJTrackUnitComboBox() {
+	private JComboBox getTrackUnitComboBox() {
 		if (trackUnitComboBox == null) {
 			ComboBoxModel jTrackUnitComboBoxModel = new DefaultComboBoxModel(new String[] { "1", "2", "4", "8", "0x10", "0x20", "0x40", "0x80", "0x100", "0x200", "0x400", "0x800",
 					"0x1000", "0x2000", "0x4000", "0x8000" });
@@ -2104,14 +2109,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			trackUnitComboBox.setEditable(true);
 			trackUnitComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jTrackUnitComboBoxActionPerformed(evt);
+					trackUnitComboBoxActionPerformed(evt);
 				}
 			});
 		}
 		return trackUnitComboBox;
 	}
 
-	private JComboBox getJTrackDistanceComboBox() {
+	private JComboBox getTrackDistanceComboBox() {
 		if (trackDistanceComboBox == null) {
 			ComboBoxModel jTrackDistanceComboBoxModel = new DefaultComboBoxModel(new String[] { "10", "20", "40", "80", "100", "200", "400", "800" });
 			trackDistanceComboBox = new JComboBox();
@@ -2122,7 +2127,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			trackDistanceComboBox.setSelectedItem(100);
 			trackDistanceComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jTrackDistanceComboBoxActionPerformed(evt);
+					trackDistanceComboBoxActionPerformed(evt);
 				}
 			});
 		}
@@ -2143,19 +2148,19 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		callGraphScaleTextField.setText(scale + "%");
 	}
 
-	private void jTrackUnitComboBoxActionPerformed(ActionEvent evt) {
+	private void trackUnitComboBoxActionPerformed(ActionEvent evt) {
 		graphComponent.addressPerPixel = CommonLib.string2BigInteger(trackUnitComboBox.getSelectedItem().toString()).floatValue();
-		addCells(graph.getDefaultParent());
+		addCallGraphCells(graph.getDefaultParent());
 		graphComponent.repaint();
 	}
 
-	private void jTrackDistanceComboBoxActionPerformed(ActionEvent evt) {
+	private void trackDistanceComboBoxActionPerformed(ActionEvent evt) {
 		graphComponent.pixelPerMarker = CommonLib.string2BigInteger(trackDistanceComboBox.getSelectedItem().toString()).intValue();
-		addCells(graph.getDefaultParent());
+		addCallGraphCells(graph.getDefaultParent());
 		graphComponent.repaint();
 	}
 
-	private JTextField getJCallGraphScaleTextField() {
+	private JTextField getCallGraphScaleTextField() {
 		if (callGraphScaleTextField == null) {
 			callGraphScaleTextField = new JTextField();
 			callGraphScaleTextField.setText("100%");
@@ -2272,17 +2277,17 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jLabel12;
 	}
 
-	private JPanel getJPanel11() {
-		if (jPanel11 == null) {
-			jPanel11 = new JPanel();
-			BorderLayout jPanel11Layout = new BorderLayout();
-			jPanel11.setLayout(jPanel11Layout);
-			jPanel11.add(getJInterruptTabbedPane(), BorderLayout.CENTER);
+	private JPanel getInterruptPanel() {
+		if (interruptPanel == null) {
+			interruptPanel = new JPanel();
+			BorderLayout interruptPanelLayout = new BorderLayout();
+			interruptPanel.setLayout(interruptPanelLayout);
+			interruptPanel.add(getInterruptTabbedPane(), BorderLayout.CENTER);
 		}
-		return jPanel11;
+		return interruptPanel;
 	}
 
-	private JTabbedPane getJInterruptTabbedPane() {
+	private JTabbedPane getInterruptTabbedPane() {
 		if (interruptTabbedPane == null) {
 			interruptTabbedPane = new JTabbedPane();
 			interruptTabbedPane.addTab("Chart", null, getJPanel12(), null);
@@ -2290,17 +2295,17 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return interruptTabbedPane;
 	}
 
-	private JPanel getJInterruptChartPanel() {
+	private JPanel getInterruptChartPanel() {
 		if (interruptChartPanel == null) {
 			interruptChartPanel = new JPanel();
 			BorderLayout jInterruptChartPanelLayout = new BorderLayout();
 			interruptChartPanel.setLayout(jInterruptChartPanelLayout);
-			interruptChartPanel.add(getJInterruptChart(), BorderLayout.CENTER);
+			interruptChartPanel.add(getInterruptChart(), BorderLayout.CENTER);
 		}
 		return interruptChartPanel;
 	}
 
-	private ChartPanel getJInterruptChart() {
+	private ChartPanel getInterruptChart() {
 		if (jInterruptChart == null) {
 			interruptDataset = createInterruptChartDataset();
 			interruptChart = createInterruptChart(interruptDataset);
@@ -2312,6 +2317,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	Hashtable<Integer, TimeSeries> allSeries = new Hashtable<Integer, TimeSeries>();
+	private JPanel toolBar;
+	private JTextField filterRawTableTextField;
+	private JButton filterCallGraphRawDataButton;
 
 	private void runTimer() {
 		if (interruptTimer != null) {
@@ -2412,7 +2420,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jSplitPane1.setOrientation(JSplitPane.VERTICAL_SPLIT);
 			jSplitPane1.setDividerLocation(400);
 			jSplitPane1.add(getJInterruptTableScrollPane(), JSplitPane.BOTTOM);
-			jSplitPane1.add(getJInterruptChartPanel(), JSplitPane.TOP);
+			jSplitPane1.add(getInterruptChartPanel(), JSplitPane.TOP);
 		}
 		return jSplitPane1;
 	}
@@ -2679,34 +2687,34 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			FlowLayout jPanel15Layout = new FlowLayout();
 			jPanel15Layout.setAlignment(FlowLayout.LEFT);
 			panel15.setLayout(jPanel15Layout);
-			panel15.add(getJInvisible3dChartButton());
+			panel15.add(getInvisible3dChartButton());
 		}
 		return panel15;
 	}
 
-	private JButton getJInvisible3dChartButton() {
+	private JButton getInvisible3dChartButton() {
 		if (invisible3dChartButton == null) {
 			invisible3dChartButton = new JButton();
 			invisible3dChartButton.setText(MyLanguage.getString("Visible"));
 			invisible3dChartButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jInvisible3dChartButtonActionPerformed(evt);
+					invisible3dChartButtonActionPerformed(evt);
 				}
 			});
 		}
 		return invisible3dChartButton;
 	}
 
-	private void jInvisible3dChartButtonActionPerformed(ActionEvent evt) {
+	private void invisible3dChartButtonActionPerformed(ActionEvent evt) {
 		if (invisible3dChartButton.getText().equals(MyLanguage.getString("Visible"))) {
 			invisible3dChartButton.setText(MyLanguage.getString("Invisible"));
-			jMemory3DPanel.setVisible(true);
+			memory3DPanel.setVisible(true);
 		} else {
 			invisible3dChartButton.setText(MyLanguage.getString("Visible"));
-			jMemory3DPanel.setVisible(false);
-			jMemory3DPanel.repaint();
+			memory3DPanel.setVisible(false);
+			memory3DPanel.repaint();
 		}
-		jMemory3DPanel.revalidate();
+		memory3DPanel.revalidate();
 	}
 
 	private JButton getJClearInterruptButton() {
@@ -2715,14 +2723,54 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			clearInterruptButton.setText("Clear");
 			clearInterruptButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jClearInterruptButtonActionPerformed(evt);
+					clearInterruptButtonActionPerformed(evt);
 				}
 			});
 		}
 		return clearInterruptButton;
 	}
 
-	private void jClearInterruptButtonActionPerformed(ActionEvent evt) {
+	private void clearInterruptButtonActionPerformed(ActionEvent evt) {
 		InterruptSocketServer.interruptRecords.clear();
+	}
+
+	private JPanel getToolBar() {
+		if (toolBar == null) {
+			toolBar = new JPanel();
+			FlowLayout flowLayout = (FlowLayout) toolBar.getLayout();
+			flowLayout.setAlignment(FlowLayout.LEFT);
+			toolBar.add(getFilterRawTableTextField());
+			toolBar.add(getFilterCallGraphRawDataButton());
+		}
+		return toolBar;
+	}
+
+	private JTextField getFilterRawTableTextField() {
+		if (filterRawTableTextField == null) {
+			filterRawTableTextField = new JTextField();
+			filterRawTableTextField.setPreferredSize(new java.awt.Dimension(250, 22));
+			filterRawTableTextField.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent e) {
+					if (e.getKeyCode() == 10) {
+						callGraphRawTableModel.filter(filterRawTableTextField.getText());
+					}
+				}
+			});
+			filterRawTableTextField.setColumns(10);
+		}
+		return filterRawTableTextField;
+	}
+
+	private JButton getFilterCallGraphRawDataButton() {
+		if (filterCallGraphRawDataButton == null) {
+			filterCallGraphRawDataButton = new JButton("Filter");
+			filterCallGraphRawDataButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					callGraphRawTableModel.filter(filterRawTableTextField.getText());
+				}
+			});
+		}
+		return filterCallGraphRawDataButton;
 	}
 }
