@@ -33,6 +33,7 @@
 #include <fstream>
 #include <set>
 #include <strings.h>
+#include <sstream>
 using namespace std;
 using std::set;
 
@@ -548,7 +549,7 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //	bx_phy_address fromPhysicalAddress;
 //	bx_phy_address toPhysicalAddress;
-//
+
 //	if (startRecordJump) {
 //		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
 //		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
@@ -561,26 +562,54 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
 		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
 
+//		static stringstream str;
+//		str << "<data>\n";
+//		str << "\t<fromPhysicalAddress>" << (unsigned long) fromPhysicalAddress << "</fromPhysicalAddress>\n";
+//		str << "\t<toPhysicalAddress>" << (unsigned long) toPhysicalAddress << "</toPhysicalAddress>\n";
+//		str << "\t<segmentBegin>" << (unsigned long) segmentBegin << "</segmentBegin>\n";
+//		str << "\t<segmentEnd>" << (unsigned long) fromPhysicalAddress << "</segmentEnd>\n";
+//		str << "\t<eax>" << (unsigned int) BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx << "</eax>\n";
+//		str << "\t<ecx>" << (unsigned int) BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx << "</ecx>\n";
+//		str << "\t<edx>" << (unsigned int) BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx << "</edx>\n";
+//		str << "\t<ebx>" << BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx << "</ebx>\n";
+//		str << "\t<esp>" << BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx << "</esp>\n";
+//		str << "\t<ebp>" << BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx << "</ebp>\n";
+//		str << "\t<esi>" << BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx << "</esi>\n";
+//		str << "\t<edi>" << BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx << "</edi>\n";
+//		str << "\t<es>" << BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value << "</es>\n";
+//		str << "\t<cs>" << BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value << "</cs>\n";
+//		str << "\t<ss>" << BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value << "</ss>\n";
+//		str << "\t<ds>" << BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value << "</ds>\n";
+//		str << "\t<fs>" << BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value << "</fs>\n";
+//		str << "\t<gs>" << BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value << "</gs>\n";
+//		str << "</data>\n";
+//		const char *cstr = str.str().c_str();
+//		//				printf("%d, %s\n", strlen(cstr), cstr);
+//
+//		int length = strlen(cstr);
+//		write(jmpSockfd, &length, sizeof(int));
+//		write(jmpSockfd, cstr, length);
+
 		write(jmpSockfd, &fromPhysicalAddress, sizeof(bx_phy_address));
 		write(jmpSockfd, &toPhysicalAddress, sizeof(bx_phy_address));
 		write(jmpSockfd, &segmentBegin, sizeof(segmentBegin));
 		write(jmpSockfd, &segmentEnd, sizeof(segmentBegin));
 
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, sizeof(Bit32u));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, sizeof(Bit32u));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, sizeof(Bit32u));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, sizeof(Bit32u));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, sizeof(Bit32u));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, sizeof(Bit32u));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
 		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, sizeof(Bit32u));
 
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, sizeof(Bit16u));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, sizeof(Bit16u));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, sizeof(Bit16u));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, sizeof(Bit16u));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, sizeof(Bit16u));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, sizeof(Bit16u));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
 
 		segmentBegin = new_eip;
 	}
