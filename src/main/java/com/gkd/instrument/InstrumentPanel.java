@@ -104,7 +104,6 @@ import com.gkd.TSSPanel;
 import com.gkd.instrument.callgraph.CallGraphConfigTableCellEditor;
 import com.gkd.instrument.callgraph.CallGraphConfigTableCellRenderer;
 import com.gkd.instrument.callgraph.CallGraphConfigTableModel;
-import com.gkd.instrument.callgraph.CallGraphRawTableModel;
 import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.jfreechart.MyXYBlockRenderer;
 import com.gkd.instrument.jfreechart.MyXYToolTipGenerator;
@@ -128,8 +127,10 @@ import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.combo_color_renderer.ComboBoxRenderer;
-import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 import com.peterswing.advancedswing.pager.Pager;
+import com.peterswing.advancedswing.pager.PagerEvent;
+import com.peterswing.advancedswing.pager.PagerEventListener;
+import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 public class InstrumentPanel extends JPanel implements ChartChangeListener, ChartMouseListener {
 	private JTabbedPane tabbedPane1;
@@ -193,9 +194,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JSplitPane callGraphSplitPane;
 	private JPanel callGraphDetailPanel;
 	private JPanel jPanel3;
-	private JTable callGraphRawTable;
-	private JScrollPane jScrollPane1;
-	private JPanel callGraphTablePanel;
 	private JTabbedPane callGraphTabbedPane;
 	private JButton layoutHierarchicalButton;
 	private JButton layoutOrganicButton;
@@ -205,7 +203,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton saveGraphButton;
 	private JToolBar toolBar1;
 	private JPanel callGraphPanel;
-	private JTable table1;
+	private JTable jmpDataTable;
 	private JCheckBox groupCheckBox;
 	private JLabel noOfLineLabel10;
 	private JComboBox noOfLineComboBox;
@@ -254,7 +252,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private final int MAX_NUMBER_OF_VERTEX = 1000;
 	JProgressBar statusProgressBar;
 	JLabel statusLabel;
-	CallGraphRawTableModel callGraphRawTableModel = new CallGraphRawTableModel();
 	JFreeChart interruptChart;
 	TimeSeriesCollection interruptDataset;
 	Timer interruptTimer;
@@ -516,6 +513,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private static XYZDataset createDataset() {
+		//$hide>>$
 		long rowCount = Data.getRowCount(CommonLib.convertFilesize((String) fromComboBox.getSelectedItem()), CommonLib.convertFilesize((String) toComboBox.getSelectedItem()),
 				CommonLib.convertFilesize((String) blockSizeComboBox.getSelectedItem()));
 		long columnCount = Data.getColumnCount(CommonLib.convertFilesize((String) fromComboBox.getSelectedItem()),
@@ -542,6 +540,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		DefaultXYZDataset dataset = new DefaultXYZDataset();
 		dataset.addSeries("read/write count", data);
+		//$hide<<$
 		return dataset;
 	}
 
@@ -1358,9 +1357,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			FlowLayout jPanel2Layout = new FlowLayout();
 			jPanel2Layout.setAlignment(FlowLayout.LEFT);
 			jPanel2.setLayout(jPanel2Layout);
+			jPanel2.add(getJmpPager());
 			jPanel2.add(getNoOfLineLabel());
 			jPanel2.add(getNoOfLineComboBox());
 			jPanel2.add(getJGroupCheckBox());
+			jPanel2.add(getFilterRawTableTextField());
+			jPanel2.add(getFilterButton());
 		}
 		return jPanel2;
 	}
@@ -1390,8 +1392,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void noOfLineComboBoxActionPerformed(ActionEvent evt) {
-		jmpTableModel.setRowCount(Integer.parseInt(noOfLineComboBox.getSelectedItem().toString()));
-		jmpTableModel.fireTableStructureChanged();
+		updateJmpTable();
 	}
 
 	private JCheckBox getJGroupCheckBox() {
@@ -1408,21 +1409,20 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void groupCheckBoxActionPerformed(ActionEvent evt) {
-		jmpTableModel.setGroup(groupCheckBox.isSelected());
-		jmpTableModel.fireTableStructureChanged();
+		jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
 	}
 
 	private JTable getJTable1() {
-		if (table1 == null) {
-			table1 = new JTable();
-			table1.setModel(jmpTableModel);
-			table1.getTableHeader().setReorderingAllowed(false);
-			table1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int x = 0; x < table1.getColumnCount(); x++) {
-				table1.getColumnModel().getColumn(x).setPreferredWidth(100);
+		if (jmpDataTable == null) {
+			jmpDataTable = new JTable();
+			jmpDataTable.setModel(jmpTableModel);
+			jmpDataTable.getTableHeader().setReorderingAllowed(false);
+			jmpDataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			for (int x = 0; x < jmpDataTable.getColumnCount(); x++) {
+				jmpDataTable.getColumnModel().getColumn(x).setPreferredWidth(100);
 			}
 		}
-		return table1;
+		return jmpDataTable;
 	}
 
 	public JmpTableModel getJmpTableModel() {
@@ -1474,6 +1474,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	public void updateCallGraph() {
+		//$hide>>$
 		graph = new mxGraph() {
 			public void drawState(mxICanvas canvas, mxCellState state, String label) {
 				if (getModel().isVertex(state.getCell()) && canvas instanceof InstrumentCanvas) {
@@ -1513,6 +1514,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		Object parent = graph.getDefaultParent();
 
 		addCallGraphCells(parent);
+		updateJmpTable();
 		graph.setCellsDisconnectable(false);
 
 		graphComponent.setGridVisible(true);
@@ -1548,6 +1550,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		callGraphPreviewPanel.removeAll();
 		callGraphPreviewPanel.add(graphOutline, BorderLayout.CENTER);
 		callGraphPreviewPanel.setPreferredSize(new Dimension(100, 100));
+		//$hide<<$
 	}
 
 	private void cellClientEvent(String label) {
@@ -1572,18 +1575,47 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		graphComponent.markerEnd = largestSegmentEnd;
 	}
 
+	private void updateJmpTable() {
+		//$hide>>$
+		synchronized (JmpSocketServer.jmpDataVector) {
+			int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
+			jmpPager.maxPageNo = JmpSocketServer.jmpDataVector.size() / pageSize;
+			if (JmpSocketServer.jmpDataVector.size() % pageSize != 0) {
+				jmpPager.maxPageNo++;
+			}
+			if (jmpPager.getPage() > jmpPager.maxPageNo) {
+				jmpPager.setPageNo(jmpPager.maxPageNo);
+			}
+			jmpTableModel.removeAll();
+
+			if (JmpSocketServer.jmpDataVector.size() > 0) {
+				try {
+					for (int x = JmpSocketServer.jmpDataVector.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
+						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
+						JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
+						jmpTableModel.add(jumpData);
+					}
+				} catch (Exception ex) {
+					//synchronized not work, that why need this try-catch, remove it in the future
+				}
+				jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
+			}
+		}
+		//$hide<<$
+	}
+
 	private void addCallGraphCells(Object parent) {
+		//$hide>>$
 		setMarkerMaxAndMinSize();
 
 		final int minX = 50;
 		final int minY = 20;
 		final int cellHeight = 20;
 
-		int count = graph.getModel().getChildCount(parent);
-		for (int x = 0; x < count; x++) {
+		for (int x = 0; x < graph.getModel().getChildCount(parent); x++) {
 			graph.getModel().remove(graph.getModel().getChildAt(parent, 0));
 		}
-		callGraphRawTableModel.removeAll();
+
 		graph.getModel().beginUpdate();
 		try {
 			mxCell lastPort = null;
@@ -1592,7 +1624,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				statusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
 				statusProgressBar.setValue(counter);
 				JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
-				callGraphRawTableModel.add(jumpData);
 				int positionX = (int) ((jumpData.segmentStart - graphComponent.markerOffset) / graphComponent.addressPerPixel);
 				positionX += minX;
 
@@ -1614,7 +1645,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		} finally {
 			graph.getModel().endUpdate();
 		}
-		callGraphRawTableModel.filter(filterRawTableTextField.getText());
+
+		//$hide<<>$
 	}
 
 	private mxCell[] addPort(mxCell node) {
@@ -1772,38 +1804,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			callGraphTabbedPane = new JTabbedPane();
 			callGraphTabbedPane.addTab("Config", null, getCallGraphConfigPanel(), null);
 			callGraphTabbedPane.addTab("Call graph", null, getCallGraphPanel(), null);
-			callGraphTabbedPane.addTab("Raw data", null, getCallGraphTablePanel(), null);
 			callGraphTabbedPane.setOpaque(true);
 		}
 		return callGraphTabbedPane;
-	}
-
-	private JPanel getCallGraphTablePanel() {
-		if (callGraphTablePanel == null) {
-			callGraphTablePanel = new JPanel();
-			callGraphTablePanel.setLayout(new BorderLayout(0, 0));
-			callGraphTablePanel.add(getJScrollPane1x());
-			callGraphTablePanel.add(getToolBar(), BorderLayout.NORTH);
-		}
-		return callGraphTablePanel;
-	}
-
-	private JScrollPane getJScrollPane1x() {
-		if (jScrollPane1 == null) {
-			jScrollPane1 = new JScrollPane();
-			jScrollPane1.setViewportView(getCallGraphRawTable());
-		}
-		return jScrollPane1;
-	}
-
-	private JTable getCallGraphRawTable() {
-		if (callGraphRawTable == null) {
-			callGraphRawTable = new JTable();
-			callGraphRawTable.setModel(callGraphRawTableModel);
-			callGraphRawTable.getTableHeader().setReorderingAllowed(false);
-			callGraphRawTable.getTableHeader().setReorderingAllowed(false);
-		}
-		return callGraphRawTable;
 	}
 
 	private JPanel getJPanel3() {
@@ -2317,9 +2320,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	Hashtable<Integer, TimeSeries> allSeries = new Hashtable<Integer, TimeSeries>();
-	private JPanel toolBar;
+	private Pager jmpPager;
 	private JTextField filterRawTableTextField;
-	private JButton filterCallGraphRawDataButton;
+	private JButton filterButton;
 
 	private void runTimer() {
 		if (interruptTimer != null) {
@@ -2734,43 +2737,35 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		InterruptSocketServer.interruptRecords.clear();
 	}
 
-	private JPanel getToolBar() {
-		if (toolBar == null) {
-			toolBar = new JPanel();
-			FlowLayout flowLayout = (FlowLayout) toolBar.getLayout();
-			flowLayout.setAlignment(FlowLayout.LEFT);
-			toolBar.add(getFilterRawTableTextField());
-			toolBar.add(getFilterCallGraphRawDataButton());
+	private Pager getJmpPager() {
+		if (jmpPager == null) {
+			jmpPager = new Pager();
+			jmpPager.addPagerEventListener(new PagerEventListener() {
+				public void clicked(PagerEvent evt) {
+					updateJmpTable();
+				}
+			});
 		}
-		return toolBar;
+		return jmpPager;
 	}
 
 	private JTextField getFilterRawTableTextField() {
 		if (filterRawTableTextField == null) {
 			filterRawTableTextField = new JTextField();
-			filterRawTableTextField.setPreferredSize(new java.awt.Dimension(250, 22));
-			filterRawTableTextField.addKeyListener(new KeyAdapter() {
-				@Override
-				public void keyReleased(KeyEvent e) {
-					if (e.getKeyCode() == 10) {
-						callGraphRawTableModel.filter(filterRawTableTextField.getText());
-					}
-				}
-			});
 			filterRawTableTextField.setColumns(10);
 		}
 		return filterRawTableTextField;
 	}
 
-	private JButton getFilterCallGraphRawDataButton() {
-		if (filterCallGraphRawDataButton == null) {
-			filterCallGraphRawDataButton = new JButton("Filter");
-			filterCallGraphRawDataButton.addActionListener(new ActionListener() {
+	private JButton getFilterButton() {
+		if (filterButton == null) {
+			filterButton = new JButton("Filter");
+			filterButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					callGraphRawTableModel.filter(filterRawTableTextField.getText());
+					jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
 				}
 			});
 		}
-		return filterCallGraphRawDataButton;
+		return filterButton;
 	}
 }

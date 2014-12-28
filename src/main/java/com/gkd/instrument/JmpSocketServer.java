@@ -21,8 +21,7 @@ public class JmpSocketServer implements Runnable {
 	private JmpTableModel jmpTableModel;
 	private boolean shouldStop;
 	private ServerSocket serverSocket;
-	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
-	FileWriter fstream;
+	//	FileWriter fstream;
 
 	//	public static LinkedHashSet<String> segments = new LinkedHashSet<String>();
 	public static Vector<JmpData> jmpDataVector = new Vector<JmpData>();
@@ -30,11 +29,11 @@ public class JmpSocketServer implements Runnable {
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		this.port = port;
 		this.jmpTableModel = jmpTableModel;
-		try {
-			fstream = new FileWriter(Global.jmpLog, true);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+		//		try {
+		//			fstream = new FileWriter(Global.jmpLog, true);
+		//		} catch (IOException e1) {
+		//			e1.printStackTrace();
+		//		}
 
 		shouldStop = false;
 		new Thread(this).start();
@@ -97,12 +96,14 @@ public class JmpSocketServer implements Runnable {
 					long fs = CommonLib.readShortFromInputStream(in);
 					long gs = CommonLib.readShortFromInputStream(in);
 
-					jmpTableModel.addData(String.valueOf(lineNo), dateformat1.format(new Date()), fromAddress, toAddress, segmentStart, segmentEnd, eax, ecx, edx, ebx, esp, ebp,
-							esi, edi, es, cs, ss, ds, fs, gs);
-					lineNo++;
-					jmpDataVector.add(new JmpData(segmentStart, segmentEnd, fromAddress, toAddress));
+					synchronized (jmpDataVector) {
+						jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress, toAddress, segmentStart, segmentEnd, eax, ecx, edx, ebx, esp, ebp, esi, edi, es, cs, ss, ds,
+								fs, gs));
+					}
 
-					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + fromAddress + "-" + toAddress + "-" + segmentStart + "-" + segmentEnd + "\n");
+					//					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + fromAddress + "-" + toAddress + "-" + segmentStart + "-" + segmentEnd + "\n");
+
+					lineNo++;
 				}
 
 				in.close();

@@ -1,55 +1,20 @@
 package com.gkd.instrument;
 
-import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.LinkedHashSet;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
-import com.gkd.Global;
-import com.gkd.ReverseFileReader;
+import com.gkd.instrument.callgraph.JmpData;
 
-
-public class JmpTableModel extends DefaultTableModel implements Runnable {
+public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs", "ss", "ds", "fs",
 			"gs" };
-	int rowCount = 20;
-	boolean isGroup;
-	File log = new File(Global.jmpLog);
-
-	Vector<String> no = new Vector<String>();
-	Vector<String> date = new Vector<String>();
-
-	Vector<Long> from = new Vector<Long>();
-	Vector<Long> to = new Vector<Long>();
-	Vector<Long> segmentStart = new Vector<Long>();
-	Vector<Long> segmentEnd = new Vector<Long>();
-
-	Vector<Long> eax = new Vector<Long>();
-	Vector<Long> ecx = new Vector<Long>();
-	Vector<Long> edx = new Vector<Long>();
-	Vector<Long> ebx = new Vector<Long>();
-	Vector<Long> esp = new Vector<Long>();
-	Vector<Long> ebp = new Vector<Long>();
-	Vector<Long> esi = new Vector<Long>();
-	Vector<Long> edi = new Vector<Long>();
-
-	Vector<Long> es = new Vector<Long>();
-	Vector<Long> cs = new Vector<Long>();
-	Vector<Long> ss = new Vector<Long>();
-	Vector<Long> ds = new Vector<Long>();
-	Vector<Long> fs = new Vector<Long>();
-	Vector<Long> gs = new Vector<Long>();
-
-	Vector allData[] = { no, date, from, to, segmentStart, segmentEnd, eax, ecx, edx, ebx, esp, ebp, esi, edi, es, cs, ss, ds, fs, gs };
-
-	// LogFileTailer tailer = new LogFileTailer(new File("jmp.log"), 1000,
-	// false);
-
-	public JmpTableModel() {
-		// tailer.addLogFileTailerListener(this);
-		// tailer.start();
-		// new Thread(this).start();
-	}
+	Vector<JmpData> originalData = new Vector<JmpData>();
+	Vector<JmpData> data;
+	Vector<String> checkDoubleVector = new Vector<String>();
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.S");
 
 	public String getColumnName(int column) {
 		return columnNames[column];
@@ -59,28 +24,60 @@ public class JmpTableModel extends DefaultTableModel implements Runnable {
 		return columnNames.length;
 	}
 
-	public void setRowCount(int rowCount) {
-		this.rowCount = rowCount;
-	}
-
 	public int getRowCount() {
-		return rowCount;
+		try {
+			return data.size();
+		} catch (Exception ex) {
+			return 0;
+		}
 	}
 
 	public void setValueAt(Object aValue, int row, int column) {
-		this.fireTableDataChanged();
 	}
 
 	public Object getValueAt(int row, int column) {
-		try {
-			if (allData[column].get(0) instanceof String) {
-				return allData[column].get(row);
-			} else if (allData[column].get(0) instanceof Long) {
-				return "0x" + Long.toHexString((Long) allData[column].get(row));
-			} else {
-				return "";
-			}
-		} catch (Exception ex) {
+		JmpData jmpData = data.get(row);
+		if (column == 0) {
+			return jmpData.lineNo;
+		} else if (column == 1) {
+			return dateFormat.format(jmpData.date);
+		} else if (column == 2) {
+			return "0x" + Long.toHexString(jmpData.fromAddress);
+		} else if (column == 3) {
+			return "0x" + Long.toHexString(jmpData.toAddress);
+		} else if (column == 4) {
+			return "0x" + Long.toHexString(jmpData.segmentStart);
+		} else if (column == 5) {
+			return "0x" + Long.toHexString(jmpData.segmentEnd);
+		} else if (column == 6) {
+			return "0x" + Long.toHexString(jmpData.eax);
+		} else if (column == 7) {
+			return "0x" + Long.toHexString(jmpData.ecx);
+		} else if (column == 8) {
+			return "0x" + Long.toHexString(jmpData.edx);
+		} else if (column == 9) {
+			return "0x" + Long.toHexString(jmpData.ebx);
+		} else if (column == 10) {
+			return "0x" + Long.toHexString(jmpData.esp);
+		} else if (column == 11) {
+			return "0x" + Long.toHexString(jmpData.ebp);
+		} else if (column == 12) {
+			return "0x" + Long.toHexString(jmpData.esi);
+		} else if (column == 13) {
+			return "0x" + Long.toHexString(jmpData.edi);
+		} else if (column == 14) {
+			return "0x" + Long.toHexString(jmpData.es);
+		} else if (column == 15) {
+			return "0x" + Long.toHexString(jmpData.cs);
+		} else if (column == 16) {
+			return "0x" + Long.toHexString(jmpData.ss);
+		} else if (column == 17) {
+			return "0x" + Long.toHexString(jmpData.ds);
+		} else if (column == 18) {
+			return "0x" + Long.toHexString(jmpData.fs);
+		} else if (column == 19) {
+			return "0x" + Long.toHexString(jmpData.gs);
+		} else {
 			return "";
 		}
 	}
@@ -89,90 +86,41 @@ public class JmpTableModel extends DefaultTableModel implements Runnable {
 		return false;
 	}
 
-	public boolean isGroup() {
-		return isGroup;
+	public void add(JmpData data) {
+		this.originalData.add(data);
 	}
 
-	public void setGroup(boolean isGroup) {
-		this.isGroup = isGroup;
-	}
-
-	public void addData(String no, String date, Long from, Long to, Long segmentStart, Long segmentEnd, Long eax, Long ecx, Long edx, Long ebx, Long esp, Long ebp, Long esi,
-			Long edi, Long es, Long cs, Long ss, Long ds, Long fs, Long gs) {
-		this.no.add(no);
-		this.date.add(date);
-		this.from.add(from);
-		this.to.add(to);
-		this.segmentStart.add(segmentStart);
-		this.segmentEnd.add(segmentEnd);
-
-		this.eax.add(eax);
-		this.ecx.add(ecx);
-		this.edx.add(edx);
-		this.ebx.add(ebx);
-		this.esp.add(esp);
-		this.ebp.add(ebp);
-		this.esi.add(esi);
-		this.edi.add(edi);
-
-		this.es.add(es);
-		this.cs.add(cs);
-		this.ss.add(ss);
-		this.ds.add(ds);
-		this.fs.add(fs);
-		this.gs.add(gs);
-
-		if (this.no.size() > getRowCount()) {
-			removeFirstRow();
-		}
+	public void removeAll() {
+		originalData.clear();
 		this.fireTableDataChanged();
 	}
 
-	@Override
-	public void run() {
-		long lastFileLength = -1;
-
-		while (true) {
-			try {
-				long fileLength = log.length();
-
-				if (fileLength > lastFileLength) {
-					ReverseFileReader reader = new ReverseFileReader(Global.jmpLog);
-					for (int x = 0; x < getRowCount(); x++) {
-						String s = reader.readLine();
-						if (s != null) {
-							String strs[] = s.split("-");
-							if (strs.length == 6) {
-								no.add(strs[0]);
-								date.add(strs[1]);
-								from.add(Long.parseLong(strs[2]));
-								to.add(Long.parseLong(strs[3]));
-								segmentStart.add(Long.parseLong(strs[4]));
-								segmentEnd.add(Long.parseLong(strs[5]));
-
-								if (no.size() > getRowCount()) {
-									removeFirstRow();
-								}
-							}
-						}
-					}
-					this.fireTableDataChanged();
-					reader.close();
-					lastFileLength = fileLength;
+	public void filter(String filter, boolean isGroup) {
+		Vector<JmpData> temp;
+		if (isGroup) {
+			//			checkDoubleVector.clear();
+			//			for (JmpData d : data) {
+			//				if (checkDoubleVector.contains(data.toString())) {
+			//
+			//				} else {
+			//					checkDoubleVector.add(data);
+			//				}
+			//			}
+			temp = new Vector<JmpData>(new LinkedHashSet<JmpData>(originalData));
+			System.out.println("==========" + temp.size() + "/" + originalData.size());
+		} else {
+			temp = originalData;
+		}
+		if (filter.equals("")) {
+			data = (Vector<JmpData>) temp.clone();
+		} else {
+			data.clear();
+			for (JmpData d : temp) {
+				if (d.contains(filter)) {
+					data.add(d);
 				}
-				Thread.currentThread().sleep(500);
-			} catch (Exception ex) {
-				ex.printStackTrace();
 			}
 		}
-
-	}
-
-	private void removeFirstRow() {
-		for (int x = 0; x < allData.length; x++) {
-			if (allData[x].size() > 0) {
-				allData[x].remove(0);
-			}
-		}
+		this.fireTableDataChanged();
 	}
 }
