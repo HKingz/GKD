@@ -24,6 +24,7 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 
 	public InstructionTableCellRenderer() {
 		this.setOpaque(true);
+		//		this.setHorizontalAlignment(JLabel.LEFT);
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -53,7 +54,8 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 			} else if (table.getValueAt(row, 1).toString().startsWith("cCode")) {
 				if (column == 1) {
 					String str = ((String) table.getValueAt(row, 1)).replaceAll("cCode : ", "");
-					this.setText(String.format("%40s", str));
+					//					this.setText(String.format("%40s", str));
+					this.setText(str);
 					this.setForeground(darkGreen);
 					this.setIcon(null);
 				} else {
