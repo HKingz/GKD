@@ -73,7 +73,7 @@ import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
-	private JSplitPane jMainSplitPane;
+	private JSplitPane mainSplitPane;
 	private JPanel panel1;
 	private JPanel panel6;
 	private JSplitPane splitPane3;
@@ -98,7 +98,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	private JPanel symbolTablePanel;
 	private JSearchTextField searchProjectTextField;
 	private JToolBar projectToolBar;
-	private JMaximizableTabbedPane jMainTabbedPane;
+	private JMaximizableTabbedPane mainTabbedPane;
 	private JTree projectTree;
 	private JPanel panel3;
 	private JMaximizableTabbedPane jTabbedPane1;
@@ -138,13 +138,13 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 		try {
 			this.setPreferredSize(new java.awt.Dimension(975, 563));
 			{
-				jMainSplitPane = new JSplitPane();
+				mainSplitPane = new JSplitPane();
 				this.add(getJErrorLabel(), "errorLabel");
-				this.add(jMainSplitPane, "MAIN");
-				jMainSplitPane.setDividerLocation(200);
+				this.add(mainSplitPane, "MAIN");
+				mainSplitPane.setDividerLocation(200);
 				{
 					panel4 = new JPanel();
-					jMainSplitPane.add(panel4, JSplitPane.RIGHT);
+					mainSplitPane.add(panel4, JSplitPane.RIGHT);
 					BorderLayout panel4Layout = new BorderLayout();
 					panel4.setLayout(panel4Layout);
 					{
@@ -159,53 +159,53 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 							BorderLayout panel6Layout = new BorderLayout();
 							panel6.setLayout(panel6Layout);
 							{
-								jMainTabbedPane = new JMaximizableTabbedPane();
-								panel6.add(jMainTabbedPane, BorderLayout.CENTER);
+								mainTabbedPane = new JMaximizableTabbedPane();
+								panel6.add(mainTabbedPane, BorderLayout.CENTER);
 								{
 									jASMPanel = new JPanel();
-									jMainTabbedPane.addTab(MyLanguage.getString("ASM/C"), null, jASMPanel, null);
-									jMainTabbedPane.addTab("Dwarf", null, getJDwarfPanel(), null);
-									jMainTabbedPane.addTab("Code base", null, getCodeBasePanel(), null);
-									jMainTabbedPane.addTab("Call Graph", null, getCallGraphPanel(), null);
+									mainTabbedPane.addTab(MyLanguage.getString("ASM/C"), null, jASMPanel, null);
+									mainTabbedPane.addTab("Dwarf", null, getJDwarfPanel(), null);
+									mainTabbedPane.addTab("Code base", null, getCodeBasePanel(), null);
+									mainTabbedPane.addTab("Call Graph", null, getCallGraphPanel(), null);
 									BorderLayout jASMPanelLayout = new BorderLayout();
 									jASMPanel.setLayout(jASMPanelLayout);
 									{
 										instructionTableScrollPane = new JScrollPane();
-										instructionTableScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-											boolean isRunning;
-
-											public void adjustmentValueChanged(AdjustmentEvent evt) {
-												/*	JScrollBar vbar = (JScrollBar) evt.getSource();
-
-													if (evt.getValueIsAdjusting()) {
-														return;
-													}
-													if ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum()) {
-														if (!isRunning) {
-															try {
-																isRunning = true;
-																final CardLayout cl = (CardLayout) (gkd.jMainPanel.getLayout());
-																cl.show(gkd.jMainPanel, "Running Label");
-																//															new Thread("update instruction thread") {
-																//																public void run() {
-																//																	long address = Long.parseLong(instructionTable.getValueAt(instructionTable.getRowCount() - 1, 1).toString()
-																//																			.substring(2), 16);
-																//																	gkd.updateInstruction(address, true);
-																//																	gkd.updateBreakpointTableColor();
-																////																	cl.show(gkd.jMainPanel, gkd.currentPanel);
-																//
-																//																	isRunning = false;
-																//																}
-																//															}.start();
-
-															} catch (Exception ex) {
-															}
-														}
-
-													}*/
-											}
-
-										});
+//										instructionTableScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+//											boolean isRunning;
+//
+//											public void adjustmentValueChanged(AdjustmentEvent evt) {
+//												/*	JScrollBar vbar = (JScrollBar) evt.getSource();
+//
+//													if (evt.getValueIsAdjusting()) {
+//														return;
+//													}
+//													if ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum()) {
+//														if (!isRunning) {
+//															try {
+//																isRunning = true;
+//																final CardLayout cl = (CardLayout) (gkd.jMainPanel.getLayout());
+//																cl.show(gkd.jMainPanel, "Running Label");
+//																//															new Thread("update instruction thread") {
+//																//																public void run() {
+//																//																	long address = Long.parseLong(instructionTable.getValueAt(instructionTable.getRowCount() - 1, 1).toString()
+//																//																			.substring(2), 16);
+//																//																	gkd.updateInstruction(address, true);
+//																//																	gkd.updateBreakpointTableColor();
+//																////																	cl.show(gkd.jMainPanel, gkd.currentPanel);
+//																//
+//																//																	isRunning = false;
+//																//																}
+//																//															}.start();
+//
+//															} catch (Exception ex) {
+//															}
+//														}
+//
+//													}*/
+//											}
+//
+//										});
 										jASMPanel.add(instructionTableScrollPane, BorderLayout.CENTER);
 										{
 											instructionTable = new JTable();
@@ -346,7 +346,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 				}
 				{
 					panel1 = new JPanel();
-					jMainSplitPane.add(panel1, JSplitPane.LEFT);
+					mainSplitPane.add(panel1, JSplitPane.LEFT);
 					BorderLayout panel1Layout = new BorderLayout();
 					panel1.setLayout(panel1Layout);
 					{
@@ -816,7 +816,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 				long address = symbol.st_value;
 
 				instructionComboBox.setSelectedItem("0x" + Long.toHexString(address));
-				jMainTabbedPane.setSelectedIndex(0);
+				mainTabbedPane.setSelectedIndex(0);
 
 				gkd.jumpToRowInstructionTable(BigInteger.valueOf(address));
 			}
@@ -841,7 +841,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 			jDwarfPanel = new JPanel();
 			BorderLayout jDwarfPanelLayout = new BorderLayout();
 			jDwarfPanel.setLayout(jDwarfPanelLayout);
-			jDwarfPanel.add(getPeterDwarfPanel(), BorderLayout.CENTER);
+			jDwarfPanel.add(getPeterDwarfPanel(), BorderLayout.NORTH);
 		}
 		return jDwarfPanel;
 	}

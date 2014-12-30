@@ -6,6 +6,7 @@ import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,7 +25,6 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 
 	public InstructionTableCellRenderer() {
 		this.setOpaque(true);
-		//		this.setHorizontalAlignment(JLabel.LEFT);
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -51,22 +51,23 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 					this.setIcon(null);
 				}
 				this.setText(null);
-			} else if (table.getValueAt(row, 1).toString().startsWith("cCode")) {
-				if (column == 1) {
-					String str = ((String) table.getValueAt(row, 1)).replaceAll("cCode : ", "");
-					//					this.setText(String.format("%40s", str));
-					this.setText(str);
-					this.setForeground(darkGreen);
-					this.setIcon(null);
-				} else {
-					String code = ((String) value);
-					if (code != null) {
-						code = code.replaceAll("\\t", "    ");
-						this.setText(code);
-					}
-					this.setForeground(darkBlue);
-					this.setIcon(null);
-				}
+				//			} else if (table.getValueAt(row, 1).toString().startsWith("cCode")) {
+			} else if (column == 1 && value.toString().startsWith("cCode")) {
+				//				if (column == 1) {
+				String str = ((String) table.getValueAt(row, 1)).replaceAll("cCode : ", "");
+				//					this.setText(String.format("%40s", str));
+				this.setText(str);
+				this.setForeground(darkGreen);
+				this.setIcon(null);
+				//				} else {
+				//					String code = ((String) value);
+				//					if (code != null) {
+				//						code = code.replaceAll("\\t", "    ");
+				//						this.setText(code);
+				//					}
+				//					this.setForeground(darkBlue);
+				//					this.setIcon(null);
+				//				}
 			} else {
 				this.setForeground(Color.black);
 				if (column == 2) {
@@ -80,16 +81,18 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 					this.setIcon(null);
 				} else {
 					String s = (String) value;
-					if (s.contains(":")) {
-						String ss[] = s.split(":");
-						if (ss.length > 1) {
-							this.setText("<html>" + ss[0] + ":<font color=green>" + ss[1] + "</font></html>");
-						} else {
-							this.setText(s);
-						}
-					} else {
-						this.setText("0x" + StringUtils.leftPad(CommonLib.string2BigInteger(s).toString(16), 16, '0'));
-					}
+					//					if (s.contains(":")) {
+					//						String ss[] = s.split(":");
+					//						if (ss.length > 1) {
+					//							this.setText("<html><body>" + ss[0] + ":<font color=green>" + ss[1] + "</font></body></html>");
+					//						} else {
+					//							this.setText(s);
+					//						}
+					//					} else {
+					System.out.println(s);
+					this.setText("0x" + StringUtils.leftPad(CommonLib.string2BigInteger(s).toString(16), 16, '0'));
+					this.setHorizontalAlignment(SwingConstants.LEFT);
+					//					}
 					this.setIcon(null);
 				}
 			}

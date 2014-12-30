@@ -1369,7 +1369,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private JComboBox getNoOfLineComboBox() {
 		if (noOfLineComboBox == null) {
-			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "20", "50", "100", "200" });
+			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "100", "200", "400", "1000" });
 			noOfLineComboBox = new JComboBox();
 			noOfLineComboBox.setModel(jNoOfLineComboBoxModel);
 			noOfLineComboBox.setEditable(true);
@@ -1591,7 +1591,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			if (JmpSocketServer.jmpDataVector.size() > 0) {
 				try {
 					for (int x = JmpSocketServer.jmpDataVector.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
-						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
+						//						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
 						JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
 						jmpTableModel.add(jumpData);
 					}

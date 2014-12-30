@@ -2245,8 +2245,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Collections.sort(model.getData(), new Comparator<String[]>() {
 			@Override
 			public int compare(String[] o1, String[] o2) {
-				String s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1[1]).toString(16), 16, '0');
-				String s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2[1]).toString(16), 16, '0');
+				String o1Address;
+				if (o1[1].contains("cCode")) {
+					o1Address = o1[1].split(":")[1].trim();
+				} else {
+					o1Address = o1[1];
+				}
+
+				String o2Address;
+				if (o2[1].contains("cCode")) {
+					o2Address = o2[1].split(":")[1].trim();
+				} else {
+					o2Address = o2[1];
+				}
+
+				String s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1Address).toString(16), 16, '0');
+				String s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(16), 16, '0');
 				s1 = s1.replaceAll("cCode : 0x", "");
 				s2 = s2.replaceAll("cCode : 0x", "");
 				return s1.compareTo(s2);
