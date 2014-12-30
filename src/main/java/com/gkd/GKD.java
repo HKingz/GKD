@@ -2246,27 +2246,36 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			@Override
 			public int compare(String[] o1, String[] o2) {
 				String o1Address;
+				BigInteger s1;
+				BigInteger s2;
 				if (o1[1].contains("cCode")) {
 					o1Address = o1[1].split(":")[1].trim();
+					s1 = CommonLib.string2BigInteger("0x"+o1Address);
 				} else {
 					o1Address = o1[1];
+//					s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1Address).toString(16), 16, '0');
+
+					s1 = CommonLib.string2BigInteger(o1Address);
 				}
 
 				String o2Address;
 				if (o2[1].contains("cCode")) {
-					o2Address = o2[1].split(":")[1].trim();
+					o2Address = o2[1].split(":")[1].trim();s2 = CommonLib.string2BigInteger("0x"+o2Address);
+//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(), 16, '0');
 				} else {
-					o2Address = o2[1];
+					o2Address = o2[1];s2 = CommonLib.string2BigInteger(o2Address);
+//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(16), 16, '0');
 				}
-
-				String s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1Address).toString(16), 16, '0');
-				String s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(16), 16, '0');
-				s1 = s1.replaceAll("cCode : 0x", "");
-				s2 = s2.replaceAll("cCode : 0x", "");
+				//				s1 = CommonLib.string2BigInteger(o1Address);
+				//				s2 = CommonLib.string2BigInteger(o2Address);
 				return s1.compareTo(s2);
 			}
 
 		});
+		
+		for (String[]s:model.getData()){
+			System.out.println(">>"+s[1]);
+		}
 		//		model.removeNonOrderInstruction();
 		model.fireTableDataChanged();
 
@@ -2848,13 +2857,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void loadBreakpointButtonActionPerformed(ActionEvent evt) {
 		if (loadBreakpointButton.getEventSource() == loadElfMenuItem) {
 			JFileChooser fc = new JFileChooser();
-			fc.setCurrentDirectory(new File(Setting.getInstance().lastLoadElfOpenDir));
+			fc.setCurrentDirectory(new File(Setting.getInstance().getLastLoadElfOpenDir()));
 			int returnVal = fc.showOpenDialog(this);
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
 				System.out.println("===" + file.getParentFile().getAbsolutePath());
-				Setting.getInstance().lastLoadElfOpenDir = file.getParentFile().getAbsolutePath();
+				Setting.getInstance().setLastLoadElfOpenDir(file.getParentFile().getAbsolutePath());
 				sourceLevelDebugger.loadELF(file, null, 0);
 			}
 		} else {
@@ -5073,10 +5082,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void openELFButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new File(Setting.getInstance().lastElfHistoryOpenDir));
+		fc.setCurrentDirectory(new File(Setting.getInstance().getLastElfHistoryOpenDir()));
 
 		int returnVal = fc.showOpenDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			Setting.getInstance().setLastElfHistoryOpenDir(fc.getSelectedFile().getParent());
 			openELF(fc.getSelectedFile());
 			parseELF(fc.getSelectedFile());
 		}
@@ -5114,7 +5124,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		model.updateBreakpoint(getRealEIP());
 
 		// save history
-		Setting.getInstance().lastElfHistoryOpenDir = file.getParentFile().getAbsolutePath();
+		Setting.getInstance().setLastElfHistoryOpenDir(file.getParent());
 		Setting.getInstance().save();
 		// end save history
 	}
@@ -5453,7 +5463,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void openELFDumpButtonActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
 		// load history
-		fc.setCurrentDirectory(new File(Setting.getInstance().lastElfHistoryOpenDir2));
+		fc.setCurrentDirectory(new File(Setting.getInstance().getLastElfHistoryOpenDir2()));
 
 		// end load history
 		int returnVal = fc.showOpenDialog(this);
@@ -5464,7 +5474,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			parseELF(file);
 			openELF(file);
 			// save history
-			Setting.getInstance().lastElfHistoryOpenDir2 = file.getParentFile().getAbsolutePath();
+			Setting.getInstance().setLastElfHistoryOpenDir2(file.getParent());
 			Setting.getInstance().save();
 			// end save history
 		}
@@ -7444,12 +7454,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void loadSystemMapMenuItemActionPerformed(ActionEvent evt) {
 		JFileChooser fc = new JFileChooser();
-		fc.setCurrentDirectory(new File(Setting.getInstance().lastLoadElfOpenDir));
+		fc.setCurrentDirectory(new File(Setting.getInstance().getLastLoadElfOpenDir()));
 		int returnVal = fc.showOpenDialog(this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			System.out.println("===" + file.getParentFile().getAbsolutePath());
+			Setting.getInstance().setLastLoadElfOpenDir(file.getParent());
 			sourceLevelDebugger.loadELF(file, null, 0);
 		}
 	}

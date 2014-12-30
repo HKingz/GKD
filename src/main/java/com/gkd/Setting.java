@@ -83,10 +83,10 @@ public class Setting {
 	public boolean interruptProfiling;
 	public boolean profilingUpdateGraph;
 
-	public String lastElfHistoryOpenDir = new File(".").getAbsolutePath();
-	public String lastElfHistoryOpenDir2 = new File(".").getAbsolutePath();
-	public String lastMapOpenDir = new File(".").getAbsolutePath();
-	public String lastLoadElfOpenDir = new File(".").getAbsolutePath();
+	private String lastElfHistoryOpenDir = new File(".").getAbsolutePath();
+	private String lastElfHistoryOpenDir2 = new File(".").getAbsolutePath();
+	private String lastMapOpenDir = new File(".").getAbsolutePath();
+	private String lastLoadElfOpenDir = new File(".").getAbsolutePath();
 
 	public Setting() {
 		currentLanguage = "en_US";
@@ -140,6 +140,37 @@ public class Setting {
 
 	public static void main(String args[]) {
 		Setting setting = Setting.getInstance();
-		System.out.println(setting.width);
+	}
+
+	public String getLastElfHistoryOpenDir() {
+		return lastElfHistoryOpenDir == null ? "." : lastElfHistoryOpenDir;
+	}
+
+	public String getLastElfHistoryOpenDir2() {
+		return lastElfHistoryOpenDir2 == null ? "." : lastElfHistoryOpenDir2;
+	}
+
+	public String getLastMapOpenDir() {
+		return lastMapOpenDir == null ? "." : lastMapOpenDir;
+	}
+
+	public String getLastLoadElfOpenDir() {
+		return lastLoadElfOpenDir == null ? "." : lastLoadElfOpenDir;
+	}
+
+	public void setLastElfHistoryOpenDir(String lastElfHistoryOpenDir) {
+		this.lastElfHistoryOpenDir = lastElfHistoryOpenDir;
+	}
+
+	public void setLastElfHistoryOpenDir2(String lastElfHistoryOpenDir2) {
+		this.lastElfHistoryOpenDir2 = lastElfHistoryOpenDir2;
+	}
+
+	public void setLastMapOpenDir(String lastMapOpenDir) {
+		this.lastMapOpenDir = lastMapOpenDir;
+	}
+
+	public void setLastLoadElfOpenDir(String lastLoadElfOpenDir) {
+		this.lastLoadElfOpenDir = lastLoadElfOpenDir;
 	}
 }
