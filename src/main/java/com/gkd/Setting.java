@@ -86,6 +86,7 @@ public class Setting {
 	public String lastElfHistoryOpenDir = new File(".").getAbsolutePath();
 	public String lastElfHistoryOpenDir2 = new File(".").getAbsolutePath();
 	public String lastMapOpenDir = new File(".").getAbsolutePath();
+	public String lastLoadElfOpenDir = new File(".").getAbsolutePath();
 
 	public Setting() {
 		currentLanguage = "en_US";

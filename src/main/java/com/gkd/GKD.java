@@ -477,7 +477,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public String currentPanel = "jMaximizableTabbedPane_BasePanel1";
 
 	private ButtonGroup buttonGroup2 = new ButtonGroup();
-	private JMenuItem loadElfMenuItem = new JMenuItem("Load ELF");
+	private JMenuItem loadElfMenuItem = new JMenuItem(MyLanguage.getString("Load_Elf"));
 	private String latestVersionURL;
 	private boolean saveToRunDotTxt;
 	private int skipBreakpointTime;
@@ -2847,11 +2847,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void loadBreakpointButtonActionPerformed(ActionEvent evt) {
 		if (loadBreakpointButton.getEventSource() == loadElfMenuItem) {
-			JFileChooser fc = new JFileChooser(new File("."));
+			JFileChooser fc = new JFileChooser();
+			fc.setCurrentDirectory(new File(Setting.getInstance().lastLoadElfOpenDir));
 			int returnVal = fc.showOpenDialog(this);
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
+				System.out.println("===" + file.getParentFile().getAbsolutePath());
+				Setting.getInstance().lastLoadElfOpenDir = file.getParentFile().getAbsolutePath();
 				sourceLevelDebugger.loadELF(file, null, 0);
 			}
 		} else {
@@ -7440,11 +7443,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void loadSystemMapMenuItemActionPerformed(ActionEvent evt) {
-		JFileChooser fc = new JFileChooser(new File("."));
+		JFileChooser fc = new JFileChooser();
+		fc.setCurrentDirectory(new File(Setting.getInstance().lastLoadElfOpenDir));
 		int returnVal = fc.showOpenDialog(this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
+			System.out.println("===" + file.getParentFile().getAbsolutePath());
 			sourceLevelDebugger.loadELF(file, null, 0);
 		}
 	}
