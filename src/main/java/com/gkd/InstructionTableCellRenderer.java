@@ -89,19 +89,17 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 					//							this.setText(s);
 					//						}
 					//					} else {
-					System.out.println(s);
-					this.setText("0x" + StringUtils.leftPad(CommonLib.string2BigInteger(s).toString(16), 16, '0'));
-					this.setHorizontalAlignment(SwingConstants.LEFT);
+					this.setText(StringUtils.leftPad(CommonLib.string2BigInteger(s).toString(16), 16, '0'));
 					//					}
 					this.setIcon(null);
 				}
 			}
 
-			if (column == 1) {
-				this.setHorizontalAlignment(JLabel.CENTER);
-			} else {
+//			if (column == 1) {
+//				this.setHorizontalAlignment(JLabel.CENTER);
+//			} else {
 				this.setHorizontalAlignment(JLabel.LEFT);
-			}
+//			}
 		} catch (Exception ex) {
 			setText(ex.getMessage());
 		}
