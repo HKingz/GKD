@@ -193,8 +193,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JPanel callGraphPreviewPanel;
 	private JSplitPane callGraphSplitPane;
 	private JPanel callGraphDetailPanel;
-	private JPanel jPanel3;
 	private JTabbedPane callGraphTabbedPane;
+	private JPanel jPanel3;
 	private JButton layoutHierarchicalButton;
 	private JButton layoutOrganicButton;
 	private JButton layoutCircleButton;
@@ -255,6 +255,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	JFreeChart interruptChart;
 	TimeSeriesCollection interruptDataset;
 	Timer interruptTimer;
+	Hashtable<Integer, TimeSeries> allSeries = new Hashtable<Integer, TimeSeries>();
+	private Pager jmpPager;
+	private JTextField filterRawTableTextField;
+	private JButton filterButton;
+	private JButton clearFilterRawTableButton;
 
 	public InstrumentPanel() {
 		try {
@@ -1363,6 +1368,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getJGroupCheckBox());
 			jmpToolBarPanel.add(getFilterRawTableTextField());
 			jmpToolBarPanel.add(getFilterButton());
+			jmpToolBarPanel.add(getClearFilterRawTableButton());
 		}
 		return jmpToolBarPanel;
 	}
@@ -1579,13 +1585,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private void updateJmpTable() {
 		//$hide>>$
 		synchronized (JmpSocketServer.jmpDataVector) {
-			Vector<JmpData> filteredData=new Vector<JmpData>();
-			for (JmpData d : JmpSocketServer.jmpDataVector){
-				if (d.contains(filterRawTableTextField.getText())){
+			Vector<JmpData> filteredData = new Vector<JmpData>();
+			for (JmpData d : JmpSocketServer.jmpDataVector) {
+				if (d.contains(filterRawTableTextField.getText())) {
 					filteredData.add(d);
 				}
 			}
-			
+
 			int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 			jmpPager.maxPageNo = filteredData.size() / pageSize;
 			if (filteredData.size() % pageSize != 0) {
@@ -2327,11 +2333,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jInterruptChart;
 	}
 
-	Hashtable<Integer, TimeSeries> allSeries = new Hashtable<Integer, TimeSeries>();
-	private Pager jmpPager;
-	private JTextField filterRawTableTextField;
-	private JButton filterButton;
-
 	private void runTimer() {
 		if (interruptTimer != null) {
 			interruptTimer.cancel();
@@ -2760,6 +2761,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTextField getFilterRawTableTextField() {
 		if (filterRawTableTextField == null) {
 			filterRawTableTextField = new JTextField();
+			filterRawTableTextField.addKeyListener(new KeyAdapter() {
+				@Override
+				public void keyReleased(KeyEvent e) {
+					if (e.getKeyCode() == 10) {
+						updateJmpTable();
+					}
+				}
+			});
 			filterRawTableTextField.setColumns(10);
 		}
 		return filterRawTableTextField;
@@ -2776,5 +2785,18 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			});
 		}
 		return filterButton;
+	}
+
+	private JButton getClearFilterRawTableButton() {
+		if (clearFilterRawTableButton == null) {
+			clearFilterRawTableButton = new JButton("Clear");
+			clearFilterRawTableButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent arg0) {
+					filterRawTableTextField.setText("");
+					updateJmpTable();
+				}
+			});
+		}
+		return clearFilterRawTableButton;
 	}
 }
