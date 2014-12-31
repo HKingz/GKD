@@ -11,9 +11,9 @@ import com.gkd.instrument.callgraph.JmpData;
 public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs", "ss", "ds", "fs",
 			"gs" };
-	Vector<JmpData> originalData = new Vector<JmpData>();
-	Vector<JmpData> data;
-	Vector<String> checkDoubleVector = new Vector<String>();
+//	Vector<JmpData> originalData = new Vector<JmpData>();
+	Vector<JmpData> data=new Vector<JmpData>();
+	//Vector<String> checkDoubleVector = new Vector<String>();
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.S");
 
 	public String getColumnName(int column) {
@@ -87,40 +87,42 @@ public class JmpTableModel extends DefaultTableModel {
 	}
 
 	public void add(JmpData data) {
-		this.originalData.add(data);
+		this.data.add(data);
 	}
 
 	public void removeAll() {
-		originalData.clear();
+		data.clear();
 		this.fireTableDataChanged();
 	}
 
-	public void filter(String filter, boolean isGroup) {
-		Vector<JmpData> temp;
-		if (isGroup) {
-			//			checkDoubleVector.clear();
-			//			for (JmpData d : data) {
-			//				if (checkDoubleVector.contains(data.toString())) {
-			//
-			//				} else {
-			//					checkDoubleVector.add(data);
-			//				}
-			//			}
-			temp = new Vector<JmpData>(new LinkedHashSet<JmpData>(originalData));
-			System.out.println("==========" + temp.size() + "/" + originalData.size());
-		} else {
-			temp = originalData;
-		}
-		if (filter.equals("")) {
-			data = (Vector<JmpData>) temp.clone();
-		} else {
-			data.clear();
-			for (JmpData d : temp) {
-				if (d.contains(filter)) {
-					data.add(d);
-				}
-			}
-		}
-		this.fireTableDataChanged();
-	}
+//	public void filter(String filter, boolean isGroup) {
+//		Vector<JmpData> temp;
+//		if (isGroup) {
+//			//			checkDoubleVector.clear();
+//			//			for (JmpData d : data) {
+//			//				if (checkDoubleVector.contains(data.toString())) {
+//			//
+//			//				} else {
+//			//					checkDoubleVector.add(data);
+//			//				}
+//			//			}
+//			temp = new Vector<JmpData>(new LinkedHashSet<JmpData>(originalData));
+//			//System.out.println("==========" + temp.size() + "/" + originalData.size());
+//		} else {
+//			temp = originalData;
+//		}
+//		if (filter.equals("")) {
+//			data = (Vector<JmpData>) temp.clone();
+//		} else {
+//			data.clear();
+//			System.out.println(temp.size());
+//			for (JmpData d : temp) {
+//				//System.out.println(d.fromAddress);
+//				if (d.contains(filter)) {
+//					data.add(d);
+//				}
+//			}
+//		}
+//		this.fireTableDataChanged();
+//	}
 }

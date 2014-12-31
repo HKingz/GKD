@@ -171,41 +171,41 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 									jASMPanel.setLayout(jASMPanelLayout);
 									{
 										instructionTableScrollPane = new JScrollPane();
-//										instructionTableScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-//											boolean isRunning;
-//
-//											public void adjustmentValueChanged(AdjustmentEvent evt) {
-//												/*	JScrollBar vbar = (JScrollBar) evt.getSource();
-//
-//													if (evt.getValueIsAdjusting()) {
-//														return;
-//													}
-//													if ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum()) {
-//														if (!isRunning) {
-//															try {
-//																isRunning = true;
-//																final CardLayout cl = (CardLayout) (gkd.jMainPanel.getLayout());
-//																cl.show(gkd.jMainPanel, "Running Label");
-//																//															new Thread("update instruction thread") {
-//																//																public void run() {
-//																//																	long address = Long.parseLong(instructionTable.getValueAt(instructionTable.getRowCount() - 1, 1).toString()
-//																//																			.substring(2), 16);
-//																//																	gkd.updateInstruction(address, true);
-//																//																	gkd.updateBreakpointTableColor();
-//																////																	cl.show(gkd.jMainPanel, gkd.currentPanel);
-//																//
-//																//																	isRunning = false;
-//																//																}
-//																//															}.start();
-//
-//															} catch (Exception ex) {
-//															}
-//														}
-//
-//													}*/
-//											}
-//
-//										});
+										//										instructionTableScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+										//											boolean isRunning;
+										//
+										//											public void adjustmentValueChanged(AdjustmentEvent evt) {
+										//												/*	JScrollBar vbar = (JScrollBar) evt.getSource();
+										//
+										//													if (evt.getValueIsAdjusting()) {
+										//														return;
+										//													}
+										//													if ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum()) {
+										//														if (!isRunning) {
+										//															try {
+										//																isRunning = true;
+										//																final CardLayout cl = (CardLayout) (gkd.jMainPanel.getLayout());
+										//																cl.show(gkd.jMainPanel, "Running Label");
+										//																//															new Thread("update instruction thread") {
+										//																//																public void run() {
+										//																//																	long address = Long.parseLong(instructionTable.getValueAt(instructionTable.getRowCount() - 1, 1).toString()
+										//																//																			.substring(2), 16);
+										//																//																	gkd.updateInstruction(address, true);
+										//																//																	gkd.updateBreakpointTableColor();
+										//																////																	cl.show(gkd.jMainPanel, gkd.currentPanel);
+										//																//
+										//																//																	isRunning = false;
+										//																//																}
+										//																//															}.start();
+										//
+										//															} catch (Exception ex) {
+										//															}
+										//														}
+										//
+										//													}*/
+										//											}
+										//
+										//										});
 										jASMPanel.add(instructionTableScrollPane, BorderLayout.CENTER);
 										{
 											instructionTable = new JTable();
@@ -457,15 +457,17 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	}
 
 	private void disassembleButtonActionPerformed(ActionEvent evt) {
-		this.addInstructionComboBox(this.instructionComboBox.getSelectedItem().toString());
-		disassembleCSEIPButton.setEnabled(false);
-		try {
-			gkd.updateInstruction(CommonLib.string2BigInteger(this.instructionComboBox.getSelectedItem().toString()));
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if (CommonLib.isNumber(this.instructionComboBox.getSelectedItem().toString())) {
+			this.addInstructionComboBox(this.instructionComboBox.getSelectedItem().toString());
+			disassembleCSEIPButton.setEnabled(false);
+			try {
+				gkd.updateInstruction(CommonLib.string2BigInteger(this.instructionComboBox.getSelectedItem().toString()));
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
+			gkd.updateBreakpointTableColor();
+			disassembleCSEIPButton.setEnabled(true);
 		}
-		gkd.updateBreakpointTableColor();
-		disassembleCSEIPButton.setEnabled(true);
 	}
 
 	private void addInstructionComboBox(String str) {

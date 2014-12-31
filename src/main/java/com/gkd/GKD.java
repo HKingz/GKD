@@ -705,7 +705,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
 
-		Global.elfPaths = GKDCommonLib.readConfig(cmd, "/gkd/elf/text()").split(",");
+		String elf = GKDCommonLib.readConfig(cmd, "/gkd/elf/text()");
+		if (elf != null && !elf.equals("")) {
+			Global.elfPaths = elf.split(",");
+		}
 
 		final GKD gkd = new GKD();
 		VMController.getVM().setGKDInstance(gkd);
@@ -2271,7 +2274,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				return s1.compareTo(s2);
 			}
 		});
-		
+
 		//		model.removeNonOrderInstruction();
 		model.fireTableDataChanged();
 

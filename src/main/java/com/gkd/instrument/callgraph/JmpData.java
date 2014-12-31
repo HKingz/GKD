@@ -52,7 +52,7 @@ public class JmpData {
 
 	public boolean contains(String s) {
 		s = s.toLowerCase();
-		System.out.println(s + " = " + segmentStart);
+//		System.out.println(s + " = " + segmentStart);
 		if (Long.toHexString(segmentStart).toLowerCase().contains(s)) {
 			return true;
 		}

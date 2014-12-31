@@ -207,7 +207,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JCheckBox groupCheckBox;
 	private JLabel noOfLineLabel10;
 	private JComboBox noOfLineComboBox;
-	private JPanel jPanel2;
+	private JPanel jmpToolBarPanel;
 	private JScrollPane jScrollPane3;
 	private JPanel jmpPanel;
 	private JButton deleteZoneButton;
@@ -1338,7 +1338,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			BorderLayout jmpPanelLayout = new BorderLayout();
 			jmpPanel.setLayout(jmpPanelLayout);
 			jmpPanel.add(getJScrollPane3(), BorderLayout.CENTER);
-			jmpPanel.add(getJPanel2(), BorderLayout.NORTH);
+			jmpPanel.add(getJmpToolbarPanel(), BorderLayout.NORTH);
 		}
 		return jmpPanel;
 	}
@@ -1351,20 +1351,20 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jScrollPane3;
 	}
 
-	private JPanel getJPanel2() {
-		if (jPanel2 == null) {
-			jPanel2 = new JPanel();
+	private JPanel getJmpToolbarPanel() {
+		if (jmpToolBarPanel == null) {
+			jmpToolBarPanel = new JPanel();
 			FlowLayout jPanel2Layout = new FlowLayout();
 			jPanel2Layout.setAlignment(FlowLayout.LEFT);
-			jPanel2.setLayout(jPanel2Layout);
-			jPanel2.add(getJmpPager());
-			jPanel2.add(getNoOfLineLabel());
-			jPanel2.add(getNoOfLineComboBox());
-			jPanel2.add(getJGroupCheckBox());
-			jPanel2.add(getFilterRawTableTextField());
-			jPanel2.add(getFilterButton());
+			jmpToolBarPanel.setLayout(jPanel2Layout);
+			jmpToolBarPanel.add(getJmpPager());
+			jmpToolBarPanel.add(getNoOfLineLabel());
+			jmpToolBarPanel.add(getNoOfLineComboBox());
+			jmpToolBarPanel.add(getJGroupCheckBox());
+			jmpToolBarPanel.add(getFilterRawTableTextField());
+			jmpToolBarPanel.add(getFilterButton());
 		}
-		return jPanel2;
+		return jmpToolBarPanel;
 	}
 
 	private JComboBox getNoOfLineComboBox() {
@@ -1409,7 +1409,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void groupCheckBoxActionPerformed(ActionEvent evt) {
-		jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
+		//jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
+		updateJmpTable();
 	}
 
 	private JTable getJTable1() {
@@ -1578,9 +1579,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private void updateJmpTable() {
 		//$hide>>$
 		synchronized (JmpSocketServer.jmpDataVector) {
+			Vector<JmpData> filteredData=new Vector<JmpData>();
+			for (JmpData d : JmpSocketServer.jmpDataVector){
+				if (d.contains(filterRawTableTextField.getText())){
+					filteredData.add(d);
+				}
+			}
+			
 			int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
-			jmpPager.maxPageNo = JmpSocketServer.jmpDataVector.size() / pageSize;
-			if (JmpSocketServer.jmpDataVector.size() % pageSize != 0) {
+			jmpPager.maxPageNo = filteredData.size() / pageSize;
+			if (filteredData.size() % pageSize != 0) {
 				jmpPager.maxPageNo++;
 			}
 			if (jmpPager.getPage() > jmpPager.maxPageNo) {
@@ -1590,15 +1598,15 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 			if (JmpSocketServer.jmpDataVector.size() > 0) {
 				try {
-					for (int x = JmpSocketServer.jmpDataVector.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
+					for (int x = filteredData.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
 						//						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
-						JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
+						JmpData jumpData = filteredData.get(x);
 						jmpTableModel.add(jumpData);
 					}
 				} catch (Exception ex) {
 					//synchronized not work, that why need this try-catch, remove it in the future
 				}
-				jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
+				//jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
 			}
 		}
 		//$hide<<$
@@ -2762,7 +2770,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			filterButton = new JButton("Filter");
 			filterButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
+					//jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
+					updateJmpTable();
 				}
 			});
 		}
