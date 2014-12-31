@@ -113,7 +113,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.apple.eawt.ApplicationEvent;
@@ -125,7 +124,7 @@ import com.gkd.instrument.InstrumentPanel;
 import com.gkd.logpanel.LogPanel;
 import com.gkd.osdebuginformation.JOSDebugInformationPanel;
 import com.gkd.osdebuginformation.OSDebugInfoHelper;
-import com.gkd.sourceleveldebugger.SourceLevelDebugger3;
+import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.gkd.structurePanel.StructurePanel;
 import com.gkd.stub.VMController;
 import com.gkd.stub.VMType;
@@ -265,7 +264,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem loadSystemMapMenuItem;
 	private JMenu systemMenu;
 	private JToggleButton sourceLevelDebuggerToggleButton;
-	private SourceLevelDebugger3 sourceLevelDebugger;
+	private SourceLevelDebugger sourceLevelDebugger;
 	public JMenuItem disasmHereMenuItem;
 	private JSeparator jSeparator3;
 	private JRadioButton mmxRadioButton;
@@ -7390,9 +7389,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateInstruction(address);
 	}
 
-	private SourceLevelDebugger3 getSourceLevelDebugger() {
+	private SourceLevelDebugger getSourceLevelDebugger() {
 		if (sourceLevelDebugger == null) {
-			sourceLevelDebugger = new SourceLevelDebugger3(this);
+			sourceLevelDebugger = new SourceLevelDebugger(this);
 		}
 		return sourceLevelDebugger;
 	}

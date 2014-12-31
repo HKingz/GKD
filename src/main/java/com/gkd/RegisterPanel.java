@@ -32,10 +32,10 @@ import net.miginfocom.swing.MigLayout;
 
 import com.gkd.components.segmentregister.SegmentRegister;
 import com.gkd.components.segmentregister.SegmentRegisterFactory;
+import com.gkd.components.segmentregister.SegmentRegisterHeader;
 import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
-import com.gkd.components.segmentregister.SegmentRegisterHeader;
 
 public class RegisterPanel extends JPanel {
 	private JLabel eaxLabel;

@@ -1,7 +1,6 @@
 package com.gkd.instrument;
 
 import java.text.SimpleDateFormat;
-import java.util.LinkedHashSet;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;

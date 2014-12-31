@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -72,7 +70,7 @@ import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialogEventLi
 import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
-public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
+public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
 	private JSplitPane mainSplitPane;
 	private JPanel panel1;
 	private JPanel panel6;
@@ -133,7 +131,7 @@ public class SourceLevelDebugger3 extends JMaximizableTabbedPane_BasePanel imple
 	mxGraph graph;
 	CallGraphComponent graphComponent;
 
-	public SourceLevelDebugger3(GKD gkd) {
+	public SourceLevelDebugger(GKD gkd) {
 		this.gkd = gkd;
 		try {
 			this.setPreferredSize(new java.awt.Dimension(975, 563));
