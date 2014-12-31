@@ -1853,11 +1853,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					loadBreakpointButtonActionPerformed(null);
 					breakpointLoadedOnce = true; // since we only have to load once
 				}
-				if (systemMapLoadedOnce == false && Setting.getInstance().loadSystemMapAtStartup) {
-					if (Global.elfPaths != null) {
-						sourceLevelDebugger.loadELF(Global.elfPaths);
-						systemMapLoadedOnce = true; // since we only have to load once
-					}
+				if (systemMapLoadedOnce == false && Global.elfPaths != null) {
+					sourceLevelDebugger.loadELF(Global.elfPaths);
+					systemMapLoadedOnce = true; // since we only have to load once
 				}
 				jumpToRowInstructionTable(getRealEIP());
 				d.progressBar.setString("updateVMStatus end");
@@ -2250,21 +2248,23 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				BigInteger s2;
 				if (o1[1].contains("cCode")) {
 					o1Address = o1[1].split(":")[1].trim();
-					s1 = CommonLib.string2BigInteger("0x"+o1Address);
+					s1 = CommonLib.string2BigInteger("0x" + o1Address);
 				} else {
 					o1Address = o1[1];
-//					s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1Address).toString(16), 16, '0');
+					//					s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1Address).toString(16), 16, '0');
 
 					s1 = CommonLib.string2BigInteger(o1Address);
 				}
 
 				String o2Address;
 				if (o2[1].contains("cCode")) {
-					o2Address = o2[1].split(":")[1].trim();s2 = CommonLib.string2BigInteger("0x"+o2Address);
-//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(), 16, '0');
+					o2Address = o2[1].split(":")[1].trim();
+					s2 = CommonLib.string2BigInteger("0x" + o2Address);
+					//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(), 16, '0');
 				} else {
-					o2Address = o2[1];s2 = CommonLib.string2BigInteger(o2Address);
-//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(16), 16, '0');
+					o2Address = o2[1];
+					s2 = CommonLib.string2BigInteger(o2Address);
+					//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(16), 16, '0');
 				}
 				//				s1 = CommonLib.string2BigInteger(o1Address);
 				//				s2 = CommonLib.string2BigInteger(o2Address);
@@ -2272,9 +2272,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 
 		});
-		
-		for (String[]s:model.getData()){
-			System.out.println(">>"+s[1]);
+
+		for (String[] s : model.getData()) {
+			System.out.println(">>" + s[1]);
 		}
 		//		model.removeNonOrderInstruction();
 		model.fireTableDataChanged();

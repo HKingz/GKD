@@ -53,7 +53,6 @@ public class Setting {
 	public String path_dwarfdump;
 
 	public boolean loadBreakpointAtStartup;
-	public boolean loadSystemMapAtStartup;
 	public boolean updateAfterGKDCommand;
 	public boolean updateAfterGKDCommand_register;
 	public boolean updateAfterGKDCommand_memory;
