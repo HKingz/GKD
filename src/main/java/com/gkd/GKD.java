@@ -2270,12 +2270,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				//				s2 = CommonLib.string2BigInteger(o2Address);
 				return s1.compareTo(s2);
 			}
-
 		});
-
-		for (String[] s : model.getData()) {
-			System.out.println(">>" + s[1]);
-		}
+		
 		//		model.removeNonOrderInstruction();
 		model.fireTableDataChanged();
 
