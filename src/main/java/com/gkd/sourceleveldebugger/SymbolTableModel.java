@@ -1,14 +1,16 @@
 package com.gkd.sourceleveldebugger;
 
+import java.math.BigInteger;
 import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
 import com.gkd.MyLanguage;
 import com.peterdwarf.elf.Elf32_Sym;
+import com.peterswing.CommonLib;
 
 public class SymbolTableModel extends AbstractTableModel {
-	private String[] columnNames = { MyLanguage.getString("Name") };
+	private String[] columnNames = { MyLanguage.getString("Name"), "Value" };
 	private TreeSet<Elf32_Sym> displaySymbols;
 	TreeSet<Elf32_Sym> symbols;
 	private String searchPattern;
@@ -23,7 +25,11 @@ public class SymbolTableModel extends AbstractTableModel {
 				setSearchPattern(searchPattern);
 			}
 			Elf32_Sym symbol = (Elf32_Sym) displaySymbols.toArray()[row];
-			return symbol;
+			if (column == 0) {
+				return symbol.name;
+			} else {
+				return "0x" + Long.toHexString(symbol.st_value);
+			}
 		} catch (Exception ex) {
 			return "";
 		}
@@ -77,8 +83,10 @@ public class SymbolTableModel extends AbstractTableModel {
 			for (int x = 0; x < symbols.size(); x++) {
 				Elf32_Sym symbol = (Elf32_Sym) symbols.toArray()[x];
 				if ((!exactMatch && symbol.name.toLowerCase().contains(searchPattern.toLowerCase()))
-						|| (exactMatch && symbol.name.toLowerCase().equals(searchPattern.toLowerCase()))) {
+						|| (exactMatch && symbol.name.toLowerCase().equals(searchPattern.toLowerCase())) || Long.toHexString(symbol.st_value).contains(searchPattern)) {
 					displaySymbols.add(symbol);
+					//				} else if (CommonLib.isNumber(searchPattern) && CommonLib.string2BigInteger(searchPattern).equals(BigInteger.valueOf(symbol.st_value))) {
+					//					displaySymbols.add(symbol);
 				}
 			}
 		} else {
