@@ -547,14 +547,13 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 }
 
 void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
-//	bx_phy_address fromPhysicalAddress;
-//	bx_phy_address toPhysicalAddress;
-
-//	if (startRecordJump) {
-//		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
-//		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
-//		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> print %llx, %llx, %llx\n", branch_eip, fromPhysicalAddress, toPhysicalAddress);
-//	}
+	if (startRecordJump) {
+		bx_phy_address fromPhysicalAddress;
+		bx_phy_address toPhysicalAddress;
+		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
+		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
+		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> print %llx, %llx, %llx\n", branch_eip, fromPhysicalAddress, toPhysicalAddress);
+	}
 
 	if (connectedToJmpServer && startRecordJump) {
 		bx_phy_address fromPhysicalAddress;
