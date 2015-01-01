@@ -1,6 +1,5 @@
 package com.gkd.instrument;
 
-
 public class JmpSocketServerController {
 	static JmpSocketServer server = new JmpSocketServer();
 

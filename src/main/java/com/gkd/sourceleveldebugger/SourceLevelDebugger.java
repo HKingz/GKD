@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.TreeSet;
+import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -91,7 +93,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private JButton instructionDownButton;
 	private JButton instructionUpButton;
 	private JButton instructionUpTenButton;
-	private JPanel jDwarfPanel;
+	private JPanel dwarfPanel;
 	public PeterDwarfPanel peterDwarfPanel;
 	private JPanel instructionControlPanel;
 	private JPanel jASMPanel;
@@ -116,7 +118,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private JCheckBox exactMatchCheckBox;
 
 	FilterTreeModel projectFilterTreeModel = new FilterTreeModel(new ProjectTreeModel(null));
-	SortableTableModel sortableTableModel = new SortableTableModel(new SymbolTableModel());
+	public static SymbolTableModel symbolTableModel = new SymbolTableModel();
+	SortableTableModel sortableTableModel = new SortableTableModel(symbolTableModel);
 	private JButton btnSearch;
 	private JPanel panel2;
 	private JButton refreshCallGrapphButton;
@@ -164,7 +167,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 								{
 									jASMPanel = new JPanel();
 									mainTabbedPane.addTab(MyLanguage.getString("ASM/C"), null, jASMPanel, null);
-									mainTabbedPane.addTab("Dwarf", null, getJDwarfPanel(), null);
+									mainTabbedPane.addTab("Dwarf", null, getDwarfPanel(), null);
 									mainTabbedPane.addTab("Code base", null, getCodeBasePanel(), null);
 									mainTabbedPane.addTab("Call Graph", null, getCallGraphPanel(), null);
 									BorderLayout jASMPanelLayout = new BorderLayout();
@@ -489,15 +492,15 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	}
 
 	private void instructionUpTenButtonActionPerformed(ActionEvent evt) {
-		gkd.instructionUpTenButtonActionPerformed(evt);
+		gkd.instructionUpTenButtonActionPerformed(null);
 	}
 
 	private void instructionUpButtonActionPerformed(ActionEvent evt) {
-		gkd.instructionUpButtonActionPerformed(evt);
+		gkd.instructionUpButtonActionPerformed(null);
 	}
 
 	private void instructionDownButtonActionPerformed(ActionEvent evt) {
-		gkd.instructionDownButtonActionPerformed(evt);
+		gkd.instructionDownButtonActionPerformed(null);
 	}
 
 	private void jButton3ActionPerformed(ActionEvent evt) {
@@ -624,7 +627,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			System.out.println("--initSymbolTable");
 		}
 
-		TreeSet<Elf32_Sym> allSymbols = new TreeSet<Elf32_Sym>();
+		Vector<Elf32_Sym> allSymbols = new Vector<Elf32_Sym>();
 		for (Dwarf dwarf : peterDwarfPanel.dwarfs) {
 			for (Elf32_Sym symbol : dwarf.symbols) {
 				if (symbol.name.length() > 0) {
@@ -639,15 +642,6 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			System.out.println("--initSymbolTable end");
 		}
 		//$hide<<$
-	}
-
-	private void initMemoryMap() {
-		if (Global.debug) {
-			System.out.println("--initMemoryMap");
-		}
-		if (Global.debug) {
-			System.out.println("--initMemoryMap end");
-		}
 	}
 
 	@Override
@@ -795,7 +789,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private void searchSymbolTextFieldKeyReleased(KeyEvent evt) {
 		if (searchSymbolTextField.getText() != null) {
 			((SymbolTableModel) sortableTableModel.model).setSearchPattern(searchSymbolTextField.getText());
-			System.out.println("fuck="+((SymbolTableModel) sortableTableModel.model).getRowCount());
+			System.out.println("fuck=" + ((SymbolTableModel) sortableTableModel.model).getRowCount());
 			sortableTableModel.updateSorter();
 			sortableTableModel.fireTableDataChanged();
 		}
@@ -845,14 +839,14 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		return errorLabel;
 	}
 
-	private JPanel getJDwarfPanel() {
-		if (jDwarfPanel == null) {
-			jDwarfPanel = new JPanel();
+	private JPanel getDwarfPanel() {
+		if (dwarfPanel == null) {
+			dwarfPanel = new JPanel();
 			BorderLayout jDwarfPanelLayout = new BorderLayout();
-			jDwarfPanel.setLayout(jDwarfPanelLayout);
-			jDwarfPanel.add(getPeterDwarfPanel(), BorderLayout.NORTH);
+			dwarfPanel.setLayout(jDwarfPanelLayout);
+			dwarfPanel.add(getPeterDwarfPanel(), BorderLayout.NORTH);
 		}
-		return jDwarfPanel;
+		return dwarfPanel;
 	}
 
 	private PeterDwarfPanel getPeterDwarfPanel() {

@@ -6268,17 +6268,41 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void instructionUpTenButtonActionPerformed(ActionEvent evt) {
-		String firstAddress = "";
-		int x = 0;
-		do {
-			firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
-			x++;
-		} while (!CommonLib.isNumber(firstAddress));
-		firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);
+		//		String firstAddress = "";
+		//		int x = 0;
+		//		do {
+		//			firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
+		//			x++;
+		//		} while (!CommonLib.isNumber(firstAddress));
+		//		firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);
 
-		this.instructionComboBox.setSelectedItem("0x" + firstAddress);
-		updateInstruction(CommonLib.string2BigInteger("0x" + firstAddress));
-		updateBreakpointTableColor();
+		String address;
+		int selectedIndex = -1;
+
+		if (evt == null) {
+			selectedIndex = sourceLevelDebugger.instructionTable.getSelectedRow();
+		} else {
+			selectedIndex = instructionTable.getSelectedRow();
+
+		}
+		if (selectedIndex != -1) {
+			address = (String) instructionTable.getValueAt(selectedIndex, 1);
+			if (address.contains("cCode")) {
+				address = address.split(":")[1];
+			}
+			BigInteger disassembleAddress = CommonLib.string2BigInteger(address).subtract(BigInteger.valueOf(10));
+
+			this.instructionComboBox.setSelectedItem("0x" + disassembleAddress.toString(16));
+			updateInstruction(disassembleAddress);
+			updateBreakpointTableColor();
+
+			if (evt == null) {
+				sourceLevelDebugger.instructionTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+			} else {
+				instructionTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+			}
+		}
+
 	}
 
 	private JMenuItem getKoreanMenuItem() {

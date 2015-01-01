@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Vector;
 
@@ -12,6 +13,8 @@ import javax.swing.JOptionPane;
 
 import com.gkd.Global;
 import com.gkd.instrument.callgraph.JmpData;
+import com.gkd.sourceleveldebugger.SourceLevelDebugger;
+import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
 
 public class JmpSocketServer implements Runnable {
@@ -95,8 +98,13 @@ public class JmpSocketServer implements Runnable {
 					long gs = CommonLib.readShortFromInputStream(in);
 
 					synchronized (jmpDataVector) {
-						jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress, toAddress, segmentStart, segmentEnd, eax, ecx, edx, ebx, esp, ebp, esi, edi, es, cs, ss, ds,
-								fs, gs));
+						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress);
+						String fromAddressDescription = symbol == null ? null : symbol.name;
+						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress);
+						String toAddressDescription = symbol == null ? null : symbol.name;
+
+						jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress, fromAddressDescription, toAddress, toAddressDescription, segmentStart, segmentEnd, eax, ecx,
+								edx, ebx, esp, ebp, esi, edi, es, cs, ss, ds, fs, gs));
 					}
 
 					//					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + fromAddress + "-" + toAddress + "-" + segmentStart + "-" + segmentEnd + "\n");

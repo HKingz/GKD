@@ -5,13 +5,15 @@ import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.gkd.instrument.callgraph.JmpData;
 
 public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs", "ss", "ds", "fs",
 			"gs" };
-//	Vector<JmpData> originalData = new Vector<JmpData>();
-	Vector<JmpData> data=new Vector<JmpData>();
+	//	Vector<JmpData> originalData = new Vector<JmpData>();
+	Vector<JmpData> data = new Vector<JmpData>();
 	//Vector<String> checkDoubleVector = new Vector<String>();
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.S");
 
@@ -41,9 +43,9 @@ public class JmpTableModel extends DefaultTableModel {
 		} else if (column == 1) {
 			return dateFormat.format(jmpData.date);
 		} else if (column == 2) {
-			return "0x" + Long.toHexString(jmpData.fromAddress);
+			return "0x" + Long.toHexString(jmpData.fromAddress) + " " + StringUtils.defaultString(jmpData.fromAddressDescription);
 		} else if (column == 3) {
-			return "0x" + Long.toHexString(jmpData.toAddress);
+			return "0x" + Long.toHexString(jmpData.toAddress) + " " + StringUtils.defaultString(jmpData.toAddressDescription);
 		} else if (column == 4) {
 			return "0x" + Long.toHexString(jmpData.segmentStart);
 		} else if (column == 5) {
@@ -94,34 +96,34 @@ public class JmpTableModel extends DefaultTableModel {
 		this.fireTableDataChanged();
 	}
 
-//	public void filter(String filter, boolean isGroup) {
-//		Vector<JmpData> temp;
-//		if (isGroup) {
-//			//			checkDoubleVector.clear();
-//			//			for (JmpData d : data) {
-//			//				if (checkDoubleVector.contains(data.toString())) {
-//			//
-//			//				} else {
-//			//					checkDoubleVector.add(data);
-//			//				}
-//			//			}
-//			temp = new Vector<JmpData>(new LinkedHashSet<JmpData>(originalData));
-//			//System.out.println("==========" + temp.size() + "/" + originalData.size());
-//		} else {
-//			temp = originalData;
-//		}
-//		if (filter.equals("")) {
-//			data = (Vector<JmpData>) temp.clone();
-//		} else {
-//			data.clear();
-//			System.out.println(temp.size());
-//			for (JmpData d : temp) {
-//				//System.out.println(d.fromAddress);
-//				if (d.contains(filter)) {
-//					data.add(d);
-//				}
-//			}
-//		}
-//		this.fireTableDataChanged();
-//	}
+	//	public void filter(String filter, boolean isGroup) {
+	//		Vector<JmpData> temp;
+	//		if (isGroup) {
+	//			//			checkDoubleVector.clear();
+	//			//			for (JmpData d : data) {
+	//			//				if (checkDoubleVector.contains(data.toString())) {
+	//			//
+	//			//				} else {
+	//			//					checkDoubleVector.add(data);
+	//			//				}
+	//			//			}
+	//			temp = new Vector<JmpData>(new LinkedHashSet<JmpData>(originalData));
+	//			//System.out.println("==========" + temp.size() + "/" + originalData.size());
+	//		} else {
+	//			temp = originalData;
+	//		}
+	//		if (filter.equals("")) {
+	//			data = (Vector<JmpData>) temp.clone();
+	//		} else {
+	//			data.clear();
+	//			System.out.println(temp.size());
+	//			for (JmpData d : temp) {
+	//				//System.out.println(d.fromAddress);
+	//				if (d.contains(filter)) {
+	//					data.add(d);
+	//				}
+	//			}
+	//		}
+	//		this.fireTableDataChanged();
+	//	}
 }

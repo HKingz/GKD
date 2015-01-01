@@ -6,7 +6,9 @@ public class JmpData {
 	public int lineNo;
 	public Date date;
 	public long fromAddress;
+	public String fromAddressDescription;
 	public long toAddress;
+	public String toAddressDescription;
 	public long segmentStart;
 	public long segmentEnd;
 
@@ -26,12 +28,14 @@ public class JmpData {
 	public long fs;
 	public long gs;
 
-	public JmpData(int lineNo, Date date, long fromAddress, long toAddress, long segmentStart, long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp,
-			long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs) {
+	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, long segmentStart, long segmentEnd,
+			long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs) {
 		this.lineNo = lineNo;
 		this.date = date;
 		this.fromAddress = fromAddress;
+		this.fromAddressDescription = fromAddressDescription;
 		this.toAddress = toAddress;
+		this.toAddressDescription = toAddressDescription;
 		this.segmentStart = segmentStart;
 		this.segmentEnd = segmentEnd;
 		this.eax = eax;
@@ -52,7 +56,7 @@ public class JmpData {
 
 	public boolean contains(String s) {
 		s = s.toLowerCase();
-//		System.out.println(s + " = " + segmentStart);
+		//		System.out.println(s + " = " + segmentStart);
 		if (Long.toHexString(segmentStart).toLowerCase().contains(s)) {
 			return true;
 		}
