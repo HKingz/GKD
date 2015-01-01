@@ -116,7 +116,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private JCheckBox exactMatchCheckBox;
 
 	FilterTreeModel projectFilterTreeModel = new FilterTreeModel(new ProjectTreeModel(null));
-	SymbolTableModel symbolTableModel = new SymbolTableModel();
+	SortableTableModel sortableTableModel = new SortableTableModel(new SymbolTableModel());
 	private JButton btnSearch;
 	private JPanel panel2;
 	private JButton refreshCallGrapphButton;
@@ -141,7 +141,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 				mainSplitPane = new JSplitPane();
 				this.add(getJErrorLabel(), "errorLabel");
 				this.add(mainSplitPane, "MAIN");
-				mainSplitPane.setDividerLocation(200);
+				mainSplitPane.setDividerLocation(300);
 				{
 					panel4 = new JPanel();
 					mainSplitPane.add(panel4, JSplitPane.RIGHT);
@@ -632,8 +632,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 				}
 			}
 		}
-		symbolTableModel.symbols = allSymbols;
-		symbolTableModel.fireTableDataChanged();
+		((SymbolTableModel) sortableTableModel.model).symbols = allSymbols;
+		sortableTableModel.fireTableDataChanged();
 
 		if (Global.debug) {
 			System.out.println("--initSymbolTable end");
@@ -744,7 +744,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 					return str;
 				}
 			};
-			SortableTableModel sortableTableModel = new SortableTableModel(symbolTableModel);
+
 			symbolTable.setModel(sortableTableModel);
 			symbolTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
@@ -794,14 +794,15 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 
 	private void searchSymbolTextFieldKeyReleased(KeyEvent evt) {
 		if (searchSymbolTextField.getText() != null) {
-			symbolTableModel.setSearchPattern(searchSymbolTextField.getText());
-			((SortableTableModel)symbolTable.getModel()).updateSorter();
-			((SortableTableModel)symbolTable.getModel()).fireTableDataChanged();
+			((SymbolTableModel) sortableTableModel.model).setSearchPattern(searchSymbolTextField.getText());
+			System.out.println("fuck="+((SymbolTableModel) sortableTableModel.model).getRowCount());
+			sortableTableModel.updateSorter();
+			sortableTableModel.fireTableDataChanged();
 		}
 	}
 
 	private void symbolExactCheckBoxActionPerformed(ActionEvent evt) {
-		symbolTableModel.exactMatch = symbolExactCheckBox.isSelected();
+		((SymbolTableModel) sortableTableModel.model).exactMatch = symbolExactCheckBox.isSelected();
 		searchSymbolTextFieldKeyReleased(null);
 	}
 
@@ -812,7 +813,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		int sel = pane.getSelectedIndex();
 
 		if (sel == 1) {
-			symbolTableModel.reload();
+			((SymbolTableModel) sortableTableModel.model).reload();
+			sortableTableModel.fireTableDataChanged();
 		}
 	}
 

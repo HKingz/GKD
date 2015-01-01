@@ -1,13 +1,11 @@
 package com.gkd.sourceleveldebugger;
 
-import java.math.BigInteger;
 import java.util.TreeSet;
 
 import javax.swing.table.AbstractTableModel;
 
 import com.gkd.MyLanguage;
 import com.peterdwarf.elf.Elf32_Sym;
-import com.peterswing.CommonLib;
 
 public class SymbolTableModel extends AbstractTableModel {
 	private String[] columnNames = { MyLanguage.getString("Name"), "Value" };
@@ -26,7 +24,8 @@ public class SymbolTableModel extends AbstractTableModel {
 			}
 			Elf32_Sym symbol = (Elf32_Sym) displaySymbols.toArray()[row];
 			if (column == 0) {
-				return symbol.name;
+				// MUST return Elf32_Sym, the double-click and tooltip NEED an Elf32_Sym object
+				return symbol;
 			} else {
 				return "0x" + Long.toHexString(symbol.st_value);
 			}
@@ -48,15 +47,7 @@ public class SymbolTableModel extends AbstractTableModel {
 		} else if (searchPattern == null) {
 			return displaySymbols.size();
 		} else {
-			int rowCount = 0;
-			for (int x = 0; x < displaySymbols.size(); x++) {
-				Elf32_Sym symbol = (Elf32_Sym) displaySymbols.toArray()[x];
-				if ((!exactMatch && symbol.name.toLowerCase().contains(searchPattern.toLowerCase()))
-						|| (exactMatch && symbol.name.toLowerCase().equals(searchPattern.toLowerCase()))) {
-					rowCount++;
-				}
-			}
-			return rowCount;
+			return displaySymbols.size();
 		}
 	}
 
