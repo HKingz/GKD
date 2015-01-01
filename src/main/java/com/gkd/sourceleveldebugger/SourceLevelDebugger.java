@@ -67,6 +67,8 @@ import com.peterswing.FilterTreeModel;
 import com.peterswing.advancedswing.jmaximizabletabbedpane.JMaximizableTabbedPane;
 import com.peterswing.advancedswing.jmaximizabletabbedpane.JMaximizableTabbedPane_BasePanel;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialogEventListener;
+import com.peterswing.advancedswing.jtable.SortableTableModel;
+import com.peterswing.advancedswing.jtable.TableSorterColumnListener;
 import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
@@ -729,7 +731,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 					if (row == -1 || col == -1) {
 						return null;
 					}
-					Elf32_Sym symbol = (Elf32_Sym) getValueAt(row, col);
+					Elf32_Sym symbol = (Elf32_Sym) getValueAt(row, 0);
 					String str = "<html><table>";
 					str += "<tr><td>name</td><td>:</td><td>" + symbol.name + "</td></tr>";
 					str += "<tr><td>st_name</td><td>:</td><td>" + symbol.st_name + "</td></tr>";
@@ -742,12 +744,15 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 					return str;
 				}
 			};
-			symbolTable.setModel(symbolTableModel);
+			SortableTableModel sortableTableModel = new SortableTableModel(symbolTableModel);
+			symbolTable.setModel(sortableTableModel);
 			symbolTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					symbolTableMouseClicked(evt);
 				}
 			});
+			TableSorterColumnListener tableSorterColumnListener = new TableSorterColumnListener(symbolTable, sortableTableModel);
+			symbolTable.getTableHeader().addMouseListener(tableSorterColumnListener);
 		}
 		return symbolTable;
 	}
@@ -790,6 +795,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private void searchSymbolTextFieldKeyReleased(KeyEvent evt) {
 		if (searchSymbolTextField.getText() != null) {
 			symbolTableModel.setSearchPattern(searchSymbolTextField.getText());
+			((SortableTableModel)symbolTable.getModel()).updateSorter();
+			((SortableTableModel)symbolTable.getModel()).fireTableDataChanged();
 		}
 	}
 
