@@ -173,7 +173,8 @@ public class RegisterPanel extends JPanel {
 
 			mainPanel = new JPanel();
 			this.add(mainPanel, BorderLayout.CENTER);
-			mainPanel.setLayout(new MigLayout("insets 0", "[][48px][grow][10px][30px][120px][10px][36px][100px][10px][30px][120px][10px][64px,grow][10px][30px][120px]", "[][][][][][][][][][][][][][][][][][21.00][][][][][28px][]"));
+			mainPanel.setLayout(new MigLayout("insets 0", "[][48px][grow][10px][30px][120px][10px][36px][100px][10px][30px][120px][10px][64px,grow][10px][30px][120px]",
+					"[][][][][][][][][][][][][][][][][][21.00][][][][][28px][]"));
 
 			segmentRegisterHeader = new SegmentRegisterHeader();
 			mainPanel.add(segmentRegisterHeader, "cell 2 1,grow");
