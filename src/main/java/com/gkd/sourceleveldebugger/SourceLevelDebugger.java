@@ -789,7 +789,6 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private void searchSymbolTextFieldKeyReleased(KeyEvent evt) {
 		if (searchSymbolTextField.getText() != null) {
 			((SymbolTableModel) sortableTableModel.model).setSearchPattern(searchSymbolTextField.getText());
-			System.out.println("fuck=" + ((SymbolTableModel) sortableTableModel.model).getRowCount());
 			sortableTableModel.updateSorter();
 			sortableTableModel.fireTableDataChanged();
 		}

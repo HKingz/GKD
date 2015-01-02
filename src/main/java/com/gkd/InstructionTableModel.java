@@ -47,7 +47,6 @@ public class InstructionTableModel extends AbstractTableModel {
 						break;
 					}
 				}
-				System.out.println("row=" + row + ", z=" + z + ", code=" + data.get(z)[0] + "," + data.get(z)[1]);
 				if (column == 0) {
 					BigInteger address = CommonLib.string2BigInteger(data.get(z)[1].split(":")[1]);
 					return getColumn0(address);
