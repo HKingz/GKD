@@ -76,8 +76,10 @@ bx_address segmentEnd;
 unsigned int buffer[MAX_SEND_BYTE];
 int pointer = 0;
 
-int registerSize=sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx);
-int segmentregisterSize=sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value);
+int physicalAddressSize = sizeof(bx_phy_address);
+int segmentSize = sizeof(segmentBegin);
+int registerSize = sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx);
+int segmentregisterSize = sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value);
 
 void logPeterBochs(char *str) {
 	fprintf(log, str);
@@ -189,6 +191,11 @@ void initJmpSocket() {
 		fprintf(log, "jmpSockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
 
+	write(jmpSockfd, &physicalAddressSize, 1);
+	write(jmpSockfd, &segmentSize, 1);
+	write(jmpSockfd, &registerSize, 1);
+	write(jmpSockfd, &segmentregisterSize, 1);
+
 	fflush(log);
 }
 
@@ -247,6 +254,11 @@ void bx_instr_initialize(unsigned cpu) {
 
 	fprintf(stderr, "GKD instrument %s - Initialize cpu %d\n", GKD_INSTRUMENT_VERSION, cpu);
 	logPeterBochs("GKD instrument\n");
+
+	logPeterBochs("registerSize=");
+	logPeterBochs(registerSize);
+	logPeterBochs("segmentregisterSize=");
+	logPeterBochs(segmentregisterSize);
 
 	initMemorySocket();
 	initJmpSocket();
@@ -589,10 +601,10 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //		write(jmpSockfd, cstr, length);
 		//xml end
 
-		write(jmpSockfd, &fromPhysicalAddress, sizeof(bx_phy_address));
-		write(jmpSockfd, &toPhysicalAddress, sizeof(bx_phy_address));
-		write(jmpSockfd, &segmentBegin, sizeof(segmentBegin));
-		write(jmpSockfd, &segmentEnd, sizeof(segmentBegin));
+		write(jmpSockfd, &fromPhysicalAddress, physicalAddressSize);
+		write(jmpSockfd, &toPhysicalAddress, physicalAddressSize);
+		write(jmpSockfd, &segmentBegin, segmentSize);
+		write(jmpSockfd, &segmentEnd, segmentSize);
 
 		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, registerSize);
 		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, registerSize);
