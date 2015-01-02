@@ -6894,7 +6894,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			registerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_bar.png")));
 			getButtonGroup4().add(registerToggleButton);
 			registerToggleButton.setSelected(true);
-			registerToggleButton.setText(MyLanguage.getString("Register"));
+			registerToggleButton.setText(MyLanguage.getString("General"));
 			registerToggleButton.setToolTipText("View all registers");
 			registerToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
