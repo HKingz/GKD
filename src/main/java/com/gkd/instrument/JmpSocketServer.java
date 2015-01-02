@@ -1,11 +1,12 @@
 package com.gkd.instrument;
 
 import java.io.DataInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Collections;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -22,19 +23,20 @@ public class JmpSocketServer implements Runnable {
 	private JmpTableModel jmpTableModel;
 	private boolean shouldStop;
 	private ServerSocket serverSocket;
-	//	FileWriter fstream;
+	FileWriter fstream;
 
 	//	public static LinkedHashSet<String> segments = new LinkedHashSet<String>();
+	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
 	public static Vector<JmpData> jmpDataVector = new Vector<JmpData>();
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		this.port = port;
 		this.jmpTableModel = jmpTableModel;
-		//		try {
-		//			fstream = new FileWriter(Global.jmpLog, true);
-		//		} catch (IOException e1) {
-		//			e1.printStackTrace();
-		//		}
+		try {
+			fstream = new FileWriter(Global.jmpLog, false);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		shouldStop = false;
 		new Thread(this).start();
@@ -68,34 +70,56 @@ public class JmpSocketServer implements Runnable {
 				Socket clientSocket = serverSocket.accept();
 				DataInputStream in = new DataInputStream(clientSocket.getInputStream());
 
+				int physicalAddressSize = in.read();
+				int segmentAddressSize = in.read();
+				int registerSize = in.read();
+				int segmentRegisterSize = in.read();
+
 				int lineNo = 1;
 
+				long fromAddress;
+				long toAddress;
+				long segmentStart;
+				long segmentEnd;
+
+				long eax;
+				long ecx;
+				long edx;
+				long ebx;
+				long esp;
+				long ebp;
+				long esi;
+				long edi;
+
+				long es;
+				long cs;
+				long ss;
+				long ds;
+				long fs;
+				long gs;
+
 				while (!shouldStop) {
-					//					int length = (int) CommonLib.readLongFromInputStream(in);
-					//					byte bytes[] = new byte[length];
-					//					in.read(bytes);
-					//					//System.out.println(new String(bytes));
+					fromAddress = read(in, physicalAddressSize);
+					toAddress = read(in, physicalAddressSize);
 
-					long fromAddress = CommonLib.readLong64BitsFromInputStream(in);
-					long toAddress = CommonLib.readLong64BitsFromInputStream(in);
-					long segmentStart = CommonLib.readLongFromInputStream(in);
-					long segmentEnd = CommonLib.readLongFromInputStream(in);
+					segmentStart = read(in, segmentAddressSize);
+					segmentEnd = read(in, segmentAddressSize);
 
-					long eax = CommonLib.readLongFromInputStream(in);
-					long ecx = CommonLib.readLongFromInputStream(in);
-					long edx = CommonLib.readLongFromInputStream(in);
-					long ebx = CommonLib.readLongFromInputStream(in);
-					long esp = CommonLib.readLongFromInputStream(in);
-					long ebp = CommonLib.readLongFromInputStream(in);
-					long esi = CommonLib.readLongFromInputStream(in);
-					long edi = CommonLib.readLongFromInputStream(in);
+					eax = read(in, registerSize);
+					ecx = read(in, registerSize);
+					edx = read(in, registerSize);
+					ebx = read(in, registerSize);
+					esp = read(in, registerSize);
+					ebp = read(in, registerSize);
+					esi = read(in, registerSize);
+					edi = read(in, registerSize);
 
-					long es = CommonLib.readShortFromInputStream(in);
-					long cs = CommonLib.readShortFromInputStream(in);
-					long ss = CommonLib.readShortFromInputStream(in);
-					long ds = CommonLib.readShortFromInputStream(in);
-					long fs = CommonLib.readShortFromInputStream(in);
-					long gs = CommonLib.readShortFromInputStream(in);
+					es = read(in, segmentRegisterSize);
+					cs = read(in, segmentRegisterSize);
+					ss = read(in, segmentRegisterSize);
+					ds = read(in, segmentRegisterSize);
+					fs = read(in, segmentRegisterSize);
+					gs = read(in, segmentRegisterSize);
 
 					synchronized (jmpDataVector) {
 						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress);
@@ -107,7 +131,8 @@ public class JmpSocketServer implements Runnable {
 								edx, ebx, esp, ebp, esi, edi, es, cs, ss, ds, fs, gs));
 					}
 
-					//					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + fromAddress + "-" + toAddress + "-" + segmentStart + "-" + segmentEnd + "\n");
+					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress) + "-" + Long.toHexString(toAddress) + "-" + segmentStart
+							+ "-" + segmentEnd + "\n");
 
 					lineNo++;
 				}
@@ -122,6 +147,14 @@ public class JmpSocketServer implements Runnable {
 			System.exit(-1);
 		} catch (IOException ex2) {
 
+		}
+	}
+
+	long read(DataInputStream in, int size) throws IOException {
+		if (size == 8) {
+			return CommonLib.readLong64BitsFromInputStream(in);
+		} else {
+			return CommonLib.readLongFromInputStream(in);
 		}
 	}
 }
