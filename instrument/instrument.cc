@@ -76,6 +76,9 @@ bx_address segmentEnd;
 unsigned int buffer[MAX_SEND_BYTE];
 int pointer = 0;
 
+int registerSize=sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx);
+int segmentregisterSize=sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value);
+
 void logPeterBochs(char *str) {
 	fprintf(log, str);
 	fflush(log);
@@ -161,12 +164,13 @@ void initJmpSocket() {
 		fprintf(log, "Jmp socket server : ERROR opening socket\n");
 		return;
 	}
-	struct sockaddr_in serv_addr;
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
 		fprintf(log, "Jmp socket server : ERROR no such host\n");
 	}
+
+	struct sockaddr_in serv_addr;
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
@@ -185,10 +189,6 @@ void initJmpSocket() {
 		fprintf(log, "jmpSockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
 
-	if (connectedToJmpServer) {
-
-	}
-
 	fflush(log);
 }
 
@@ -198,12 +198,14 @@ void initInterruptSocket() {
 		fprintf(log, "Interrupt socket server : ERROR opening socket\n");
 		return;
 	}
-	struct sockaddr_in serv_addr;
+
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
 		fprintf(log, "Interrupt socket server : ERROR no such host\n");
 	}
+
+	struct sockaddr_in serv_addr;
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
@@ -220,10 +222,6 @@ void initInterruptSocket() {
 	int ret = setsockopt(interruptSockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(flag));
 	if (ret == -1) {
 		fprintf(log, "interruptSockfd couldn't setsockopt(TCP_NODELAY)\n");
-	}
-
-	if (connectedToInterruptServer) {
-
 	}
 
 	fflush(log);
@@ -547,13 +545,13 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 }
 
 void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
-	if (startRecordJump) {
-		bx_phy_address fromPhysicalAddress;
-		bx_phy_address toPhysicalAddress;
-		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
-		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
-		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> print %llx, %llx, %llx\n", branch_eip, fromPhysicalAddress, toPhysicalAddress);
-	}
+//	if (startRecordJump) {
+//		bx_phy_address fromPhysicalAddress;
+//		bx_phy_address toPhysicalAddress;
+//		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
+//		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
+//		printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> print %llx, %llx, %llx\n", branch_eip, fromPhysicalAddress, toPhysicalAddress);
+//	}
 
 	if (connectedToJmpServer && startRecordJump) {
 		bx_phy_address fromPhysicalAddress;
@@ -561,6 +559,7 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
 		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
 
+		//xml
 //		static stringstream str;
 //		str << "<data>\n";
 //		str << "\t<fromPhysicalAddress>" << (unsigned long) fromPhysicalAddress << "</fromPhysicalAddress>\n";
@@ -588,27 +587,28 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //		int length = strlen(cstr);
 //		write(jmpSockfd, &length, sizeof(int));
 //		write(jmpSockfd, cstr, length);
+		//xml end
 
 		write(jmpSockfd, &fromPhysicalAddress, sizeof(bx_phy_address));
 		write(jmpSockfd, &toPhysicalAddress, sizeof(bx_phy_address));
 		write(jmpSockfd, &segmentBegin, sizeof(segmentBegin));
 		write(jmpSockfd, &segmentEnd, sizeof(segmentBegin));
 
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx));
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, sizeof(Bit32u));
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, registerSize);
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, registerSize);
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, registerSize);
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, registerSize);
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, registerSize);
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, registerSize);
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, registerSize);
+		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, registerSize);
 
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value));
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, segmentregisterSize);
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, segmentregisterSize);
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, segmentregisterSize);
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, segmentregisterSize);
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, segmentregisterSize);
+		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, segmentregisterSize);
 
 		segmentBegin = new_eip;
 	}
