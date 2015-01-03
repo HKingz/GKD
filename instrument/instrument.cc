@@ -601,11 +601,6 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //		write(jmpSockfd, cstr, length);
 		//xml end
 
-		fromPhysicalAddress=1;
-		toPhysicalAddress=2;
-		segmentBegin=3;
-		segmentEnd=4;
-
 		write(jmpSockfd, &fromPhysicalAddress, physicalAddressSize);
 		write(jmpSockfd, &toPhysicalAddress, physicalAddressSize);
 		write(jmpSockfd, &segmentBegin, segmentSize);
