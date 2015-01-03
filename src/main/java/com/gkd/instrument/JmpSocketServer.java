@@ -153,8 +153,12 @@ public class JmpSocketServer implements Runnable {
 	long read(DataInputStream in, int size) throws IOException {
 		if (size == 8) {
 			return CommonLib.readLong64BitsFromInputStream(in);
-		} else {
+		} else if (size == 4) {
 			return CommonLib.readLongFromInputStream(in);
+		} else if (size == 2) {
+			return CommonLib.readShortFromInputStream(in);
+		} else {
+			return in.readByte();
 		}
 	}
 }
