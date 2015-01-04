@@ -1404,7 +1404,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JCheckBox getWithSymbolCheckBox() {
 		if (withSymbolCheckBox == null) {
 			withSymbolCheckBox = new JCheckBox();
-			withSymbolCheckBox.setText("Group");
+			withSymbolCheckBox.setText("To address has symbol");
 			withSymbolCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					withSymbolCheckBoxActionPerformed(evt);
@@ -1586,7 +1586,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		synchronized (JmpSocketServer.jmpDataVector) {
 			Vector<JmpData> filteredData = new Vector<JmpData>();
 			for (JmpData d : JmpSocketServer.jmpDataVector) {
-				if (d.contains(filterRawTableTextField.getText()) && (!withSymbolCheckBox.isSelected() || (d.fromAddressDescription != null || d.toAddressDescription != null))) {
+				if (d.contains(filterRawTableTextField.getText()) && (!withSymbolCheckBox.isSelected() || d.toAddressDescription != null)) {
 					filteredData.add(d);
 				}
 			}

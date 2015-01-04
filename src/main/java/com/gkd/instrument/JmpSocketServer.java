@@ -29,6 +29,10 @@ public class JmpSocketServer implements Runnable {
 	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
 	public static Vector<JmpData> jmpDataVector = new Vector<JmpData>();
 
+	public static void main(String args[]) {
+		new JmpSocketServer().startServer(8765, new JmpTableModel());
+	}
+
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		this.port = port;
 		this.jmpTableModel = jmpTableModel;
@@ -99,6 +103,9 @@ public class JmpSocketServer implements Runnable {
 				long gs;
 
 				while (!shouldStop) {
+					if (lineNo % 10000 == 0) {
+						System.out.println("     read 1  = " + lineNo);
+					}
 					fromAddress = read(in, physicalAddressSize);
 					toAddress = read(in, physicalAddressSize);
 
@@ -122,7 +129,7 @@ public class JmpSocketServer implements Runnable {
 					gs = read(in, segmentRegisterSize);
 
 					synchronized (jmpDataVector) {
-						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress);
+						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress);
 						String fromAddressDescription = symbol == null ? null : symbol.name;
 						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress);
 						String toAddressDescription = symbol == null ? null : symbol.name;
@@ -134,6 +141,9 @@ public class JmpSocketServer implements Runnable {
 					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress) + "-" + Long.toHexString(toAddress) + "-" + segmentStart
 							+ "-" + segmentEnd + "\n");
 
+					if (lineNo % 10000 == 0) {
+						System.out.println("     read 2");
+					}
 					lineNo++;
 				}
 

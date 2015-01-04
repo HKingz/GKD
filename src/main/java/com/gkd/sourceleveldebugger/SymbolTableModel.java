@@ -98,4 +98,13 @@ public class SymbolTableModel extends AbstractTableModel {
 		}
 		return null;
 	}
+	
+	public Elf32_Sym searchSymbolWithinRange(long address) {
+		for (Elf32_Sym symbol : symbols) {
+			if (symbol.checkWithinRange(address)) {
+				return symbol;
+			}
+		}
+		return null;
+	}
 }
