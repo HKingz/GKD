@@ -106,7 +106,10 @@ public class JmpSocketServer implements Runnable {
 					if (lineNo % 10000 == 0) {
 						System.out.println("     read 1  = " + lineNo);
 					}
-					fromAddress = read(in, physicalAddressSize);
+					byte bytes[] = new byte[physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6];
+					in.read(bytes);
+
+					/*fromAddress = read(in, physicalAddressSize);
 					toAddress = read(in, physicalAddressSize);
 
 					segmentStart = read(in, segmentAddressSize);
@@ -139,7 +142,7 @@ public class JmpSocketServer implements Runnable {
 					}
 
 					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress) + "-" + Long.toHexString(toAddress) + "-" + segmentStart
-							+ "-" + segmentEnd + "\n");
+							+ "-" + segmentEnd + "\n");*/
 
 					if (lineNo % 10000 == 0) {
 						System.out.println("     read 2");
