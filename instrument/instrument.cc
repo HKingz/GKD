@@ -111,11 +111,13 @@ pthread_mutex_t jmpMutex;
  static vector<Bit16u> gsVector;
  */
 
-#define JMP_CACHE_SIZE 50000
+#define JMP_CACHE_SIZE 1
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
+
 bx_address segmentBeginVector[JMP_CACHE_SIZE];
 bx_address segmentEndVector[JMP_CACHE_SIZE];
+
 Bit32u eaxVector[JMP_CACHE_SIZE];
 Bit32u ecxVector[JMP_CACHE_SIZE];
 Bit32u edxVector[JMP_CACHE_SIZE];
@@ -124,12 +126,14 @@ Bit32u espVector[JMP_CACHE_SIZE];
 Bit32u ebpVector[JMP_CACHE_SIZE];
 Bit32u esiVector[JMP_CACHE_SIZE];
 Bit32u ediVector[JMP_CACHE_SIZE];
+
 Bit16u esVector[JMP_CACHE_SIZE];
 Bit16u csVector[JMP_CACHE_SIZE];
 Bit16u ssVector[JMP_CACHE_SIZE];
 Bit16u dsVector[JMP_CACHE_SIZE];
 Bit16u fsVector[JMP_CACHE_SIZE];
 Bit16u gsVector[JMP_CACHE_SIZE];
+
 int jumpIndex = 0;
 
 void logGKD(char *str) {
@@ -685,6 +689,7 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 	}
 }
 
+int pp = 1;
 void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //	if (startRecordJump) {
 //		bx_phy_address fromPhysicalAddress;
@@ -731,27 +736,27 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //xml end
 
 		/*
-		write(jmpSockfd, &fromPhysicalAddress, physicalAddressSize);
-		write(jmpSockfd, &toPhysicalAddress, physicalAddressSize);
-		write(jmpSockfd, &segmentBegin, segmentSize);
-		write(jmpSockfd, &segmentEnd, segmentSize);
+		 write(jmpSockfd, &fromPhysicalAddress, physicalAddressSize);
+		 write(jmpSockfd, &toPhysicalAddress, physicalAddressSize);
+		 write(jmpSockfd, &segmentBegin, segmentSize);
+		 write(jmpSockfd, &segmentEnd, segmentSize);
 
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, registerSize);
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, registerSize);
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, registerSize);
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, registerSize);
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, registerSize);
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, registerSize);
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, registerSize);
-		write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, registerSize);
+		 write(jmpSockfd, &BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, registerSize);
 
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, segmentRegisterSize);
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, segmentRegisterSize);
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, segmentRegisterSize);
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, segmentRegisterSize);
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, segmentRegisterSize);
-		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, segmentRegisterSize);
-		*/
+		 write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value, segmentRegisterSize);
+		 write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, segmentRegisterSize);
+		 write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value, segmentRegisterSize);
+		 write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, segmentRegisterSize);
+		 write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, segmentRegisterSize);
+		 write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, segmentRegisterSize);
+		 */
 
 		//logGKD("a1\n");
 		pthread_mutex_lock(&jmpMutex);
@@ -804,7 +809,13 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 		gsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value;
 
 		jumpIndex++;
+		if (jumpIndex % 10000 == 0) {
+			logGKD_Dec(jumpIndex);
+		}
+		pp++;
 		if (jumpIndex == JMP_CACHE_SIZE) {
+			logGKD("send\n");
+			logGKD_Dec(pp);
 			/*
 			 for (int i = 0; i < JMP_CACHE_SIZE; i++) {
 			 write(jmpSockfd, &fromAddressVector[i], physicalAddressSize);
@@ -831,28 +842,28 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 			 }
 			 */
 
-			write(jmpSockfd, fromAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, toAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, fromAddressVector, JMP_CACHE_SIZE);
+			write(jmpSockfd, toAddressVector, JMP_CACHE_SIZE);
 
-			write(jmpSockfd, segmentBeginVector, segmentSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, segmentEndVector, segmentSize * JMP_CACHE_SIZE);
-
-			write(jmpSockfd, eaxVector, registerSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, ecxVector, registerSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, edxVector, registerSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, ebxVector, registerSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, espVector, registerSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, ebpVector, registerSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, esiVector, registerSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, ediVector, registerSize * JMP_CACHE_SIZE);
-
-			write(jmpSockfd, esVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, csVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, ssVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, dsVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, fsVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			write(jmpSockfd, gsVector, segmentRegisterSize * JMP_CACHE_SIZE);
-
+			write(jmpSockfd, segmentBeginVector, JMP_CACHE_SIZE);
+			write(jmpSockfd, segmentEndVector, JMP_CACHE_SIZE);
+//
+//			write(jmpSockfd, eaxVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, ecxVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, edxVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, ebxVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, espVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, ebpVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, esiVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, ediVector, JMP_CACHE_SIZE);
+//
+//			write(jmpSockfd, esVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, csVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, ssVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, dsVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, fsVector, JMP_CACHE_SIZE);
+//			write(jmpSockfd, gsVector, JMP_CACHE_SIZE);
+while(1);
 			jumpIndex = 0;
 		}
 		pthread_mutex_unlock(&jmpMutex);
