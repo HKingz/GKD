@@ -80,34 +80,59 @@ public class JmpSocketServer implements Runnable {
 				int segmentRegisterSize = in.read();
 
 				int lineNo = 1;
+				//int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
+				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2;
 
-				long fromAddress;
-				long toAddress;
-				long segmentStart;
-				long segmentEnd;
+				int noOfJmpRecordToFlush = 1;
+				long fromAddress[] = new long[noOfJmpRecordToFlush];
+				long toAddress[] = new long[noOfJmpRecordToFlush];
+				long segmentStart[] = new long[noOfJmpRecordToFlush];
+				long segmentEnd[] = new long[noOfJmpRecordToFlush];
 
-				long eax;
-				long ecx;
-				long edx;
-				long ebx;
-				long esp;
-				long ebp;
-				long esi;
-				long edi;
+				long eax[] = new long[noOfJmpRecordToFlush];
+				long ecx[] = new long[noOfJmpRecordToFlush];
+				long edx[] = new long[noOfJmpRecordToFlush];
+				long ebx[] = new long[noOfJmpRecordToFlush];
+				long esp[] = new long[noOfJmpRecordToFlush];
+				long ebp[] = new long[noOfJmpRecordToFlush];
+				long esi[] = new long[noOfJmpRecordToFlush];
+				long edi[] = new long[noOfJmpRecordToFlush];
 
-				long es;
-				long cs;
-				long ss;
-				long ds;
-				long fs;
-				long gs;
+				long es[] = new long[noOfJmpRecordToFlush];
+				long cs[] = new long[noOfJmpRecordToFlush];
+				long ss[] = new long[noOfJmpRecordToFlush];
+				long ds[] = new long[noOfJmpRecordToFlush];
+				long fs[] = new long[noOfJmpRecordToFlush];
+				long gs[] = new long[noOfJmpRecordToFlush];
 
 				while (!shouldStop) {
-					if (lineNo % 10000 == 0) {
-						System.out.println("     read 1  = " + lineNo);
-					}
-					byte bytes[] = new byte[physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6];
+					System.out.println("     read 1  = " + lineNo);
+
+					byte bytes[] = new byte[noOfJmpRecordToFlush * totalSize];
 					in.read(bytes);
+
+					int offset = 0;
+					offset += read(fromAddress, bytes, offset, physicalAddressSize);
+					offset += read(toAddress, bytes, offset, physicalAddressSize);
+
+					offset += read(segmentStart, bytes, offset, segmentAddressSize);
+					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
+					//
+					//					offset += read(eax, bytes, offset, registerSize);
+					//					offset += read(ecx, bytes, offset, registerSize);
+					//					offset += read(edx, bytes, offset, registerSize);
+					//					offset += read(ebx, bytes, offset, registerSize);
+					//					offset += read(esp, bytes, offset, registerSize);
+					//					offset += read(ebp, bytes, offset, registerSize);
+					//					offset += read(esi, bytes, offset, registerSize);
+					//					offset += read(edi, bytes, offset, registerSize);
+					//
+					//					offset += read(es, bytes, offset, segmentRegisterSize);
+					//					offset += read(cs, bytes, offset, segmentRegisterSize);
+					//					offset += read(ss, bytes, offset, segmentRegisterSize);
+					//					offset += read(ds, bytes, offset, segmentRegisterSize);
+					//					offset += read(fs, bytes, offset, segmentRegisterSize);
+					//					offset += read(gs, bytes, offset, segmentRegisterSize);
 
 					/*fromAddress = read(in, physicalAddressSize);
 					toAddress = read(in, physicalAddressSize);
@@ -130,24 +155,26 @@ public class JmpSocketServer implements Runnable {
 					ds = read(in, segmentRegisterSize);
 					fs = read(in, segmentRegisterSize);
 					gs = read(in, segmentRegisterSize);
+					*/
 
-					synchronized (jmpDataVector) {
-						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress);
-						String fromAddressDescription = symbol == null ? null : symbol.name;
-						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress);
-						String toAddressDescription = symbol == null ? null : symbol.name;
+					//					synchronized (jmpDataVector) {
+					//						for (int x = 0; x < noOfJmpRecordToFlush; x++) {
+					//							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
+					//							String fromAddressDescription = symbol == null ? null : symbol.name;
+					//							symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
+					//							String toAddressDescription = symbol == null ? null : symbol.name;
+					//
+					//							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, segmentStart[x],
+					//									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
+					//
+					//							fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
+					//									+ segmentStart[x] + "-" + segmentEnd[x] + "\n");
+					//
+					//							lineNo++;
+					//						}
+					//					}
 
-						jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress, fromAddressDescription, toAddress, toAddressDescription, segmentStart, segmentEnd, eax, ecx,
-								edx, ebx, esp, ebp, esi, edi, es, cs, ss, ds, fs, gs));
-					}
-
-					fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress) + "-" + Long.toHexString(toAddress) + "-" + segmentStart
-							+ "-" + segmentEnd + "\n");*/
-
-					if (lineNo % 10000 == 0) {
-						System.out.println("     read 2");
-					}
-					lineNo++;
+					System.out.println("     read 2");
 				}
 
 				in.close();
@@ -163,15 +190,37 @@ public class JmpSocketServer implements Runnable {
 		}
 	}
 
-	long read(DataInputStream in, int size) throws IOException {
+	//	long read(DataInputStream in, int size) throws IOException {
+	//		if (size == 8) {
+	//			return CommonLib.readLong64BitsFromInputStream(in);
+	//		} else if (size == 4) {
+	//			return CommonLib.readLongFromInputStream(in);
+	//		} else if (size == 2) {
+	//			return CommonLib.readShortFromInputStream(in);
+	//		} else {
+	//			return in.readByte();
+	//		}
+	//	}
+
+	int read(long arr[], byte bytes[], int offset, int size) throws IOException {
+		int totalByteRead = 0;
+		for (int x = 0; x < arr.length; x++) {
+			long value = read(bytes, offset + (x * size), size);
+			totalByteRead += size;
+			arr[x] = value;
+		}
+		return totalByteRead;
+	}
+
+	long read(byte bytes[], int offset, int size) throws IOException {
 		if (size == 8) {
-			return CommonLib.readLong64BitsFromInputStream(in);
+			return CommonLib.get64BitsInt(bytes, offset);
 		} else if (size == 4) {
-			return CommonLib.readLongFromInputStream(in);
+			return CommonLib.getInt(bytes, offset);
 		} else if (size == 2) {
-			return CommonLib.readShortFromInputStream(in);
+			return CommonLib.getShort(bytes[offset], bytes[offset + 1]);
 		} else {
-			return in.readByte();
+			return bytes[offset];
 		}
 	}
 }
