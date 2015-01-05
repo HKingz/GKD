@@ -111,7 +111,7 @@ pthread_mutex_t jmpMutex;
  static vector<Bit16u> gsVector;
  */
 
-#define JMP_CACHE_SIZE 10000
+#define JMP_CACHE_SIZE 50000
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
 bx_address segmentBeginVector[JMP_CACHE_SIZE];
@@ -730,6 +730,7 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //		write(jmpSockfd, cstr, length);
 //xml end
 
+		/*
 		write(jmpSockfd, &fromPhysicalAddress, physicalAddressSize);
 		write(jmpSockfd, &toPhysicalAddress, physicalAddressSize);
 		write(jmpSockfd, &segmentBegin, segmentSize);
@@ -750,6 +751,7 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, segmentRegisterSize);
 		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, segmentRegisterSize);
 		write(jmpSockfd, &BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, segmentRegisterSize);
+		*/
 
 		//logGKD("a1\n");
 		pthread_mutex_lock(&jmpMutex);
@@ -803,29 +805,54 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 
 		jumpIndex++;
 		if (jumpIndex == JMP_CACHE_SIZE) {
-			for (int i = 0; i < JMP_CACHE_SIZE; i++) {
-				write(jmpSockfd, &fromAddressVector[i], physicalAddressSize);
-				write(jmpSockfd, &toAddressVector[i], physicalAddressSize);
+			/*
+			 for (int i = 0; i < JMP_CACHE_SIZE; i++) {
+			 write(jmpSockfd, &fromAddressVector[i], physicalAddressSize);
+			 write(jmpSockfd, &toAddressVector[i], physicalAddressSize);
 
-				write(jmpSockfd, &segmentBeginVector[i], segmentSize);
-				write(jmpSockfd, &segmentEndVector[i], segmentSize);
+			 write(jmpSockfd, &segmentBeginVector[i], segmentSize);
+			 write(jmpSockfd, &segmentEndVector[i], segmentSize);
 
-				write(jmpSockfd, &eaxVector[i], registerSize);
-				write(jmpSockfd, &ecxVector[i], registerSize);
-				write(jmpSockfd, &edxVector[i], registerSize);
-				write(jmpSockfd, &ebxVector[i], registerSize);
-				write(jmpSockfd, &espVector[i], registerSize);
-				write(jmpSockfd, &ebpVector[i], registerSize);
-				write(jmpSockfd, &esiVector[i], registerSize);
-				write(jmpSockfd, &ediVector[i], registerSize);
+			 write(jmpSockfd, &eaxVector[i], registerSize);
+			 write(jmpSockfd, &ecxVector[i], registerSize);
+			 write(jmpSockfd, &edxVector[i], registerSize);
+			 write(jmpSockfd, &ebxVector[i], registerSize);
+			 write(jmpSockfd, &espVector[i], registerSize);
+			 write(jmpSockfd, &ebpVector[i], registerSize);
+			 write(jmpSockfd, &esiVector[i], registerSize);
+			 write(jmpSockfd, &ediVector[i], registerSize);
 
-				write(jmpSockfd, &esVector[i], segmentRegisterSize);
-				write(jmpSockfd, &csVector[i], segmentRegisterSize);
-				write(jmpSockfd, &ssVector[i], segmentRegisterSize);
-				write(jmpSockfd, &dsVector[i], segmentRegisterSize);
-				write(jmpSockfd, &fsVector[i], segmentRegisterSize);
-				write(jmpSockfd, &gsVector[i], segmentRegisterSize);
-			}
+			 write(jmpSockfd, &esVector[i], segmentRegisterSize);
+			 write(jmpSockfd, &csVector[i], segmentRegisterSize);
+			 write(jmpSockfd, &ssVector[i], segmentRegisterSize);
+			 write(jmpSockfd, &dsVector[i], segmentRegisterSize);
+			 write(jmpSockfd, &fsVector[i], segmentRegisterSize);
+			 write(jmpSockfd, &gsVector[i], segmentRegisterSize);
+			 }
+			 */
+
+			write(jmpSockfd, fromAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, toAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
+
+			write(jmpSockfd, segmentBeginVector, segmentSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, segmentEndVector, segmentSize * JMP_CACHE_SIZE);
+
+			write(jmpSockfd, eaxVector, registerSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, ecxVector, registerSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, edxVector, registerSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, ebxVector, registerSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, espVector, registerSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, ebpVector, registerSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, esiVector, registerSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, ediVector, registerSize * JMP_CACHE_SIZE);
+
+			write(jmpSockfd, esVector, segmentRegisterSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, csVector, segmentRegisterSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, ssVector, segmentRegisterSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, dsVector, segmentRegisterSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, fsVector, segmentRegisterSize * JMP_CACHE_SIZE);
+			write(jmpSockfd, gsVector, segmentRegisterSize * JMP_CACHE_SIZE);
+
 			jumpIndex = 0;
 		}
 		pthread_mutex_unlock(&jmpMutex);
