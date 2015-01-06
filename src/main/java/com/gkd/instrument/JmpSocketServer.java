@@ -81,7 +81,7 @@ public class JmpSocketServer implements Runnable {
 
 				int lineNo = 1;
 				//int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
-				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2;
+				int totalSize = physicalAddressSize * 2 ;//+ segmentAddressSize * 2;
 
 				int noOfJmpRecordToFlush = 1;
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
