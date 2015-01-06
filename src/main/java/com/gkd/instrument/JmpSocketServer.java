@@ -115,8 +115,8 @@ public class JmpSocketServer implements Runnable {
 					offset += read(fromAddress, bytes, offset, physicalAddressSize);
 					offset += read(toAddress, bytes, offset, physicalAddressSize);
 
-					offset += read(segmentStart, bytes, offset, segmentAddressSize);
-					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
+					//offset += read(segmentStart, bytes, offset, segmentAddressSize);
+					//offset += read(segmentEnd, bytes, offset, segmentAddressSize);
 					//
 					//					offset += read(eax, bytes, offset, registerSize);
 					//					offset += read(ecx, bytes, offset, registerSize);
