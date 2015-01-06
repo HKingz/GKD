@@ -841,9 +841,11 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 			 write(jmpSockfd, &gsVector[i], segmentRegisterSize);
 			 }
 			 */
-
-			write(jmpSockfd, &fromAddressVector[0], JMP_CACHE_SIZE);
-			write(jmpSockfd, &toAddressVector[0], JMP_CACHE_SIZE);
+			fromAddressVector[0]=0x12345678;
+			unsigned long fuck=0x12345678;
+			toAddressVector[0]=  0xabcdefabcdefabcd;
+			write(jmpSockfd, "abcdefgh", 8);
+			write(jmpSockfd, toAddressVector, JMP_CACHE_SIZE);
 
 //			write(jmpSockfd, segmentBeginVector, JMP_CACHE_SIZE);
 //			write(jmpSockfd, segmentEndVector, JMP_CACHE_SIZE);
