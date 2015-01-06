@@ -80,10 +80,10 @@ public class JmpSocketServer implements Runnable {
 				int segmentRegisterSize = in.read();
 
 				int lineNo = 1;
-				//int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
-				int totalSize = physicalAddressSize * 2;//+ segmentAddressSize * 2;
+				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
+				//				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 6;
 
-				int noOfJmpRecordToFlush = 1;
+				int noOfJmpRecordToFlush = 50000;
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
 				long toAddress[] = new long[noOfJmpRecordToFlush];
 				long segmentStart[] = new long[noOfJmpRecordToFlush];
@@ -109,34 +109,37 @@ public class JmpSocketServer implements Runnable {
 					System.out.println("     read 1  = " + lineNo);
 
 					byte bytes[] = new byte[noOfJmpRecordToFlush * totalSize];
-					System.out.println(">>" + in.read());
-					System.out.println(">>" + in.readByte());
-					System.out.println(">>" + in.readByte());
-					System.out.println(">>" + in.readByte());
-					in.read(bytes);
+					//					System.out.println(">>" + in.read());
+					//					System.out.println(">>" + in.readByte());
+					//					System.out.println(">>" + in.readByte());
+					//					System.out.println(">>" + in.readByte());
+					int byteRead = 0;
+					while (byteRead < bytes.length) {
+						byteRead += in.read(bytes, byteRead, bytes.length - byteRead);
+					}
 
 					int offset = 0;
 					offset += read(fromAddress, bytes, offset, physicalAddressSize);
 					offset += read(toAddress, bytes, offset, physicalAddressSize);
 
-					//offset += read(segmentStart, bytes, offset, segmentAddressSize);
-					//offset += read(segmentEnd, bytes, offset, segmentAddressSize);
-					//
-					//					offset += read(eax, bytes, offset, registerSize);
-					//					offset += read(ecx, bytes, offset, registerSize);
-					//					offset += read(edx, bytes, offset, registerSize);
-					//					offset += read(ebx, bytes, offset, registerSize);
-					//					offset += read(esp, bytes, offset, registerSize);
-					//					offset += read(ebp, bytes, offset, registerSize);
-					//					offset += read(esi, bytes, offset, registerSize);
-					//					offset += read(edi, bytes, offset, registerSize);
-					//
-					//					offset += read(es, bytes, offset, segmentRegisterSize);
-					//					offset += read(cs, bytes, offset, segmentRegisterSize);
-					//					offset += read(ss, bytes, offset, segmentRegisterSize);
-					//					offset += read(ds, bytes, offset, segmentRegisterSize);
-					//					offset += read(fs, bytes, offset, segmentRegisterSize);
-					//					offset += read(gs, bytes, offset, segmentRegisterSize);
+					offset += read(segmentStart, bytes, offset, segmentAddressSize);
+					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
+
+					offset += read(eax, bytes, offset, registerSize);
+					offset += read(ecx, bytes, offset, registerSize);
+					offset += read(edx, bytes, offset, registerSize);
+					offset += read(ebx, bytes, offset, registerSize);
+					offset += read(esp, bytes, offset, registerSize);
+					offset += read(ebp, bytes, offset, registerSize);
+					offset += read(esi, bytes, offset, registerSize);
+					offset += read(edi, bytes, offset, registerSize);
+
+					offset += read(es, bytes, offset, segmentRegisterSize);
+					offset += read(cs, bytes, offset, segmentRegisterSize);
+					offset += read(ss, bytes, offset, segmentRegisterSize);
+					offset += read(ds, bytes, offset, segmentRegisterSize);
+					offset += read(fs, bytes, offset, segmentRegisterSize);
+					offset += read(gs, bytes, offset, segmentRegisterSize);
 
 					/*fromAddress = read(in, physicalAddressSize);
 					toAddress = read(in, physicalAddressSize);
@@ -161,22 +164,22 @@ public class JmpSocketServer implements Runnable {
 					gs = read(in, segmentRegisterSize);
 					*/
 
-					//					synchronized (jmpDataVector) {
-					//						for (int x = 0; x < noOfJmpRecordToFlush; x++) {
-					//							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
-					//							String fromAddressDescription = symbol == null ? null : symbol.name;
-					//							symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
-					//							String toAddressDescription = symbol == null ? null : symbol.name;
-					//
-					//							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, segmentStart[x],
-					//									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
-					//
-					//							fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
-					//									+ segmentStart[x] + "-" + segmentEnd[x] + "\n");
-					//
-					//							lineNo++;
-					//						}
-					//					}
+					synchronized (jmpDataVector) {
+						for (int x = 0; x < noOfJmpRecordToFlush; x++) {
+							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
+							String fromAddressDescription = symbol == null ? null : symbol.name;
+							symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
+							String toAddressDescription = symbol == null ? null : symbol.name;
+
+							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, segmentStart[x],
+									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
+
+							fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
+									+ segmentStart[x] + "-" + segmentEnd[x] + "\n");
+
+							lineNo++;
+						}
+					}
 
 					System.out.println("     read 2");
 				}
