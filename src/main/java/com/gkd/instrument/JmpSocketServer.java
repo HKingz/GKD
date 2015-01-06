@@ -1,6 +1,7 @@
 package com.gkd.instrument;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.BindException;
@@ -73,6 +74,7 @@ public class JmpSocketServer implements Runnable {
 			while (!shouldStop) {
 				Socket clientSocket = serverSocket.accept();
 				DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+				DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
 
 				int physicalAddressSize = in.read();
 				int segmentAddressSize = in.read();
@@ -80,8 +82,7 @@ public class JmpSocketServer implements Runnable {
 				int segmentRegisterSize = in.read();
 
 				int lineNo = 1;
-				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
-				//				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 6;
+				int totalSize = physicalAddressSize;//* 2+ segmentAddressSize * 2 + registerSize * 8;// + segmentRegisterSize * 6;
 
 				int noOfJmpRecordToFlush = 50000;
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
@@ -106,40 +107,75 @@ public class JmpSocketServer implements Runnable {
 				long gs[] = new long[noOfJmpRecordToFlush];
 
 				while (!shouldStop) {
-					System.out.println("     read 1  = " + lineNo);
-
 					byte bytes[] = new byte[noOfJmpRecordToFlush * totalSize];
 					//					System.out.println(">>" + in.read());
 					//					System.out.println(">>" + in.readByte());
 					//					System.out.println(">>" + in.readByte());
 					//					System.out.println(">>" + in.readByte());
+
+					System.out.println("wait start");
+					//					String beacon = String.valueOf((char) in.read()) + (char) in.read() + (char) in.read() + (char) in.read() + (char) in.read();
+					byte startBytes[] = new byte[5];
+					//										in.read(startBytes);
+					in.readFully(startBytes);
+					String beacon = new String(startBytes);
+					if (!beacon.equals("start")) {
+						fstream.write("jmp socket - beacon error\n");
+						fstream.flush();
+						System.exit(-1);
+					}
+
 					int byteRead = 0;
 					while (byteRead < bytes.length) {
-						byteRead += in.read(bytes, byteRead, bytes.length - byteRead);
+						int b = in.read(bytes, byteRead, bytes.length - byteRead);
+						if (b <= 0) {
+							System.out.println("b<0");
+							System.exit(-1);
+						}
+						byteRead += b;
+						System.out.println("byteRead=" + byteRead);
 					}
+					//					in.readFully(bytes);
 
 					int offset = 0;
 					offset += read(fromAddress, bytes, offset, physicalAddressSize);
-					offset += read(toAddress, bytes, offset, physicalAddressSize);
+					//					offset += read(toAddress, bytes, offset, physicalAddressSize);
+					//
+					//					offset += read(segmentStart, bytes, offset, segmentAddressSize);
+					//					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
+					//
+					//					offset += read(eax, bytes, offset, registerSize);
+					//					offset += read(ecx, bytes, offset, registerSize);
+					//					offset += read(edx, bytes, offset, registerSize);
+					//					offset += read(ebx, bytes, offset, registerSize);
+					//					offset += read(esp, bytes, offset, registerSize);
+					//					offset += read(ebp, bytes, offset, registerSize);
+					//					offset += read(esi, bytes, offset, registerSize);
+					//					offset += read(edi, bytes, offset, registerSize);
 
-					offset += read(segmentStart, bytes, offset, segmentAddressSize);
-					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
+					//					offset += read(es, bytes, offset, segmentRegisterSize);
+					//					offset += read(cs, bytes, offset, segmentRegisterSize);
+					//					offset += read(ss, bytes, offset, segmentRegisterSize);
+					//					offset += read(ds, bytes, offset, segmentRegisterSize);
+					//					offset += read(fs, bytes, offset, segmentRegisterSize);
+					//					offset += read(gs, bytes, offset, segmentRegisterSize);
 
-					offset += read(eax, bytes, offset, registerSize);
-					offset += read(ecx, bytes, offset, registerSize);
-					offset += read(edx, bytes, offset, registerSize);
-					offset += read(ebx, bytes, offset, registerSize);
-					offset += read(esp, bytes, offset, registerSize);
-					offset += read(ebp, bytes, offset, registerSize);
-					offset += read(esi, bytes, offset, registerSize);
-					offset += read(edi, bytes, offset, registerSize);
-
-					offset += read(es, bytes, offset, segmentRegisterSize);
-					offset += read(cs, bytes, offset, segmentRegisterSize);
-					offset += read(ss, bytes, offset, segmentRegisterSize);
-					offset += read(ds, bytes, offset, segmentRegisterSize);
-					offset += read(fs, bytes, offset, segmentRegisterSize);
-					offset += read(gs, bytes, offset, segmentRegisterSize);
+					//					int c = in.read();
+					//					System.out.println(c + "," + (char) c);
+					//					c = in.read();
+					//					System.out.println(c + "," + (char) c);
+					//					c = in.read();
+					//					System.out.println(c + "," + (char) c);
+					byte endBytes[] = new byte[3];
+					//										in.read(startBytes);
+					in.readFully(endBytes);
+					//					beacon = String.valueOf((char) in.read()) + (char) in.read() + (char) in.read();
+					beacon = new String(endBytes);
+					if (!beacon.equals("end")) {
+						fstream.write("jmp socket - beacon error\n");
+						fstream.flush();
+						System.exit(-1);
+					}
 
 					/*fromAddress = read(in, physicalAddressSize);
 					toAddress = read(in, physicalAddressSize);
@@ -173,15 +209,20 @@ public class JmpSocketServer implements Runnable {
 
 							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, segmentStart[x],
 									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
-
-							fstream.write(lineNo + "-" + dateformat1.format(new Date()) + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
-									+ segmentStart[x] + "-" + segmentEnd[x] + "\n");
+							if (fromAddress[x] == 0) {
+								System.out.println("fuck");
+							}
+							fstream.write(lineNo + "-" + /*dateformat1.format(new Date()) +*/"-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
+									+ Long.toHexString(segmentStart[x]) + "-" + Long.toHexString(segmentEnd[x]) + "\n");
+							fstream.flush();
 
 							lineNo++;
 						}
 					}
 
-					System.out.println("     read 2");
+					out.write("done".getBytes());
+					
+
 				}
 
 				in.close();

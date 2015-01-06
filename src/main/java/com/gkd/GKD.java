@@ -2419,7 +2419,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				File file = startHeader.filenames.get((int) startLine.file_num).file;
 				List<String> sourceLines = CacheStructure.fileCaches.get(file);
-				if (sourceLines == null) {
+				if (sourceLines == null && file.exists()) {
 					sourceLines = FileUtils.readLines(file);
 					CacheStructure.fileCaches.put(file, sourceLines);
 				}
