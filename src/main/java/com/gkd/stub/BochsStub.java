@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import javax.swing.JOptionPane;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -223,7 +225,8 @@ public class BochsStub implements VMStub {
 						String lineNo[] = gkd.getCCode(pc, true);
 						if (s != null && lineNo != null) {
 							for (int index = 0; index < s.length; index++) {
-								r.add(new String[] { "", "cCode : " + StringUtils.leftPad(CommonLib.string2BigInteger(pc.toString()).toString(16), 16, '0') + " : " + lineNo[index], s[index], "" });
+								r.add(new String[] { "",
+										"cCode : " + StringUtils.leftPad(CommonLib.string2BigInteger(pc.toString()).toString(16), 16, '0') + " : " + lineNo[index], s[index], "" });
 							}
 						}
 						// end load cCode
