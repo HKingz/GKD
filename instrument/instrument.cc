@@ -55,10 +55,6 @@ int memoryPortNo = 1980;
 int jmpPortNo = 1981;
 int interruptPortNo = 1982;
 
-int oslogPort = 0xffff;
-char oslogFile[] = "os.log";
-ofstream oslogStream(oslogFile, ios::app);
-
 static disassembler bx_disassembler;
 
 static FILE *log;
@@ -250,54 +246,52 @@ void safeRead(int socketFD, unsigned char *inBuffer, unsigned int size) {
 
 void initMemorySocket() {
 	logGKD("initMemorySocket\n");
-	oslogStream << "initMemorySocket" << endl;
-	oslogStream.flush();
 	memorySockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (memorySockfd < 0) {
-//fprintf(stderr, "ERROR opening socket\n");
-		fprintf(log, "Memory socket server : ERROR opening socket\n");
+		logGKD("Memory socket server : ERROR opening socket\n");
 		return;
 	}
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
-//fprintf(stderr, "ERROR, no such host\n");
-		fprintf(log, "Memory socket server : ERROR no such host\n");
+		logGKD("Memory socket server : ERROR no such host\n");
+		return;
 	}
 	bzero((char *) &serv_addr, sizeof(serv_addr));
 	serv_addr.sin_family = AF_INET;
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
 	serv_addr.sin_port = htons(memoryPortNo);
 	if (connect(memorySockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		fprintf(log, "Memory socket server : ERROR connecting\n");
+		logGKD("Memory socket server : ERROR connecting\n");
 		connectedToMemoryServer = false;
+		return;
 	} else {
-		fprintf(log, "Memory socket server : connected to server\n");
+		logGKD("Memory socket server : connected to server\n");
 		connectedToMemoryServer = true;
 	}
 
 	int flag = 1;
 	int ret = setsockopt(memorySockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(flag));
 	if (ret == -1) {
-		fprintf(log, "memorySockfd couldn't setsockopt(TCP_NODELAY)\n");
+		logGKD("memorySockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
 	fflush(log);
-	oslogStream << "initMemorySocket2" << endl;
-	oslogStream.flush();
+	logGKD("initMemorySocket end\n");
 }
 
 void initJmpSocket() {
-	logGKD("initJmpSocket\n");
+	logGKD("initJmpSocket 1\n");
 	jmpSockfd = socket(AF_INET, SOCK_STREAM, 0);
+	logGKD("initJmpSocket 2\n");
 	if (jmpSockfd < 0) {
-		fprintf(log, "Jmp socket server : ERROR opening socket\n");
+		logGKD("Jmp socket server : ERROR opening socket\n");
 		return;
 	}
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
-		fprintf(log, "Jmp socket server : ERROR no such host\n");
+		logGKD("Jmp socket server : ERROR no such host\n");
 	}
 
 	struct sockaddr_in serv_addr;
@@ -306,41 +300,42 @@ void initJmpSocket() {
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
 	serv_addr.sin_port = htons(jmpPortNo);
 	if (connect(jmpSockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		fprintf(log, "Jmp socket server : ERROR connecting\n");
+		logGKD("Jmp socket server : ERROR connecting\n");
 		connectedToJmpServer = false;
 	} else {
-		fprintf(log, "Jmp socket server : connected to server\n");
+		logGKD("Jmp socket server : connected to server\n");
 		connectedToJmpServer = true;
 	}
 
 	int flag = 1;
 	int ret = setsockopt(jmpSockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(flag));
 	if (ret == -1) {
-		fprintf(log, "jmpSockfd couldn't setsockopt(TCP_NODELAY)\n");
+		logGKD("jmpSockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
 
-	write(jmpSockfd, &physicalAddressSize, 1);
-	write(jmpSockfd, &segmentSize, 1);
-	write(jmpSockfd, &registerSize, 1);
-	write(jmpSockfd, &segmentRegisterSize, 1);
-
-	fflush(log);
+	if (connectedToJmpServer) {
+		write(jmpSockfd, &physicalAddressSize, 1);
+		write(jmpSockfd, &segmentSize, 1);
+		write(jmpSockfd, &registerSize, 1);
+		write(jmpSockfd, &segmentRegisterSize, 1);
+	}
 
 	pthread_mutex_init(&jmpMutex, NULL);
 	int err = pthread_create(&jmpThread, NULL, jmpTimer, NULL);
+	logGKD("initJmpSocket end\n");
 }
 
 void initInterruptSocket() {
 	interruptSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (interruptSockfd < 0) {
-		fprintf(log, "Interrupt socket server : ERROR opening socket\n");
+		logGKD("Interrupt socket server : ERROR opening socket\n");
 		return;
 	}
 
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
-		fprintf(log, "Interrupt socket server : ERROR no such host\n");
+		logGKD("Interrupt socket server : ERROR no such host\n");
 	}
 
 	struct sockaddr_in serv_addr;
@@ -349,20 +344,18 @@ void initInterruptSocket() {
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
 	serv_addr.sin_port = htons(interruptPortNo);
 	if (connect(interruptSockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		fprintf(log, "Interrupt socket server : ERROR connecting\n");
+		logGKD("Interrupt socket server : ERROR connecting\n");
 		connectedToInterruptServer = false;
 	} else {
-		fprintf(log, "Interrupt socket server : connected to server\n");
+		logGKD("Interrupt socket server : connected to server\n");
 		connectedToInterruptServer = true;
 	}
 
 	int flag = 1;
 	int ret = setsockopt(interruptSockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(flag));
 	if (ret == -1) {
-		fprintf(log, "interruptSockfd couldn't setsockopt(TCP_NODELAY)\n");
+		logGKD("interruptSockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
-
-	fflush(log);
 }
 
 void bx_instr_init_env(void) {
@@ -383,8 +376,8 @@ void bx_instr_initialize(unsigned cpu) {
 	// GKD
 	log = fopen("gkd.log", "a+");
 
-	fprintf(stderr, "GKD instrument %s - Initialize cpu %d\n", GKD_INSTRUMENT_VERSION, cpu);
-	logGKD("GKD instrument\n");
+	fprintf(stderr, "GKD instrument %s - Initialize cpu %d\n",
+	GKD_INSTRUMENT_VERSION, cpu);
 
 	/*
 	 logGKD("registerSize=");
@@ -403,6 +396,7 @@ void bx_instr_initialize(unsigned cpu) {
 			zonesHit[x] = 0;
 		}
 	}
+	logGKD("init end\n");
 }
 
 void bxInstrumentation::bx_instr_reset(unsigned type) {
@@ -634,7 +628,8 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 	}
 // end check zone
 	if (pointer == MAX_SEND_BYTE) {
-		send(memorySockfd, (char *) buffer, MAX_SEND_BYTE * sizeof(unsigned int), 0);
+		send(memorySockfd, (char *) buffer,
+		MAX_SEND_BYTE * sizeof(unsigned int), 0);
 
 		send(memorySockfd, &zonesTail, sizeof(unsigned int), 0);
 
@@ -841,10 +836,11 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 			 write(jmpSockfd, &gsVector[i], segmentRegisterSize);
 			 }
 			 */
-			fromAddressVector[0]=0x12345678;
-			unsigned long fuck=0x12345678;
-			toAddressVector[0]=  0xabcdefabcdefabcd;
-			write(jmpSockfd, "abcdefgh", 8);
+
+			fromAddressVector[0] = 0x12345678;
+			unsigned long fuck = 0x1234;
+			toAddressVector[0] = 0xabcdef;
+			write(jmpSockfd, (char *)fuck, 8);
 			write(jmpSockfd, toAddressVector, JMP_CACHE_SIZE);
 
 //			write(jmpSockfd, segmentBeginVector, JMP_CACHE_SIZE);
@@ -865,7 +861,8 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 //			write(jmpSockfd, dsVector, JMP_CACHE_SIZE);
 //			write(jmpSockfd, fsVector, JMP_CACHE_SIZE);
 //			write(jmpSockfd, gsVector, JMP_CACHE_SIZE);
-while(1);
+			while (1)
+				;
 			jumpIndex = 0;
 		}
 		pthread_mutex_unlock(&jmpMutex);
