@@ -132,15 +132,19 @@ Bit16u gsVector[JMP_CACHE_SIZE];
 
 int jumpIndex = 0;
 
-void writeToSocket(int sock, void *data, int size) {
+void writeToSocket(int sock, char *data, int size) {
 	int byteSent = 0;
-	while (byteSent < physicalAddressSize * JMP_CACHE_SIZE) {
-		int b = write(jmpSockfd, fromAddressVector + byteSent, physicalAddressSize * JMP_CACHE_SIZE - byteSent);
+	while (byteSent < size) {
+		int b = write(jmpSockfd, data + byteSent, size - byteSent);
 
 		byteSent += b;
 		fprintf(log, "             byteSent=%d, %d\n", byteSent, b);
 		fflush(log);
 	}
+}
+
+void writeToSocket(int sock, void *data, int size) {
+	writeToSocket(sock, (char *) data, size);
 }
 
 void logGKD(char *str) {
@@ -819,12 +823,12 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 
 		jumpIndex++;
 		if (jumpIndex % 10000 == 0) {
-			logGKD_Dec (jumpIndex);
+			logGKD_Dec(jumpIndex);
 		}
 		pp++;
 		if (jumpIndex == JMP_CACHE_SIZE) {
 			logGKD("send\n");
-			logGKD_Dec (pp);
+			logGKD_Dec(pp);
 			/*
 			 for (int i = 0; i < JMP_CACHE_SIZE; i++) {
 			 write(jmpSockfd, &fromAddressVector[i], physicalAddressSize);
@@ -868,7 +872,7 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 			fprintf(log, "segmentSize=%d\n", segmentSize);
 			fprintf(log, "registerSize=%d\n", registerSize);
 			fprintf(log, "segmentRegisterSize=%d\n", segmentRegisterSize);
-			fflush (log);
+			fflush(log);
 
 			writeToSocket(jmpSockfd, "start", 5);
 
