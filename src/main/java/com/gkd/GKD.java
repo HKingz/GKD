@@ -2436,16 +2436,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				// logger.debug(pc.toString(16) + ", " +
 				// startLine.line_num + ", " + endLineNo);
-				String s[] = new String[endLineNo - startLine.line_num + 1];
-				for (int z = startLine.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {
-					if (getFile) {
-						s[index] = startHeader.filenames.get((int) startLine.file_num).file.getName() + " : " + (z + 1);
-					} else {
-						String cCode = sourceLines.get(z);
-						s[index] = cCode;
+				if (sourceLines != null) {
+					String s[] = new String[endLineNo - startLine.line_num + 1];
+					for (int z = startLine.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {
+						if (getFile) {
+							s[index] = startHeader.filenames.get((int) startLine.file_num).file.getName() + " : " + (z + 1);
+						} else {
+							String cCode = sourceLines.get(z);
+							s[index] = cCode;
+						}
 					}
+					return s;
 				}
-				return s;
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}

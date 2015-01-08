@@ -276,7 +276,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					GroupLayout jMemoryPanelLayout = new GroupLayout((JComponent) memoryPanel);
 					memoryPanel.setLayout(jMemoryPanelLayout);
 					tabbedPane1.addTab("Memory", null, memoryPanel, null);
-					tabbedPane1.addTab("Profiling", null, getJMemoryProfilingPanel(), null);
+					tabbedPane1.addTab("Profiling", null, getMemoryProfilingPanel(), null);
 					tabbedPane1.addTab("Jmp", null, getJmpPanel(), null);
 					tabbedPane1.addTab("Call graph", null, getCallGraphTabbedPane(), null);
 					tabbedPane1.addTab("Interrupt", null, getInterruptPanel(), null);
@@ -1059,7 +1059,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jTabbedPane2;
 	}
 
-	private JPanel getJMemoryProfilingPanel() {
+	private JPanel getMemoryProfilingPanel() {
 		if (memoryProfilingPanel == null) {
 			memoryProfilingPanel = new JPanel();
 			GroupLayout memoryProfilingPanelLayout = new GroupLayout((JComponent) memoryProfilingPanel);

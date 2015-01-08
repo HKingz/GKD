@@ -9,7 +9,7 @@ import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {
 	private String[] columnNames = { MyLanguage.getString("Name"), "Value" };
-	public Vector<Elf32_Sym> synbols;
+	public Vector<Elf32_Sym> displaySymbols;
 	Vector<Elf32_Sym> symbols;
 	private String searchPattern;
 	public boolean exactMatch;
@@ -19,10 +19,10 @@ public class SymbolTableModel extends AbstractTableModel {
 
 	public Object getValueAt(int row, int column) {
 		try {
-			if (synbols == null) {
+			if (displaySymbols == null) {
 				setSearchPattern(searchPattern);
 			}
-			Elf32_Sym symbol = (Elf32_Sym) synbols.toArray()[row];
+			Elf32_Sym symbol = (Elf32_Sym) displaySymbols.toArray()[row];
 			if (column == 0) {
 				// MUST return Elf32_Sym, the double-click and tooltip NEED an Elf32_Sym object
 				return symbol;
@@ -39,15 +39,15 @@ public class SymbolTableModel extends AbstractTableModel {
 	}
 
 	public int getRowCount() {
-		if (synbols == null) {
+		if (displaySymbols == null) {
 			setSearchPattern(searchPattern);
 		}
-		if (synbols == null) {
+		if (displaySymbols == null) {
 			return 0;
 		} else if (searchPattern == null) {
-			return synbols.size();
+			return displaySymbols.size();
 		} else {
-			return synbols.size();
+			return displaySymbols.size();
 		}
 	}
 
@@ -60,6 +60,9 @@ public class SymbolTableModel extends AbstractTableModel {
 	}
 
 	public Class getColumnClass(int columnIndex) {
+		if (columnIndex == 0) {
+			return Elf32_Sym.class;
+		}
 		return String.class;
 	}
 
@@ -69,19 +72,19 @@ public class SymbolTableModel extends AbstractTableModel {
 			return;
 		}
 		if (searchPattern != null && !searchPattern.equals("")) {
-			synbols.clear();
+			displaySymbols.clear();
 
 			for (int x = 0; x < symbols.size(); x++) {
 				Elf32_Sym symbol = (Elf32_Sym) symbols.toArray()[x];
 				if ((!exactMatch && symbol.name.toLowerCase().contains(searchPattern.toLowerCase()))
 						|| (exactMatch && symbol.name.toLowerCase().equals(searchPattern.toLowerCase())) || Long.toHexString(symbol.st_value).contains(searchPattern)) {
-					synbols.add(symbol);
+					displaySymbols.add(symbol);
 					//				} else if (CommonLib.isNumber(searchPattern) && CommonLib.string2BigInteger(searchPattern).equals(BigInteger.valueOf(symbol.st_value))) {
 					//					displaySymbols.add(symbol);
 				}
 			}
 		} else {
-			synbols = (Vector<Elf32_Sym>) symbols.clone();
+			displaySymbols = (Vector<Elf32_Sym>) symbols.clone();
 		}
 		fireTableDataChanged();
 	}
@@ -98,7 +101,7 @@ public class SymbolTableModel extends AbstractTableModel {
 		}
 		return null;
 	}
-	
+
 	public Elf32_Sym searchSymbolWithinRange(long address) {
 		for (Elf32_Sym symbol : symbols) {
 			if (symbol.checkWithinRange(address)) {

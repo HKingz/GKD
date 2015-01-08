@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.util.Collections;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -96,7 +95,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private JPanel dwarfPanel;
 	public PeterDwarfPanel peterDwarfPanel;
 	private JPanel instructionControlPanel;
-	private JPanel jASMPanel;
+	private JPanel asmPanel;
 	private JPanel symbolTablePanel;
 	private JSearchTextField searchProjectTextField;
 	private JToolBar projectToolBar;
@@ -165,51 +164,16 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 								mainTabbedPane = new JMaximizableTabbedPane();
 								panel6.add(mainTabbedPane, BorderLayout.CENTER);
 								{
-									jASMPanel = new JPanel();
-									mainTabbedPane.addTab(MyLanguage.getString("ASM/C"), null, jASMPanel, null);
+									asmPanel = new JPanel();
+									mainTabbedPane.addTab(MyLanguage.getString("ASM/C"), null, asmPanel, null);
 									mainTabbedPane.addTab("Dwarf", null, getDwarfPanel(), null);
 									mainTabbedPane.addTab("Code base", null, getCodeBasePanel(), null);
 									mainTabbedPane.addTab("Call Graph", null, getCallGraphPanel(), null);
 									BorderLayout jASMPanelLayout = new BorderLayout();
-									jASMPanel.setLayout(jASMPanelLayout);
+									asmPanel.setLayout(jASMPanelLayout);
 									{
 										instructionTableScrollPane = new JScrollPane();
-										//										instructionTableScrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
-										//											boolean isRunning;
-										//
-										//											public void adjustmentValueChanged(AdjustmentEvent evt) {
-										//												/*	JScrollBar vbar = (JScrollBar) evt.getSource();
-										//
-										//													if (evt.getValueIsAdjusting()) {
-										//														return;
-										//													}
-										//													if ((vbar.getValue() + vbar.getVisibleAmount()) == vbar.getMaximum()) {
-										//														if (!isRunning) {
-										//															try {
-										//																isRunning = true;
-										//																final CardLayout cl = (CardLayout) (gkd.jMainPanel.getLayout());
-										//																cl.show(gkd.jMainPanel, "Running Label");
-										//																//															new Thread("update instruction thread") {
-										//																//																public void run() {
-										//																//																	long address = Long.parseLong(instructionTable.getValueAt(instructionTable.getRowCount() - 1, 1).toString()
-										//																//																			.substring(2), 16);
-										//																//																	gkd.updateInstruction(address, true);
-										//																//																	gkd.updateBreakpointTableColor();
-										//																////																	cl.show(gkd.jMainPanel, gkd.currentPanel);
-										//																//
-										//																//																	isRunning = false;
-										//																//																}
-										//																//															}.start();
-										//
-										//															} catch (Exception ex) {
-										//															}
-										//														}
-										//
-										//													}*/
-										//											}
-										//
-										//										});
-										jASMPanel.add(instructionTableScrollPane, BorderLayout.CENTER);
+										asmPanel.add(instructionTableScrollPane, BorderLayout.CENTER);
 										{
 											instructionTable = new JTable();
 											instructionTableScrollPane.setViewportView(instructionTable);
@@ -232,7 +196,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 									}
 									{
 										instructionControlPanel = new JPanel();
-										jASMPanel.add(instructionControlPanel, BorderLayout.NORTH);
+										asmPanel.add(instructionControlPanel, BorderLayout.NORTH);
 										{
 											instructionComboBox = new JComboBox();
 											instructionControlPanel.add(instructionComboBox);
@@ -740,6 +704,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			};
 
 			symbolTable.setModel(sortableTableModel);
+			symbolTable.setDefaultRenderer(Elf32_Sym.class, new SymbolTableCellRenderer());
+			symbolTable.setDefaultRenderer(String.class, new SymbolTableCellRenderer());
 			symbolTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					symbolTableMouseClicked(evt);
@@ -843,7 +809,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			dwarfPanel = new JPanel();
 			BorderLayout jDwarfPanelLayout = new BorderLayout();
 			dwarfPanel.setLayout(jDwarfPanelLayout);
-			dwarfPanel.add(getPeterDwarfPanel(), BorderLayout.NORTH);
+			dwarfPanel.add(getPeterDwarfPanel(), BorderLayout.CENTER);
 		}
 		return dwarfPanel;
 	}

@@ -127,14 +127,12 @@ public class JmpSocketServer implements Runnable {
 
 					int byteRead = 0;
 					while (byteRead < bytes.length) {
-						System.out.println(">>" + (bytes.length - byteRead));
 						int b = in.read(bytes, byteRead, bytes.length - byteRead);
 						if (b < 0) {
 							System.out.println("b<0");
 							System.exit(-1);
 						}
 						byteRead += b;
-						System.out.println("byteRead=" + byteRead);
 					}
 					//					in.readFully(bytes);
 
@@ -220,7 +218,6 @@ public class JmpSocketServer implements Runnable {
 							lineNo++;
 						}
 					}
-					System.out.println("lineNo=" + lineNo);
 
 					out.write("done".getBytes());
 				}
