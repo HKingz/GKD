@@ -82,7 +82,7 @@ public class JmpSocketServer implements Runnable {
 				int segmentRegisterSize = in.read();
 
 				int lineNo = 1;
-				int totalSize = physicalAddressSize;//* 2+ segmentAddressSize * 2 + registerSize * 8;// + segmentRegisterSize * 6;
+				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
 
 				int noOfJmpRecordToFlush = 50000;
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
@@ -113,7 +113,7 @@ public class JmpSocketServer implements Runnable {
 					//					System.out.println(">>" + in.readByte());
 					//					System.out.println(">>" + in.readByte());
 
-					System.out.println("wait start");
+					//					System.out.println("wait start");
 					//					String beacon = String.valueOf((char) in.read()) + (char) in.read() + (char) in.read() + (char) in.read() + (char) in.read();
 					byte startBytes[] = new byte[5];
 					//										in.read(startBytes);
@@ -127,8 +127,9 @@ public class JmpSocketServer implements Runnable {
 
 					int byteRead = 0;
 					while (byteRead < bytes.length) {
+						System.out.println(">>" + (bytes.length - byteRead));
 						int b = in.read(bytes, byteRead, bytes.length - byteRead);
-						if (b <= 0) {
+						if (b < 0) {
 							System.out.println("b<0");
 							System.exit(-1);
 						}
@@ -139,26 +140,26 @@ public class JmpSocketServer implements Runnable {
 
 					int offset = 0;
 					offset += read(fromAddress, bytes, offset, physicalAddressSize);
-					//					offset += read(toAddress, bytes, offset, physicalAddressSize);
-					//
-					//					offset += read(segmentStart, bytes, offset, segmentAddressSize);
-					//					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
-					//
-					//					offset += read(eax, bytes, offset, registerSize);
-					//					offset += read(ecx, bytes, offset, registerSize);
-					//					offset += read(edx, bytes, offset, registerSize);
-					//					offset += read(ebx, bytes, offset, registerSize);
-					//					offset += read(esp, bytes, offset, registerSize);
-					//					offset += read(ebp, bytes, offset, registerSize);
-					//					offset += read(esi, bytes, offset, registerSize);
-					//					offset += read(edi, bytes, offset, registerSize);
+					offset += read(toAddress, bytes, offset, physicalAddressSize);
 
-					//					offset += read(es, bytes, offset, segmentRegisterSize);
-					//					offset += read(cs, bytes, offset, segmentRegisterSize);
-					//					offset += read(ss, bytes, offset, segmentRegisterSize);
-					//					offset += read(ds, bytes, offset, segmentRegisterSize);
-					//					offset += read(fs, bytes, offset, segmentRegisterSize);
-					//					offset += read(gs, bytes, offset, segmentRegisterSize);
+					offset += read(segmentStart, bytes, offset, segmentAddressSize);
+					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
+
+					offset += read(eax, bytes, offset, registerSize);
+					offset += read(ecx, bytes, offset, registerSize);
+					offset += read(edx, bytes, offset, registerSize);
+					offset += read(ebx, bytes, offset, registerSize);
+					offset += read(esp, bytes, offset, registerSize);
+					offset += read(ebp, bytes, offset, registerSize);
+					offset += read(esi, bytes, offset, registerSize);
+					offset += read(edi, bytes, offset, registerSize);
+
+					offset += read(es, bytes, offset, segmentRegisterSize);
+					offset += read(cs, bytes, offset, segmentRegisterSize);
+					offset += read(ss, bytes, offset, segmentRegisterSize);
+					offset += read(ds, bytes, offset, segmentRegisterSize);
+					offset += read(fs, bytes, offset, segmentRegisterSize);
+					offset += read(gs, bytes, offset, segmentRegisterSize);
 
 					//					int c = in.read();
 					//					System.out.println(c + "," + (char) c);
@@ -219,10 +220,9 @@ public class JmpSocketServer implements Runnable {
 							lineNo++;
 						}
 					}
+					System.out.println("lineNo=" + lineNo);
 
 					out.write("done".getBytes());
-					
-
 				}
 
 				in.close();

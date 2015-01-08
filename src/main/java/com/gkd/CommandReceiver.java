@@ -25,6 +25,8 @@ public class CommandReceiver {
 			char c;
 			while ((x = is.read()) != -1) {
 				c = (char) x;
+				//				System.out.print(c);
+				//				System.out.flush();
 				content.append(c);
 				line += c;
 				Matcher matcher = pattern.matcher(line);
