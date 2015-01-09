@@ -29,7 +29,7 @@ public class SearchMemoryDialog extends JDialog {
 	private JTextField textField1;
 	private JLabel label1;
 	private JPanel panel2;
-	private JLabel jAddressLabel;
+	private JLabel addressLabel;
 	int patternByte[];
 	boolean shouldStop;
 	Thread t;
@@ -49,8 +49,8 @@ public class SearchMemoryDialog extends JDialog {
 			panel1 = new JPanel();
 			getContentPane().add(panel1, BorderLayout.SOUTH);
 
-			jAddressLabel = new JLabel();
-			panel1.add(jAddressLabel);
+			addressLabel = new JLabel();
+			panel1.add(addressLabel);
 
 			button1 = new JButton();
 			panel1.add(button1);
@@ -102,7 +102,7 @@ public class SearchMemoryDialog extends JDialog {
 			progressBar1.setMaximum(100);
 			int totalByte = 200;
 			for (long addr = from; addr <= to; addr += (totalByte - patternByte.length + 1)) {
-				jAddressLabel.setText("0x" + Long.toHexString(addr));
+				addressLabel.setText("0x" + Long.toHexString(addr));
 				//				GKD.commandReceiver.clearBuffer();
 				//				GKD.sendBochsCommand("xp /" + totalByte + "bx " + addr);
 				float totalByte2 = totalByte - 1;
