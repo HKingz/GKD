@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.gkd.GKD;
 import com.gkd.instrument.callgraph.JmpData;
 
 public class JmpTableModel extends DefaultTableModel {
@@ -43,9 +44,11 @@ public class JmpTableModel extends DefaultTableModel {
 		} else if (column == 1) {
 			return dateFormat.format(jmpData.date);
 		} else if (column == 2) {
-			return "0x" + Long.toHexString(jmpData.fromAddress) + " " + StringUtils.defaultString(jmpData.fromAddressDescription);
+			return "0x" + Long.toHexString(jmpData.fromAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress).DW_AT_name + " "
+					+ StringUtils.defaultString(jmpData.fromAddressDescription);
 		} else if (column == 3) {
-			return "0x" + Long.toHexString(jmpData.toAddress) + " " + StringUtils.defaultString(jmpData.toAddressDescription);
+			return "0x" + Long.toHexString(jmpData.toAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress).DW_AT_name + " "
+					+ StringUtils.defaultString(jmpData.toAddressDescription);
 		} else if (column == 4) {
 			return "0x" + Long.toHexString(jmpData.segmentStart);
 		} else if (column == 5) {

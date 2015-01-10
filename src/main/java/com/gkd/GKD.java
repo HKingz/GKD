@@ -264,7 +264,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem loadSystemMapMenuItem;
 	private JMenu systemMenu;
 	private JToggleButton sourceLevelDebuggerToggleButton;
-	private SourceLevelDebugger sourceLevelDebugger;
+	public static SourceLevelDebugger sourceLevelDebugger;
 	public JMenuItem disasmHereMenuItem;
 	private JSeparator jSeparator3;
 	private JRadioButton mmxRadioButton;

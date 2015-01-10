@@ -807,8 +807,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private JPanel getDwarfPanel() {
 		if (dwarfPanel == null) {
 			dwarfPanel = new JPanel();
-			BorderLayout jDwarfPanelLayout = new BorderLayout();
-			dwarfPanel.setLayout(jDwarfPanelLayout);
+			BorderLayout dwarfPanelLayout = new BorderLayout();
+			dwarfPanel.setLayout(dwarfPanelLayout);
 			dwarfPanel.add(getPeterDwarfPanel(), BorderLayout.CENTER);
 		}
 		return dwarfPanel;
