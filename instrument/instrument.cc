@@ -876,7 +876,7 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 
 			writeToSocket(jmpSockfd, "start", 5);
 
-			writeToSocket(jmpSockfd, toAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
+			writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
 			writeToSocket(jmpSockfd, toAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
 
 			writeToSocket(jmpSockfd, segmentBeginVector, segmentSize * JMP_CACHE_SIZE);
