@@ -133,7 +133,7 @@ import com.peterswing.advancedswing.pager.PagerEventListener;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 public class InstrumentPanel extends JPanel implements ChartChangeListener, ChartMouseListener {
-	private JTabbedPane tabbedPane1;
+	private JTabbedPane mainTabbedPane;
 	private JPanel memoryPanel;
 	private JButton clearInterruptButton;
 	private JButton invisible3dChartButton;
@@ -267,19 +267,19 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			setLayout(thisLayout);
 			setPreferredSize(new java.awt.Dimension(870, 609));
 			{
-				tabbedPane1 = new JTabbedPane();
-				add(tabbedPane1, BorderLayout.CENTER);
-				tabbedPane1.setTabPlacement(JTabbedPane.LEFT);
-				tabbedPane1.setPreferredSize(new java.awt.Dimension(661, 419));
+				mainTabbedPane = new JTabbedPane();
+				add(mainTabbedPane, BorderLayout.CENTER);
+				mainTabbedPane.setTabPlacement(JTabbedPane.LEFT);
+				mainTabbedPane.setPreferredSize(new java.awt.Dimension(661, 419));
 				{
 					memoryPanel = new JPanel();
 					GroupLayout jMemoryPanelLayout = new GroupLayout((JComponent) memoryPanel);
 					memoryPanel.setLayout(jMemoryPanelLayout);
-					tabbedPane1.addTab("Memory", null, memoryPanel, null);
-					tabbedPane1.addTab("Profiling", null, getMemoryProfilingPanel(), null);
-					tabbedPane1.addTab("Jmp", null, getJmpPanel(), null);
-					tabbedPane1.addTab("Call graph", null, getCallGraphTabbedPane(), null);
-					tabbedPane1.addTab("Interrupt", null, getInterruptPanel(), null);
+					mainTabbedPane.addTab("Memory", null, memoryPanel, null);
+					mainTabbedPane.addTab("Profiling", null, getMemoryProfilingPanel(), null);
+					mainTabbedPane.addTab("Jmp", null, getJmpPanel(), null);
+					mainTabbedPane.addTab("Call graph", null, getCallGraphTabbedPane(), null);
+					mainTabbedPane.addTab("Interrupt", null, getInterruptPanel(), null);
 					jMemoryPanelLayout
 							.setVerticalGroup(jMemoryPanelLayout
 									.createSequentialGroup()
