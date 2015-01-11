@@ -1375,7 +1375,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private JComboBox getNoOfLineComboBox() {
 		if (noOfLineComboBox == null) {
-			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "100", "200", "400", "1000" });
+			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "50", "100", "200", "400", "1000" });
 			noOfLineComboBox = new JComboBox();
 			noOfLineComboBox.setModel(jNoOfLineComboBoxModel);
 			noOfLineComboBox.setEditable(true);
@@ -1427,6 +1427,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			for (int x = 0; x < jmpDataTable.getColumnCount(); x++) {
 				jmpDataTable.getColumnModel().getColumn(x).setPreferredWidth(100);
 			}
+			jmpDataTable.getColumnModel().getColumn(2).setPreferredWidth(300);
+			jmpDataTable.getColumnModel().getColumn(3).setPreferredWidth(300);
+//			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(new AddressCellRenderer());
+//			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(new AddressCellRenderer());
 		}
 		return jmpDataTable;
 	}
@@ -1598,6 +1602,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			if (jmpPager.getPage() > jmpPager.maxPageNo) {
 				jmpPager.setPageNo(jmpPager.maxPageNo);
+			} else if (jmpPager.getPage() == 0) {
+				jmpPager.setPageNo(1);
 			}
 			jmpTableModel.removeAll();
 
@@ -1613,6 +1619,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				}
 				//jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
 			}
+			jmpTableModel.fireTableDataChanged();
 		}
 		//$hide<<$
 	}

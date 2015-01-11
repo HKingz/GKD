@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
@@ -21,13 +20,12 @@ import com.peterswing.CommonLib;
 
 public class JmpSocketServer implements Runnable {
 	private int port;
-	private JmpTableModel jmpTableModel;
 	private boolean shouldStop;
 	private ServerSocket serverSocket;
 	FileWriter fstream;
 
 	//	public static LinkedHashSet<String> segments = new LinkedHashSet<String>();
-	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
+	//	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
 	public static Vector<JmpData> jmpDataVector = new Vector<JmpData>();
 
 	public static void main(String args[]) {
@@ -36,7 +34,6 @@ public class JmpSocketServer implements Runnable {
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		this.port = port;
-		this.jmpTableModel = jmpTableModel;
 		try {
 			fstream = new FileWriter(Global.jmpLog, false);
 		} catch (IOException e1) {
@@ -208,9 +205,6 @@ public class JmpSocketServer implements Runnable {
 
 							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, segmentStart[x],
 									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
-							if (fromAddress[x] == 0) {
-								System.out.println("fuck");
-							}
 							fstream.write(lineNo + "-" + /*dateformat1.format(new Date()) +*/"-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
 									+ Long.toHexString(segmentStart[x]) + "-" + Long.toHexString(segmentEnd[x]) + "\n");
 							fstream.flush();

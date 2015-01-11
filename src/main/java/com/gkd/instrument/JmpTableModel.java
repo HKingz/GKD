@@ -1,6 +1,7 @@
 package com.gkd.instrument;
 
 import java.text.SimpleDateFormat;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
@@ -44,9 +45,19 @@ public class JmpTableModel extends DefaultTableModel {
 		} else if (column == 1) {
 			return dateFormat.format(jmpData.date);
 		} else if (column == 2) {
+			//			Hashtable<String, Object> ht = new Hashtable<String, Object>();
+			//			ht.put("address", jmpData.fromAddress);
+			//			ht.put("compileUnit", GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress));
+			//			ht.put("addressDescription", jmpData.fromAddressDescription);
+			//			return ht;
 			return "0x" + Long.toHexString(jmpData.fromAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress).DW_AT_name + " "
 					+ StringUtils.defaultString(jmpData.fromAddressDescription);
 		} else if (column == 3) {
+			//			Hashtable<String, Object> ht = new Hashtable<String, Object>();
+			//			ht.put("address", jmpData.toAddress);
+			//			ht.put("compileUnit", GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress));
+			//			ht.put("addressDescription", StringUtils.defaultString(jmpData.toAddressDescription));
+			//			return ht;
 			return "0x" + Long.toHexString(jmpData.toAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress).DW_AT_name + " "
 					+ StringUtils.defaultString(jmpData.toAddressDescription);
 		} else if (column == 4) {
