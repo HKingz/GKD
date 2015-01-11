@@ -214,9 +214,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton addZoneButton;
 	private JScrollPane jScrollPane2;
 	private JTable profilingTable;
-	private JComboBox jProfilingToComboBox;
+	private JComboBox profilingToComboBox;
 	private JLabel jLabel9;
-	private JComboBox jProfilingFromComboBox;
+	private JComboBox profilingFromComboBox;
 	private JLabel jLabel8;
 	private JLabel jLabel7;
 	private JPanel memoryProfilingPanel;
@@ -1073,13 +1073,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 							.addGroup(
 									memoryProfilingPanelLayout
 											.createParallelGroup(GroupLayout.Alignment.BASELINE)
-											.addComponent(getJProfilingFromComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+											.addComponent(getProfilingFromComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 													GroupLayout.PREFERRED_SIZE)
 											.addComponent(getJLabel8(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 													GroupLayout.PREFERRED_SIZE)
 											.addComponent(getJLabel9(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 													GroupLayout.PREFERRED_SIZE)
-											.addComponent(getJProfilingToComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+											.addComponent(getProfilingToComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 													GroupLayout.PREFERRED_SIZE)
 											.addComponent(getJAddZoneButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 													GroupLayout.PREFERRED_SIZE))
@@ -1096,7 +1096,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 							.addComponent(getJScrollPane6(), GroupLayout.PREFERRED_SIZE, 214, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 							.addComponent(getJDeleteZoneButton(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE));
-			memoryProfilingPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] { getJProfilingFromComboBox(), getJProfilingToComboBox() });
+			memoryProfilingPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] { getProfilingFromComboBox(), getProfilingToComboBox() });
 			memoryProfilingPanelLayout.setHorizontalGroup(memoryProfilingPanelLayout
 					.createSequentialGroup()
 					.addContainerGap()
@@ -1138,16 +1138,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 																					.createSequentialGroup()
 																					.addComponent(getJLabel8(), GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
 																					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																					.addComponent(getJProfilingFromComboBox(), GroupLayout.PREFERRED_SIZE,
+																					.addComponent(getProfilingFromComboBox(), GroupLayout.PREFERRED_SIZE,
 																							GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(29)))
 													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 74, GroupLayout.PREFERRED_SIZE)
 													.addComponent(getJLabel9(), GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
 													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(getJProfilingToComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+													.addComponent(getProfilingToComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 													.addComponent(getJAddZoneButton(), GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE).addGap(0, 275, Short.MAX_VALUE))
 									.addComponent(getJScrollPane2(), GroupLayout.Alignment.LEADING, 0, 764, Short.MAX_VALUE)
 									.addComponent(getJScrollPane6(), GroupLayout.Alignment.LEADING, 0, 764, Short.MAX_VALUE)).addContainerGap());
-			memoryProfilingPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] { getJProfilingFromComboBox(), getJProfilingToComboBox() });
+			memoryProfilingPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] { getProfilingFromComboBox(), getProfilingToComboBox() });
 		}
 		return memoryProfilingPanel;
 	}
@@ -1168,12 +1168,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jLabel8;
 	}
 
-	private JComboBox getJProfilingFromComboBox() {
-		if (jProfilingFromComboBox == null) {
+	private JComboBox getProfilingFromComboBox() {
+		if (profilingFromComboBox == null) {
 			ComboBoxModel jComboBox1Model = new DefaultComboBoxModel(new String[] {});
-			jProfilingFromComboBox = new JComboBox();
-			jProfilingFromComboBox.setModel(jComboBox1Model);
-			jProfilingFromComboBox.setEditable(true);
+			profilingFromComboBox = new JComboBox();
+			profilingFromComboBox.setModel(jComboBox1Model);
+			profilingFromComboBox.setEditable(true);
 
 			new Thread() {
 				public void run() {
@@ -1185,7 +1185,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				}
 			}.start();
 		}
-		return jProfilingFromComboBox;
+		return profilingFromComboBox;
 	}
 
 	private JLabel getJLabel9() {
@@ -1197,12 +1197,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jLabel9;
 	}
 
-	private JComboBox getJProfilingToComboBox() {
-		if (jProfilingToComboBox == null) {
+	private JComboBox getProfilingToComboBox() {
+		if (profilingToComboBox == null) {
 			ComboBoxModel jComboBox2Model = new DefaultComboBoxModel(new String[] {});
-			jProfilingToComboBox = new JComboBox();
-			jProfilingToComboBox.setModel(jComboBox2Model);
-			jProfilingToComboBox.setEditable(true);
+			profilingToComboBox = new JComboBox();
+			profilingToComboBox.setModel(jComboBox2Model);
+			profilingToComboBox.setEditable(true);
 
 			new Thread() {
 				public void run() {
@@ -1214,13 +1214,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				}
 			}.start();
 		}
-		return jProfilingToComboBox;
+		return profilingToComboBox;
 	}
 
-	private JTable getJProfilingTable() {
+	private JTable getProfilingTable() {
 		if (profilingTable == null) {
 			profilingTable = new JTable();
 			ProfilingTableModel profilingTableModel = new ProfilingTableModel();
+			//$hide>>$
 			profilingTable.setModel(profilingTableModel);
 			profilingTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			profilingTable.getColumnModel().getColumn(4).setPreferredWidth(3000);
@@ -1241,8 +1242,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					((ProfilingTableModel) this.profilingTable.getModel()).addZone(fromIterator.next(), toIterator.next());
 				}
 			} catch (Exception ex) {
-
+				ex.printStackTrace();
 			}
+			//$hide<<$
 		}
 		return profilingTable;
 	}
@@ -1250,7 +1252,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JScrollPane getJScrollPane2() {
 		if (jScrollPane2 == null) {
 			jScrollPane2 = new JScrollPane();
-			jScrollPane2.setViewportView(getJProfilingTable());
+			jScrollPane2.setViewportView(getProfilingTable());
 		}
 		return jScrollPane2;
 	}
@@ -1270,16 +1272,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private void jAddZoneButtonActionPerformed(ActionEvent evt) {
 		try {
-			long from = CommonLib.convertFilesize(jProfilingFromComboBox.getSelectedItem().toString());
-			long to = CommonLib.convertFilesize(jProfilingToComboBox.getSelectedItem().toString());
+			long from = CommonLib.convertFilesize(profilingFromComboBox.getSelectedItem().toString());
+			long to = CommonLib.convertFilesize(profilingToComboBox.getSelectedItem().toString());
 			if (from > to) {
 				long x = to;
 				to = from;
 				from = x;
 			}
 			((ProfilingTableModel) this.profilingTable.getModel()).addZone(from, to);
-			jProfilingFromComboBox.setSelectedItem("");
-			jProfilingToComboBox.setSelectedItem("");
+			profilingFromComboBox.setSelectedItem("");
+			profilingToComboBox.setSelectedItem("");
 
 			Setting.getInstance().profileMemoryFromAddress.add(from);
 			Setting.getInstance().profileMemoryToAddress.add(to);
@@ -1292,21 +1294,21 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	}
 
 	private void addProfileMemoryFromComboBox(Long l) {
-		for (int x = 0; x < jProfilingFromComboBox.getItemCount(); x++) {
-			if (jProfilingFromComboBox.getItemAt(x).toString().trim().equals(l.toString().trim())) {
+		for (int x = 0; x < profilingFromComboBox.getItemCount(); x++) {
+			if (profilingFromComboBox.getItemAt(x).toString().trim().equals(l.toString().trim())) {
 				return;
 			}
 		}
-		jProfilingFromComboBox.addItem("0x" + Long.toHexString(l));
+		profilingFromComboBox.addItem("0x" + Long.toHexString(l));
 	}
 
 	private void addProfileMemoryToComboBox(Long l) {
-		for (int x = 0; x < jProfilingToComboBox.getItemCount(); x++) {
-			if (jProfilingToComboBox.getItemAt(x).toString().trim().equals(l.toString().trim())) {
+		for (int x = 0; x < profilingToComboBox.getItemCount(); x++) {
+			if (profilingToComboBox.getItemAt(x).toString().trim().equals(l.toString().trim())) {
 				return;
 			}
 		}
-		jProfilingToComboBox.addItem("0x" + Long.toHexString(l));
+		profilingToComboBox.addItem("0x" + Long.toHexString(l));
 	}
 
 	private JButton getJDeleteZoneButton() {
@@ -2059,11 +2061,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTable getJCallGraphConfigTable() {
 		if (callGraphConfigTable == null) {
 			callGraphConfigTable = new JTable();
+			//$hide>>$
 			callGraphConfigTable.setModel(callGraphConfigTableModel);
 			callGraphConfigTable.getTableHeader().setReorderingAllowed(false);
 			callGraphConfigTable.getTableHeader().setReorderingAllowed(false);
 			callGraphConfigTable.setDefaultRenderer(Boolean.class, new CallGraphConfigTableCellRenderer());
 			callGraphConfigTable.setDefaultEditor(Boolean.class, new CallGraphConfigTableCellEditor());
+			//$hide<<$
 		}
 		return callGraphConfigTable;
 	}
@@ -2427,7 +2431,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTable getJInterruptTable() {
 		if (interruptTable == null) {
 			interruptTable = new JTable();
+			//$hide>>$
 			interruptTable.setModel(new InterruptTableModel());
+			//$hide<<$
 		}
 		return interruptTable;
 	}
