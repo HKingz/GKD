@@ -156,7 +156,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JSplitPane jSplitPane1;
 	private JTable interruptTable;
 	private JScrollPane interruptTableScrollPane;
-	private ChartPanel jInterruptChart;
+	private ChartPanel subInterruptChart;
 	private JPanel interruptChartPanel;
 	private JTabbedPane interruptTabbedPane;
 	private JPanel interruptPanel;
@@ -260,12 +260,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTextField filterRawTableTextField;
 	private JButton filterButton;
 	private JButton clearFilterRawTableButton;
+	private JCheckBox fullPathCheckbox;
+	AddressCellRenderer addressCellRenderer = new AddressCellRenderer();
 
 	public InstrumentPanel() {
 		try {
 			BorderLayout thisLayout = new BorderLayout();
 			setLayout(thisLayout);
-			setPreferredSize(new java.awt.Dimension(870, 609));
+			setPreferredSize(new Dimension(1482, 961));
 			{
 				mainTabbedPane = new JTabbedPane();
 				add(mainTabbedPane, BorderLayout.CENTER);
@@ -461,12 +463,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		// plot.setRangeGridlineStroke(new BasicStroke(1));
 		plot.setRangeGridlinePaint(Color.white);
 
+		//$hide<<$
+
 		// JFreeChart chart = new JFreeChart("Memory read/write hot zone", new
 		// Font("Serif", Font.PLAIN, 12), plot, true);
 		JFreeChart chart = new JFreeChart("Memory read/write hot zone", plot);
 		chart.removeLegend();
 		chart.setBackgroundPaint(Color.white);
-		//$hide<<$
 		return chart;
 	}
 
@@ -1371,6 +1374,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getFilterRawTableTextField());
 			jmpToolBarPanel.add(getFilterButton());
 			jmpToolBarPanel.add(getClearFilterRawTableButton());
+			jmpToolBarPanel.add(getFullPathCheckbox());
 		}
 		return jmpToolBarPanel;
 	}
@@ -1431,8 +1435,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			jmpDataTable.getColumnModel().getColumn(2).setPreferredWidth(300);
 			jmpDataTable.getColumnModel().getColumn(3).setPreferredWidth(300);
-			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(new AddressCellRenderer());
-			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(new AddressCellRenderer());
+			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(addressCellRenderer);
+			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(addressCellRenderer);
 		}
 		return jmpDataTable;
 	}
@@ -1819,16 +1823,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			layout.execute(cell);
 		}
-	}
-
-	private JTabbedPane getCallGraphTabbedPane() {
-		if (callGraphTabbedPane == null) {
-			callGraphTabbedPane = new JTabbedPane();
-			callGraphTabbedPane.addTab("Config", null, getCallGraphConfigPanel(), null);
-			callGraphTabbedPane.addTab("Call graph", null, getCallGraphPanel(), null);
-			callGraphTabbedPane.setOpaque(true);
-		}
-		return callGraphTabbedPane;
 	}
 
 	private JPanel getJPanel3() {
@@ -2304,16 +2298,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return jLabel12;
 	}
 
-	private JPanel getInterruptPanel() {
-		if (interruptPanel == null) {
-			interruptPanel = new JPanel();
-			BorderLayout interruptPanelLayout = new BorderLayout();
-			interruptPanel.setLayout(interruptPanelLayout);
-			interruptPanel.add(getInterruptTabbedPane(), BorderLayout.CENTER);
-		}
-		return interruptPanel;
-	}
-
 	private JTabbedPane getInterruptTabbedPane() {
 		if (interruptTabbedPane == null) {
 			interruptTabbedPane = new JTabbedPane();
@@ -2327,20 +2311,23 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			interruptChartPanel = new JPanel();
 			BorderLayout jInterruptChartPanelLayout = new BorderLayout();
 			interruptChartPanel.setLayout(jInterruptChartPanelLayout);
-			interruptChartPanel.add(getInterruptChart(), BorderLayout.CENTER);
+
+			//$hide>>$
+			interruptChartPanel.add(getSubInterruptChart(), BorderLayout.CENTER);
+			//$hide<<$
 		}
 		return interruptChartPanel;
 	}
 
-	private ChartPanel getInterruptChart() {
-		if (jInterruptChart == null) {
+	private ChartPanel getSubInterruptChart() {
+		if (subInterruptChart == null) {
 			interruptDataset = createInterruptChartDataset();
 			interruptChart = createInterruptChart(interruptDataset);
-			jInterruptChart = new ChartPanel(interruptChart);
+			subInterruptChart = new ChartPanel(interruptChart);
 
 			runTimer();
 		}
-		return jInterruptChart;
+		return subInterruptChart;
 	}
 
 	private void runTimer() {
@@ -2809,5 +2796,38 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			});
 		}
 		return clearFilterRawTableButton;
+	}
+
+	private JTabbedPane getCallGraphTabbedPane() {
+		if (callGraphTabbedPane == null) {
+			callGraphTabbedPane = new JTabbedPane();
+			callGraphTabbedPane.addTab("Config", null, getCallGraphConfigPanel(), null);
+			callGraphTabbedPane.addTab("Call graph", null, getCallGraphPanel(), null);
+			callGraphTabbedPane.setOpaque(true);
+		}
+		return callGraphTabbedPane;
+	}
+
+	private JPanel getInterruptPanel() {
+		if (interruptPanel == null) {
+			interruptPanel = new JPanel();
+			BorderLayout interruptPanelLayout = new BorderLayout();
+			interruptPanel.setLayout(interruptPanelLayout);
+			interruptPanel.add(getInterruptTabbedPane(), BorderLayout.CENTER);
+		}
+		return interruptPanel;
+	}
+
+	private JCheckBox getFullPathCheckbox() {
+		if (fullPathCheckbox == null) {
+			fullPathCheckbox = new JCheckBox("Full path");
+			fullPathCheckbox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addressCellRenderer.showFullPath = fullPathCheckbox.isSelected();
+					jmpTableModel.fireTableDataChanged();
+				}
+			});
+		}
+		return fullPathCheckbox;
 	}
 }

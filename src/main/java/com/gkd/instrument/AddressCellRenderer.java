@@ -2,6 +2,7 @@ package com.gkd.instrument;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.io.File;
 import java.util.Hashtable;
 
 import javax.swing.JLabel;
@@ -11,6 +12,8 @@ import javax.swing.table.TableCellRenderer;
 import com.peterdwarf.dwarf.CompileUnit;
 
 public class AddressCellRenderer extends JLabel implements TableCellRenderer {
+	public boolean showFullPath;
+
 	public AddressCellRenderer() {
 		setOpaque(true);
 	}
@@ -30,7 +33,14 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		Long address = (Long) ht.get("address");
 		CompileUnit cu = (CompileUnit) ht.get("compileUnit");
 		String addressDescription = (String) ht.get("addressDescription");
-		setText("<html><body>0x" + Long.toHexString(address) + " <font color=blue>" + cu.DW_AT_name + "</font> <font color=green>" + addressDescription + "</font></body></html>");
+
+		String filePath;
+		if (showFullPath) {
+			filePath = cu.DW_AT_name;
+		} else {
+			filePath = new File(cu.DW_AT_name).getName();
+		}
+		setText("<html><body>0x" + Long.toHexString(address) + " <font color=blue>" + filePath + "</font> <font color=green>" + addressDescription + "</font></body></html>");
 		return this;
 	}
 }

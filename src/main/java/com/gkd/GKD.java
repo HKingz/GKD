@@ -6222,34 +6222,62 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public void instructionUpButtonActionPerformed(ActionEvent evt) {
 		if (GKD.instructionTable.getRowCount() > 0) {
-			String firstAddress = "";
-			int x = 0;
-			do {
-				firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
-				x++;
-			} while (!CommonLib.isNumber(firstAddress));
-			firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(1)).toString(16);
+			String address;
+			int selectedIndex = -1;
 
-			instructionComboBox.setSelectedItem("0x" + firstAddress);
-			updateInstruction(CommonLib.string2BigInteger("0x" + firstAddress));
-			updateBreakpointTableColor();
+			if (evt == null) {
+				selectedIndex = sourceLevelDebugger.instructionTable.getSelectedRow();
+			} else {
+				selectedIndex = instructionTable.getSelectedRow();
+
+			}
+			if (selectedIndex != -1) {
+				address = (String) instructionTable.getValueAt(selectedIndex, 1);
+				if (address.contains("cCode")) {
+					address = address.split(":")[1];
+				}
+				BigInteger disassembleAddress = CommonLib.string2BigInteger(address).subtract(BigInteger.valueOf(1));
+
+				this.instructionComboBox.setSelectedItem("0x" + disassembleAddress.toString(16));
+				updateInstruction(disassembleAddress);
+				updateBreakpointTableColor();
+
+				if (evt == null) {
+					sourceLevelDebugger.instructionTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+				} else {
+					instructionTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+				}
+			}
 		}
 	}
 
 	public void instructionDownButtonActionPerformed(ActionEvent evt) {
 		try {
-			if (GKD.instructionTable.getRowCount() > 10) {
-				String firstAddress = "";
-				for (int x = 0, count = 0; count < 10 && x < GKD.instructionTable.getRowCount(); x++) {
-					firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().split(":")[0];
-					if (CommonLib.isNumber(firstAddress)) {
-						count++;
-					}
-				}
+			String address;
+			int selectedIndex = -1;
 
-				instructionComboBox.setSelectedItem(firstAddress);
-				updateInstruction(CommonLib.string2BigInteger(firstAddress));
+			if (evt == null) {
+				selectedIndex = sourceLevelDebugger.instructionTable.getSelectedRow();
+			} else {
+				selectedIndex = instructionTable.getSelectedRow();
+
+			}
+			if (selectedIndex != -1) {
+				address = (String) instructionTable.getValueAt(selectedIndex, 1);
+				if (address.contains("cCode")) {
+					address = address.split(":")[1];
+				}
+				BigInteger disassembleAddress = CommonLib.string2BigInteger(address);
+
+				this.instructionComboBox.setSelectedItem("0x" + disassembleAddress.toString(16));
+				updateInstruction(disassembleAddress);
 				updateBreakpointTableColor();
+
+				if (evt == null) {
+					sourceLevelDebugger.instructionTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+				} else {
+					instructionTable.setRowSelectionInterval(selectedIndex, selectedIndex);
+				}
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
