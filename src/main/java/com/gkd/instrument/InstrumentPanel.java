@@ -270,6 +270,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	AddressCellRenderer addressCellRenderer = new AddressCellRenderer();
 	private JFormattedTextField lineTextField;
 	private JButton gotoLineButton;
+	private JCheckBox removeDuplcatedCheckBox;
 
 	public InstrumentPanel() {
 		try {
@@ -285,9 +286,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					memoryPanel = new JPanel();
 					GroupLayout jMemoryPanelLayout = new GroupLayout((JComponent) memoryPanel);
 					memoryPanel.setLayout(jMemoryPanelLayout);
+					mainTabbedPane.addTab("Jmp", null, getJmpPanel(), null);
 					mainTabbedPane.addTab("Memory", null, memoryPanel, null);
 					mainTabbedPane.addTab("Profiling", null, getMemoryProfilingPanel(), null);
-					mainTabbedPane.addTab("Jmp", null, getJmpPanel(), null);
 					mainTabbedPane.addTab("Call graph", null, getCallGraphTabbedPane(), null);
 					mainTabbedPane.addTab("Interrupt", null, getInterruptPanel(), null);
 					jMemoryPanelLayout
@@ -1379,10 +1380,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getNoOfLineLabel());
 			jmpToolBarPanel.add(getNoOfLineComboBox());
 			jmpToolBarPanel.add(getWithSymbolCheckBox());
+			jmpToolBarPanel.add(getRemoveDuplcatedCheckBox());
+			jmpToolBarPanel.add(getFullPathCheckbox());
 			jmpToolBarPanel.add(getFilterRawTableTextField());
 			jmpToolBarPanel.add(getFilterButton());
 			jmpToolBarPanel.add(getClearFilterRawTableButton());
-			jmpToolBarPanel.add(getFullPathCheckbox());
 			jmpToolBarPanel.add(getLineTextField());
 			jmpToolBarPanel.add(getGotoLineButton());
 		}
@@ -1604,9 +1606,18 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private void updateJmpTable() {
 		//$hide>>$
 		synchronized (JmpSocketServer.jmpDataVector) {
+			HashSet<String> checkDuplicated = new HashSet<String>();
 			Vector<JmpData> filteredData = new Vector<JmpData>();
 			String filterText = filterRawTableTextField.getText().toLowerCase();
 			for (JmpData d : JmpSocketServer.jmpDataVector) {
+				if (removeDuplcatedCheckBox.isSelected()) {
+					String pattern = d.fromAddress + "-" + d.toAddress;
+					if (checkDuplicated.contains(pattern)) {
+						continue;
+					} else {
+						checkDuplicated.add(pattern);
+					}
+				}
 				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null) {
 					continue;
 				}
@@ -2895,5 +2906,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			});
 		}
 		return gotoLineButton;
+	}
+
+	private JCheckBox getRemoveDuplcatedCheckBox() {
+		if (removeDuplcatedCheckBox == null) {
+			removeDuplcatedCheckBox = new JCheckBox("Remove duplcated");
+		}
+		return removeDuplcatedCheckBox;
 	}
 }
