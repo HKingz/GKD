@@ -40,7 +40,10 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		} else {
 			filePath = new File(cu.DW_AT_name).getName();
 		}
-		setText("<html><body>0x" + Long.toHexString(address) + " <font color=blue>" + filePath + "</font> <font color=green>" + addressDescription + "</font></body></html>");
+		int hashCode = filePath.hashCode();
+		Color color = new Color(hashCode);
+		String hex = String.format("#%02x%02x%02x", (int) (color.getRed() * 0.5), (int) (color.getGreen() * 0.5), (int) (color.getBlue() * 0.5));
+		setText("<html><body>0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=green>" + addressDescription + "</font></body></html>");
 		return this;
 	}
 }
