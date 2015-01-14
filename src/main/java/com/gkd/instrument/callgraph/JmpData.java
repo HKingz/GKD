@@ -55,8 +55,6 @@ public class JmpData {
 	}
 
 	public boolean contains(String s) {
-		s = s.toLowerCase();
-		//		System.out.println(s + " = " + segmentStart);
 		if (Long.toHexString(segmentStart).toLowerCase().contains(s)) {
 			return true;
 		}
@@ -67,6 +65,12 @@ public class JmpData {
 			return true;
 		}
 		if (Long.toHexString(toAddress).toLowerCase().contains(s)) {
+			return true;
+		}
+		if (fromAddressDescription != null && fromAddressDescription.toLowerCase().contains(s)) {
+			return true;
+		}
+		if (toAddressDescription != null && toAddressDescription.toLowerCase().contains(s)) {
 			return true;
 		}
 		return false;

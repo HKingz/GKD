@@ -486,6 +486,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JProgressBarDialog progressBarDialog = new JProgressBarDialog();
 
 	StepThread stepThread;
+	final Highlighter hilit = new DefaultHighlighter();
+	final Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE);
+	private JButton jumpToInstructionButton;
+	public static JLabel instrumentStatusLabel;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
 			"Disp Enb Address", MyLanguage.getString("Hit") }) {
@@ -5314,6 +5318,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel25.add(getCPUModeLabel());
 			jPanel25.add(getBochsVersionLabel());
 			jPanel25.add(getLatestVersionLabel());
+			jPanel25.add(getInstrumentStatusLabel());
 		}
 		return jPanel25;
 	}
@@ -6590,10 +6595,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 		return searchObjdumpButton;
 	}
-
-	final Highlighter hilit = new DefaultHighlighter();
-	final Highlighter.HighlightPainter painter = new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE);
-	private JButton jumpToInstructionButton;
 
 	private void searchObjdumpButtonActionPerformed(ActionEvent evt) {
 		if (searchObjdumpTextField.getText().length() > 0) {
@@ -8212,5 +8213,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jumpToInstructionButton.setIcon(new ImageIcon(GKD.class.getResource("/com/gkd/icons/famfam_icons/eye.png")));
 		}
 		return jumpToInstructionButton;
+	}
+
+	private JLabel getInstrumentStatusLabel() {
+		if (instrumentStatusLabel == null) {
+			instrumentStatusLabel = new JLabel("");
+		}
+		return instrumentStatusLabel;
 	}
 }

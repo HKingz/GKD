@@ -545,7 +545,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		peterDwarfPanel.init(elfFile, memoryOffset, dialog);
 		gkd.disasmHereMenuItem.setEnabled(true);
 		gkd.clearInstructionTableMenuItem.setEnabled(true);
-		gkd.sourceLevelDebuggerToggleButtonActionPerformed(null);
+		//gkd.sourceLevelDebuggerToggleButtonActionPerformed(null);
 		com.peterswing.CommonLib.expandAll(projectTree, true);
 
 		initProjectTree();

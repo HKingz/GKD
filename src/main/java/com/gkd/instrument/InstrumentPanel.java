@@ -99,6 +99,7 @@ import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.Shape;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
+import com.gkd.GKD;
 import com.gkd.MyLanguage;
 import com.gkd.RegisterPanel;
 import com.gkd.Setting;
@@ -127,6 +128,7 @@ import com.mxgraph.util.png.mxPngEncodeParam;
 import com.mxgraph.util.png.mxPngImageEncoder;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
+import com.peterdwarf.dwarf.CompileUnit;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.combo_color_renderer.ComboBoxRenderer;
 import com.peterswing.advancedswing.pager.Pager;
@@ -1603,9 +1605,24 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		//$hide>>$
 		synchronized (JmpSocketServer.jmpDataVector) {
 			Vector<JmpData> filteredData = new Vector<JmpData>();
+			String filterText = filterRawTableTextField.getText().toLowerCase();
 			for (JmpData d : JmpSocketServer.jmpDataVector) {
-				if (d.contains(filterRawTableTextField.getText()) && (!withSymbolCheckBox.isSelected() || d.toAddressDescription != null)) {
+				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null) {
+					continue;
+				}
+				if (d.contains(filterText)) {
 					filteredData.add(d);
+				} else {
+					CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
+					if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
+						filteredData.add(d);
+						continue;
+					}
+					CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
+					if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
+						filteredData.add(d);
+						continue;
+					}
 				}
 			}
 

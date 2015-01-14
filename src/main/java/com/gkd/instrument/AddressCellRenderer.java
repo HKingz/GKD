@@ -13,6 +13,7 @@ import com.peterdwarf.dwarf.CompileUnit;
 
 public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 	public boolean showFullPath;
+	Color colors[] = { Color.red, Color.blue, Color.pink, new Color(0, 0, 100) };
 
 	public AddressCellRenderer() {
 		setOpaque(true);
@@ -40,8 +41,10 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		} else {
 			filePath = new File(cu.DW_AT_name).getName();
 		}
-		int hashCode = filePath.hashCode();
-		Color color = new Color(hashCode);
+		int hashCode = Math.abs(filePath.hashCode());
+		//Color color = new Color(hashCode);
+		System.out.println("d=" + hashCode % colors.length);
+		Color color = colors[hashCode % colors.length];
 		String hex = String.format("#%02x%02x%02x", (int) (color.getRed() * 0.5), (int) (color.getGreen() * 0.5), (int) (color.getBlue() * 0.5));
 		setText("<html><body>0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=green>" + addressDescription + "</font></body></html>");
 		return this;

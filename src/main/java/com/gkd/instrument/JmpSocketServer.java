@@ -12,6 +12,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import com.gkd.GKD;
 import com.gkd.Global;
 import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
@@ -79,7 +80,7 @@ public class JmpSocketServer implements Runnable {
 				int segmentRegisterSize = in.read();
 
 				int lineNo = 1;
-				int totalSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
+				int rowlSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
 
 				int noOfJmpRecordToFlush = 50000;
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
@@ -103,8 +104,9 @@ public class JmpSocketServer implements Runnable {
 				long fs[] = new long[noOfJmpRecordToFlush];
 				long gs[] = new long[noOfJmpRecordToFlush];
 
+				int noOfRecordRead = 0;
 				while (!shouldStop) {
-					byte bytes[] = new byte[noOfJmpRecordToFlush * totalSize];
+					byte bytes[] = new byte[noOfJmpRecordToFlush * rowlSize];
 					//					System.out.println(">>" + in.read());
 					//					System.out.println(">>" + in.readByte());
 					//					System.out.println(">>" + in.readByte());
@@ -132,6 +134,9 @@ public class JmpSocketServer implements Runnable {
 						byteRead += b;
 					}
 					//					in.readFully(bytes);
+
+					noOfRecordRead += noOfJmpRecordToFlush;
+					GKD.instrumentStatusLabel.setText("jump : " + String.format("%,d", noOfRecordRead));
 
 					int offset = 0;
 					offset += read(fromAddress, bytes, offset, physicalAddressSize);
