@@ -1640,7 +1640,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 			if (JmpSocketServer.jmpDataVector.size() > 0) {
 				try {
-					for (int x = filteredData.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
+					//for (int x = filteredData.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
+					for (int x = pageSize * (jmpPager.getPage() - 1); x < pageSize * jmpPager.getPage() && x < JmpSocketServer.jmpDataVector.size(); x++) {
 						//						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
 						JmpData jumpData = filteredData.get(x);
 						jmpTableModel.add(jumpData);
@@ -2878,12 +2879,17 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int rowNo = Integer.parseInt(lineTextField.getText());
 					int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
-					int tmp = rowNo / pageSize;
+					/*int tmp = rowNo / pageSize;
 					if (rowNo % pageSize == 0) {
 						tmp--;
 					}
 					int pageNo = jmpPager.maxPageNo - tmp;
-					jmpPager.setPageNo(pageNo);
+					*/
+					int tmp = ((rowNo - 1) / pageSize) + 1;
+					//					if (rowNo % pageSize == 0) {
+					//						tmp++;
+					//					}
+					jmpPager.setPageNo(tmp);
 					updateJmpTable();
 				}
 			});

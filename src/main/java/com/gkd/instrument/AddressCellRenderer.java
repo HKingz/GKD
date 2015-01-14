@@ -13,7 +13,8 @@ import com.peterdwarf.dwarf.CompileUnit;
 
 public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 	public boolean showFullPath;
-	Color colors[] = { Color.red, Color.blue, Color.pink, new Color(0, 0, 100) };
+	static Color colors[] = { Color.red, Color.blue, new Color(255, 0, 255), new Color(0, 128, 128), new Color(210, 105, 30), new Color(250, 128, 114), new Color(255, 140, 0),
+			new Color(30, 144, 255), new Color(50, 205, 50), new Color(0, 191, 255) };
 
 	public AddressCellRenderer() {
 		setOpaque(true);
@@ -43,10 +44,12 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		}
 		int hashCode = Math.abs(filePath.hashCode());
 		//Color color = new Color(hashCode);
-		System.out.println("d=" + hashCode % colors.length);
 		Color color = colors[hashCode % colors.length];
-		String hex = String.format("#%02x%02x%02x", (int) (color.getRed() * 0.5), (int) (color.getGreen() * 0.5), (int) (color.getBlue() * 0.5));
-		setText("<html><body>0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=green>" + addressDescription + "</font></body></html>");
+		//		String hex = String.format("#%02x%02x%02x", (int) (color.getRed() * 0.5), (int) (color.getGreen() * 0.5), (int) (color.getBlue() * 0.5));
+		String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+		setText("<html><body>0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=" + hex + ">" + addressDescription
+				+ "</font></body></html>");
+		//setBackground(color);
 		return this;
 	}
 }
