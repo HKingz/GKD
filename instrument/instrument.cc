@@ -564,8 +564,8 @@ void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_
 	 */
 }
 
-void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u new_cs, bx_address new_eip) {
-	branch_taken((bx_address) what, new_eip);
+void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u prev_cs, bx_address prev_eip, Bit16u new_cs, bx_address new_eip) {
+	branch_taken(prev_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_interrupt(unsigned vector) {
