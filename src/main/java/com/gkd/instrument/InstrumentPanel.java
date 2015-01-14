@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -49,6 +50,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -130,6 +132,8 @@ import com.peterswing.advancedswing.combo_color_renderer.ComboBoxRenderer;
 import com.peterswing.advancedswing.pager.Pager;
 import com.peterswing.advancedswing.pager.PagerEvent;
 import com.peterswing.advancedswing.pager.PagerEventListener;
+import com.peterswing.advancedswing.pager.PagerTextFieldEvent;
+import com.peterswing.advancedswing.pager.PagerTextFieldEventListener;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 public class InstrumentPanel extends JPanel implements ChartChangeListener, ChartMouseListener {
@@ -262,6 +266,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton clearFilterRawTableButton;
 	private JCheckBox fullPathCheckbox;
 	AddressCellRenderer addressCellRenderer = new AddressCellRenderer();
+	private JFormattedTextField lineTextField;
+	private JButton gotoLineButton;
 
 	public InstrumentPanel() {
 		try {
@@ -1375,6 +1381,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getFilterButton());
 			jmpToolBarPanel.add(getClearFilterRawTableButton());
 			jmpToolBarPanel.add(getFullPathCheckbox());
+			jmpToolBarPanel.add(getLineTextField());
+			jmpToolBarPanel.add(getGotoLineButton());
 		}
 		return jmpToolBarPanel;
 	}
@@ -2753,6 +2761,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					updateJmpTable();
 				}
 			});
+			jmpPager.addPagerTextFieldEventListener(new PagerTextFieldEventListener() {
+				public void KeyReleased(PagerTextFieldEvent evt) {
+					updateJmpTable();
+				}
+			});
 		}
 		return jmpPager;
 	}
@@ -2829,5 +2842,35 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			});
 		}
 		return fullPathCheckbox;
+	}
+
+	private JFormattedTextField getLineTextField() {
+		if (lineTextField == null) {
+			DecimalFormat formatter = new DecimalFormat();
+			formatter.setGroupingUsed(false);
+			lineTextField = new JFormattedTextField(formatter);
+			lineTextField.setColumns(10);
+		}
+		return lineTextField;
+	}
+
+	private JButton getGotoLineButton() {
+		if (gotoLineButton == null) {
+			gotoLineButton = new JButton("Goto line");
+			gotoLineButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int rowNo = Integer.parseInt(lineTextField.getText());
+					int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
+					int tmp = rowNo / pageSize;
+					if (rowNo % pageSize == 0) {
+						tmp--;
+					}
+					int pageNo = jmpPager.maxPageNo - tmp;
+					jmpPager.setPageNo(pageNo);
+					updateJmpTable();
+				}
+			});
+		}
+		return gotoLineButton;
 	}
 }
