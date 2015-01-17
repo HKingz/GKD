@@ -6,6 +6,9 @@ import java.awt.EventQueue;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -13,7 +16,6 @@ import javax.swing.border.EmptyBorder;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
-import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 
@@ -39,10 +41,9 @@ public class TestJGraphx extends JFrame {
 	public TestJGraphx() {
 		graph = new mxGraph() {
 			public void drawState(mxICanvas canvas, mxCellState state, boolean drawLabel) {
-				String label = (drawLabel) ? state.getLabel() : "";
 				if (getModel().isVertex(state.getCell()) && canvas instanceof JGraphxCanvas) {
 					JGraphxCanvas c = (JGraphxCanvas) canvas;
-					c.drawVertex(state, label);
+					c.drawVertex(state);
 				} else {
 					super.drawState(canvas, state, true);
 				}
@@ -82,11 +83,21 @@ public class TestJGraphx extends JFrame {
 		graphxComponent.setConnectable(false);
 		graphxComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 			public void mouseReleased(MouseEvent e) {
-				Object cell = graphxComponent.getCellAt(e.getX(), e.getY());
-
-				if (cell != null) {
-					String label = graph.getLabel(cell);
-					System.out.println(label);
+				mxCell cell = (mxCell) graphxComponent.getCellAt(e.getX(), e.getY());
+				if (cell == null) {
+					return;
+				}
+				JComponent value = (JComponent) cell.getValue();
+				if (value instanceof JCheckBox) {
+					JCheckBox c = (JCheckBox) value;
+					c.setSelected(!c.isSelected());
+					//c.repaint();
+					//					e.setSource(c);
+					//					c.dispatchEvent(e);
+					//					c.repaint();
+					//					c.updateUI();
+					graphxComponent.repaint();
+					System.out.println("ok");
 				}
 			}
 		});
@@ -102,13 +113,15 @@ public class TestJGraphx extends JFrame {
 	}
 
 	private void addCells(Object parent) {
-		mxCell node = (mxCell) graph.insertVertex(parent, null, "one", 200, 200, 50, 50);
+		mxCell node = (mxCell) graph.insertVertex(parent, null, new JButton("B1"), 200, 200, 50, 50);
 		mxCell ports[] = addPort(node);
 
-		mxCell node2 = (mxCell) graph.insertVertex(parent, null, "two", 300, 200, 50, 50);
+		mxCell node2 = (mxCell) graph.insertVertex(parent, null, new JCheckBox("C1"), 300, 200, 50, 50);
 		mxCell ports2[] = addPort(node2);
 
-		graph.insertEdge(parent, null, "", ports[1], ports2[0], "edgeStyle=entityRelationEdgeStyle;");
+		graph.insertEdge(parent, null, "", ports[0], ports2[0], "edgeStyle=entityRelationEdgeStyle;");
+		graph.insertEdge(parent, null, "", ports[1], ports2[1], "edgeStyle=entityRelationEdgeStyle;");
+		graph.insertEdge(parent, null, "", ports[2], ports2[2], "edgeStyle=entityRelationEdgeStyle;");
 
 	}
 
@@ -117,21 +130,27 @@ public class TestJGraphx extends JFrame {
 		final int PORT_RADIUS = PORT_DIAMETER / 2;
 
 		mxGeometry geo1 = new mxGeometry(0, 0.5, PORT_DIAMETER, PORT_DIAMETER);
-		geo1.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
+		//geo1.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
 		geo1.setRelative(true);
-
 		mxCell port1 = new mxCell(null, geo1, "shape=ellipse;perimter=ellipsePerimeter");
 		port1.setVertex(true);
 		graph.addCell(port1, node);
 
 		mxGeometry geo2 = new mxGeometry(1, 0.5, PORT_DIAMETER, PORT_DIAMETER);
-		geo2.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
+		//geo2.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
 		geo2.setRelative(true);
-
 		mxCell port2 = new mxCell(null, geo2, "shape=ellipse;perimter=ellipsePerimeter");
 		port2.setVertex(true);
 		graph.addCell(port2, node);
-		return new mxCell[] { port1, port2 };
+
+		mxGeometry geo3 = new mxGeometry(1, 0.6, PORT_DIAMETER, PORT_DIAMETER);
+		//geo2.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
+		geo3.setRelative(true);
+		mxCell port3 = new mxCell(null, geo3, "shape=ellipse;perimter=ellipsePerimeter");
+		port2.setVertex(true);
+		graph.addCell(port3, node);
+
+		return new mxCell[] { port1, port2, port3 };
 	}
 
 }

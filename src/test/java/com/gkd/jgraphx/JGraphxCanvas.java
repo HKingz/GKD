@@ -5,9 +5,10 @@ import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.CellRendererPane;
-import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.view.mxInteractiveCanvas;
 import com.mxgraph.view.mxCellState;
@@ -32,9 +33,11 @@ public class JGraphxCanvas extends mxInteractiveCanvas {
 		jLabel.setFont(new Font("arial", Font.PLAIN, 10));
 	}
 
-	public void drawVertex(mxCellState state, String label) {
-		rendererPane.paintComponent(g, new JButton(label), graphComponent, (int) state.getX() + translate.x, (int) state.getY() + translate.y, (int) state.getWidth(),
-				(int) state.getHeight(), true);
+	public void drawVertex(mxCellState state) {
+		mxCell cell = (mxCell) state.getCell();
+		JComponent value = (JComponent) cell.getValue();
+		rendererPane.paintComponent(g, value, graphComponent, (int) state.getX() + translate.x, (int) state.getY() + translate.y, (int) state.getWidth(), (int) state.getHeight(),
+				true);
 	}
 
 	public void drawBackground() {
