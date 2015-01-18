@@ -38,10 +38,10 @@ public class SchemaGraphComponent extends mxGraphComponent {
 					double x = (left) ? start.getX() : start.getX() + start.getWidth();
 					double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
 					System.out.println("\t\t" + x + "," + y);
-//					System.out.println("\t\t" + x2 + "," + y);
+					//					System.out.println("\t\t" + x2 + "," + y);
 
-					//					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
-					//					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
+					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
+					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
 
 					int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
 					System.out.println("index=" + index);
