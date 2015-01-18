@@ -271,6 +271,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JFormattedTextField lineTextField;
 	private JButton gotoLineButton;
 	private JCheckBox removeDuplcatedCheckBox;
+	private JButton callGraphButton;
 
 	public InstrumentPanel() {
 		try {
@@ -1387,6 +1388,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getClearFilterRawTableButton());
 			jmpToolBarPanel.add(getLineTextField());
 			jmpToolBarPanel.add(getGotoLineButton());
+			jmpToolBarPanel.add(getCallGraphButton());
 		}
 		return jmpToolBarPanel;
 	}
@@ -2913,5 +2915,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			removeDuplcatedCheckBox = new JCheckBox("Remove duplcated");
 		}
 		return removeDuplcatedCheckBox;
+	}
+	private JButton getCallGraphButton() {
+		if (callGraphButton == null) {
+			callGraphButton = new JButton("Call graph");
+		}
+		return callGraphButton;
 	}
 }
