@@ -116,7 +116,7 @@ public class TestJGraphx extends JFrame {
 		mxCell node = (mxCell) graph.insertVertex(parent, null, new JButton("B1"), 200, 200, 50, 50);
 		mxCell ports[] = addPort(node);
 
-		mxCell node2 = (mxCell) graph.insertVertex(parent, null, new JCheckBox("C1"), 300, 200, 50, 50);
+		mxCell node2 = (mxCell) graph.insertVertex(parent, null, new JCheckBox("C1"), 300, 300, 50, 50);
 		mxCell ports2[] = addPort(node2);
 
 		graph.insertEdge(parent, null, "", ports[0], ports2[0], "edgeStyle=entityRelationEdgeStyle;");
