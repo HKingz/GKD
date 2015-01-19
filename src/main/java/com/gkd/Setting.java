@@ -1,8 +1,10 @@
 package com.gkd;
 
+import java.awt.Component;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
@@ -86,6 +88,23 @@ public class Setting {
 	private String lastElfHistoryOpenDir2 = new File(".").getAbsolutePath();
 	private String lastMapOpenDir = new File(".").getAbsolutePath();
 	private String lastLoadElfOpenDir = new File(".").getAbsolutePath();
+
+	class DialogPosition {
+		public int x;
+		public int y;
+		public int width;
+		public int height;
+
+		public DialogPosition(int x, int y, int width, int height) {
+			super();
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+		}
+	}
+
+	public HashMap<String, DialogPosition> dialogPositions = new HashMap<String, DialogPosition>();
 
 	public Setting() {
 		currentLanguage = "en_US";
@@ -171,5 +190,23 @@ public class Setting {
 
 	public void setLastLoadElfOpenDir(String lastLoadElfOpenDir) {
 		this.lastLoadElfOpenDir = lastLoadElfOpenDir;
+	}
+
+	public void saveComponentPositionAndSize(String name, Component component) {
+		dialogPositions.put(name, new DialogPosition(component.getX(), component.getY(), component.getWidth(), component.getHeight()));
+		getInstance().save();
+	}
+
+	public void restoreComponentPositionAndSize(String name, Component component) {
+		Setting setting = Setting.load();
+
+		if (dialogPositions == null) {
+			return;
+		}
+		DialogPosition p = setting.dialogPositions.get(name);
+		if (p != null) {
+			component.setLocation(p.x, p.y);
+			component.setSize(p.width, p.height);
+		}
 	}
 }

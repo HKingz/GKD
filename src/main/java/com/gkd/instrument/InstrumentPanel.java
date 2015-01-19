@@ -2932,6 +2932,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					String str = JOptionPane.showInputDialog(gkd, "How many instruction?", "10000");
 					int noOfInstruction = Integer.parseInt(str);
 					Vector<JmpData> data = new Vector<JmpData>();
+					int pageNo = jmpPager.getPage() - 1;
+					int pageSize = jmpDataTable.getRowCount();
+					int startRecordIndex = pageNo * pageSize + jmpDataTable.getSelectedRow();
+					System.out.println("pageNo=" + pageNo);
+
+					for (int x = 0; x < noOfInstruction; x++) {
+						data.add(JmpSocketServer.jmpDataVector.get(startRecordIndex + x));
+					}
 
 					new CallGraphDialog(gkd, data, noOfInstruction).setVisible(true);
 				}

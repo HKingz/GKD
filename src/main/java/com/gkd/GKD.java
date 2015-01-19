@@ -2213,7 +2213,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	boolean is32Bits() {
+	public boolean is32Bits() {
 		String cr0 = registerPanel.cr0TextField.getText();
 		return (CommonLib.string2int(cr0.substring(cr0.length() - 1)) & 1) == 1;
 	}
