@@ -110,6 +110,7 @@ import com.gkd.instrument.callgraph.CallGraphConfigTableModel;
 import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.jfreechart.MyXYBlockRenderer;
 import com.gkd.instrument.jfreechart.MyXYToolTipGenerator;
+import com.gkd.instrument.newcallgraph.CallGraphDialog;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.layout.mxCircleLayout;
@@ -272,8 +273,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton gotoLineButton;
 	private JCheckBox removeDuplcatedCheckBox;
 	private JButton callGraphButton;
+	GKD gkd;
 
-	public InstrumentPanel() {
+	public InstrumentPanel(GKD gkd) {
+		this.gkd = gkd;
 		try {
 			BorderLayout thisLayout = new BorderLayout();
 			setLayout(thisLayout);
@@ -2916,9 +2919,23 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		}
 		return removeDuplcatedCheckBox;
 	}
+
 	private JButton getCallGraphButton() {
 		if (callGraphButton == null) {
 			callGraphButton = new JButton("Call graph");
+			callGraphButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					if (jmpDataTable.getSelectedRowCount() == 0) {
+						JOptionPane.showMessageDialog(gkd, "Please select one row", "Warning", JOptionPane.WARNING_MESSAGE);
+						return;
+					}
+					String str = JOptionPane.showInputDialog(gkd, "How many instruction?", "10000");
+					int noOfInstruction = Integer.parseInt(str);
+					Vector<JmpData> data = new Vector<JmpData>();
+
+					new CallGraphDialog(gkd, data, noOfInstruction).setVisible(true);
+				}
+			});
 		}
 		return callGraphButton;
 	}

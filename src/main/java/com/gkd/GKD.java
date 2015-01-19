@@ -713,7 +713,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			Global.elfPaths = elf.split(",");
 		}
 
-		final GKD gkd = new GKD();
+		GKD gkd = new GKD();
 		VMController.getVM().setGKDInstance(gkd);
 		VMController.getVM().setVMPath(GKDCommonLib.readConfig(cmd, "/gkd/vm/text()"));
 		VMController.getVM().setVMArguments(GKDCommonLib.readConfig(cmd, "/gkd/vmArguments/text()"));
@@ -6880,7 +6880,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private InstrumentPanel getJInstrumentPanel() {
 		if (instrumentPanel == null) {
-			instrumentPanel = new InstrumentPanel();
+			instrumentPanel = new InstrumentPanel(this);
 		}
 		return instrumentPanel;
 	}
