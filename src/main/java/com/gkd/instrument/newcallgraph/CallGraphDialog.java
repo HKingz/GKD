@@ -3,6 +3,7 @@ package com.gkd.instrument.newcallgraph;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Date;
 import java.util.Vector;
 
 import javax.swing.JDialog;
@@ -20,7 +21,11 @@ public class CallGraphDialog extends JDialog {
 	Vector<JmpData> jmpData;
 
 	public static void main(String args[]) {
-		new CallGraphDialog(null, null, 0).setVisible(true);
+		Vector<JmpData> jmpData = new Vector<JmpData>();
+		jmpData.add(new JmpData(0, new Date(), 0x1600000, "1", 0x1600005, "4", 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14));
+		jmpData.add(new JmpData(1, new Date(), 4, "4", 15, "15", 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14));
+
+		new CallGraphDialog(null, jmpData, 0).setVisible(true);
 	}
 
 	public CallGraphDialog(JFrame frame, Vector<JmpData> jmpData, int noOfInstruction) {

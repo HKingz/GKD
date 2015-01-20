@@ -2,9 +2,6 @@ package com.gkd.instrument.newcallgraph;
 
 import java.awt.Component;
 
-import javax.swing.JComponent;
-
-import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
@@ -72,18 +69,19 @@ public class CallGraphComponent extends mxGraphComponent {
 
 	@Override
 	public Component[] createComponents(mxCellState state) {
-		if (getGraph().getModel().isVertex(state.getCell())) {
-			mxCell cell = (mxCell) state.getCell();
-			JComponent value = (JComponent) cell.getValue();
-			if (value == null) {
-				return null;
-			} else {
-				return new Component[] { value };
-			}
-		}
 		//		if (getGraph().getModel().isVertex(state.getCell())) {
-		//			return new Component[] { new JLabel("Peter") };
+		//			mxCell cell = (mxCell) state.getCell();
+		//			JComponent value = (JComponent) cell.getValue();
+		//			if (value == null) {
+		//				return null;
+		//			} else {
+		//				return new Component[] { value };
+		//			}
 		//		}
+		if (getGraph().getModel().isVertex(state.getCell())) {
+			String label = state.getLabel();
+			return new Component[] { new UIComponent(state.getCell(), this) };
+		}
 
 		return null;
 	}

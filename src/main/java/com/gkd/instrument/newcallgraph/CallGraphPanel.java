@@ -19,8 +19,6 @@ import com.gkd.stub.VMController;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphOutline;
-import com.mxgraph.util.mxPoint;
-import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 import com.peterswing.CommonLib;
@@ -80,57 +78,57 @@ public class CallGraphPanel extends JPanel {
 		};
 
 		mxGraphView graphView = new mxGraphView(graph) {
-			public void updateFloatingTerminalPoint(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
-				//				System.out.println("updateFloatingTerminalPoint=");
-				//				System.out.println(edge);
-				//				System.out.println(start);
-				//				System.out.println(end);
-				//				System.out.println(isSource);
-				double y = start.getY() + start.getHeight() / 2;
-
-				boolean left = start.getX() > end.getX();
-				//								double x = (left) ? start.getX() : start.getX() + start.getWidth();
-				//				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
-				//				System.out.println("\t\t" + x2 + "," + y);
-
-				//					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
-				//					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
-
-				mxCell cell = (mxCell) start.getCell();
-				CallGraphDialogComponent c = (CallGraphDialogComponent) cell.getValue();
-
-				//				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
-				//				System.out.println("y=" + y);
-				//				if (isSource) {
-				//					try {
-				//						//x = c.label2.getLocationOnScreen().x;
-				//						//						x = start.getX() + start.getWidth();
-				//						y = c.label2.getLocation().y;
-				//						System.out.println("y2=" + y);
-				//					} catch (Exception ex) {
-				//
-				//					}
-				//					System.out.println("\t\t >> " + x + "," + y);
-				//					edge.setAbsolutePoint(index, new mxPoint(x, y));
-				//				} else {
-				//					System.out.println("\t\t" + x + "," + y);
-				//					edge.setAbsolutePoint(index, new mxPoint(x, y));
-				//				}
-
-				double x = (left) ? start.getX() : start.getX() + start.getWidth();
-				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
-				//				System.out.println("\t\t" + x + "," + y);
-				//					System.out.println("\t\t" + x2 + "," + y);
-
-				int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
-				edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
-
-				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
-				//				System.out.println("index=" + index);
-				edge.setAbsolutePoint(index, new mxPoint(x, y));
-
-				//								super.updateFloatingTerminalPoint(edge, start, end, isSource);
-			}
+			//			public void updateFloatingTerminalPoint(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
+			//				//				System.out.println("updateFloatingTerminalPoint=");
+			//				//				System.out.println(edge);
+			//				//				System.out.println(start);
+			//				//				System.out.println(end);
+			//				//				System.out.println(isSource);
+			//				double y = start.getY() + start.getHeight() / 2;
+			//
+			//				boolean left = start.getX() > end.getX();
+			//				//								double x = (left) ? start.getX() : start.getX() + start.getWidth();
+			//				//				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
+			//				//				System.out.println("\t\t" + x2 + "," + y);
+			//
+			//				//					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
+			//				//					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
+			//
+			//				mxCell cell = (mxCell) start.getCell();
+			//				UIComponent c = (UIComponent) cell.getValue();
+			//
+			//				//				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
+			//				//				System.out.println("y=" + y);
+			//				//				if (isSource) {
+			//				//					try {
+			//				//						//x = c.label2.getLocationOnScreen().x;
+			//				//						//						x = start.getX() + start.getWidth();
+			//				//						y = c.label2.getLocation().y;
+			//				//						System.out.println("y2=" + y);
+			//				//					} catch (Exception ex) {
+			//				//
+			//				//					}
+			//				//					System.out.println("\t\t >> " + x + "," + y);
+			//				//					edge.setAbsolutePoint(index, new mxPoint(x, y));
+			//				//				} else {
+			//				//					System.out.println("\t\t" + x + "," + y);
+			//				//					edge.setAbsolutePoint(index, new mxPoint(x, y));
+			//				//				}
+			//
+			//				double x = (left) ? start.getX() : start.getX() + start.getWidth();
+			//				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
+			//				//				System.out.println("\t\t" + x + "," + y);
+			//				//					System.out.println("\t\t" + x2 + "," + y);
+			//
+			//				int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
+			//				edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
+			//
+			//				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
+			//				//				System.out.println("index=" + index);
+			//				edge.setAbsolutePoint(index, new mxPoint(x, y));
+			//
+			//				//								super.updateFloatingTerminalPoint(edge, start, end, isSource);
+			//			}
 		};
 
 		graph.setView(graphView);
@@ -161,11 +159,11 @@ public class CallGraphPanel extends JPanel {
 	}
 
 	private void addCells(Object parent, String text, Vector<String[]> data) {
-		CallGraphDialogComponent b1 = new CallGraphDialogComponent();
-		b1.titleLabel.setText(text);
-		b1.setData(data);
-		mxCell node = (mxCell) graph.insertVertex(parent, null, b1, 50, 50, 400, 200);
-		mxCell ports[] = addPort(node);
+		//		UIComponent b1 = new UIComponent(graphxComponent, null);
+		//		b1.titleLabel.setText(text);
+		//		b1.setData(data);
+		mxCell node = (mxCell) graph.insertVertex(parent, null, "b1", 50, 50, 400, 200);
+		//		mxCell ports[] = addPort(node);
 
 		//		CallGraphDialogComponent l = new CallGraphDialogComponent();
 		//
@@ -217,42 +215,44 @@ public class CallGraphPanel extends JPanel {
 			if (checkDuplicate.contains(Long.toHexString(j.fromAddress) + "," + Long.toHexString(j.toAddress))) {
 				continue;
 			}
-
-			Vector<String[]> r = VMController.getVM().instruction(BigInteger.valueOf(j.fromAddress), gkd.is32Bits());
-			String lastAddress = null;
 			Vector<String[]> data = new Vector<String[]>();
-			for (String[] s : r) {
-				if (lastAddress != s[1]) {
-					data.add(s);
+			try {
+				Vector<String[]> r = VMController.getVM().instruction(BigInteger.valueOf(j.fromAddress), gkd.is32Bits());
+				String lastAddress = null;
+				for (String[] s : r) {
+					if (lastAddress != s[1]) {
+						data.add(s);
+					}
+					lastAddress = s[1];
 				}
-				lastAddress = s[1];
+				Collections.sort(data, new Comparator<String[]>() {
+					@Override
+					public int compare(String[] o1, String[] o2) {
+						String o1Address;
+						BigInteger s1;
+						BigInteger s2;
+						if (o1[1].contains("cCode")) {
+							o1Address = o1[1].split(":")[1].trim();
+							s1 = CommonLib.string2BigInteger("0x" + o1Address);
+						} else {
+							o1Address = o1[1];
+							s1 = CommonLib.string2BigInteger(o1Address);
+						}
+
+						String o2Address;
+						if (o2[1].contains("cCode")) {
+							o2Address = o2[1].split(":")[1].trim();
+							s2 = CommonLib.string2BigInteger("0x" + o2Address);
+						} else {
+							o2Address = o2[1];
+							s2 = CommonLib.string2BigInteger(o2Address);
+						}
+						return s1.compareTo(s2);
+					}
+				});
+			} catch (Exception ex) {
 			}
-			Collections.sort(data, new Comparator<String[]>() {
-				@Override
-				public int compare(String[] o1, String[] o2) {
-					String o1Address;
-					BigInteger s1;
-					BigInteger s2;
-					if (o1[1].contains("cCode")) {
-						o1Address = o1[1].split(":")[1].trim();
-						s1 = CommonLib.string2BigInteger("0x" + o1Address);
-					} else {
-						o1Address = o1[1];
-						s1 = CommonLib.string2BigInteger(o1Address);
-					}
-
-					String o2Address;
-					if (o2[1].contains("cCode")) {
-						o2Address = o2[1].split(":")[1].trim();
-						s2 = CommonLib.string2BigInteger("0x" + o2Address);
-					} else {
-						o2Address = o2[1];
-						s2 = CommonLib.string2BigInteger(o2Address);
-					}
-					return s1.compareTo(s2);
-				}
-			});
-
+			data.add(new String[] { "a", "b", "c" });
 			checkDuplicate.add(Long.toHexString(j.fromAddress) + "," + Long.toHexString(j.toAddress));
 			System.out.println(Long.toHexString(j.fromAddress) + "," + Long.toHexString(j.toAddress));
 			addCells(parent, Long.toHexString(j.fromAddress) + "," + Long.toHexString(j.toAddress), data);

@@ -193,6 +193,9 @@ public class Setting {
 	}
 
 	public void saveComponentPositionAndSize(String name, Component component) {
+		if (dialogPositions == null) {
+			dialogPositions = new HashMap<String, DialogPosition>();
+		}
 		dialogPositions.put(name, new DialogPosition(component.getX(), component.getY(), component.getWidth(), component.getHeight()));
 		getInstance().save();
 	}

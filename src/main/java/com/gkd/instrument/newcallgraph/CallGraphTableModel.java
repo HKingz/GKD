@@ -12,18 +12,26 @@ public class CallGraphTableModel extends DefaultTableModel {
 	}
 
 	public String getColumnName(int column) {
-		return columnNames[column];
+		try {
+			return columnNames[column];
+		} catch (Exception ex) {
+			return "";
+		}
 	}
 
 	public int getColumnCount() {
-		return columnNames.length;
+		try {
+			return columnNames.length;
+		} catch (Exception ex) {
+			return 0;
+		}
 	}
 
 	public int getRowCount() {
-		if (data == null) {
-			return 0;
-		} else {
+		try {
 			return data.size();
+		} catch (Exception ex) {
+			return 0;
 		}
 	}
 
@@ -32,7 +40,11 @@ public class CallGraphTableModel extends DefaultTableModel {
 	}
 
 	public Object getValueAt(int row, int column) {
-		return data.get(row)[1] + " " + data.get(row)[2];
+		try {
+			return data.get(row)[1] + " " + data.get(row)[2];
+		} catch (Exception ex) {
+			return "";
+		}
 	}
 
 	public boolean isCellEditable(int row, int column) {

@@ -26,7 +26,6 @@
   <ldt/>
   <logToPetersoftServer>false</logToPetersoftServer>
   <loadBreakpointAtStartup>false</loadBreakpointAtStartup>
-  <loadSystemMapAtStartup>false</loadSystemMapAtStartup>
   <updateAfterGKDCommand>false</updateAfterGKDCommand>
   <updateAfterGKDCommand__register>false</updateAfterGKDCommand__register>
   <updateAfterGKDCommand__memory>false</updateAfterGKDCommand__memory>
@@ -53,7 +52,20 @@
   <jmpProfiling>false</jmpProfiling>
   <interruptProfiling>false</interruptProfiling>
   <profilingUpdateGraph>false</profilingUpdateGraph>
-  <lastElfHistoryOpenDir>/Users/peter/NetBeansProjects/GKD/.</lastElfHistoryOpenDir>
-  <lastElfHistoryOpenDir2>/Users/peter/NetBeansProjects/GKD/.</lastElfHistoryOpenDir2>
-  <lastMapOpenDir>/Users/peter/NetBeansProjects/GKD/.</lastMapOpenDir>
+  <lastElfHistoryOpenDir>/Users/peter/workspace/gkd/.</lastElfHistoryOpenDir>
+  <lastElfHistoryOpenDir2>/Users/peter/workspace/gkd/.</lastElfHistoryOpenDir2>
+  <lastMapOpenDir>/Users/peter/workspace/gkd/.</lastMapOpenDir>
+  <lastLoadElfOpenDir>/Users/peter/workspace/gkd/.</lastLoadElfOpenDir>
+  <dialogPositions>
+    <entry>
+      <string>callGraphDialog</string>
+      <com.gkd.Setting_-DialogPosition>
+        <x>95</x>
+        <y>23</y>
+        <width>1000</width>
+        <height>840</height>
+        <outer-class reference="../../../.."/>
+      </com.gkd.Setting_-DialogPosition>
+    </entry>
+  </dialogPositions>
 </Setting>
