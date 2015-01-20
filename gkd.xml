@@ -60,9 +60,9 @@
     <entry>
       <string>callGraphDialog</string>
       <com.gkd.Setting_-DialogPosition>
-        <x>631</x>
-        <y>288</y>
-        <width>1000</width>
+        <x>395</x>
+        <y>189</y>
+        <width>999</width>
         <height>840</height>
         <outer-class reference="../../../.."/>
       </com.gkd.Setting_-DialogPosition>

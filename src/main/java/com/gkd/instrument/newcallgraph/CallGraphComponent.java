@@ -10,23 +10,75 @@ import javax.swing.JViewport;
 import com.gkd.jgraphx_example.editor.JTableRenderer;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxGraphView;
 
 public class CallGraphComponent extends mxGraphComponent {
-	float addressPerPixel = (float) 327.68;
-	int pixelPerMarker = 100;
-	long markerOffset = 0;
-	long markerEnd = 1000000;
 	public HashMap<String, Vector<String[]>> tableData = new HashMap<String, Vector<String[]>>();
 
 	public CallGraphComponent(mxGraph graph) {
 		super(graph);
+
+		mxGraphView graphView = new mxGraphView(graph) {
+			public void updateFloatingTerminalPoint_old(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
+				double y = start.getY() + start.getHeight() / 2;
+
+				boolean left = start.getX() > end.getX();
+				mxCell cell = (mxCell) start.getCell();
+				UIComponent c = (UIComponent) cell.getValue();
+
+				double x = (left) ? start.getX() : start.getX() + start.getWidth();
+				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
+
+				int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
+				edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
+
+				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
+				edge.setAbsolutePoint(index, new mxPoint(x, y));
+			}
+
+			public void updateFloatingTerminalPoint(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
+				System.out.println("updateFloatingTerminalPoint=" + edge + "," + start + "," + end + "," + isSource);
+				int col = getColumn(edge, isSource);
+
+				if (col >= 0) {
+					double y = getColumnLocation(edge, start, col);
+					boolean left = start.getX() > end.getX();
+
+					if (isSource) {
+						double diff = Math.abs(start.getCenterX() - end.getCenterX()) - start.getWidth() / 2 - end.getWidth() / 2;
+
+						if (diff < 40) {
+							left = !left;
+						}
+					}
+
+					double x = (left) ? start.getX() : start.getX() + start.getWidth();
+					double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
+					System.out.println("\t\t" + x + "," + y);
+					//					System.out.println("\t\t" + x2 + "," + y);
+
+					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
+					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
+
+					int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
+					System.out.println("index=" + index);
+					edge.setAbsolutePoint(index, new mxPoint(x, y));
+				} else {
+					//					super.updateFloatingTerminalPoint(edge, start, end, isSource);
+				}
+			}
+		};
+
+		graph.setView(graphView);
 	}
 
-	@Override
 	public Component[] createComponents(mxCellState state) {
+		System.out.println("components=" + components);
+		System.out.println("---- createComponents");
 		if (getGraph().getModel().isVertex(state.getCell())) {
 			System.out.println(((mxCell) state.getCell()).getAttribute("type"));
 			String label = state.getLabel();
@@ -45,7 +97,8 @@ public class CallGraphComponent extends mxGraphComponent {
 	}
 
 	public int getColumn(mxCellState state, boolean isSource) {
-		System.out.println("getColumn");
+		System.out.println("components 3=" + components);
+		System.out.println("getColumn " + state);
 		if (state != null) {
 			if (isSource) {
 				System.out.println("sourceRow=" + mxUtils.getInt(state.getStyle(), "sourceRow", -1));
@@ -60,13 +113,15 @@ public class CallGraphComponent extends mxGraphComponent {
 	}
 
 	public int getColumnLocation(mxCellState edge, mxCellState terminal, int column) {
+		System.out.println("components 2=" + components);
 		Component[] c = components.get(terminal.getCell());
+		System.out.println("c=" + c);
 		int y = 0;
 
 		if (c != null) {
 			for (int i = 0; i < c.length; i++) {
-				if (c[i] instanceof JTableRenderer) {
-					JTableRenderer vertex = (JTableRenderer) c[i];
+				if (c[i] instanceof UIComponent) {
+					UIComponent vertex = (UIComponent) c[i];
 
 					JTable table = vertex.table;
 					JViewport viewport = (JViewport) table.getParent();

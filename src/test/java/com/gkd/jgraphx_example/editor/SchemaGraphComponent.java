@@ -56,6 +56,7 @@ public class SchemaGraphComponent extends mxGraphComponent {
 	}
 
 	public int getColumn(mxCellState state, boolean isSource) {
+		System.out.println("          components 3=" + components);
 		System.out.println("getColumn");
 		if (state != null) {
 			if (isSource) {
@@ -71,6 +72,7 @@ public class SchemaGraphComponent extends mxGraphComponent {
 	}
 
 	public int getColumnLocation(mxCellState edge, mxCellState terminal, int column) {
+		System.out.println("          components 2=" + components);
 		Component[] c = components.get(terminal.getCell());
 		int y = 0;
 
@@ -92,6 +94,8 @@ public class SchemaGraphComponent extends mxGraphComponent {
 	}
 
 	public Component[] createComponents(mxCellState state) {
+		System.out.println("          components 1=" + components);
+		System.out.println("---- createComponents");
 		if (getGraph().getModel().isVertex(state.getCell())) {
 			return new Component[] { new JTableRenderer(state.getCell(), this) };
 		}

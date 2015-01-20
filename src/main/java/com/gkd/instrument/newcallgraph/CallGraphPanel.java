@@ -84,59 +84,6 @@ public class CallGraphPanel extends JPanel {
 			}
 		};
 
-		mxGraphView graphView = new mxGraphView(graph) {
-			public void updateFloatingTerminalPoint_old(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
-				double y = start.getY() + start.getHeight() / 2;
-
-				boolean left = start.getX() > end.getX();
-				mxCell cell = (mxCell) start.getCell();
-				UIComponent c = (UIComponent) cell.getValue();
-
-				double x = (left) ? start.getX() : start.getX() + start.getWidth();
-				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
-
-				int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
-				edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
-
-				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
-				edge.setAbsolutePoint(index, new mxPoint(x, y));
-			}
-
-			public void updateFloatingTerminalPoint(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
-				System.out.println("updateFloatingTerminalPoint=" + edge + "," + start + "," + end + "," + isSource);
-				int col = graphxComponent.getColumn(edge, isSource);
-
-				if (col >= 0) {
-					double y = graphxComponent.getColumnLocation(edge, start, col);
-					boolean left = start.getX() > end.getX();
-
-					if (isSource) {
-						double diff = Math.abs(start.getCenterX() - end.getCenterX()) - start.getWidth() / 2 - end.getWidth() / 2;
-
-						if (diff < 40) {
-							left = !left;
-						}
-					}
-
-					double x = (left) ? start.getX() : start.getX() + start.getWidth();
-					double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
-					System.out.println("\t\t" + x + "," + y);
-					//					System.out.println("\t\t" + x2 + "," + y);
-
-					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
-					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
-
-					int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
-					System.out.println("index=" + index);
-					edge.setAbsolutePoint(index, new mxPoint(x, y));
-				} else {
-					//					super.updateFloatingTerminalPoint(edge, start, end, isSource);
-				}
-			}
-		};
-
-		graph.setView(graphView);
-
 		graphxComponent = new CallGraphComponent(graph);
 		leftPanel.setLayout(new BorderLayout(0, 0));
 		graphOutline = new mxGraphOutline(graphxComponent);
@@ -163,8 +110,8 @@ public class CallGraphPanel extends JPanel {
 	}
 
 	public void initGraph(Vector<JmpData> jmpData, int noOfInstruction) {
-		graph.getModel().beginUpdate();
-		mxCell parent = (mxCell) graph.getDefaultParent();
+		graphxComponent.getGraph().getModel().beginUpdate();
+		mxCell parent = (mxCell) graphxComponent.getGraph().getDefaultParent();
 		Vector<String> checkDuplicate = new Vector<String>();
 		Vector<mxCell> cells = new Vector<mxCell>();
 		for (JmpData j : jmpData) {
@@ -215,8 +162,20 @@ public class CallGraphPanel extends JPanel {
 			mxCell cell = addCells(parent, Long.toHexString(j.fromAddress) + "," + Long.toHexString(j.toAddress), data);
 			cells.add(cell);
 		}
-		Object edge = graph.insertEdge(null, null, null, cells.get(0), cells.get(1), "sourceRow=" + 12 + ";targetRow=" + 14);
-		graph.getModel().endUpdate();
+
+//		graphxComponent.updateComponents();
+//		System.out.println(">>"+graphxComponent.getGraph().getModel().getChildCount(graphxComponent.getGraph().getModel().getRoot()));
+
+		Object edge = graphxComponent.getGraph().insertEdge(parent, null, null, cells.get(0), cells.get(1), "sourceRow=" + 2 + ";targetRow=" + 5);
+		//		graph.setSelectionCell(edge);
+
+		//		mxCell node11 = (mxCell) graph.insertVertex(parent, null, "11", 50, graph.getChildCells(parent).length * 250 + 10, 400, 200);
+		//		mxCell ports1[] = addPort(node11);
+		//		mxCell node22 = (mxCell) graph.insertVertex(parent, null, "22", 50, graph.getChildCells(parent).length * 250 + 10, 400, 200);
+		//		mxCell ports2[] = addPort(node22);
+		//		Object edge = graph.insertEdge(parent, null, null,node11, node22);
+		//		graph.setSelectionCell(edge);
+		graphxComponent.getGraph().getModel().endUpdate();
 	}
 
 	private mxCell addCells(Object parent, String text, Vector<String[]> data) {
@@ -251,7 +210,7 @@ public class CallGraphPanel extends JPanel {
 		//geo1.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
 		geo1.setRelative(true);
 		mxCell port1 = new mxCell(null, geo1, "shape=ellipse;perimter=ellipsePerimeter");
-		port1.setVisible(false);
+		//		port1.setVisible(false);
 		port1.setVertex(true);
 		graph.addCell(port1, node);
 
@@ -259,7 +218,7 @@ public class CallGraphPanel extends JPanel {
 		//geo2.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
 		geo2.setRelative(true);
 		mxCell port2 = new mxCell(null, geo2, "shape=ellipse;perimter=ellipsePerimeter");
-		port2.setVisible(false);
+		//		port2.setVisible(false);
 		port2.setVertex(true);
 		graph.addCell(port2, node);
 
@@ -267,7 +226,7 @@ public class CallGraphPanel extends JPanel {
 		//geo2.setOffset(new mxPoint(-PORT_RADIUS, -PORT_RADIUS));
 		geo3.setRelative(true);
 		mxCell port3 = new mxCell(null, geo3, "shape=ellipse;perimter=ellipsePerimeter");
-		port3.setVisible(false);
+		//		port3.setVisible(false);
 		port3.setVertex(true);
 		graph.addCell(port3, node);
 

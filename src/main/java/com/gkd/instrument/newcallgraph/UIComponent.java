@@ -3,6 +3,8 @@ package com.gkd.instrument.newcallgraph;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -14,6 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
+import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxCellHandler;
 import com.mxgraph.view.mxGraph;
 
@@ -29,7 +32,7 @@ public class UIComponent extends JPanel {
 	protected mxGraph graph;
 	protected CallGraphComponent graphxComponent;
 
-	public UIComponent(final Object cell, CallGraphComponent graphxComponent) {
+	public UIComponent(final Object cell, final CallGraphComponent graphxComponent) {
 		this.cell = cell;
 		this.graphxComponent = graphxComponent;
 		this.graph = graphxComponent.getGraph();
@@ -53,6 +56,11 @@ public class UIComponent extends JPanel {
 		table.setModel(model);
 		//$hide<<$
 		scrollPane.setViewportView(table);
+		scrollPane.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				((mxGraphComponent) graphxComponent).refresh();
+			}
+		});
 
 		bottomPanel = new JPanel();
 		bottomPanel.setLayout(new FlowLayout(FlowLayout.RIGHT));

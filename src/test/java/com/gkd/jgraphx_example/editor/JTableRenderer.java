@@ -344,15 +344,15 @@ public class JTableRenderer extends JComponent {
 		}
 	}
 
-	public static JTableRenderer getVertex(Component component) {
-		while (component != null) {
-			if (component instanceof JTableRenderer) {
-				return (JTableRenderer) component;
-			}
-			component = component.getParent();
-		}
-
-		return null;
-	}
+//	public static JTableRenderer getVertex(Component component) {
+//		while (component != null) {
+//			if (component instanceof JTableRenderer) {
+//				return (JTableRenderer) component;
+//			}
+//			component = component.getParent();
+//		}
+//
+//		return null;
+//	}
 
 }
