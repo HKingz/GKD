@@ -1,6 +1,8 @@
 package com.gkd.instrument.newcallgraph;
 
 import java.awt.Component;
+import java.util.HashMap;
+import java.util.Vector;
 
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxCellState;
@@ -11,6 +13,7 @@ public class CallGraphComponent extends mxGraphComponent {
 	int pixelPerMarker = 100;
 	long markerOffset = 0;
 	long markerEnd = 1000000;
+	public HashMap<String, Vector<String[]>> tableData = new HashMap<String, Vector<String[]>>();
 
 	public CallGraphComponent(mxGraph graph) {
 		super(graph);
@@ -80,7 +83,13 @@ public class CallGraphComponent extends mxGraphComponent {
 		//		}
 		if (getGraph().getModel().isVertex(state.getCell())) {
 			String label = state.getLabel();
-			return new Component[] { new UIComponent(state.getCell(), this) };
+
+			UIComponent c = new UIComponent(state.getCell(), this);
+			c.titleLabel.setText(label);
+			c.model.data = tableData.get(label);
+			c.model.fireTableDataChanged();
+			//c.addResizeHandler(state.getCell());
+			return new Component[] { c };
 		}
 
 		return null;

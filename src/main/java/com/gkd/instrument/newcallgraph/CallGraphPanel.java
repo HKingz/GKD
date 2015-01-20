@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.ImageIcon;
@@ -162,7 +163,9 @@ public class CallGraphPanel extends JPanel {
 		//		UIComponent b1 = new UIComponent(graphxComponent, null);
 		//		b1.titleLabel.setText(text);
 		//		b1.setData(data);
-		mxCell node = (mxCell) graph.insertVertex(parent, null, "b1", 50, 50, 400, 200);
+
+		graphxComponent.tableData.put(text, data);
+		mxCell node = (mxCell) graph.insertVertex(parent, null, text, 50, 50, 400, 200);
 		//		mxCell ports[] = addPort(node);
 
 		//		CallGraphDialogComponent l = new CallGraphDialogComponent();

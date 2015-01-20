@@ -14,7 +14,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
-import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.handler.mxCellHandler;
 import com.mxgraph.view.mxGraph;
 
@@ -31,6 +30,7 @@ public class UIComponent extends JPanel {
 	protected CallGraphComponent graphxComponent;
 
 	public UIComponent(final Object cell, CallGraphComponent graphxComponent) {
+		this.cell = cell;
 		this.graphxComponent = graphxComponent;
 		this.graph = graphxComponent.getGraph();
 		setLayout(new BorderLayout(0, 0));
@@ -46,7 +46,7 @@ public class UIComponent extends JPanel {
 		mainPanel.setLayout(new BorderLayout(0, 0));
 
 		scrollPane = new JScrollPane();
-		mainPanel.add(scrollPane, BorderLayout.NORTH);
+		mainPanel.add(scrollPane, BorderLayout.CENTER);
 
 		table = new JTable();
 		//$hide>>$
@@ -60,13 +60,17 @@ public class UIComponent extends JPanel {
 
 		resizeLabel = new JLabel("New label");
 		bottomPanel.add(resizeLabel);
-	}
 
-	public void addResizeHandler(mxCell cell) {
-		this.cell = cell;
 		ResizeHandler resizeHandler = new ResizeHandler();
 		resizeLabel.addMouseListener(resizeHandler);
 		resizeLabel.addMouseMotionListener(resizeHandler);
+	}
+
+	public void addResizeHandler(Object cell) {
+		//		this.cell = cell;
+		//		ResizeHandler resizeHandler = new ResizeHandler();
+		//		resizeLabel.addMouseListener(resizeHandler);
+		//		resizeLabel.addMouseMotionListener(resizeHandler);
 	}
 
 	@Override
@@ -103,6 +107,7 @@ public class UIComponent extends JPanel {
 		}
 
 		public void mousePressed(MouseEvent e) {
+			System.out.println("mousePressed");
 			// Selects to create a handler for resizing
 			if (!graph.isCellSelected(cell)) {
 				graphxComponent.selectCellForEvent(cell, e);
@@ -110,7 +115,7 @@ public class UIComponent extends JPanel {
 
 			// Initiates a resize event in the handler
 			mxCellHandler handler = graphxComponent.getSelectionCellsHandler().getHandler(cell);
-
+			System.out.println(handler);
 			if (handler != null) {
 				// Starts the resize at index 7 (bottom right)
 				handler.start(SwingUtilities.convertMouseEvent((Component) e.getSource(), e, graphxComponent.getGraphControl()), index);
