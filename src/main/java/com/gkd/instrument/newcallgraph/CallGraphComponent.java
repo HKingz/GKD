@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.util.HashMap;
 import java.util.Vector;
 
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
@@ -82,7 +83,11 @@ public class CallGraphComponent extends mxGraphComponent {
 		//			}
 		//		}
 		if (getGraph().getModel().isVertex(state.getCell())) {
+			System.out.println(((mxCell) state.getCell()).getAttribute("type"));
 			String label = state.getLabel();
+			if (label.equals("port")) {
+				return null;
+			}
 
 			UIComponent c = new UIComponent(state.getCell(), this);
 			c.titleLabel.setText(label);
