@@ -4,8 +4,13 @@ import java.awt.Component;
 import java.util.HashMap;
 import java.util.Vector;
 
+import javax.swing.JTable;
+import javax.swing.JViewport;
+
+import com.gkd.jgraphx_example.editor.JTableRenderer;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.util.mxUtils;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
 
@@ -20,68 +25,8 @@ public class CallGraphComponent extends mxGraphComponent {
 		super(graph);
 	}
 
-	//	@Override
-	//	public mxInteractiveCanvas createCanvas() {
-	//		return new JGraphxCanvas(this);
-	//	}
-
-	// public Component[] createComponents(mxCellState state) {
-	// if (getGraph().getModel().isVertex(state.getCell())) {
-	// System.out.println(state.getCell());
-	// // return new Component[] { new JTableRenderer(state.getCell(),
-	// // this) };
-	// return new Component[] { new JButton(((mxCell)
-	// state.getCell()).getValue().toString()) };
-	// }
-	// return null;
-	// }
-
-	//	@Override
-	//	protected void paintBackground(Graphics g) {
-	//		double scale = this.getGraph().getView().getScale();
-	//		super.paintGrid(g);
-	//
-	//		if (scale >= 0.5) {
-	//			Graphics2D g2 = (Graphics2D) g;
-	//			FontMetrics fm = g2.getFontMetrics();
-	//
-	//			int minX = (int) (50 * scale);
-	//			int minY = (int) (20 * scale);
-	//			int tricker = 10;
-	//
-	//			g2.setColor(Color.darkGray);
-	//
-	//			// address line
-	//			int actualWidth = this.getViewport().getComponent(0).getWidth();
-	//			int actualHeight = this.getViewport().getComponent(0).getHeight();
-	//			g2.drawLine(0, minY, actualWidth, minY);
-	//			int wordWidth = fm.stringWidth("This is JGraphxComponent");
-	//			g2.drawString("This is JGraphxComponent", minX, minY - 10);
-	//
-	//			int width = (int) ((markerEnd - markerOffset) / addressPerPixel);
-	//			for (int x = 0; x <= width; x += pixelPerMarker) {
-	//				float positionX = x;
-	//				float scaledPositionX = (float) (positionX * scale);
-	//				scaledPositionX += minX;
-	//				g2.drawLine((int) scaledPositionX, (int) (minY - (tricker * scale)), (int) scaledPositionX, (int) (minY + (tricker * scale)));
-	//				g2.drawString("0x" + Long.toHexString((long) (x * addressPerPixel) + markerOffset), (int) scaledPositionX, minY);
-	//			}
-	//			// end address line
-	//
-	//		}
-	//	}
-
 	@Override
 	public Component[] createComponents(mxCellState state) {
-		//		if (getGraph().getModel().isVertex(state.getCell())) {
-		//			mxCell cell = (mxCell) state.getCell();
-		//			JComponent value = (JComponent) cell.getValue();
-		//			if (value == null) {
-		//				return null;
-		//			} else {
-		//				return new Component[] { value };
-		//			}
-		//		}
 		if (getGraph().getModel().isVertex(state.getCell())) {
 			System.out.println(((mxCell) state.getCell()).getAttribute("type"));
 			String label = state.getLabel();
@@ -93,10 +38,45 @@ public class CallGraphComponent extends mxGraphComponent {
 			c.titleLabel.setText(label);
 			c.model.data = tableData.get(label);
 			c.model.fireTableDataChanged();
-			//c.addResizeHandler(state.getCell());
 			return new Component[] { c };
 		}
 
 		return null;
+	}
+
+	public int getColumn(mxCellState state, boolean isSource) {
+		System.out.println("getColumn");
+		if (state != null) {
+			if (isSource) {
+				System.out.println("sourceRow=" + mxUtils.getInt(state.getStyle(), "sourceRow", -1));
+				return mxUtils.getInt(state.getStyle(), "sourceRow", -1);
+			} else {
+				System.out.println("targetRow=" + mxUtils.getInt(state.getStyle(), "targetRow", -1));
+				return mxUtils.getInt(state.getStyle(), "targetRow", -1);
+			}
+		}
+
+		return -1;
+	}
+
+	public int getColumnLocation(mxCellState edge, mxCellState terminal, int column) {
+		Component[] c = components.get(terminal.getCell());
+		int y = 0;
+
+		if (c != null) {
+			for (int i = 0; i < c.length; i++) {
+				if (c[i] instanceof JTableRenderer) {
+					JTableRenderer vertex = (JTableRenderer) c[i];
+
+					JTable table = vertex.table;
+					JViewport viewport = (JViewport) table.getParent();
+					double dy = -viewport.getViewPosition().getY();
+					y = (int) Math.max(terminal.getY() + 22, terminal.getY() + Math.min(terminal.getHeight() - 20, 30 + dy + column * 16));
+				}
+			}
+		}
+
+		System.out.println("getColumnLocation=" + y);
+		return y;
 	}
 }

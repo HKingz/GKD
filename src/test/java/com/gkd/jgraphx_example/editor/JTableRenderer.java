@@ -236,9 +236,9 @@ public class JTableRenderer extends JComponent {
 				}
 
 				protected Transferable createTransferable(JComponent c) {
-					System.out.println("createTransferable");
 					sourceRow = getSelectedRow();
 					dragSource = JTableRenderer.this;
+					System.out.println("createTransferable , dragSource=" + dragSource);
 					//mxRectangle bounds = new mxRectangle(0, 0, MyTable.this.getWidth(), 20);
 					return new mxGraphTransferable(null, null, null);
 				}
@@ -283,7 +283,7 @@ public class JTableRenderer extends JComponent {
 				Point p = e.getLocation();
 				int targetRow = rowAtPoint(p);
 
-				System.out.println("insertEdge");
+				System.out.println("insertEdge " + dragSource.cell);
 				Object edge = graph.insertEdge(null, null, null, dragSource.cell, JTableRenderer.this.cell, "sourceRow=" + sourceRow + ";targetRow=" + targetRow);
 				graph.setSelectionCell(edge);
 

@@ -66,13 +66,6 @@ public class UIComponent extends JPanel {
 		resizeLabel.addMouseMotionListener(resizeHandler);
 	}
 
-	public void addResizeHandler(Object cell) {
-		//		this.cell = cell;
-		//		ResizeHandler resizeHandler = new ResizeHandler();
-		//		resizeLabel.addMouseListener(resizeHandler);
-		//		resizeLabel.addMouseMotionListener(resizeHandler);
-	}
-
 	@Override
 	public String toString() {
 		return "";
