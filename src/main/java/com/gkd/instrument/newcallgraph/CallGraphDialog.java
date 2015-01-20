@@ -9,6 +9,7 @@ import java.util.Vector;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 import com.gkd.GKD;
@@ -21,6 +22,11 @@ public class CallGraphDialog extends JDialog {
 	Vector<JmpData> jmpData;
 
 	public static void main(String args[]) {
+		try {
+			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingWhiteLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		Vector<JmpData> jmpData = new Vector<JmpData>();
 		jmpData.add(new JmpData(0, new Date(), 1, "1", 5, "4", 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14));
 		jmpData.add(new JmpData(1, new Date(), 4, "4", 15, "15", 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14));

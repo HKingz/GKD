@@ -81,55 +81,20 @@ public class CallGraphPanel extends JPanel {
 
 		mxGraphView graphView = new mxGraphView(graph) {
 			public void updateFloatingTerminalPoint(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
-				//				System.out.println("updateFloatingTerminalPoint=");
-				//				System.out.println(edge);
-				//				System.out.println(start);
-				//				System.out.println(end);
-				//				System.out.println(isSource);
 				double y = start.getY() + start.getHeight() / 2;
 
 				boolean left = start.getX() > end.getX();
-				//								double x = (left) ? start.getX() : start.getX() + start.getWidth();
-				//				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
-				//				System.out.println("\t\t" + x2 + "," + y);
-
-				//					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
-				//					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
-
 				mxCell cell = (mxCell) start.getCell();
 				UIComponent c = (UIComponent) cell.getValue();
 
-				//				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
-				//				System.out.println("y=" + y);
-				//				if (isSource) {
-				//					try {
-				//						//x = c.label2.getLocationOnScreen().x;
-				//						//						x = start.getX() + start.getWidth();
-				//						y = c.label2.getLocation().y;
-				//						System.out.println("y2=" + y);
-				//					} catch (Exception ex) {
-				//
-				//					}
-				//					System.out.println("\t\t >> " + x + "," + y);
-				//					edge.setAbsolutePoint(index, new mxPoint(x, y));
-				//				} else {
-				//					System.out.println("\t\t" + x + "," + y);
-				//					edge.setAbsolutePoint(index, new mxPoint(x, y));
-				//				}
-
 				double x = (left) ? start.getX() : start.getX() + start.getWidth();
 				double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
-				//				System.out.println("\t\t" + x + "," + y);
-				//					System.out.println("\t\t" + x2 + "," + y);
 
 				int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
 				edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
 
 				int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
-				//				System.out.println("index=" + index);
 				edge.setAbsolutePoint(index, new mxPoint(x, y));
-
-				//								super.updateFloatingTerminalPoint(edge, start, end, isSource);
 			}
 		};
 
@@ -204,6 +169,9 @@ public class CallGraphPanel extends JPanel {
 					}
 				});
 			} catch (Exception ex) {
+			}
+			for (int x = 0; x < 1000; x++) {
+				data.add(new String[] { String.valueOf(x), String.valueOf(x), String.valueOf(x) });
 			}
 			checkDuplicate.add(Long.toHexString(j.fromAddress) + "," + Long.toHexString(j.toAddress));
 			addCells(parent, Long.toHexString(j.fromAddress) + "," + Long.toHexString(j.toAddress), data);
