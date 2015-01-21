@@ -10,7 +10,11 @@ public class JmpData {
 	public long toAddress;
 	public String toAddressDescription;
 
-	public long what;
+	public enum JmpType {
+		unknown, BX_INSTR_IS_JMP, BX_INSTR_IS_JMP_INDIRECT, BX_INSTR_IS_CALL, BX_INSTR_IS_CALL_INDIRECT, BX_INSTR_IS_RET, BX_INSTR_IS_IRET, BX_INSTR_IS_INT, BX_INSTR_IS_SYSCALL, BX_INSTR_IS_SYSRET, BX_INSTR_IS_SYSENTER, BX_INSTR_IS_SYSEXIT,
+	}
+
+	public JmpType what;
 
 	public long segmentStart;
 	public long segmentEnd;
@@ -31,7 +35,7 @@ public class JmpData {
 	public long fs;
 	public long gs;
 
-	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, long what, long segmentStart,
+	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, JmpType what, long segmentStart,
 			long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs) {
 		this.lineNo = lineNo;
 		this.date = date;

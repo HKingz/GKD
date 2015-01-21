@@ -212,7 +212,46 @@ public class JmpSocketServer implements Runnable {
 							symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 							String toAddressDescription = symbol == null ? null : symbol.name;
 
-							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, what[x], segmentStart[x],
+							JmpData.JmpType w = null;
+							switch ((int) what[x]) {
+							case 10:
+								w = JmpData.JmpType.BX_INSTR_IS_JMP;
+								break;
+							case 11:
+								w = JmpData.JmpType.BX_INSTR_IS_JMP_INDIRECT;
+								break;
+							case 12:
+								w = JmpData.JmpType.BX_INSTR_IS_CALL;
+								break;
+							case 13:
+								w = JmpData.JmpType.BX_INSTR_IS_CALL_INDIRECT;
+								break;
+							case 14:
+								w = JmpData.JmpType.BX_INSTR_IS_RET;
+								break;
+							case 15:
+								w = JmpData.JmpType.BX_INSTR_IS_IRET;
+								break;
+							case 16:
+								w = JmpData.JmpType.BX_INSTR_IS_INT;
+								break;
+							case 17:
+								w = JmpData.JmpType.BX_INSTR_IS_SYSCALL;
+								break;
+							case 18:
+								w = JmpData.JmpType.BX_INSTR_IS_SYSRET;
+								break;
+							case 19:
+								w = JmpData.JmpType.BX_INSTR_IS_SYSENTER;
+								break;
+							case 20:
+								w = JmpData.JmpType.BX_INSTR_IS_SYSEXIT;
+								break;
+							default:
+								w = JmpData.JmpType.unknown;
+							}
+
+							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
 									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
 							fstream.write(lineNo + "-" + /*dateformat1.format(new Date()) +*/"-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
 									+ Long.toHexString(segmentStart[x]) + "-" + Long.toHexString(segmentEnd[x]) + "\n");
