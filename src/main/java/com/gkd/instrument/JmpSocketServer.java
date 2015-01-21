@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import com.gkd.GKD;
 import com.gkd.Global;
 import com.gkd.instrument.callgraph.JmpData;
+import com.gkd.instrument.callgraph.JmpType;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
@@ -107,6 +108,8 @@ public class JmpSocketServer implements Runnable {
 				long gs[] = new long[noOfJmpRecordToFlush];
 
 				int noOfRecordRead = 0;
+				int deep = 0;
+
 				while (!shouldStop) {
 					byte bytes[] = new byte[noOfJmpRecordToFlush * rowlSize];
 					//					System.out.println(">>" + in.read());
@@ -212,50 +215,80 @@ public class JmpSocketServer implements Runnable {
 							symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 							String toAddressDescription = symbol == null ? null : symbol.name;
 
-							JmpData.JmpType w = null;
+							JmpType w = null;
 							switch ((int) what[x]) {
 							case 10:
-								w = JmpData.JmpType.BX_INSTR_IS_JMP;
+								w = JmpType.JMP;
 								break;
 							case 11:
-								w = JmpData.JmpType.BX_INSTR_IS_JMP_INDIRECT;
+								w = JmpType.JMP_INDIRECT;
 								break;
 							case 12:
-								w = JmpData.JmpType.BX_INSTR_IS_CALL;
+								w = JmpType.CALL;
 								break;
 							case 13:
-								w = JmpData.JmpType.BX_INSTR_IS_CALL_INDIRECT;
+								w = JmpType.CALL_INDIRECT;
 								break;
 							case 14:
-								w = JmpData.JmpType.BX_INSTR_IS_RET;
+								w = JmpType.RET;
 								break;
 							case 15:
-								w = JmpData.JmpType.BX_INSTR_IS_IRET;
+								w = JmpType.IRET;
 								break;
 							case 16:
-								w = JmpData.JmpType.BX_INSTR_IS_INT;
+								w = JmpType.INT;
 								break;
 							case 17:
-								w = JmpData.JmpType.BX_INSTR_IS_SYSCALL;
+								w = JmpType.SYSCALL;
 								break;
 							case 18:
-								w = JmpData.JmpType.BX_INSTR_IS_SYSRET;
+								w = JmpType.SYSRET;
 								break;
 							case 19:
-								w = JmpData.JmpType.BX_INSTR_IS_SYSENTER;
+								w = JmpType.SYSENTER;
 								break;
 							case 20:
-								w = JmpData.JmpType.BX_INSTR_IS_SYSEXIT;
+								w = JmpType.SYSEXIT;
 								break;
 							default:
-								w = JmpData.JmpType.unknown;
+								w = JmpType.unknown;
 							}
 
 							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
-									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
-							fstream.write(lineNo + "-" + /*dateformat1.format(new Date()) +*/"-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
-									+ Long.toHexString(segmentStart[x]) + "-" + Long.toHexString(segmentEnd[x]) + "\n");
+									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
+							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
+									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
 							fstream.flush();
+
+							switch ((int) what[x]) {
+							case 12:
+								deep++;
+								break;
+							case 13:
+								deep++;
+								break;
+							case 14:
+								deep--;
+								break;
+							case 15:
+								deep--;
+								break;
+							case 16:
+								deep++;
+								break;
+							case 17:
+								deep++;
+								break;
+							case 18:
+								deep--;
+								break;
+							case 19:
+								deep++;
+								break;
+							case 20:
+								deep--;
+								break;
+							}
 
 							lineNo++;
 						}

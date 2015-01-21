@@ -108,6 +108,7 @@ import com.gkd.instrument.callgraph.CallGraphConfigTableCellEditor;
 import com.gkd.instrument.callgraph.CallGraphConfigTableCellRenderer;
 import com.gkd.instrument.callgraph.CallGraphConfigTableModel;
 import com.gkd.instrument.callgraph.JmpData;
+import com.gkd.instrument.callgraph.JmpType;
 import com.gkd.instrument.jfreechart.MyXYBlockRenderer;
 import com.gkd.instrument.jfreechart.MyXYToolTipGenerator;
 import com.gkd.instrument.newcallgraph.CallGraphDialog;
@@ -1427,7 +1428,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JCheckBox getWithSymbolCheckBox() {
 		if (withSymbolCheckBox == null) {
 			withSymbolCheckBox = new JCheckBox();
-			withSymbolCheckBox.setText("To address has symbol");
+			withSymbolCheckBox.setText("To address has symbol / ret");
 			withSymbolCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					withSymbolCheckBoxActionPerformed(evt);
@@ -1623,7 +1624,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						checkDuplicated.add(pattern);
 					}
 				}
-				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null) {
+				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what != JmpType.RET && d.what != JmpType.IRET && d.what != JmpType.SYSEXIT
+						&& d.what != JmpType.SYSRET) {
 					continue;
 				}
 				if (d.contains(filterText)) {
@@ -2893,20 +2895,23 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			gotoLineButton = new JButton("Goto line");
 			gotoLineButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					int rowNo = Integer.parseInt(lineTextField.getText());
-					int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
-					/*int tmp = rowNo / pageSize;
-					if (rowNo % pageSize == 0) {
-						tmp--;
+					try {
+						int rowNo = Integer.parseInt(lineTextField.getText());
+						int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
+						/*int tmp = rowNo / pageSize;
+						if (rowNo % pageSize == 0) {
+							tmp--;
+						}
+						int pageNo = jmpPager.maxPageNo - tmp;
+						*/
+						int tmp = ((rowNo - 1) / pageSize) + 1;
+						//					if (rowNo % pageSize == 0) {
+						//						tmp++;
+						//					}
+						jmpPager.setPageNo(tmp);
+						updateJmpTable();
+					} catch (Exception ex) {
 					}
-					int pageNo = jmpPager.maxPageNo - tmp;
-					*/
-					int tmp = ((rowNo - 1) / pageSize) + 1;
-					//					if (rowNo % pageSize == 0) {
-					//						tmp++;
-					//					}
-					jmpPager.setPageNo(tmp);
-					updateJmpTable();
 				}
 			});
 		}
@@ -2916,6 +2921,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JCheckBox getRemoveDuplcatedCheckBox() {
 		if (removeDuplcatedCheckBox == null) {
 			removeDuplcatedCheckBox = new JCheckBox("Remove duplcated");
+			removeDuplcatedCheckBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					updateJmpTable();
+				}
+			});
 		}
 		return removeDuplcatedCheckBox;
 	}

@@ -9,6 +9,8 @@ import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.peterdwarf.dwarf.CompileUnit;
 
 public class AddressCellRenderer extends JLabel implements TableCellRenderer {
@@ -35,6 +37,7 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		Long address = (Long) ht.get("address");
 		CompileUnit cu = (CompileUnit) ht.get("compileUnit");
 		String addressDescription = (String) ht.get("addressDescription");
+		int deep = (int) ht.get("deep");
 
 		String filePath;
 		if (showFullPath) {
@@ -47,8 +50,11 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		Color color = colors[hashCode % colors.length];
 		//		String hex = String.format("#%02x%02x%02x", (int) (color.getRed() * 0.5), (int) (color.getGreen() * 0.5), (int) (color.getBlue() * 0.5));
 		String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-		setText("<html><body>0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=" + hex + ">" + addressDescription
-				+ "</font></body></html>");
+
+		String spacer = StringUtils.repeat("&nbsp;", deep);
+
+		setText("<html><body>" + spacer + "0x" + Long.toHexString(address) + "," + deep + " <font color=" + hex + ">" + filePath + "</font> <font color=" + hex + ">"
+				+ addressDescription + "</font></body></html>");
 		//setBackground(color);
 		return this;
 	}

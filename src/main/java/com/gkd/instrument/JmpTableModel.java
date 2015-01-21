@@ -49,6 +49,7 @@ public class JmpTableModel extends DefaultTableModel {
 			ht.put("address", jmpData.fromAddress);
 			ht.put("compileUnit", GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress));
 			ht.put("addressDescription", StringUtils.defaultString(jmpData.fromAddressDescription));
+			ht.put("deep", jmpData.deep);
 			return ht;
 			//			return "0x" + Long.toHexString(jmpData.fromAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress).DW_AT_name + " "
 			//					+ StringUtils.defaultString(jmpData.fromAddressDescription);
@@ -57,6 +58,7 @@ public class JmpTableModel extends DefaultTableModel {
 			ht.put("address", jmpData.toAddress);
 			ht.put("compileUnit", GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress));
 			ht.put("addressDescription", StringUtils.defaultString(jmpData.toAddressDescription));
+			ht.put("deep", jmpData.deep);
 			return ht;
 			//			return "0x" + Long.toHexString(jmpData.toAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress).DW_AT_name + " "
 			//					+ StringUtils.defaultString(jmpData.toAddressDescription);
