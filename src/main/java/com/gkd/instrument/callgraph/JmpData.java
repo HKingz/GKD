@@ -9,6 +9,9 @@ public class JmpData {
 	public String fromAddressDescription;
 	public long toAddress;
 	public String toAddressDescription;
+
+	public long what;
+
 	public long segmentStart;
 	public long segmentEnd;
 
@@ -28,14 +31,15 @@ public class JmpData {
 	public long fs;
 	public long gs;
 
-	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, long segmentStart, long segmentEnd,
-			long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs) {
+	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, long what, long segmentStart,
+			long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs) {
 		this.lineNo = lineNo;
 		this.date = date;
 		this.fromAddress = fromAddress;
 		this.fromAddressDescription = fromAddressDescription;
 		this.toAddress = toAddress;
 		this.toAddressDescription = toAddressDescription;
+		this.what = what;
 		this.segmentStart = segmentStart;
 		this.segmentEnd = segmentEnd;
 		this.eax = eax;

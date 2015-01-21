@@ -76,15 +76,17 @@ public class JmpSocketServer implements Runnable {
 
 				int physicalAddressSize = in.read();
 				int segmentAddressSize = in.read();
+				int whatSize = in.read();
 				int registerSize = in.read();
 				int segmentRegisterSize = in.read();
 
 				int lineNo = 1;
-				int rowlSize = physicalAddressSize * 2 + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
+				int rowlSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
 
 				int noOfJmpRecordToFlush = 50000;
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
 				long toAddress[] = new long[noOfJmpRecordToFlush];
+				long what[] = new long[noOfJmpRecordToFlush];
 				long segmentStart[] = new long[noOfJmpRecordToFlush];
 				long segmentEnd[] = new long[noOfJmpRecordToFlush];
 
@@ -141,6 +143,8 @@ public class JmpSocketServer implements Runnable {
 					int offset = 0;
 					offset += read(fromAddress, bytes, offset, physicalAddressSize);
 					offset += read(toAddress, bytes, offset, physicalAddressSize);
+
+					offset += read(what, bytes, offset, whatSize);
 
 					offset += read(segmentStart, bytes, offset, segmentAddressSize);
 					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
@@ -208,7 +212,7 @@ public class JmpSocketServer implements Runnable {
 							symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 							String toAddressDescription = symbol == null ? null : symbol.name;
 
-							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, segmentStart[x],
+							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, what[x], segmentStart[x],
 									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x]));
 							fstream.write(lineNo + "-" + /*dateformat1.format(new Date()) +*/"-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-"
 									+ Long.toHexString(segmentStart[x]) + "-" + Long.toHexString(segmentEnd[x]) + "\n");
