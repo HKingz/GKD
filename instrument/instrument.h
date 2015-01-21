@@ -90,9 +90,9 @@ public:
   void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw);
 
   void memorySampling(bx_phy_address);
-  void jmpSampling(bx_address, bx_address);
+  void jmpSampling(unsigned, bx_address, bx_address);
 private:
-  void branch_taken(bx_address branch_eip, bx_address new_eip);
+  void branch_taken(unsigned, bx_address branch_eip, bx_address new_eip);
 
   void bx_print_instruction(void);
 };

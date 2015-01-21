@@ -79,6 +79,7 @@ unsigned int buffer[MAX_SEND_BYTE];
 int pointer = 0;
 
 int physicalAddressSize = sizeof(bx_phy_address);
+int whatSize = sizeof(unsigned);
 int segmentSize = sizeof(bx_address);
 int registerSize = sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx);
 int segmentRegisterSize = sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value);
@@ -110,7 +111,7 @@ pthread_mutex_t jmpMutex;
 #define JMP_CACHE_SIZE 50000
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
-
+unsigned whatVector[JMP_CACHE_SIZE];
 bx_address segmentBeginVector[JMP_CACHE_SIZE];
 bx_address segmentEndVector[JMP_CACHE_SIZE];
 
@@ -330,6 +331,7 @@ void initJmpSocket() {
 
 	if (connectedToJmpServer) {
 		write(jmpSockfd, &physicalAddressSize, 1);
+		write(jmpSockfd, &whatSize, 1);
 		write(jmpSockfd, &segmentSize, 1);
 		write(jmpSockfd, &registerSize, 1);
 		write(jmpSockfd, &segmentRegisterSize, 1);
@@ -517,13 +519,13 @@ void bxInstrumentation::bx_instr_after_execution(bxInstruction_c *i) {
 	}
 }
 
-void bxInstrumentation::branch_taken(bx_address branch_eip, bx_address new_eip) {
+void bxInstrumentation::branch_taken(unsigned what, bx_address branch_eip, bx_address new_eip) {
 	if (!active || !ready)
 		return;
 
 	// find linear address
 	target_linear = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
-	jmpSampling(branch_eip, new_eip);
+	jmpSampling(what, branch_eip, new_eip);
 	/*
 	 // find linear address
 	 bx_address laddr = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
@@ -537,7 +539,7 @@ void bxInstrumentation::branch_taken(bx_address branch_eip, bx_address new_eip) 
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip) {
-	branch_taken(branch_eip, new_eip);
+	branch_taken(0, branch_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
@@ -553,7 +555,7 @@ void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
 }
 
 void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip) {
-	branch_taken(branch_eip, new_eip);
+	branch_taken(what, branch_eip, new_eip);
 	/*
 	 branch_taken(new_eip);
 	 if (connectedToJmpServer) {
@@ -565,7 +567,7 @@ void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_
 }
 
 void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u prev_cs, bx_address prev_eip, Bit16u new_cs, bx_address new_eip) {
-	branch_taken(prev_eip, new_eip);
+	branch_taken(what, prev_eip, new_eip);
 }
 
 void bxInstrumentation::bx_instr_interrupt(unsigned vector) {
@@ -699,7 +701,7 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 }
 
 int pp = 1;
-void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
+void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_address new_eip) {
 //	if (startRecordJump) {
 //		bx_phy_address fromPhysicalAddress;
 //		bx_phy_address toPhysicalAddress;
@@ -800,6 +802,8 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 		toAddressVector[jumpIndex] = toPhysicalAddress;
 		//toAddressVector[jumpIndex] = 0xabcdefab;
 
+		whatVector[jumpIndex] = what;
+
 		segmentBeginVector[jumpIndex] = segmentBegin;
 		//segmentBeginVector[jumpIndex] = 0x23232323;
 		segmentEndVector[jumpIndex] = segmentEnd;
@@ -878,6 +882,8 @@ void bxInstrumentation::jmpSampling(bx_address branch_eip, bx_address new_eip) {
 
 			writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
 			writeToSocket(jmpSockfd, toAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
+
+			writeToSocket(jmpSockfd, whatVector, whatSize * JMP_CACHE_SIZE);
 
 			writeToSocket(jmpSockfd, segmentBeginVector, segmentSize * JMP_CACHE_SIZE);
 			writeToSocket(jmpSockfd, segmentEndVector, segmentSize * JMP_CACHE_SIZE);
