@@ -872,11 +872,14 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 			 */
 //			write(jmpSockfd, &fuck, 8);
 //			write(jmpSockfd, fuck3, 8);
+
+			/*
 			fprintf(log, "physicalAddressSize=%d\n", physicalAddressSize);
 			fprintf(log, "segmentSize=%d\n", segmentSize);
 			fprintf(log, "registerSize=%d\n", registerSize);
 			fprintf(log, "segmentRegisterSize=%d\n", segmentRegisterSize);
 			fflush(log);
+			*/
 
 			writeToSocket(jmpSockfd, "start", 5);
 
