@@ -108,7 +108,7 @@ pthread_mutex_t jmpMutex;
  static vector<Bit16u> gsVector;
  */
 
-#define JMP_CACHE_SIZE 50000
+#define JMP_CACHE_SIZE 1000000
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
 unsigned whatVector[JMP_CACHE_SIZE];
@@ -131,16 +131,15 @@ Bit16u dsVector[JMP_CACHE_SIZE];
 Bit16u fsVector[JMP_CACHE_SIZE];
 Bit16u gsVector[JMP_CACHE_SIZE];
 
-int jumpIndex = 0;
+unsigned int jumpIndex = 0;
 
 void writeToSocket(int sock, char *data, int size) {
 	int byteSent = 0;
 	while (byteSent < size) {
 		int b = write(jmpSockfd, data + byteSent, size - byteSent);
-
 		byteSent += b;
-		fprintf(log, "             byteSent=%d, %d\n", byteSent, b);
-		fflush(log);
+		//fprintf(log, "             byteSent=%d, %d\n", byteSent, b);
+		//fflush(log);
 	}
 }
 
@@ -148,102 +147,95 @@ void writeToSocket(int sock, void *data, int size) {
 	writeToSocket(sock, (char *) data, size);
 }
 
-void logGKD(char *str) {
-	fprintf(log, str);
-	fflush(log);
-}
+/*
+ void logGKD(char *str) {
+ fprintf(log, str);
+ fflush(log);
+ }
 
-void logGKD(char *str1, char *str2, char *str3) {
-	fprintf(log, str1);
-	fprintf(log, str2);
-	fprintf(log, str3);
-	fflush(log);
-}
+ void logGKD(char *str1, char *str2, char *str3) {
+ fprintf(log, str1);
+ fprintf(log, str2);
+ fprintf(log, str3);
+ fflush(log);
+ }
 
-void logGKD(unsigned int x) {
-	char temp[100];
-	sprintf(temp, "%x\n", x);
-	fprintf(log, temp);
-	fflush(log);
-}
+ void logGKD(unsigned int x) {
+ char temp[100];
+ sprintf(temp, "%x\n", x);
+ fprintf(log, temp);
+ fflush(log);
+ }
 
-void logGKD_Dec(unsigned int x) {
-	char temp[100];
-	sprintf(temp, "%d\n", x);
-	fprintf(log, temp);
-	fflush(log);
-}
+ void logGKD_Dec(unsigned int x) {
+ char temp[100];
+ sprintf(temp, "%d\n", x);
+ fprintf(log, temp);
+ fflush(log);
+ }
 
-void logGKD(char *a, unsigned int x, char *b) {
-	fprintf(log, a);
-	char temp[100];
-	sprintf(temp, "%u", x);
-	fprintf(log, temp);
-	fprintf(log, b);
-	fflush(log);
-}
+ void logGKD(char *a, unsigned int x, char *b) {
+ fprintf(log, a);
+ char temp[100];
+ sprintf(temp, "%u", x);
+ fprintf(log, temp);
+ fprintf(log, b);
+ fflush(log);
+ }
+ */
 
 void * jmpTimer(void *arg) {
 	while (1) {
 		sleep(2);
-		//logGKD("b1\n");
-//		pthread_mutex_lock(&jmpMutex);
-//		logGKD("   b2  ");
-//		logGKD(fromAddressVector.size());
+		pthread_mutex_lock(&jmpMutex);
+		fprintf(log, "jumpIndex=%d\n", jumpIndex);
+		fflush(log);
 
-//		for (int i = 0; i < fromAddressVector.size(); i++) {
-//			if (i%10000==0){
-//				logGKD_Dec(i);
-//			}
-//			write(jmpSockfd, &fromAddressVector[i], physicalAddressSize);
-//			write(jmpSockfd, &toAddressVector[i], physicalAddressSize);
-//
-//			write(jmpSockfd, &segmentBeginVector[i], segmentSize);
-//			write(jmpSockfd, &segmentEndVector[i], segmentSize);
-//
-//			write(jmpSockfd, &eaxVector[i], registerSize);
-//			write(jmpSockfd, &ecxVector[i], registerSize);
-//			write(jmpSockfd, &edxVector[i], registerSize);
-//			write(jmpSockfd, &ebxVector[i], registerSize);
-//			write(jmpSockfd, &espVector[i], registerSize);
-//			write(jmpSockfd, &ebpVector[i], registerSize);
-//			write(jmpSockfd, &esiVector[i], registerSize);
-//			write(jmpSockfd, &ediVector[i], registerSize);
-//
-//			write(jmpSockfd, &esVector[i], segmentRegisterSize);
-//			write(jmpSockfd, &csVector[i], segmentRegisterSize);
-//			write(jmpSockfd, &ssVector[i], segmentRegisterSize);
-//			write(jmpSockfd, &dsVector[i], segmentRegisterSize);
-//			write(jmpSockfd, &fsVector[i], segmentRegisterSize);
-//			write(jmpSockfd, &gsVector[i], segmentRegisterSize);
-//		}
+		if (jumpIndex > 0) {
+			fprintf(log, "jumpIndex=%d\n", jumpIndex);
+			fflush(log);
 
-		/*
-		 fromAddressVector.clear();
-		 toAddressVector.clear();
+			writeToSocket(jmpSockfd, "start", 5);
+			//jumpIndex=1234;
+			writeToSocket(jmpSockfd, &jumpIndex, 4);
 
-		 segmentBeginVector.clear();
-		 segmentEndVector.clear();
+			writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * jumpIndex);
+			writeToSocket(jmpSockfd, toAddressVector, physicalAddressSize * jumpIndex);
 
-		 eaxVector.clear();
-		 ecxVector.clear();
-		 edxVector.clear();
-		 ebxVector.clear();
-		 espVector.clear();
-		 ebpVector.clear();
-		 esiVector.clear();
-		 ediVector.clear();
+			writeToSocket(jmpSockfd, whatVector, whatSize * jumpIndex);
 
-		 esVector.clear();
-		 csVector.clear();
-		 ssVector.clear();
-		 dsVector.clear();
-		 fsVector.clear();
-		 gsVector.clear();
-		 */
+			writeToSocket(jmpSockfd, segmentBeginVector, segmentSize * jumpIndex);
+			writeToSocket(jmpSockfd, segmentEndVector, segmentSize * jumpIndex);
 
-//		logGKD("   b3\n");
-//		pthread_mutex_unlock(&jmpMutex);
+			writeToSocket(jmpSockfd, eaxVector, registerSize * jumpIndex);
+			writeToSocket(jmpSockfd, ecxVector, registerSize * jumpIndex);
+			writeToSocket(jmpSockfd, edxVector, registerSize * jumpIndex);
+			writeToSocket(jmpSockfd, ebxVector, registerSize * jumpIndex);
+			writeToSocket(jmpSockfd, espVector, registerSize * jumpIndex);
+			writeToSocket(jmpSockfd, ebpVector, registerSize * jumpIndex);
+			writeToSocket(jmpSockfd, esiVector, registerSize * jumpIndex);
+			writeToSocket(jmpSockfd, ediVector, registerSize * jumpIndex);
+
+			writeToSocket(jmpSockfd, esVector, segmentRegisterSize * jumpIndex);
+			writeToSocket(jmpSockfd, csVector, segmentRegisterSize * jumpIndex);
+			writeToSocket(jmpSockfd, ssVector, segmentRegisterSize * jumpIndex);
+			writeToSocket(jmpSockfd, dsVector, segmentRegisterSize * jumpIndex);
+			writeToSocket(jmpSockfd, fsVector, segmentRegisterSize * jumpIndex);
+			writeToSocket(jmpSockfd, gsVector, segmentRegisterSize * jumpIndex);
+
+			writeToSocket(jmpSockfd, "end", 3);
+
+			char readBytes[4];
+			read(jmpSockfd, readBytes, 4);
+			if (strncmp(readBytes, "done", 4) != 0) {
+				fprintf(log, "jmp socket read/write error = %s\n", readBytes);
+				fflush(log);
+				exit(-1);
+			}
+
+			jumpIndex = 0;
+		}
+		pthread_mutex_unlock(&jmpMutex);
 		//logGKD("b4\n");
 	}
 	return 0;
@@ -261,17 +253,17 @@ void safeRead(int socketFD, unsigned char *inBuffer, unsigned int size) {
 }
 
 void initMemorySocket() {
-	logGKD("initMemorySocket\n");
+	fprintf(log, "initMemorySocket\n");
 	memorySockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (memorySockfd < 0) {
-		logGKD("Memory socket server : ERROR opening socket\n");
+		fprintf(log, "Memory socket server : ERROR opening socket\n");
 		return;
 	}
 	struct sockaddr_in serv_addr;
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
-		logGKD("Memory socket server : ERROR no such host\n");
+		fprintf(log, "Memory socket server : ERROR no such host\n");
 		return;
 	}
 	bzero((char *) &serv_addr, sizeof(serv_addr));
@@ -279,35 +271,35 @@ void initMemorySocket() {
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
 	serv_addr.sin_port = htons(memoryPortNo);
 	if (connect(memorySockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		logGKD("Memory socket server : ERROR connecting\n");
+		fprintf(log, "Memory socket server : ERROR connecting\n");
 		connectedToMemoryServer = false;
 		return;
 	} else {
-		logGKD("Memory socket server : connected to server\n");
+		fprintf(log, "Memory socket server : connected to server\n");
 		connectedToMemoryServer = true;
 	}
 
 	int flag = 1;
 	int ret = setsockopt(memorySockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(flag));
 	if (ret == -1) {
-		logGKD("memorySockfd couldn't setsockopt(TCP_NODELAY)\n");
+		fprintf(log, "memorySockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
 	fflush(log);
-	logGKD("initMemorySocket end\n");
+	fprintf(log, "initMemorySocket end\n");
 }
 
 void initJmpSocket() {
-	logGKD("initJmpSocket 1\n");
+	fprintf(log, "initJmpSocket 1\n");
 	jmpSockfd = socket(AF_INET, SOCK_STREAM, 0);
-	logGKD("initJmpSocket 2\n");
+	fprintf(log, "initJmpSocket 2\n");
 	if (jmpSockfd < 0) {
-		logGKD("Jmp socket server : ERROR opening socket\n");
+		fprintf(log, "Jmp socket server : ERROR opening socket\n");
 		return;
 	}
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
-		logGKD("Jmp socket server : ERROR no such host\n");
+		fprintf(log, "Jmp socket server : ERROR no such host\n");
 	}
 
 	struct sockaddr_in serv_addr;
@@ -316,17 +308,17 @@ void initJmpSocket() {
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
 	serv_addr.sin_port = htons(jmpPortNo);
 	if (connect(jmpSockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		logGKD("Jmp socket server : ERROR connecting\n");
+		fprintf(log, "Jmp socket server : ERROR connecting\n");
 		connectedToJmpServer = false;
 	} else {
-		logGKD("Jmp socket server : connected to server\n");
+		fprintf(log, "Jmp socket server : connected to server\n");
 		connectedToJmpServer = true;
 	}
 
 	int flag = 1;
 	int ret = setsockopt(jmpSockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(flag));
 	if (ret == -1) {
-		logGKD("jmpSockfd couldn't setsockopt(TCP_NODELAY)\n");
+		fprintf(log, "jmpSockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
 
 	if (connectedToJmpServer) {
@@ -338,21 +330,21 @@ void initJmpSocket() {
 	}
 
 	pthread_mutex_init(&jmpMutex, NULL);
-	//int err = pthread_create(&jmpThread, NULL, jmpTimer, NULL);
+	int err = pthread_create(&jmpThread, NULL, jmpTimer, NULL);
 	//logGKD("initJmpSocket end\n");
 }
 
 void initInterruptSocket() {
 	interruptSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (interruptSockfd < 0) {
-		logGKD("Interrupt socket server : ERROR opening socket\n");
+		fprintf(log, "Interrupt socket server : ERROR opening socket\n");
 		return;
 	}
 
 	struct hostent *server;
 	server = gethostbyname("localhost");
 	if (server == NULL) {
-		logGKD("Interrupt socket server : ERROR no such host\n");
+		fprintf(log, "Interrupt socket server : ERROR no such host\n");
 	}
 
 	struct sockaddr_in serv_addr;
@@ -361,17 +353,17 @@ void initInterruptSocket() {
 	bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
 	serv_addr.sin_port = htons(interruptPortNo);
 	if (connect(interruptSockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-		logGKD("Interrupt socket server : ERROR connecting\n");
+		fprintf(log, "Interrupt socket server : ERROR connecting\n");
 		connectedToInterruptServer = false;
 	} else {
-		logGKD("Interrupt socket server : connected to server\n");
+		fprintf(log, "Interrupt socket server : connected to server\n");
 		connectedToInterruptServer = true;
 	}
 
 	int flag = 1;
 	int ret = setsockopt(interruptSockfd, IPPROTO_TCP, TCP_NODELAY, (char *) &flag, sizeof(flag));
 	if (ret == -1) {
-		logGKD("interruptSockfd couldn't setsockopt(TCP_NODELAY)\n");
+		fprintf(log, "interruptSockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
 }
 
@@ -412,7 +404,7 @@ void bx_instr_initialize(unsigned cpu) {
 			zonesHit[x] = 0;
 		}
 	}
-	logGKD("init end\n");
+	fprintf(log, "init end\n");
 }
 
 void bxInstrumentation::bx_instr_reset(unsigned type) {
@@ -700,7 +692,6 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 	}
 }
 
-int pp = 1;
 void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_address new_eip) {
 //	if (startRecordJump) {
 //		bx_phy_address fromPhysicalAddress;
@@ -797,6 +788,7 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		 */
 
 //		logGKD("a3\n");
+		pthread_mutex_lock(&jmpMutex);
 		fromAddressVector[jumpIndex] = fromPhysicalAddress;
 		//fromAddressVector[jumpIndex] = 0x12345678;
 		toAddressVector[jumpIndex] = toPhysicalAddress;
@@ -826,101 +818,52 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		gsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value;
 
 		jumpIndex++;
-		if (jumpIndex % 10000 == 0) {
-			logGKD_Dec(jumpIndex);
-		}
-		pp++;
-		if (jumpIndex == JMP_CACHE_SIZE) {
-			logGKD("send\n");
-			logGKD_Dec(pp);
-			/*
-			 for (int i = 0; i < JMP_CACHE_SIZE; i++) {
-			 write(jmpSockfd, &fromAddressVector[i], physicalAddressSize);
-			 write(jmpSockfd, &toAddressVector[i], physicalAddressSize);
+		pthread_mutex_unlock(&jmpMutex);
 
-			 write(jmpSockfd, &segmentBeginVector[i], segmentSize);
-			 write(jmpSockfd, &segmentEndVector[i], segmentSize);
+		/*
+		 if (jumpIndex == JMP_CACHE_SIZE) {
+		 fprintf(log, "send\n");
+		 writeToSocket(jmpSockfd, "start", 5);
 
-			 write(jmpSockfd, &eaxVector[i], registerSize);
-			 write(jmpSockfd, &ecxVector[i], registerSize);
-			 write(jmpSockfd, &edxVector[i], registerSize);
-			 write(jmpSockfd, &ebxVector[i], registerSize);
-			 write(jmpSockfd, &espVector[i], registerSize);
-			 write(jmpSockfd, &ebpVector[i], registerSize);
-			 write(jmpSockfd, &esiVector[i], registerSize);
-			 write(jmpSockfd, &ediVector[i], registerSize);
+		 writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, toAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
 
-			 write(jmpSockfd, &esVector[i], segmentRegisterSize);
-			 write(jmpSockfd, &csVector[i], segmentRegisterSize);
-			 write(jmpSockfd, &ssVector[i], segmentRegisterSize);
-			 write(jmpSockfd, &dsVector[i], segmentRegisterSize);
-			 write(jmpSockfd, &fsVector[i], segmentRegisterSize);
-			 write(jmpSockfd, &gsVector[i], segmentRegisterSize);
-			 }
-			 */
+		 writeToSocket(jmpSockfd, whatVector, whatSize * JMP_CACHE_SIZE);
 
-			//fromAddressVector[0] = 0x12345678;
-			/*
-			 unsigned long fuck = 0x12345678;
-			 char *fuck2 = "abababab";
-			 toAddressVector[0] = 0xabcdef;
-			 char *fuck3 = (char *) &fuck;
-			 fprintf(log, "fuck you %x %x %x %x\n", fuck3[0], fuck3[1], fuck3[2], fuck3[3]);
-			 fprintf(log, "fuck you %x %x %x %x\n", &fuck3[0], &fuck3[1], &fuck3[2], &fuck3[3]);
-			 fprintf(log, "physicalAddressSize=%d\n", physicalAddressSize);
-			 fflush(log);
-			 */
-//			write(jmpSockfd, &fuck, 8);
-//			write(jmpSockfd, fuck3, 8);
+		 writeToSocket(jmpSockfd, segmentBeginVector, segmentSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, segmentEndVector, segmentSize * JMP_CACHE_SIZE);
 
-			/*
-			fprintf(log, "physicalAddressSize=%d\n", physicalAddressSize);
-			fprintf(log, "segmentSize=%d\n", segmentSize);
-			fprintf(log, "registerSize=%d\n", registerSize);
-			fprintf(log, "segmentRegisterSize=%d\n", segmentRegisterSize);
-			fflush(log);
-			*/
+		 writeToSocket(jmpSockfd, eaxVector, registerSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, ecxVector, registerSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, edxVector, registerSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, ebxVector, registerSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, espVector, registerSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, ebpVector, registerSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, esiVector, registerSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, ediVector, registerSize * JMP_CACHE_SIZE);
 
-			writeToSocket(jmpSockfd, "start", 5);
+		 writeToSocket(jmpSockfd, esVector, segmentRegisterSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, csVector, segmentRegisterSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, ssVector, segmentRegisterSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, dsVector, segmentRegisterSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, fsVector, segmentRegisterSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, gsVector, segmentRegisterSize * JMP_CACHE_SIZE);
 
-			writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, toAddressVector, physicalAddressSize * JMP_CACHE_SIZE);
+		 writeToSocket(jmpSockfd, "end", 3);
+		 jumpIndex = 0;
 
-			writeToSocket(jmpSockfd, whatVector, whatSize * JMP_CACHE_SIZE);
+		 char readBytes[4];
+		 read(jmpSockfd, readBytes, 4);
+		 if (strncmp(readBytes, "done", 4) != 0) {
+		 fprintf(log, "jmp socket read/write error = %s\n", readBytes);
+		 fflush(log);
+		 exit(-1);
+		 }
+		 }
+		 */
 
-			writeToSocket(jmpSockfd, segmentBeginVector, segmentSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, segmentEndVector, segmentSize * JMP_CACHE_SIZE);
-
-			writeToSocket(jmpSockfd, eaxVector, registerSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, ecxVector, registerSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, edxVector, registerSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, ebxVector, registerSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, espVector, registerSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, ebpVector, registerSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, esiVector, registerSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, ediVector, registerSize * JMP_CACHE_SIZE);
-
-			writeToSocket(jmpSockfd, esVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, csVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, ssVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, dsVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, fsVector, segmentRegisterSize * JMP_CACHE_SIZE);
-			writeToSocket(jmpSockfd, gsVector, segmentRegisterSize * JMP_CACHE_SIZE);
-
-			writeToSocket(jmpSockfd, "end", 3);
-			jumpIndex = 0;
-
-			char readBytes[4];
-			read(jmpSockfd, readBytes, 4);
-			if (strncmp(readBytes, "done", 4) != 0) {
-				fprintf(log, "jmp socket read/write error = %s\n", readBytes);
-				fflush(log);
-				exit(-1);
-			}
-		}
 		//pthread_mutex_unlock(&jmpMutex);
 		//logGKD("a4\n");
-
 		segmentBegin = new_eip;
 	}
 }
