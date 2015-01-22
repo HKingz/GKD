@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.Date;
 import java.util.Vector;
 
@@ -25,6 +27,7 @@ public class JmpSocketServer implements Runnable {
 	private boolean shouldStop;
 	private ServerSocket serverSocket;
 	FileWriter fstream;
+	int noOfJmpRecordToFlush = 100;
 
 	//	public static LinkedHashSet<String> segments = new LinkedHashSet<String>();
 	//	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
@@ -82,36 +85,12 @@ public class JmpSocketServer implements Runnable {
 				int segmentRegisterSize = in.read();
 
 				int lineNo = 1;
-				int rowlSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
-
-				int noOfJmpRecordToFlush = 50000;
-				long fromAddress[] = new long[noOfJmpRecordToFlush];
-				long toAddress[] = new long[noOfJmpRecordToFlush];
-				long what[] = new long[noOfJmpRecordToFlush];
-				long segmentStart[] = new long[noOfJmpRecordToFlush];
-				long segmentEnd[] = new long[noOfJmpRecordToFlush];
-
-				long eax[] = new long[noOfJmpRecordToFlush];
-				long ecx[] = new long[noOfJmpRecordToFlush];
-				long edx[] = new long[noOfJmpRecordToFlush];
-				long ebx[] = new long[noOfJmpRecordToFlush];
-				long esp[] = new long[noOfJmpRecordToFlush];
-				long ebp[] = new long[noOfJmpRecordToFlush];
-				long esi[] = new long[noOfJmpRecordToFlush];
-				long edi[] = new long[noOfJmpRecordToFlush];
-
-				long es[] = new long[noOfJmpRecordToFlush];
-				long cs[] = new long[noOfJmpRecordToFlush];
-				long ss[] = new long[noOfJmpRecordToFlush];
-				long ds[] = new long[noOfJmpRecordToFlush];
-				long fs[] = new long[noOfJmpRecordToFlush];
-				long gs[] = new long[noOfJmpRecordToFlush];
+				int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
 
 				int noOfRecordRead = 0;
 				int deep = 0;
 
 				while (!shouldStop) {
-					byte bytes[] = new byte[noOfJmpRecordToFlush * rowlSize];
 					//					System.out.println(">>" + in.read());
 					//					System.out.println(">>" + in.readByte());
 					//					System.out.println(">>" + in.readByte());
@@ -126,18 +105,47 @@ public class JmpSocketServer implements Runnable {
 					if (!beacon.equals("start")) {
 						fstream.write("jmp socket - beacon error\n");
 						fstream.flush();
+						System.err.println("jmp socket error beacon!=start");
 						System.exit(-1);
 					}
+
+					byte[] tempBytes = new byte[4];
+					in.readFully(tempBytes);
+					noOfJmpRecordToFlush = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+					long fromAddress[] = new long[noOfJmpRecordToFlush];
+					long toAddress[] = new long[noOfJmpRecordToFlush];
+					long what[] = new long[noOfJmpRecordToFlush];
+					long segmentStart[] = new long[noOfJmpRecordToFlush];
+					long segmentEnd[] = new long[noOfJmpRecordToFlush];
+
+					long eax[] = new long[noOfJmpRecordToFlush];
+					long ecx[] = new long[noOfJmpRecordToFlush];
+					long edx[] = new long[noOfJmpRecordToFlush];
+					long ebx[] = new long[noOfJmpRecordToFlush];
+					long esp[] = new long[noOfJmpRecordToFlush];
+					long ebp[] = new long[noOfJmpRecordToFlush];
+					long esi[] = new long[noOfJmpRecordToFlush];
+					long edi[] = new long[noOfJmpRecordToFlush];
+
+					long es[] = new long[noOfJmpRecordToFlush];
+					long cs[] = new long[noOfJmpRecordToFlush];
+					long ss[] = new long[noOfJmpRecordToFlush];
+					long ds[] = new long[noOfJmpRecordToFlush];
+					long fs[] = new long[noOfJmpRecordToFlush];
+					long gs[] = new long[noOfJmpRecordToFlush];
+					byte bytes[] = new byte[noOfJmpRecordToFlush * rowSize];
 
 					int byteRead = 0;
 					while (byteRead < bytes.length) {
 						int b = in.read(bytes, byteRead, bytes.length - byteRead);
 						if (b < 0) {
-							System.out.println("b<0");
+							System.err.println("b<0");
 							System.exit(-1);
 						}
 						byteRead += b;
 					}
+
 					//					in.readFully(bytes);
 
 					noOfRecordRead += noOfJmpRecordToFlush;
@@ -182,6 +190,7 @@ public class JmpSocketServer implements Runnable {
 					if (!beacon.equals("end")) {
 						fstream.write("jmp socket - beacon error\n");
 						fstream.flush();
+						System.err.println("jmp socket error beacon!=end");
 						System.exit(-1);
 					}
 
@@ -295,6 +304,7 @@ public class JmpSocketServer implements Runnable {
 					}
 
 					out.write("done".getBytes());
+					out.flush();
 				}
 
 				in.close();
