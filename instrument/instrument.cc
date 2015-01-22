@@ -43,7 +43,7 @@
 using namespace std;
 using std::set;
 
-#define GKD_INSTRUMENT_VERSION "20141215"
+#define GKD_INSTRUMENT_VERSION "20150122"
 bxInstrumentation *icpu = NULL;
 
 #define MAX_SEND_BYTE 500
@@ -186,7 +186,7 @@ void writeToSocket(int sock, void *data, int size) {
 
 void * jmpTimer(void *arg) {
 	while (1) {
-		sleep(2);
+		sleep(4);
 		pthread_mutex_lock(&jmpMutex);
 		fprintf(log, "jumpIndex=%d\n", jumpIndex);
 		fflush(log);
@@ -663,7 +663,7 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 				yy++;
 			}
 		}
-// end send zones back to GKD
+		// end send zones back to GKD
 
 		unsigned char inBuffer[10000];
 		safeRead(memorySockfd, inBuffer, 1);
@@ -786,6 +786,9 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		 fsVector.push_back(BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value);
 		 gsVector.push_back(BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value);
 		 */
+
+		while (jumpIndex >= JMP_CACHE_SIZE)
+			;
 
 //		logGKD("a3\n");
 		pthread_mutex_lock(&jmpMutex);
