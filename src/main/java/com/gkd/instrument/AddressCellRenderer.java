@@ -53,8 +53,8 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 
 		String spacer = StringUtils.repeat("&nbsp;", deep);
 
-		setText("<html><body>" + spacer + "0x" + Long.toHexString(address) + "," + deep + " <font color=" + hex + ">" + filePath + "</font> <font color=" + hex + ">"
-				+ addressDescription + "</font></body></html>");
+		setText("<html><body>" + spacer + "0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=" + hex + ">" + addressDescription
+				+ "</font></body></html>");
 		//setBackground(color);
 		return this;
 	}
