@@ -1615,17 +1615,18 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			HashSet<String> checkDuplicated = new HashSet<String>();
 			Vector<JmpData> filteredData = new Vector<JmpData>();
 			String filterText = filterRawTableTextField.getText().toLowerCase();
+			int lastDeep = -1;
 			for (JmpData d : JmpSocketServer.jmpDataVector) {
 				if (removeDuplcatedCheckBox.isSelected()) {
 					String pattern = d.fromAddress + "-" + d.toAddress;
-					if (checkDuplicated.contains(pattern)) {
+					if (checkDuplicated.contains(pattern) && lastDeep == d.deep) {
 						continue;
 					} else {
+						lastDeep = d.deep;
 						checkDuplicated.add(pattern);
 					}
 				}
-				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what != JmpType.RET && d.what != JmpType.IRET && d.what != JmpType.SYSEXIT
-						&& d.what != JmpType.SYSRET) {
+				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
 					continue;
 				}
 				if (d.contains(filterText)) {
