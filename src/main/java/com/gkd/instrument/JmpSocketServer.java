@@ -265,8 +265,8 @@ public class JmpSocketServer implements Runnable {
 
 							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
 									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
-							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
-									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
+//							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
+//									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
 							fstream.flush();
 
 							switch ((int) what[x]) {
