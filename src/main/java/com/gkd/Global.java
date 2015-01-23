@@ -3,7 +3,7 @@ package com.gkd;
 import java.math.BigInteger;
 
 public class Global {
-	public static String version = "20141215";
+	public static String version = "20150124";
 	public static boolean debug = true;
 	public static BigInteger osDebug = BigInteger.valueOf(-1);
 	public static String jmpLog = "jmp.log";

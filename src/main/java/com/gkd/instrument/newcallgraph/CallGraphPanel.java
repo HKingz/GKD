@@ -2,7 +2,6 @@ package com.gkd.instrument.newcallgraph;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,22 +11,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
-import javax.swing.JTable;
 import javax.swing.JToolBar;
-import javax.swing.JViewport;
 
 import com.gkd.GKD;
 import com.gkd.instrument.callgraph.JmpData;
-import com.gkd.jgraphx_example.editor.JTableRenderer;
 import com.gkd.stub.VMController;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphOutline;
-import com.mxgraph.util.mxPoint;
-import com.mxgraph.util.mxUtils;
-import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxGraphView;
 import com.peterswing.CommonLib;
 
 public class CallGraphPanel extends JPanel {
