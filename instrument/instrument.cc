@@ -188,13 +188,8 @@ void * jmpTimer(void *arg) {
 	while (1) {
 		sleep(4);
 		pthread_mutex_lock(&jmpMutex);
-		fprintf(log, "jumpIndex=%d\n", jumpIndex);
-		fflush(log);
 
 		if (jumpIndex > 0) {
-			fprintf(log, "jumpIndex=%d\n", jumpIndex);
-			fflush(log);
-
 			writeToSocket(jmpSockfd, "start", 5);
 			//jumpIndex=1234;
 			writeToSocket(jmpSockfd, &jumpIndex, 4);
