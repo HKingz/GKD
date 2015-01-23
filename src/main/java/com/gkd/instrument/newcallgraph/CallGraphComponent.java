@@ -7,7 +7,6 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 
-import com.gkd.jgraphx_example.editor.JTableRenderer;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxPoint;
