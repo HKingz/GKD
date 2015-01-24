@@ -1,0 +1,18 @@
+Here are steps to compile GKD. GKD is depends on some my other projects, all are open source and written in Java & maven. So just do “mvn clean install” in every of them.
+
+Check out these project in order, run “mvn clean install” on every of them:
+
+1. https://github.com/mcheung63/peter-swing
+2. https://code.google.com/p/tightvncpanel/
+3. https://code.google.com/p/peter-ar/
+4. https://code.google.com/p/peter-dwarf/
+
+Finally, get GKD source from svn://svn.petersoft.com/GKD, username : gkd, password : gkd.
+
+1) execute the command in installJar.txt
+2) run “mvn clean package”, you will have a GKDxxxxx.jar in your target folder, now you are ready to run it.
+3) download this
+4) cd to the unzipped folder, run “java -jar GKD-20150124.jar -f gkd_bochs.xml”
+5) read gkd_bochs.xml, then you know everything.
+
+Peter (mcheung63@hotmail.com) 

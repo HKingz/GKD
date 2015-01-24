@@ -1617,16 +1617,15 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			String filterText = filterRawTableTextField.getText().toLowerCase();
 			int lastDeep = -1;
 			for (JmpData d : JmpSocketServer.jmpDataVector) {
-				if (removeDuplcatedCheckBox.isSelected()) {
+				if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
 					String pattern = d.fromAddress + "-" + d.toAddress;
-					if (checkDuplicated.contains(pattern) && lastDeep == d.deep) {
+					if (checkDuplicated.contains(pattern)) {
 						continue;
 					} else {
-						lastDeep = d.deep;
 						checkDuplicated.add(pattern);
 					}
 				}
-				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown && lastDeep == d.deep) {
+				if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
 					continue;
 				}
 				if (d.contains(filterText)) {
@@ -1643,6 +1642,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						continue;
 					}
 				}
+				lastDeep = d.deep;
 			}
 
 			int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
