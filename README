@@ -1,3 +1,5 @@
+Compile:
+
 Here are steps to compile GKD. GKD is depends on some my other projects, all are open source and written in Java & maven. So just do “mvn clean install” in every of them.
 
 Check out these project in order, run “mvn clean install” on every of them:
@@ -14,5 +16,17 @@ Finally, get GKD source from svn://svn.petersoft.com/GKD, username : gkd, passwo
 3) download this
 4) cd to the unzipped folder, run “java -jar GKD-20150124.jar -f gkd_bochs.xml”
 5) read gkd_bochs.xml, then you know everything.
+
+
+
+Gossip:
+
+1) "mvn versions:display-dependency-updates" to check outdated dependencies
+2) 
+
+
+
+
+Contact:
 
 Peter (mcheung63@hotmail.com) 
