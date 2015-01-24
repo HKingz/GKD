@@ -14,8 +14,12 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import com.gkd.GKD;
 import com.gkd.Global;
+import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.callgraph.JmpType;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
@@ -33,8 +37,13 @@ public class JmpSocketServer implements Runnable {
 	//	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
 	public static Vector<JmpData> jmpDataVector = new Vector<JmpData>();
 
+	Session session = HibernateUtil.openSession();
+	Transaction tx;
+
 	public static void main(String args[]) {
-		new JmpSocketServer().startServer(8765, new JmpTableModel());
+		JmpSocketServer jmpSocketServer = new JmpSocketServer();
+		jmpSocketServer.startServer(8765, new JmpTableModel());
+		jmpSocketServer.stopServer();
 	}
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
@@ -48,20 +57,25 @@ public class JmpSocketServer implements Runnable {
 		shouldStop = false;
 		new Thread(this).start();
 
-		while (serverSocket != null && !serverSocket.isBound()) {
-			try {
-				Thread.currentThread().sleep(500);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
+		//		while (serverSocket != null && !serverSocket.isBound()) {
+		//			try {
+		//				Thread.currentThread().sleep(500);
+		//			} catch (InterruptedException e) {
+		//				e.printStackTrace();
+		//			}
+		//		}
+
 	}
 
 	public void stopServer() {
 		shouldStop = true;
 		try {
 			serverSocket.close();
+			if (session.isOpen()) {
+				session.close();
+			}
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -73,6 +87,7 @@ public class JmpSocketServer implements Runnable {
 
 		try {
 			serverSocket = new ServerSocket(port);
+
 			while (!shouldStop) {
 				Socket clientSocket = serverSocket.accept();
 				DataInputStream in = new DataInputStream(clientSocket.getInputStream());
@@ -218,6 +233,7 @@ public class JmpSocketServer implements Runnable {
 					*/
 
 					synchronized (jmpDataVector) {
+						tx = session.beginTransaction();
 						for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
 							String fromAddressDescription = symbol == null ? null : symbol.name;
@@ -263,11 +279,15 @@ public class JmpSocketServer implements Runnable {
 								w = JmpType.unknown;
 							}
 
-							jmpDataVector.add(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
-									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
-//							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
-//									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
-							fstream.flush();
+							JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
+									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep);
+							jmpDataVector.add(jmpData);
+							//							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
+							//									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
+
+							//							session.save(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
+							//									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
+							session.save(jmpData);
 
 							switch ((int) what[x]) {
 							case 12:
@@ -301,6 +321,9 @@ public class JmpSocketServer implements Runnable {
 
 							lineNo++;
 						}
+						if (session.isOpen() && session.isConnected()) {
+							tx.commit();
+						}
 					}
 
 					out.write("done".getBytes());
@@ -316,7 +339,7 @@ public class JmpSocketServer implements Runnable {
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		} catch (IOException ex2) {
-
+			ex2.printStackTrace();
 		}
 	}
 

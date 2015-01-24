@@ -134,6 +134,7 @@ public class BochsStub implements VMStub {
 	@Override
 	public void stopVM() {
 		logger.debug("stopVM");
+		JmpSocketServerController.stop();
 		if (p != null) {
 			p.destroy();
 		}

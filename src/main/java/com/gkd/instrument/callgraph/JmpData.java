@@ -1,8 +1,23 @@
 package com.gkd.instrument.callgraph;
 
+import static javax.persistence.GenerationType.IDENTITY;
+
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "jmpData")
 public class JmpData {
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	@Column(name = "jmpDataId", unique = true, nullable = false)
+	private Integer jmpDataId;
+
 	public int lineNo;
 	public Date date;
 	public long fromAddress;
