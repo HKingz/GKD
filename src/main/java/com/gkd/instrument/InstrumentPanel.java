@@ -1626,7 +1626,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						checkDuplicated.add(pattern);
 					}
 				}
-				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
+				if (withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown && lastDeep == d.deep) {
 					continue;
 				}
 				if (d.contains(filterText)) {
