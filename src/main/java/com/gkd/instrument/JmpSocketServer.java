@@ -13,6 +13,7 @@ import java.util.Date;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -38,6 +39,8 @@ public class JmpSocketServer implements Runnable {
 
 	public static Session session = HibernateUtil.openSession();
 	Transaction tx;
+
+	public static Logger logger = Logger.getLogger(JmpSocketServer.class);
 
 	public static void main(String args[]) {
 		JmpSocketServer jmpSocketServer = new JmpSocketServer();
@@ -233,12 +236,13 @@ public class JmpSocketServer implements Runnable {
 
 					//					synchronized (jmpDataVector) {
 					tx = session.beginTransaction();
-					System.out.println("noOfJmpRecordToFlush " + noOfJmpRecordToFlush);
 					for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
 						String fromAddressDescription = symbol == null ? null : symbol.name;
 						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 						String toAddressDescription = symbol == null ? null : symbol.name;
+						//						String fromAddressDescription="123";
+						//						String toAddressDescription="456";
 
 						JmpType w = null;
 						switch ((int) what[x]) {
@@ -288,14 +292,9 @@ public class JmpSocketServer implements Runnable {
 						//							session.save(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
 						//									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
 						session.save(jmpData);
-						if (lineNo % 100000 == 0) {
-							System.out.println("        >>> added " + lineNo);
+						if (lineNo % 20000 == 0) {
+							logger.info("        processed " + lineNo);
 						}
-						if (lineNo % 50 == 0) {
-							session.flush();
-							session.clear();
-						}
-
 						switch ((int) what[x]) {
 						case 12:
 							deep++;
@@ -328,11 +327,10 @@ public class JmpSocketServer implements Runnable {
 
 						lineNo++;
 					}
-					System.out.println("add to db " + lineNo);
 					if (session.isOpen() && session.isConnected()) {
 						tx.commit();
 					}
-					System.out.println("commited to db " + lineNo);
+					logger.info("commited to db " + lineNo);
 
 					out.write("done".getBytes());
 					out.flush();

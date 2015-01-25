@@ -1595,21 +1595,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		long smallestSegmentStart = Long.MAX_VALUE;
 		long largestSegmentEnd = Long.MIN_VALUE;
 
-		//		int rowcount = ((Long) JmpSocketServer.session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
-		//		for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
-		//			JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
-		//			if (jumpData.segmentStart < smallestSegmentStart) {
-		//				smallestSegmentStart = jumpData.segmentStart;
-		//			}
-		//			if (jumpData.segmentEnd > largestSegmentEnd) {
-		//				largestSegmentEnd = jumpData.segmentEnd;
-		//			}
-		//		}
-
 		Query query = JmpSocketServer.session.createQuery("from JmpData");
+		query.setMaxResults(MAX_NUMBER_OF_VERTEX);
 		Iterator<JmpData> iterator = query.iterate();
-		int counter = 0;
-		while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
+		while (iterator.hasNext()) {
 			JmpData jmpData = iterator.next();
 			if (jmpData.segmentStart < smallestSegmentStart) {
 				smallestSegmentStart = jmpData.segmentStart;
@@ -1635,18 +1624,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private void updateJmpTable() {
 		//$hide>>$
-		//		synchronized (JmpSocketServer.jmpDataVector) {
 		HashSet<String> checkDuplicated = new HashSet<String>();
 		Vector<JmpData> filteredData = new Vector<JmpData>();
 		String filterText = filterRawTableTextField.getText().toLowerCase();
 		int lastDeep = -1;
-		//			for (JmpData d : JmpSocketServer.jmpDataVector) {
 
 		Query query = JmpSocketServer.session.createQuery("from JmpData");
 		Iterator<JmpData> iterator = query.iterate();
-		System.out.println("    >>> updateJmpTable");
-		//		int counter = 0;
-		System.out.println("  ------------------------------  aaa");
 		while (iterator.hasNext()) {
 			JmpData d = iterator.next();
 			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
@@ -1676,7 +1660,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			lastDeep = d.deep;
 		}
-		System.out.println("  ------------------------------  eee");
 
 		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 		jmpPager.maxPageNo = filteredData.size() / pageSize;
@@ -1701,23 +1684,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		System.out.println("filteredData=" + filteredData.size());
 		System.out.println("jmpTableModel.data=" + jmpTableModel.data.size());
 
-		//		if (JmpSocketServer.jmpDataVector.size() > 0) {
-		//			try {
-		//				//for (int x = filteredData.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
-		//				for (int x = pageSize * (jmpPager.getPage() - 1); x < pageSize * jmpPager.getPage() && x < JmpSocketServer.jmpDataVector.size(); x++) {
-		//					//						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
-		//					JmpData jumpData = filteredData.get(x);
-		//					jmpTableModel.add(jumpData);
-		//				}
-		//			} catch (Exception ex) {
-		//				//synchronized not work, that why need this try-catch, remove it in the future
-		//			}
-		//			//jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
-		//		}
 		jmpTableModel.fireTableDataChanged();
-		System.out.println("    >>> updateJmpTable end");
-
-		//		}
 		//$hide<<$
 	}
 
@@ -1799,17 +1766,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		graph.addCell(port2, node);
 		return new mxCell[] { port1, port2 };
 	}
-
-	// public Vector<Object> getAllCells(Object parent) {
-	// Vector<Object> vector = new Vector<Object>();
-	// for (int x = 0; x < graph.getModel().getChildCount(parent); x++) {
-	// mxCell cell = (mxCell) graph.getModel().getChildAt(parent, x);
-	// if (cell.isVertex()) {
-	// vector.add(cell);
-	// }
-	// }
-	// return vector;
-	// }
 
 	private JButton getRefreshCallGraphButton() {
 		if (refreshCallGraphButton == null) {
@@ -2957,16 +2913,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					try {
 						int rowNo = Integer.parseInt(lineTextField.getText());
 						int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
-						/*int tmp = rowNo / pageSize;
-						if (rowNo % pageSize == 0) {
-							tmp--;
-						}
-						int pageNo = jmpPager.maxPageNo - tmp;
-						*/
 						int tmp = ((rowNo - 1) / pageSize) + 1;
-						//					if (rowNo % pageSize == 0) {
-						//						tmp++;
-						//					}
 						jmpPager.setPageNo(tmp);
 						updateJmpTable();
 					} catch (Exception ex) {
@@ -3012,8 +2959,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					Iterator<JmpData> iterator = query.iterate();
 					int counter = 0;
 					while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
-						//for (int x = 0; x < noOfInstruction; x++) {
-						//data.add(JmpSocketServer.jmpDataVector.get(startRecordIndex + x));
 						data.add(iterator.next());
 					}
 
