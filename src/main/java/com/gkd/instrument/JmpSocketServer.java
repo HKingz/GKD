@@ -292,7 +292,7 @@ public class JmpSocketServer implements Runnable {
 						//							session.save(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
 						//									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
 						session.save(jmpData);
-						if (lineNo % 20000 == 0) {
+						if (lineNo % 10000 == 0) {
 							logger.info("        processed " + lineNo);
 						}
 						switch ((int) what[x]) {

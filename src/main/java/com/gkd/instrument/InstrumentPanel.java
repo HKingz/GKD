@@ -258,7 +258,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	CallGraphComponent graphComponent;
 	CallGraphConfigTableModel callGraphConfigTableModel = new CallGraphConfigTableModel();
 	mxGraphOutline graphOutline;
-	private final int MAX_NUMBER_OF_VERTEX = 1000;
+	private final int MAX_NUMBER_OF_VERTEX = 200;
 	JProgressBar statusProgressBar;
 	JLabel statusLabel;
 	JFreeChart interruptChart;
