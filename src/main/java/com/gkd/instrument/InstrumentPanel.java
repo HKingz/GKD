@@ -3015,19 +3015,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return exportJmpTableToExcelButton;
 	}
 
-	public static void exportJmpTable(XSSFWorkbook wb, JProgressBarDialog d) {
+	public void exportJmpTable(XSSFWorkbook wb, JProgressBarDialog d) {
 		CreationHelper createHelper = wb.getCreationHelper();
-		Sheet sheet = wb.createSheet("Registers");
-		sheet.setColumnWidth(5, 30000);
-		sheet.setColumnWidth(6, 30000);
+		Sheet sheet = wb.createSheet("Jmp instrumentation");
+		sheet.setColumnWidth(2, 30000);
+		sheet.setColumnWidth(3, 30000);
 
 		// Create a row and put some cells in it. Rows are 0 based.
-		String columnNames[] = { "row no.", "time", "ptime", "cs", "eip", "instruction", "c code", "ds", "es", "fs", "gs", "ss", "eflags", "eax", "ebx", "ecx", "edx", "esi",
-				"edi", "ebp", "esp", "cr0", "cr2", "cr3", "cr4", "gdtr", "ldtr", "idtr", "tr" };
-		Vector data[] = { AllRegisters.time, AllRegisters.ptime, AllRegisters.cs, AllRegisters.eip, AllRegisters.instructions, AllRegisters.cCode, AllRegisters.ds,
-				AllRegisters.es, AllRegisters.fs, AllRegisters.gs, AllRegisters.ss, AllRegisters.eflags, AllRegisters.eax, AllRegisters.ebx, AllRegisters.ecx, AllRegisters.edx,
-				AllRegisters.esi, AllRegisters.edi, AllRegisters.ebp, AllRegisters.esp, AllRegisters.cr0, AllRegisters.cr2, AllRegisters.cr3, AllRegisters.cr4, AllRegisters.gdtr,
-				AllRegisters.ldtr, AllRegisters.idtr, AllRegisters.tr };
+		String columnNames[] = jmpTableModel.columnNames;
 		Row row = sheet.createRow(0);
 
 		Cell cell;
@@ -3040,9 +3035,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		//		CellStyle style = wb.createCellStyle();
 		//		style.setFillBackgroundColor(XSSFColor.LIME.index);
 
-		if (AllRegisters.time.size() > GKDCommonLib.max_row_limit_in_xls) {
+		if (jmpTableModel.getRowCount() > GKDCommonLib.max_row_limit_in_xls) {
 			JOptionPane.showMessageDialog(null, "Will export " + GKDCommonLib.max_row_limit_in_xls + " row only, this is the xls limit");
-		} else if (AllRegisters.time.size() > 100000) {
+		} else if (jmpTableModel.getRowCount() > 100000) {
 			JOptionPane.showMessageDialog(null, "You are exporting too many rows, make sure you have tuned the -Xmx4g setting");
 		}
 
@@ -3084,7 +3079,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		cellStyleHighlight.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
 
 		// data
-		for (int rowY = 0; rowY < AllRegisters.time.size() && rowY < GKDCommonLib.max_row_limit_in_xls; rowY++) {
+		for (int rowY = 0; rowY < jmpTableModel.getRowCount() && rowY < GKDCommonLib.max_row_limit_in_xls; rowY++) {
 			d.progressBar.setString("General register worksheet, exporting row: " + rowY);
 			row = sheet.createRow(rowY + 1);
 			cell = row.createCell(0);
@@ -3096,19 +3091,33 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 
 			int max = 1;
-			for (int rowX = 0; rowX < data.length; rowX++) {
+			for (int rowX = 0; rowX < jmpTableModel.getColumnCount(); rowX++) {
 				cell = row.createCell(rowX + 1);
 				if (rowY % 2 == 0) {
 					cell.setCellStyle(cellStyleHighlight);
 				} else {
 					cell.setCellStyle(cellStyleNormal);
 				}
-				Object obj = data[rowX].get(rowY);
+				Object obj = jmpTableModel.getValueAt(rowY, rowX);
 				if (obj != null) {
 					if (obj.getClass() == Long.class) {
 						cell.setCellValue("0x" + Long.toHexString((Long) obj));
 					} else if (obj.getClass() == Date.class) {
 						cell.setCellValue(obj.toString().trim());
+					} else if (obj.getClass() == Hashtable.class) {
+						Hashtable<String, Object> ht = (Hashtable<String, Object>) obj;
+
+						Long address = (Long) ht.get("address");
+						CompileUnit cu = (CompileUnit) ht.get("compileUnit");
+						String addressDescription = (String) ht.get("addressDescription");
+						String filePath;
+						//						if (showFullPath) {
+						//							filePath = cu.DW_AT_name;
+						//						} else {
+						filePath = new File(cu.DW_AT_name).getName();
+						//						}
+						String text = Long.toHexString(address) + " " + filePath + " " + addressDescription;
+						cell.setCellValue(text);
 					} else {
 						cell.setCellValue(obj.toString().trim());
 					}
@@ -3119,61 +3128,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			row.setHeight((short) (GKDCommonLib.rowHeight * max));
 		}
-		//		if (AllRegisters.time.size() < 20000) {
-		//			for (int x = 0; x < columnNames.length; x++) {
-		//				sheet.autoSizeColumn(x);
-		//				d.jProgressBar.setString("General register worksheet, auto resize column : " + x);
-		//			}
-		//		}
 
-		//fpu
-		sheet = wb.createSheet("FPU");
-		columnNames = new String[] { "row no.", "time", "ptime", "instruction", "status", "control", "tag", "operand", "fip", "fcs", "fdp", "fds" };
-		data = new Vector[] { AllRegisters.time, AllRegisters.ptime, AllRegisters.instructions, AllRegisters.fpu_status, AllRegisters.fpu_control, AllRegisters.fpu_tag,
-				AllRegisters.fpu_operand, AllRegisters.fip, AllRegisters.fcs, AllRegisters.fdp, AllRegisters.fds };
-		row = sheet.createRow(0);
-
-		for (int x = 0; x < columnNames.length; x++) {
-			cell = row.createCell(x);
-			cell.setCellValue(columnNames[x]);
-			d.progressBar.setString("FPU worksheet, creating column : " + columnNames[x]);
-		}
-
-		for (int rowY = 0; rowY < AllRegisters.time.size() && rowY < GKDCommonLib.max_row_limit_in_xls; rowY++) {
-			d.progressBar.setString("General register worksheet, exporting row: " + rowY);
-			row = sheet.createRow(rowY + 1);
-			cell = row.createCell(0);
-			if (rowY % 2 == 0) {
-				cell.setCellStyle(cellStyleHighlight);
-			} else {
-				cell.setCellStyle(cellStyleNormal);
-			}
-			cell.setCellValue("'" + (rowY + 1));
-
-			for (int y = 0; y < data.length; y++) {
-				cell = row.createCell(y + 1);
-				if (rowY % 2 == 0) {
-					cell.setCellStyle(cellStyleHighlight);
-				} else {
-					cell.setCellStyle(cellStyleNormal);
-				}
-				Object obj = data[y].get(rowY);
-				if (obj != null) {
-					if (obj.getClass() == Long.class) {
-						cell.setCellValue("0x" + Long.toHexString((Long) obj));
-					} else if (obj.getClass() == Date.class) {
-						cell.setCellValue(obj.toString().trim());
-					} else {
-						cell.setCellValue(obj.toString());
-					}
-				}
-			}
-		}
-		//		if (AllRegisters.time.size() < 20000) {
-		//			for (int x = 0; x < columnNames.length; x++) {
-		//				sheet.autoSizeColumn(x);
-		//				d.jProgressBar.setString("FPU worksheet, auto resize column : " + x);
-		//			}
-		//		}
 	}
 }

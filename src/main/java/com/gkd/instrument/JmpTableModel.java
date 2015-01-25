@@ -16,9 +16,7 @@ import com.peterdwarf.elf.Elf32_Sym;
 public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "What", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs", "ss", "ds",
 			"fs", "gs" };
-	//	Vector<JmpData> originalData = new Vector<JmpData>();
 	public Vector<JmpData> data = new Vector<JmpData>();
-	//Vector<String> checkDoubleVector = new Vector<String>();
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.S");
 
 	public String getColumnName(int column) {
@@ -56,8 +54,6 @@ public class JmpTableModel extends DefaultTableModel {
 			ht.put("addressDescription", StringUtils.defaultString(fromAddressDescription));
 			ht.put("deep", jmpData.deep);
 			return ht;
-			//			return "0x" + Long.toHexString(jmpData.fromAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress).DW_AT_name + " "
-			//					+ StringUtils.defaultString(jmpData.fromAddressDescription);
 		} else if (column == 3) {
 			Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(jmpData.toAddress);
 			String toAddressDescription = (symbol == null) ? null : symbol.name;
@@ -68,8 +64,6 @@ public class JmpTableModel extends DefaultTableModel {
 			ht.put("addressDescription", StringUtils.defaultString(toAddressDescription));
 			ht.put("deep", jmpData.deep);
 			return ht;
-			//			return "0x" + Long.toHexString(jmpData.toAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress).DW_AT_name + " "
-			//					+ StringUtils.defaultString(jmpData.toAddressDescription);
 		} else if (column == 4) {
 			return jmpData.what;
 		} else if (column == 5) {
@@ -127,35 +121,4 @@ public class JmpTableModel extends DefaultTableModel {
 		data.clear();
 		this.fireTableDataChanged();
 	}
-
-	//	public void filter(String filter, boolean isGroup) {
-	//		Vector<JmpData> temp;
-	//		if (isGroup) {
-	//			//			checkDoubleVector.clear();
-	//			//			for (JmpData d : data) {
-	//			//				if (checkDoubleVector.contains(data.toString())) {
-	//			//
-	//			//				} else {
-	//			//					checkDoubleVector.add(data);
-	//			//				}
-	//			//			}
-	//			temp = new Vector<JmpData>(new LinkedHashSet<JmpData>(originalData));
-	//			//System.out.println("==========" + temp.size() + "/" + originalData.size());
-	//		} else {
-	//			temp = originalData;
-	//		}
-	//		if (filter.equals("")) {
-	//			data = (Vector<JmpData>) temp.clone();
-	//		} else {
-	//			data.clear();
-	//			System.out.println(temp.size());
-	//			for (JmpData d : temp) {
-	//				//System.out.println(d.fromAddress);
-	//				if (d.contains(filter)) {
-	//					data.add(d);
-	//				}
-	//			}
-	//		}
-	//		this.fireTableDataChanged();
-	//	}
 }
