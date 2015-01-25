@@ -10,6 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.gkd.GKD;
 import com.gkd.instrument.callgraph.JmpData;
+import com.gkd.sourceleveldebugger.SourceLevelDebugger;
+import com.peterdwarf.elf.Elf32_Sym;
 
 public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "What", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs", "ss", "ds",
@@ -45,19 +47,25 @@ public class JmpTableModel extends DefaultTableModel {
 		} else if (column == 1) {
 			return dateFormat.format(jmpData.date);
 		} else if (column == 2) {
+			Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(jmpData.fromAddress);
+			String fromAddressDescription = (symbol == null) ? null : symbol.name;
+
 			Hashtable<String, Object> ht = new Hashtable<String, Object>();
 			ht.put("address", jmpData.fromAddress);
 			ht.put("compileUnit", GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress));
-			ht.put("addressDescription", StringUtils.defaultString(jmpData.fromAddressDescription));
+			ht.put("addressDescription", StringUtils.defaultString(fromAddressDescription));
 			ht.put("deep", jmpData.deep);
 			return ht;
 			//			return "0x" + Long.toHexString(jmpData.fromAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress).DW_AT_name + " "
 			//					+ StringUtils.defaultString(jmpData.fromAddressDescription);
 		} else if (column == 3) {
+			Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(jmpData.toAddress);
+			String toAddressDescription = (symbol == null) ? null : symbol.name;
+
 			Hashtable<String, Object> ht = new Hashtable<String, Object>();
 			ht.put("address", jmpData.toAddress);
 			ht.put("compileUnit", GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress));
-			ht.put("addressDescription", StringUtils.defaultString(jmpData.toAddressDescription));
+			ht.put("addressDescription", StringUtils.defaultString(toAddressDescription));
 			ht.put("deep", jmpData.deep);
 			return ht;
 			//			return "0x" + Long.toHexString(jmpData.toAddress) + " " + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress).DW_AT_name + " "

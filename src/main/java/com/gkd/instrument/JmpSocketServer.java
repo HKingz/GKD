@@ -108,15 +108,7 @@ public class JmpSocketServer implements Runnable {
 				int deep = 0;
 
 				while (!shouldStop) {
-					//					System.out.println(">>" + in.read());
-					//					System.out.println(">>" + in.readByte());
-					//					System.out.println(">>" + in.readByte());
-					//					System.out.println(">>" + in.readByte());
-
-					//					System.out.println("wait start");
-					//					String beacon = String.valueOf((char) in.read()) + (char) in.read() + (char) in.read() + (char) in.read() + (char) in.read();
 					byte startBytes[] = new byte[5];
-					//										in.read(startBytes);
 					in.readFully(startBytes);
 					String beacon = new String(startBytes);
 					if (!beacon.equals("start")) {
@@ -163,8 +155,6 @@ public class JmpSocketServer implements Runnable {
 						byteRead += b;
 					}
 
-					//					in.readFully(bytes);
-
 					noOfRecordRead += noOfJmpRecordToFlush;
 					GKD.instrumentStatusLabel.setText("jump : " + String.format("%,d", noOfRecordRead));
 
@@ -193,16 +183,9 @@ public class JmpSocketServer implements Runnable {
 					offset += read(fs, bytes, offset, segmentRegisterSize);
 					offset += read(gs, bytes, offset, segmentRegisterSize);
 
-					//					int c = in.read();
-					//					System.out.println(c + "," + (char) c);
-					//					c = in.read();
-					//					System.out.println(c + "," + (char) c);
-					//					c = in.read();
-					//					System.out.println(c + "," + (char) c);
 					byte endBytes[] = new byte[3];
-					//										in.read(startBytes);
 					in.readFully(endBytes);
-					//					beacon = String.valueOf((char) in.read()) + (char) in.read() + (char) in.read();
+
 					beacon = new String(endBytes);
 					if (!beacon.equals("end")) {
 						fstream.write("jmp socket - beacon error\n");
@@ -211,39 +194,8 @@ public class JmpSocketServer implements Runnable {
 						System.exit(-1);
 					}
 
-					/*fromAddress = read(in, physicalAddressSize);
-					toAddress = read(in, physicalAddressSize);
-
-					segmentStart = read(in, segmentAddressSize);
-					segmentEnd = read(in, segmentAddressSize);
-
-					eax = read(in, registerSize);
-					ecx = read(in, registerSize);
-					edx = read(in, registerSize);
-					ebx = read(in, registerSize);
-					esp = read(in, registerSize);
-					ebp = read(in, registerSize);
-					esi = read(in, registerSize);
-					edi = read(in, registerSize);
-
-					es = read(in, segmentRegisterSize);
-					cs = read(in, segmentRegisterSize);
-					ss = read(in, segmentRegisterSize);
-					ds = read(in, segmentRegisterSize);
-					fs = read(in, segmentRegisterSize);
-					gs = read(in, segmentRegisterSize);
-					*/
-
-					//					synchronized (jmpDataVector) {
 					tx = session.beginTransaction();
 					for (int x = 0; x < noOfJmpRecordToFlush; x++) {
-						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
-						String fromAddressDescription = symbol == null ? null : symbol.name;
-						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
-						String toAddressDescription = symbol == null ? null : symbol.name;
-						//						String fromAddressDescription="123";
-						//						String toAddressDescription="456";
-
 						JmpType w = null;
 						switch ((int) what[x]) {
 						case 10:
@@ -283,8 +235,8 @@ public class JmpSocketServer implements Runnable {
 							w = JmpType.unknown;
 						}
 
-						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
-								segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep);
+						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], null, toAddress[x], null, w, segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x],
+								ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep);
 						//							jmpDataVector.add(jmpData);
 						//							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
 						//									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
@@ -349,18 +301,6 @@ public class JmpSocketServer implements Runnable {
 			ex2.printStackTrace();
 		}
 	}
-
-	//	long read(DataInputStream in, int size) throws IOException {
-	//		if (size == 8) {
-	//			return CommonLib.readLong64BitsFromInputStream(in);
-	//		} else if (size == 4) {
-	//			return CommonLib.readLongFromInputStream(in);
-	//		} else if (size == 2) {
-	//			return CommonLib.readShortFromInputStream(in);
-	//		} else {
-	//			return in.readByte();
-	//		}
-	//	}
 
 	int read(long arr[], byte bytes[], int offset, int size) throws IOException {
 		int totalByteRead = 0;
