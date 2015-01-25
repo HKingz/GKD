@@ -45,8 +45,8 @@ import org.w3c.dom.Document;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
 
 public class GKDCommonLib {
-	private final static int max_row_limit_in_xls = 1000000;
-	private final static short rowHeight = 250;
+	public final static int max_row_limit_in_xls = 1000000;
+	public final static short rowHeight = 250;
 
 	public GKDCommonLib() {
 	}

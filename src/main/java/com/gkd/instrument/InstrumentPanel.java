@@ -67,6 +67,14 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Query;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -100,7 +108,9 @@ import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.Shape;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
+import com.gkd.AllRegisters;
 import com.gkd.GKD;
+import com.gkd.GKDCommonLib;
 import com.gkd.MyLanguage;
 import com.gkd.RegisterPanel;
 import com.gkd.Setting;
@@ -134,6 +144,7 @@ import com.mxgraph.view.mxGraph;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.combo_color_renderer.ComboBoxRenderer;
+import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
 import com.peterswing.advancedswing.pager.Pager;
 import com.peterswing.advancedswing.pager.PagerEvent;
 import com.peterswing.advancedswing.pager.PagerEventListener;
@@ -276,6 +287,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JCheckBox removeDuplcatedCheckBox;
 	private JButton callGraphButton;
 	GKD gkd;
+	private JButton exportJmpTableToExcelButton;
 
 	public InstrumentPanel(GKD gkd) {
 		this.gkd = gkd;
@@ -1389,6 +1401,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getLineTextField());
 			jmpToolBarPanel.add(getGotoLineButton());
 			jmpToolBarPanel.add(getCallGraphButton());
+			jmpToolBarPanel.add(getExportJmpTableToExcelButton());
 		}
 		return jmpToolBarPanel;
 	}
@@ -2948,5 +2961,219 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			});
 		}
 		return callGraphButton;
+	}
+
+	private JButton getExportJmpTableToExcelButton() {
+		if (exportJmpTableToExcelButton == null) {
+			exportJmpTableToExcelButton = new JButton("Export");
+			exportJmpTableToExcelButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					JFileChooser fc = new JFileChooser();
+					int returnVal = fc.showSaveDialog(gkd);
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+						File file = fc.getSelectedFile();
+						if (!file.getName().endsWith(".xlsx")) {
+							file = new File(file.getParent() + File.separator + file.getName() + ".xlsx");
+						}
+						if (file.exists()) {
+							int r = JOptionPane.showConfirmDialog(gkd, "Overwrite " + file.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+							if (r == 1) {
+								return;
+							}
+						}
+						final JProgressBarDialog d = new JProgressBarDialog(gkd, "Exporting to XLSX", true);
+						d.progressBar.setIndeterminate(true);
+						d.progressBar.setStringPainted(true);
+
+						class MyThread extends Thread {
+							File file;
+
+							public MyThread(File file) {
+								this.file = file;
+							}
+
+							public void run() {
+								XSSFWorkbook wb = new XSSFWorkbook();
+								exportJmpTable(wb, d);
+								FileOutputStream fileOut;
+								try {
+									fileOut = new FileOutputStream(file);
+									wb.write(fileOut);
+									fileOut.close();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						}
+						d.thread = new MyThread(file);
+						d.setVisible(true);
+					}
+				}
+			});
+			exportJmpTableToExcelButton.setIcon(new ImageIcon(InstrumentPanel.class.getResource("/com/gkd/icons/famfam_icons/disk.png")));
+		}
+		return exportJmpTableToExcelButton;
+	}
+
+	public static void exportJmpTable(XSSFWorkbook wb, JProgressBarDialog d) {
+		CreationHelper createHelper = wb.getCreationHelper();
+		Sheet sheet = wb.createSheet("Registers");
+		sheet.setColumnWidth(5, 30000);
+		sheet.setColumnWidth(6, 30000);
+
+		// Create a row and put some cells in it. Rows are 0 based.
+		String columnNames[] = { "row no.", "time", "ptime", "cs", "eip", "instruction", "c code", "ds", "es", "fs", "gs", "ss", "eflags", "eax", "ebx", "ecx", "edx", "esi",
+				"edi", "ebp", "esp", "cr0", "cr2", "cr3", "cr4", "gdtr", "ldtr", "idtr", "tr" };
+		Vector data[] = { AllRegisters.time, AllRegisters.ptime, AllRegisters.cs, AllRegisters.eip, AllRegisters.instructions, AllRegisters.cCode, AllRegisters.ds,
+				AllRegisters.es, AllRegisters.fs, AllRegisters.gs, AllRegisters.ss, AllRegisters.eflags, AllRegisters.eax, AllRegisters.ebx, AllRegisters.ecx, AllRegisters.edx,
+				AllRegisters.esi, AllRegisters.edi, AllRegisters.ebp, AllRegisters.esp, AllRegisters.cr0, AllRegisters.cr2, AllRegisters.cr3, AllRegisters.cr4, AllRegisters.gdtr,
+				AllRegisters.ldtr, AllRegisters.idtr, AllRegisters.tr };
+		Row row = sheet.createRow(0);
+
+		Cell cell;
+		for (int x = 0; x < columnNames.length; x++) {
+			cell = row.createCell(x);
+			cell.setCellValue(columnNames[x]);
+			d.progressBar.setString("General register worksheet, creating column : " + columnNames[x]);
+		}
+
+		//		CellStyle style = wb.createCellStyle();
+		//		style.setFillBackgroundColor(XSSFColor.LIME.index);
+
+		if (AllRegisters.time.size() > GKDCommonLib.max_row_limit_in_xls) {
+			JOptionPane.showMessageDialog(null, "Will export " + GKDCommonLib.max_row_limit_in_xls + " row only, this is the xls limit");
+		} else if (AllRegisters.time.size() > 100000) {
+			JOptionPane.showMessageDialog(null, "You are exporting too many rows, make sure you have tuned the -Xmx4g setting");
+		}
+
+		CellStyle cellStyleNormal = wb.createCellStyle();
+		CellStyle cellStyleHighlight = wb.createCellStyle();
+
+		cellStyleNormal.setDataFormat(createHelper.createDataFormat().getFormat("yy/m/d h:mm:ss"));
+		cellStyleHighlight.setDataFormat(createHelper.createDataFormat().getFormat("yy/m/d h:mm:ss"));
+
+		cellStyleNormal.setWrapText(true);
+		cellStyleHighlight.setWrapText(true);
+
+		//		cellStyleHighlight.setFillBackgroundColor(XSSFColor.LIME.index);
+		//		cellStyleHighlight.setFillPattern(CellStyle.ALIGN_FILL);
+
+		//		cellStyleHighlight.setAlignment(CellStyle.ALIGN_CENTER);
+		//		XSSFPalette palette = wb.getCustomPalette();
+		//		palette.setColorAtIndex((short) 9, (byte) (0xff & 245), (byte) (0xff & 245), (byte) (0xff & 245));
+
+		cellStyleHighlight.setBorderBottom(CellStyle.BORDER_THIN);
+		cellStyleHighlight.setBorderLeft(CellStyle.BORDER_THIN);
+		cellStyleHighlight.setBorderRight(CellStyle.BORDER_THIN);
+		cellStyleHighlight.setBorderTop(CellStyle.BORDER_THIN);
+		cellStyleHighlight.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		cellStyleHighlight.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		cellStyleHighlight.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		cellStyleHighlight.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+
+		cellStyleNormal.setBorderBottom(CellStyle.BORDER_THIN);
+		cellStyleNormal.setBorderLeft(CellStyle.BORDER_THIN);
+		cellStyleNormal.setBorderRight(CellStyle.BORDER_THIN);
+		cellStyleNormal.setBorderTop(CellStyle.BORDER_THIN);
+		cellStyleNormal.setBottomBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		cellStyleNormal.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		cellStyleNormal.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+		cellStyleNormal.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
+
+		cellStyleHighlight.setFillForegroundColor((short) 9);
+		cellStyleHighlight.setFillPattern(XSSFCellStyle.SOLID_FOREGROUND);
+
+		// data
+		for (int rowY = 0; rowY < AllRegisters.time.size() && rowY < GKDCommonLib.max_row_limit_in_xls; rowY++) {
+			d.progressBar.setString("General register worksheet, exporting row: " + rowY);
+			row = sheet.createRow(rowY + 1);
+			cell = row.createCell(0);
+			cell.setCellValue("'" + (rowY + 1));
+			if (rowY % 2 == 0) {
+				cell.setCellStyle(cellStyleHighlight);
+			} else {
+				cell.setCellStyle(cellStyleNormal);
+			}
+
+			int max = 1;
+			for (int rowX = 0; rowX < data.length; rowX++) {
+				cell = row.createCell(rowX + 1);
+				if (rowY % 2 == 0) {
+					cell.setCellStyle(cellStyleHighlight);
+				} else {
+					cell.setCellStyle(cellStyleNormal);
+				}
+				Object obj = data[rowX].get(rowY);
+				if (obj != null) {
+					if (obj.getClass() == Long.class) {
+						cell.setCellValue("0x" + Long.toHexString((Long) obj));
+					} else if (obj.getClass() == Date.class) {
+						cell.setCellValue(obj.toString().trim());
+					} else {
+						cell.setCellValue(obj.toString().trim());
+					}
+					if (obj.toString().trim().split("\n").length > max) {
+						max = obj.toString().trim().split("\n").length;
+					}
+				}
+			}
+			row.setHeight((short) (GKDCommonLib.rowHeight * max));
+		}
+		//		if (AllRegisters.time.size() < 20000) {
+		//			for (int x = 0; x < columnNames.length; x++) {
+		//				sheet.autoSizeColumn(x);
+		//				d.jProgressBar.setString("General register worksheet, auto resize column : " + x);
+		//			}
+		//		}
+
+		//fpu
+		sheet = wb.createSheet("FPU");
+		columnNames = new String[] { "row no.", "time", "ptime", "instruction", "status", "control", "tag", "operand", "fip", "fcs", "fdp", "fds" };
+		data = new Vector[] { AllRegisters.time, AllRegisters.ptime, AllRegisters.instructions, AllRegisters.fpu_status, AllRegisters.fpu_control, AllRegisters.fpu_tag,
+				AllRegisters.fpu_operand, AllRegisters.fip, AllRegisters.fcs, AllRegisters.fdp, AllRegisters.fds };
+		row = sheet.createRow(0);
+
+		for (int x = 0; x < columnNames.length; x++) {
+			cell = row.createCell(x);
+			cell.setCellValue(columnNames[x]);
+			d.progressBar.setString("FPU worksheet, creating column : " + columnNames[x]);
+		}
+
+		for (int rowY = 0; rowY < AllRegisters.time.size() && rowY < GKDCommonLib.max_row_limit_in_xls; rowY++) {
+			d.progressBar.setString("General register worksheet, exporting row: " + rowY);
+			row = sheet.createRow(rowY + 1);
+			cell = row.createCell(0);
+			if (rowY % 2 == 0) {
+				cell.setCellStyle(cellStyleHighlight);
+			} else {
+				cell.setCellStyle(cellStyleNormal);
+			}
+			cell.setCellValue("'" + (rowY + 1));
+
+			for (int y = 0; y < data.length; y++) {
+				cell = row.createCell(y + 1);
+				if (rowY % 2 == 0) {
+					cell.setCellStyle(cellStyleHighlight);
+				} else {
+					cell.setCellStyle(cellStyleNormal);
+				}
+				Object obj = data[y].get(rowY);
+				if (obj != null) {
+					if (obj.getClass() == Long.class) {
+						cell.setCellValue("0x" + Long.toHexString((Long) obj));
+					} else if (obj.getClass() == Date.class) {
+						cell.setCellValue(obj.toString().trim());
+					} else {
+						cell.setCellValue(obj.toString());
+					}
+				}
+			}
+		}
+		//		if (AllRegisters.time.size() < 20000) {
+		//			for (int x = 0; x < columnNames.length; x++) {
+		//				sheet.autoSizeColumn(x);
+		//				d.jProgressBar.setString("FPU worksheet, auto resize column : " + x);
+		//			}
+		//		}
 	}
 }
