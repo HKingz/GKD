@@ -67,6 +67,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
+import org.hibernate.Query;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -1515,14 +1516,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					InstrumentCanvas c = (InstrumentCanvas) canvas;
 					c.drawVertex(state, label);
 				} else {
-					// draw edge, at least
-					//					super.drawState(canvas, state, label);
+					// draw edge, at least super.drawState(canvas, state, label);
 					super.drawState(canvas, state, true);
 				}
 			}
 
-			// Ports are not used as terminals for edges, they are
-			// only used to compute the graphical connection point
+			// Ports are not used as terminals for edges, they are only used to compute the graphical connection point
 
 			public boolean isPort(Object cell) {
 				mxGeometry geo = getCellGeometry(cell);
@@ -1530,8 +1529,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				return (geo != null) ? geo.isRelative() : false;
 			}
 
-			// Implements a tooltip that shows the actual
-			// source and target of an edge
+			// Implements a tooltip that shows the actual source and target of an edge
 			public String getToolTipForCell(Object cell) {
 				if (model.isEdge(cell)) {
 					return convertValueToString(model.getTerminal(cell, true)) + " -> " + convertValueToString(model.getTerminal(cell, false));
@@ -1596,82 +1594,130 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private void setMarkerMaxAndMinSize() {
 		long smallestSegmentStart = Long.MAX_VALUE;
 		long largestSegmentEnd = Long.MIN_VALUE;
-		for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
-			JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
-			if (jumpData.segmentStart < smallestSegmentStart) {
-				smallestSegmentStart = jumpData.segmentStart;
+
+		//		int rowcount = ((Long) JmpSocketServer.session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
+		//		for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
+		//			JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
+		//			if (jumpData.segmentStart < smallestSegmentStart) {
+		//				smallestSegmentStart = jumpData.segmentStart;
+		//			}
+		//			if (jumpData.segmentEnd > largestSegmentEnd) {
+		//				largestSegmentEnd = jumpData.segmentEnd;
+		//			}
+		//		}
+
+		Query query = JmpSocketServer.session.createQuery("from JmpData");
+		Iterator<JmpData> iterator = query.iterate();
+		int counter = 0;
+		while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
+			JmpData jmpData = iterator.next();
+			if (jmpData.segmentStart < smallestSegmentStart) {
+				smallestSegmentStart = jmpData.segmentStart;
 			}
-			if (jumpData.segmentEnd > largestSegmentEnd) {
-				largestSegmentEnd = jumpData.segmentEnd;
+			if (jmpData.segmentEnd > largestSegmentEnd) {
+				largestSegmentEnd = jmpData.segmentEnd;
 			}
+			counter++;
 		}
+
+		//		for (int x = rowcount - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
+		//			JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
+		//			if (jumpData.segmentStart < smallestSegmentStart) {
+		//				smallestSegmentStart = jumpData.segmentStart;
+		//			}
+		//			if (jumpData.segmentEnd > largestSegmentEnd) {
+		//				largestSegmentEnd = jumpData.segmentEnd;
+		//			}
+		//		}
 		graphComponent.markerOffset = smallestSegmentStart;
 		graphComponent.markerEnd = largestSegmentEnd;
 	}
 
 	private void updateJmpTable() {
 		//$hide>>$
-		synchronized (JmpSocketServer.jmpDataVector) {
-			HashSet<String> checkDuplicated = new HashSet<String>();
-			Vector<JmpData> filteredData = new Vector<JmpData>();
-			String filterText = filterRawTableTextField.getText().toLowerCase();
-			int lastDeep = -1;
-			for (JmpData d : JmpSocketServer.jmpDataVector) {
-				if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
-					String pattern = d.fromAddress + "-" + d.toAddress;
-					if (checkDuplicated.contains(pattern)) {
-						continue;
-					} else {
-						checkDuplicated.add(pattern);
-					}
+		//		synchronized (JmpSocketServer.jmpDataVector) {
+		HashSet<String> checkDuplicated = new HashSet<String>();
+		Vector<JmpData> filteredData = new Vector<JmpData>();
+		String filterText = filterRawTableTextField.getText().toLowerCase();
+		int lastDeep = -1;
+		//			for (JmpData d : JmpSocketServer.jmpDataVector) {
+
+		Query query = JmpSocketServer.session.createQuery("from JmpData");
+		Iterator<JmpData> iterator = query.iterate();
+		System.out.println("    >>> updateJmpTable");
+		//		int counter = 0;
+		System.out.println("  ------------------------------  aaa");
+		while (iterator.hasNext()) {
+			JmpData d = iterator.next();
+			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
+				String pattern = d.fromAddress + "-" + d.toAddress;
+				if (checkDuplicated.contains(pattern)) {
+					continue;
+				} else {
+					checkDuplicated.add(pattern);
 				}
-				if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
+			}
+			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
+				continue;
+			}
+			if (d.contains(filterText)) {
+				filteredData.add(d);
+			} else {
+				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
+				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
+					filteredData.add(d);
 					continue;
 				}
-				if (d.contains(filterText)) {
+				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
+				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
 					filteredData.add(d);
-				} else {
-					CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
-					if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
-						filteredData.add(d);
-						continue;
-					}
-					CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
-					if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
-						filteredData.add(d);
-						continue;
-					}
+					continue;
 				}
-				lastDeep = d.deep;
 			}
-
-			int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
-			jmpPager.maxPageNo = filteredData.size() / pageSize;
-			if (filteredData.size() % pageSize != 0) {
-				jmpPager.maxPageNo++;
-			}
-			if (jmpPager.getPage() > jmpPager.maxPageNo) {
-				jmpPager.setPageNo(jmpPager.maxPageNo);
-			} else if (jmpPager.getPage() == 0) {
-				jmpPager.setPageNo(1);
-			}
-			jmpTableModel.removeAll();
-
-			if (JmpSocketServer.jmpDataVector.size() > 0) {
-				try {
-					//for (int x = filteredData.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
-					for (int x = pageSize * (jmpPager.getPage() - 1); x < pageSize * jmpPager.getPage() && x < JmpSocketServer.jmpDataVector.size(); x++) {
-						//						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
-						JmpData jumpData = filteredData.get(x);
-						jmpTableModel.add(jumpData);
-					}
-				} catch (Exception ex) {
-					//synchronized not work, that why need this try-catch, remove it in the future
-				}
-				//jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
-			}
-			jmpTableModel.fireTableDataChanged();
+			lastDeep = d.deep;
 		}
+		System.out.println("  ------------------------------  eee");
+
+		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
+		jmpPager.maxPageNo = filteredData.size() / pageSize;
+		if (filteredData.size() % pageSize != 0) {
+			jmpPager.maxPageNo++;
+		}
+		if (jmpPager.getPage() > jmpPager.maxPageNo) {
+			jmpPager.setPageNo(jmpPager.maxPageNo);
+		} else if (jmpPager.getPage() == 0) {
+			jmpPager.setPageNo(1);
+		}
+		jmpTableModel.removeAll();
+
+		int startIndex = pageSize * (jmpPager.getPage() - 1);
+		if (startIndex >= 0) {
+			for (int x = startIndex; x < pageSize * jmpPager.getPage() && x < filteredData.size(); x++) {
+				JmpData jumpData = filteredData.get(x);
+				jmpTableModel.add(jumpData);
+			}
+		}
+		System.out.println(pageSize * (jmpPager.getPage() - 1) + " , " + pageSize);
+		System.out.println("filteredData=" + filteredData.size());
+		System.out.println("jmpTableModel.data=" + jmpTableModel.data.size());
+
+		//		if (JmpSocketServer.jmpDataVector.size() > 0) {
+		//			try {
+		//				//for (int x = filteredData.size() - (pageSize * (jmpPager.getPage() - 1)) - 1, count = 0; x >= 0 && count < pageSize; count++, x--) {
+		//				for (int x = pageSize * (jmpPager.getPage() - 1); x < pageSize * jmpPager.getPage() && x < JmpSocketServer.jmpDataVector.size(); x++) {
+		//					//						System.out.println(x + "/" + JmpSocketServer.jmpDataVector.size());
+		//					JmpData jumpData = filteredData.get(x);
+		//					jmpTableModel.add(jumpData);
+		//				}
+		//			} catch (Exception ex) {
+		//				//synchronized not work, that why need this try-catch, remove it in the future
+		//			}
+		//			//jmpTableModel.filter(filterRawTableTextField.getText(), groupCheckBox.isSelected());
+		//		}
+		jmpTableModel.fireTableDataChanged();
+		System.out.println("    >>> updateJmpTable end");
+
+		//		}
 		//$hide<<$
 	}
 
@@ -1691,10 +1737,21 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		try {
 			mxCell lastPort = null;
 			statusProgressBar.setMaximum(MAX_NUMBER_OF_VERTEX);
-			for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
-				statusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
+			Query query = JmpSocketServer.session.createQuery("from JmpData");
+			query.setMaxResults(MAX_NUMBER_OF_VERTEX);
+			Iterator<JmpData> iterator = query.iterate();
+			int counter = 0;
+			int rowCount = ((Long) JmpSocketServer.session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
+			if (rowCount > MAX_NUMBER_OF_VERTEX) {
+				rowCount = MAX_NUMBER_OF_VERTEX;
+			}
+			while (iterator.hasNext()) {
+				//for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
+				//statusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
+				statusLabel.setText("Updating call graph " + counter + "/" + rowCount);
 				statusProgressBar.setValue(counter);
-				JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
+				//JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
+				JmpData jumpData = iterator.next();
 				int positionX = (int) ((jumpData.segmentStart - graphComponent.markerOffset) / graphComponent.addressPerPixel);
 				positionX += minX;
 
@@ -1711,6 +1768,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					graph.insertEdge(parent, null, "", lastPort, ports[0], "edgeStyle=entityRelationEdgeStyle;");
 				}
 				lastPort = ports[1];
+				counter++;
 			}
 			statusProgressBar.setValue(statusProgressBar.getMaximum());
 		} finally {
@@ -2948,8 +3006,15 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					int startRecordIndex = pageNo * pageSize + jmpDataTable.getSelectedRow();
 					System.out.println("pageNo=" + pageNo);
 
-					for (int x = 0; x < noOfInstruction; x++) {
-						data.add(JmpSocketServer.jmpDataVector.get(startRecordIndex + x));
+					Query query = JmpSocketServer.session.createQuery("from JmpData");
+					query.setFirstResult(startRecordIndex);
+					query.setMaxResults(noOfInstruction);
+					Iterator<JmpData> iterator = query.iterate();
+					int counter = 0;
+					while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
+						//for (int x = 0; x < noOfInstruction; x++) {
+						//data.add(JmpSocketServer.jmpDataVector.get(startRecordIndex + x));
+						data.add(iterator.next());
 					}
 
 					new CallGraphDialog(gkd, data, noOfInstruction).setVisible(true);

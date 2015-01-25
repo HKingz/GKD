@@ -15,7 +15,7 @@ public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "What", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs", "ss", "ds",
 			"fs", "gs" };
 	//	Vector<JmpData> originalData = new Vector<JmpData>();
-	Vector<JmpData> data = new Vector<JmpData>();
+	public Vector<JmpData> data = new Vector<JmpData>();
 	//Vector<String> checkDoubleVector = new Vector<String>();
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.S");
 
@@ -107,8 +107,12 @@ public class JmpTableModel extends DefaultTableModel {
 		return false;
 	}
 
-	public void add(JmpData data) {
-		this.data.add(data);
+	public void add(JmpData jmpDate) {
+		data.add(jmpDate);
+	}
+
+	public void addAll(Vector<JmpData> d) {
+		data.addAll(d);
 	}
 
 	public void removeAll() {

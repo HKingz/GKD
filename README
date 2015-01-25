@@ -22,7 +22,7 @@ Finally, get GKD source from svn://svn.petersoft.com/GKD, username : gkd, passwo
 Gossip:
 
 1) "mvn versions:display-dependency-updates" to check outdated dependencies
-2) 
+2) "mvn graph:reactor" to generate maven dependency graph
 
 
 

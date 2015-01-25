@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Date;
-import java.util.Vector;
 
 import javax.swing.JOptionPane;
 
@@ -35,9 +34,9 @@ public class JmpSocketServer implements Runnable {
 
 	//	public static LinkedHashSet<String> segments = new LinkedHashSet<String>();
 	//	private SimpleDateFormat dateformat1 = new SimpleDateFormat("HH:mm:ss.S");
-	public static Vector<JmpData> jmpDataVector = new Vector<JmpData>();
+	//	public static Vector<JmpData> jmpDataVector = new Vector<JmpData>();
 
-	Session session = HibernateUtil.openSession();
+	public static Session session = HibernateUtil.openSession();
 	Transaction tx;
 
 	public static void main(String args[]) {
@@ -232,103 +231,109 @@ public class JmpSocketServer implements Runnable {
 					gs = read(in, segmentRegisterSize);
 					*/
 
-					synchronized (jmpDataVector) {
-						tx = session.beginTransaction();
-						for (int x = 0; x < noOfJmpRecordToFlush; x++) {
-							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
-							String fromAddressDescription = symbol == null ? null : symbol.name;
-							symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
-							String toAddressDescription = symbol == null ? null : symbol.name;
+					//					synchronized (jmpDataVector) {
+					tx = session.beginTransaction();
+					System.out.println("noOfJmpRecordToFlush " + noOfJmpRecordToFlush);
+					for (int x = 0; x < noOfJmpRecordToFlush; x++) {
+						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(fromAddress[x]);
+						String fromAddressDescription = symbol == null ? null : symbol.name;
+						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
+						String toAddressDescription = symbol == null ? null : symbol.name;
 
-							JmpType w = null;
-							switch ((int) what[x]) {
-							case 10:
-								w = JmpType.JMP;
-								break;
-							case 11:
-								w = JmpType.JMP_INDIRECT;
-								break;
-							case 12:
-								w = JmpType.CALL;
-								break;
-							case 13:
-								w = JmpType.CALL_INDIRECT;
-								break;
-							case 14:
-								w = JmpType.RET;
-								break;
-							case 15:
-								w = JmpType.IRET;
-								break;
-							case 16:
-								w = JmpType.INT;
-								break;
-							case 17:
-								w = JmpType.SYSCALL;
-								break;
-							case 18:
-								w = JmpType.SYSRET;
-								break;
-							case 19:
-								w = JmpType.SYSENTER;
-								break;
-							case 20:
-								w = JmpType.SYSEXIT;
-								break;
-							default:
-								w = JmpType.unknown;
-							}
-
-							JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
-									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep);
-							jmpDataVector.add(jmpData);
-							//							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
-							//									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
-
-							//							session.save(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
-							//									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
-							session.save(jmpData);
-
-							switch ((int) what[x]) {
-							case 12:
-								deep++;
-								break;
-							case 13:
-								deep++;
-								break;
-							case 14:
-								deep--;
-								break;
-							case 15:
-								deep--;
-								break;
-							case 16:
-								deep++;
-								break;
-							case 17:
-								deep++;
-								break;
-							case 18:
-								deep--;
-								break;
-							case 19:
-								deep++;
-								break;
-							case 20:
-								deep--;
-								break;
-							}
-
-							lineNo++;
+						JmpType w = null;
+						switch ((int) what[x]) {
+						case 10:
+							w = JmpType.JMP;
+							break;
+						case 11:
+							w = JmpType.JMP_INDIRECT;
+							break;
+						case 12:
+							w = JmpType.CALL;
+							break;
+						case 13:
+							w = JmpType.CALL_INDIRECT;
+							break;
+						case 14:
+							w = JmpType.RET;
+							break;
+						case 15:
+							w = JmpType.IRET;
+							break;
+						case 16:
+							w = JmpType.INT;
+							break;
+						case 17:
+							w = JmpType.SYSCALL;
+							break;
+						case 18:
+							w = JmpType.SYSRET;
+							break;
+						case 19:
+							w = JmpType.SYSENTER;
+							break;
+						case 20:
+							w = JmpType.SYSEXIT;
+							break;
+						default:
+							w = JmpType.unknown;
 						}
-						if (session.isOpen() && session.isConnected()) {
-							tx.commit();
+
+						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
+								segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep);
+						//							jmpDataVector.add(jmpData);
+						//							fstream.write(lineNo + "-" + Long.toHexString(fromAddress[x]) + "-" + Long.toHexString(toAddress[x]) + "-" + Long.toHexString(segmentStart[x]) + "-"
+						//									+ Long.toHexString(segmentEnd[x]) + "-" + w + "-" + deep + "\n");
+
+						//							session.save(new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
+						//									segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deep));
+						session.save(jmpData);
+						if (lineNo % 100000 == 0) {
+							System.out.println("        >>> added " + lineNo);
 						}
+
+						switch ((int) what[x]) {
+						case 12:
+							deep++;
+							break;
+						case 13:
+							deep++;
+							break;
+						case 14:
+							deep--;
+							break;
+						case 15:
+							deep--;
+							break;
+						case 16:
+							deep++;
+							break;
+						case 17:
+							deep++;
+							break;
+						case 18:
+							deep--;
+							break;
+						case 19:
+							deep++;
+							break;
+						case 20:
+							deep--;
+							break;
+						}
+
+						lineNo++;
 					}
+					System.out.println("add to db " + lineNo);
+					if (session.isOpen() && session.isConnected()) {
+						tx.commit();
+					}
+					System.out.println("commited to db " + lineNo);
 
 					out.write("done".getBytes());
 					out.flush();
-				}
+
+				} // end while
 
 				in.close();
 				clientSocket.close();
