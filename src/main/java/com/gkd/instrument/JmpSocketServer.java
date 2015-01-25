@@ -291,6 +291,10 @@ public class JmpSocketServer implements Runnable {
 						if (lineNo % 100000 == 0) {
 							System.out.println("        >>> added " + lineNo);
 						}
+						if (lineNo % 50 == 0) {
+							session.flush();
+							session.clear();
+						}
 
 						switch ((int) what[x]) {
 						case 12:
