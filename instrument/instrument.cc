@@ -87,28 +87,7 @@ int segmentRegisterSize = sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value)
 pthread_t jmpThread;
 pthread_mutex_t jmpMutex;
 
-/*
- static vector<bx_phy_address> fromAddressVector;
- static vector<bx_phy_address> toAddressVector;
- static vector<bx_address> segmentBeginVector;
- static vector<bx_address> segmentEndVector;
- static vector<Bit32u> eaxVector;
- static vector<Bit32u> ecxVector;
- static vector<Bit32u> edxVector;
- static vector<Bit32u> ebxVector;
- static vector<Bit32u> espVector;
- static vector<Bit32u> ebpVector;
- static vector<Bit32u> esiVector;
- static vector<Bit32u> ediVector;
- static vector<Bit16u> esVector;
- static vector<Bit16u> csVector;
- static vector<Bit16u> ssVector;
- static vector<Bit16u> dsVector;
- static vector<Bit16u> fsVector;
- static vector<Bit16u> gsVector;
- */
-
-#define JMP_CACHE_SIZE 1000000
+#define JMP_CACHE_SIZE 100000
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
 unsigned whatVector[JMP_CACHE_SIZE];
@@ -152,9 +131,6 @@ void * jmpTimer(void *arg) {
 		if (jumpIndex > 0) {
 			writeToSocket(jmpSockfd, "start", 5);
 
-			fprintf(log, " try send = %d\n", jumpIndex);
-			fflush(log);
-
 			writeToSocket(jmpSockfd, &jumpIndex, 4);
 
 			writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * jumpIndex);
@@ -184,18 +160,12 @@ void * jmpTimer(void *arg) {
 			writeToSocket(jmpSockfd, "end", 3);
 
 			char readBytes[4];
-
-			fprintf(log, " try readBytes\n");
-			fflush(log);
-
 			read(jmpSockfd, readBytes, 4);
 			if (strncmp(readBytes, "done", 4) != 0) {
 				fprintf(log, "jmp socket read/write error = %s\n", readBytes);
 				fflush(log);
 				exit(-1);
 			}
-			fprintf(log, " done sent = %s\n", readBytes);
-			fflush(log);
 
 			jumpIndex = 0;
 		}
@@ -663,11 +633,11 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
 		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
 
-		/*while (jumpIndex >= JMP_CACHE_SIZE){
-		 fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
-		 fflush(log);
-		 sleep(1);
-		 }*/
+		while (jumpIndex >= JMP_CACHE_SIZE) {
+			fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
+			fflush(log);
+			sleep(1);
+		}
 
 		pthread_mutex_lock(&jmpMutex);
 		fromAddressVector[jumpIndex] = fromPhysicalAddress;
