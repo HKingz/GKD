@@ -592,11 +592,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		}
 		LookupPaintScale paintScale = new LookupPaintScale(0, largest, background);
 		if (largest > 1) {
-			// int mean =
-			// medianWithoutZero(Data.getChartData(CommonLib.convertFilesize((String)
-			// jFromComboBox.getSelectedItem()),
-			// CommonLib.convertFilesize((String) jToComboBox
-			// .getSelectedItem())));
 			int m[] = Data.getChartData(CommonLib.convertFilesize((String) fromComboBox.getSelectedItem()), CommonLib.convertFilesize((String) toComboBox.getSelectedItem()),
 					CommonLib.convertFilesize((String) blockSizeComboBox.getSelectedItem()));
 			TreeSet<Integer> data = new TreeSet<Integer>();
@@ -1606,18 +1601,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			if (jmpData.segmentEnd > largestSegmentEnd) {
 				largestSegmentEnd = jmpData.segmentEnd;
 			}
-			counter++;
 		}
-
-		//		for (int x = rowcount - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
-		//			JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
-		//			if (jumpData.segmentStart < smallestSegmentStart) {
-		//				smallestSegmentStart = jumpData.segmentStart;
-		//			}
-		//			if (jumpData.segmentEnd > largestSegmentEnd) {
-		//				largestSegmentEnd = jumpData.segmentEnd;
-		//			}
-		//		}
 		graphComponent.markerOffset = smallestSegmentStart;
 		graphComponent.markerEnd = largestSegmentEnd;
 	}
@@ -1680,9 +1664,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				jmpTableModel.add(jumpData);
 			}
 		}
-		System.out.println(pageSize * (jmpPager.getPage() - 1) + " , " + pageSize);
-		System.out.println("filteredData=" + filteredData.size());
-		System.out.println("jmpTableModel.data=" + jmpTableModel.data.size());
 
 		jmpTableModel.fireTableDataChanged();
 		//$hide<<$
