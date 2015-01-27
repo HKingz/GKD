@@ -76,6 +76,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -115,6 +116,7 @@ import com.gkd.MyLanguage;
 import com.gkd.RegisterPanel;
 import com.gkd.Setting;
 import com.gkd.TSSPanel;
+import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.callgraph.CallGraphConfigTableCellEditor;
 import com.gkd.instrument.callgraph.CallGraphConfigTableCellRenderer;
 import com.gkd.instrument.callgraph.CallGraphConfigTableModel;
@@ -288,6 +290,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton callGraphButton;
 	GKD gkd;
 	private JButton exportJmpTableToExcelButton;
+	public static Session session = HibernateUtil.openSession();
 
 	public InstrumentPanel(GKD gkd) {
 		this.gkd = gkd;
@@ -1603,7 +1606,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		long smallestSegmentStart = Long.MAX_VALUE;
 		long largestSegmentEnd = Long.MIN_VALUE;
 
-		Query query = JmpSocketServer.session.createQuery("from JmpData");
+		Query query = session.createQuery("from JmpData");
 		query.setMaxResults(MAX_NUMBER_OF_VERTEX);
 		Iterator<JmpData> iterator = query.iterate();
 		while (iterator.hasNext()) {
@@ -1626,7 +1629,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		String filterText = filterRawTableTextField.getText().toLowerCase();
 		int lastDeep = -1;
 
-		Query query = JmpSocketServer.session.createQuery("from JmpData");
+		Query query = session.createQuery("from JmpData");
 		Iterator<JmpData> iterator = query.iterate();
 		while (iterator.hasNext()) {
 			JmpData d = iterator.next();
@@ -1698,11 +1701,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		try {
 			mxCell lastPort = null;
 			statusProgressBar.setMaximum(MAX_NUMBER_OF_VERTEX);
-			Query query = JmpSocketServer.session.createQuery("from JmpData");
+			Query query = session.createQuery("from JmpData");
 			query.setMaxResults(MAX_NUMBER_OF_VERTEX);
 			Iterator<JmpData> iterator = query.iterate();
 			int counter = 0;
-			int rowCount = ((Long) JmpSocketServer.session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
+			int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
 			if (rowCount > MAX_NUMBER_OF_VERTEX) {
 				rowCount = MAX_NUMBER_OF_VERTEX;
 			}
@@ -2945,9 +2948,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					int pageNo = jmpPager.getPage() - 1;
 					int pageSize = jmpDataTable.getRowCount();
 					int startRecordIndex = pageNo * pageSize + jmpDataTable.getSelectedRow();
-					System.out.println("pageNo=" + pageNo);
 
-					Query query = JmpSocketServer.session.createQuery("from JmpData");
+					Query query = session.createQuery("from JmpData");
 					query.setFirstResult(startRecordIndex);
 					query.setMaxResults(noOfInstruction);
 					Iterator<JmpData> iterator = query.iterate();
