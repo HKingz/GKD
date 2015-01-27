@@ -87,7 +87,7 @@ int segmentRegisterSize = sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value)
 pthread_t jmpThread;
 pthread_mutex_t jmpMutex;
 
-#define JMP_CACHE_SIZE 50000
+#define JMP_CACHE_SIZE 500000
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
 unsigned whatVector[JMP_CACHE_SIZE];
@@ -636,7 +636,7 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		while (jumpIndex >= JMP_CACHE_SIZE) {
 			fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
 			fflush(log);
-			sleep(1);
+			//sleep(1);
 		}
 
 		pthread_mutex_lock(&jmpMutex);
