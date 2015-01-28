@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.peter</groupId>
 	<artifactId>GKD</artifactId>
-	<version>20150124</version>
+	<version>20150128</version>
 	<name>General Kernel Debugger</name>
 	<description>GKD is a gui debug tool for kernel development. It was originally call &quot;peter-bochs&quot; (http://peter-bochs.googlecode.com). Bochs' command line is not productive, so I make a GUI for it. Now, I adding support to QEMU is rename the project to GKD. Tutorials of peter-bochs can be found in https://code.google.com/p/peter-bochs/w/list</description>
 	<url>http://peter.kingofcoders.com</url>
@@ -122,12 +122,12 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-ar</artifactId>
-			<version>20141215</version>
+			<version>20150128</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-dwarf</artifactId>
-			<version>20141215</version>
+			<version>20150128</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -142,12 +142,12 @@
 		<dependency>
 			<groupId>com.github.mcheung63</groupId>
 			<artifactId>peter-swing</artifactId>
-			<version>20141215</version>
+			<version>20150128</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>JLibGDB</artifactId>
-			<version>20141215</version>
+			<version>20150128</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-discovery</groupId>
@@ -172,7 +172,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>tightvncpanel</artifactId>
-			<version>20141215</version>
+			<version>20150128</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -202,7 +202,7 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>4.12</version>
 		</dependency>
 	</dependencies>
 	<scm>
