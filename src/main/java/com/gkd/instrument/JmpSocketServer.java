@@ -297,7 +297,7 @@ public class JmpSocketServer implements Runnable {
 							//										edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x]);
 							//								session.save(jmpData);
 							if (lineNo % 10000 == 0) {
-								logger.debug("        processed " + lineNo);
+								logger.debug("processed " + lineNo);
 							}
 							//							}
 							//						});
@@ -344,6 +344,7 @@ public class JmpSocketServer implements Runnable {
 					//						tx.commit();
 					//					}
 					try {
+						logger.debug("before commit");
 						pstmt.executeBatch();
 					} catch (SQLException e) {
 						e.printStackTrace();

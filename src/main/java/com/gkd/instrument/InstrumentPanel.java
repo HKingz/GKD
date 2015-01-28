@@ -1606,6 +1606,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		long smallestSegmentStart = Long.MAX_VALUE;
 		long largestSegmentEnd = Long.MIN_VALUE;
 
+		Session session = HibernateUtil.openSession();
 		Query query = session.createQuery("from JmpData");
 		query.setMaxResults(MAX_NUMBER_OF_VERTEX);
 		Iterator<JmpData> iterator = query.iterate();
@@ -1618,6 +1619,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				largestSegmentEnd = jmpData.segmentEnd;
 			}
 		}
+		session.close();
 		graphComponent.markerOffset = smallestSegmentStart;
 		graphComponent.markerEnd = largestSegmentEnd;
 	}
