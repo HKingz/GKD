@@ -349,7 +349,7 @@ public class JmpSocketServer implements Runnable {
 					} catch (SQLException e) {
 						e.printStackTrace();
 					}
-					logger.info("commited to db " + lineNo);
+					logger.debug("commited to db " + lineNo);
 
 					out.write("done".getBytes());
 					out.flush();
