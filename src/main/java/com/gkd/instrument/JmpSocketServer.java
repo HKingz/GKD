@@ -89,9 +89,9 @@ public class JmpSocketServer implements Runnable {
 		try {
 			serverSocket.close();
 			//			conn.close();
-			//			if (session.isOpen()) {
-			//				session.close();
-			//			}
+			if (DBThread.session.isOpen()) {
+				DBThread.session.close();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
