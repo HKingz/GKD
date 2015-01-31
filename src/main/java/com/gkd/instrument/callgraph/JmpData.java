@@ -48,6 +48,9 @@ public class JmpData {
 
 	public int deep;
 
+	public JmpData() {
+	}
+
 	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, JmpType what, long segmentStart,
 			long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs, int deep) {
 		this.lineNo = lineNo;

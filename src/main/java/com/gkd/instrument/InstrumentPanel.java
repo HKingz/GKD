@@ -290,7 +290,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton callGraphButton;
 	GKD gkd;
 	private JButton exportJmpTableToExcelButton;
-	Session session = HibernateUtil.openSession();
 
 	public InstrumentPanel(GKD gkd) {
 		this.gkd = gkd;
@@ -1606,6 +1605,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		long smallestSegmentStart = Long.MAX_VALUE;
 		long largestSegmentEnd = Long.MIN_VALUE;
 
+		Session session = HibernateUtil.openSession();
 		Query query = session.createQuery("from JmpData");
 		query.setMaxResults(MAX_NUMBER_OF_VERTEX);
 		Iterator<JmpData> iterator = query.iterate();
@@ -1618,6 +1618,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				largestSegmentEnd = jmpData.segmentEnd;
 			}
 		}
+		session.close();
 		graphComponent.markerOffset = smallestSegmentStart;
 		graphComponent.markerEnd = largestSegmentEnd;
 	}
@@ -1629,11 +1630,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		String filterText = filterRawTableTextField.getText().toLowerCase();
 		int lastDeep = -1;
 
+		Session session = HibernateUtil.openSession();
 		Query query = session.createQuery("from JmpData");
 		query.setMaxResults(10);
 		Iterator<JmpData> iterator = query.iterate();
 		while (iterator.hasNext()) {
-			System.out.println("fuck");
 			JmpData d = iterator.next();
 			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
 				String pattern = d.fromAddress + "-" + d.toAddress;
@@ -1662,6 +1663,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			lastDeep = d.deep;
 		}
+		session.close();
 
 		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 		jmpPager.maxPageNo = filteredData.size() / pageSize;
@@ -1703,6 +1705,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		try {
 			mxCell lastPort = null;
 			statusProgressBar.setMaximum(MAX_NUMBER_OF_VERTEX);
+			Session session = HibernateUtil.openSession();
 			Query query = session.createQuery("from JmpData");
 			query.setMaxResults(MAX_NUMBER_OF_VERTEX);
 			Iterator<JmpData> iterator = query.iterate();
@@ -1736,6 +1739,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				lastPort = ports[1];
 				counter++;
 			}
+			session.close();
 			statusProgressBar.setValue(statusProgressBar.getMaximum());
 		} finally {
 			graph.getModel().endUpdate();
@@ -2951,6 +2955,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					int pageSize = jmpDataTable.getRowCount();
 					int startRecordIndex = pageNo * pageSize + jmpDataTable.getSelectedRow();
 
+					Session session = HibernateUtil.openSession();
 					Query query = session.createQuery("from JmpData");
 					query.setFirstResult(startRecordIndex);
 					query.setMaxResults(noOfInstruction);
@@ -2959,6 +2964,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
 						data.add(iterator.next());
 					}
+					session.close();
 
 					new CallGraphDialog(gkd, data, noOfInstruction).setVisible(true);
 				}

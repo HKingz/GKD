@@ -2,6 +2,7 @@ package com.gkd.instrument;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.BindException;
@@ -16,9 +17,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
+import org.h2.tools.DeleteDbFiles;
 
 import com.gkd.GKD;
 import com.gkd.Global;
+import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.callgraph.JmpType;
 import com.peterswing.CommonLib;
@@ -53,6 +56,9 @@ public class JmpSocketServer implements Runnable {
 	}
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
+		DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
+		HibernateUtil.getSessionFactory();
+
 		this.port = port;
 		try {
 			fstream = new FileWriter(Global.jmpLog, false);
@@ -89,9 +95,9 @@ public class JmpSocketServer implements Runnable {
 		try {
 			serverSocket.close();
 			//			conn.close();
-//			if (DBThread.session.isOpen()) {
-//				DBThread.session.close();
-//			}
+			//			if (DBThread.session.isOpen()) {
+			//				DBThread.session.close();
+			//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,267 +110,265 @@ public class JmpSocketServer implements Runnable {
 		try {
 			serverSocket = new ServerSocket(port);
 
+			Socket clientSocket = serverSocket.accept();
+			DataInputStream in = new DataInputStream(clientSocket.getInputStream());
+			DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+
+			int physicalAddressSize = in.read();
+			int segmentAddressSize = in.read();
+			int whatSize = in.read();
+			int registerSize = in.read();
+			int segmentRegisterSize = in.read();
+
+			int lineNo = 1;
+			int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
+
+			int noOfRecordRead = 0;
+			int deep = 0;
+
 			while (!shouldStop) {
-				Socket clientSocket = serverSocket.accept();
-				DataInputStream in = new DataInputStream(clientSocket.getInputStream());
-				DataOutputStream out = new DataOutputStream(clientSocket.getOutputStream());
+				byte startBytes[] = new byte[5];
+				in.readFully(startBytes);
+				String beacon = new String(startBytes);
+				if (!beacon.equals("start")) {
+					fstream.write("jmp socket - beacon error\n");
+					fstream.flush();
+					System.err.println("jmp socket error beacon!=start");
+					System.exit(-1);
+				}
 
-				int physicalAddressSize = in.read();
-				int segmentAddressSize = in.read();
-				int whatSize = in.read();
-				int registerSize = in.read();
-				int segmentRegisterSize = in.read();
+				byte[] tempBytes = new byte[4];
+				in.readFully(tempBytes);
+				noOfJmpRecordToFlush = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
 
-				int lineNo = 1;
-				int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
+				long fromAddress[] = new long[noOfJmpRecordToFlush];
+				long toAddress[] = new long[noOfJmpRecordToFlush];
+				long what[] = new long[noOfJmpRecordToFlush];
+				long segmentStart[] = new long[noOfJmpRecordToFlush];
+				long segmentEnd[] = new long[noOfJmpRecordToFlush];
 
-				int noOfRecordRead = 0;
-				int deep = 0;
+				long eax[] = new long[noOfJmpRecordToFlush];
+				long ecx[] = new long[noOfJmpRecordToFlush];
+				long edx[] = new long[noOfJmpRecordToFlush];
+				long ebx[] = new long[noOfJmpRecordToFlush];
+				long esp[] = new long[noOfJmpRecordToFlush];
+				long ebp[] = new long[noOfJmpRecordToFlush];
+				long esi[] = new long[noOfJmpRecordToFlush];
+				long edi[] = new long[noOfJmpRecordToFlush];
 
-				while (!shouldStop) {
-					byte startBytes[] = new byte[5];
-					in.readFully(startBytes);
-					String beacon = new String(startBytes);
-					if (!beacon.equals("start")) {
-						fstream.write("jmp socket - beacon error\n");
-						fstream.flush();
-						System.err.println("jmp socket error beacon!=start");
+				long es[] = new long[noOfJmpRecordToFlush];
+				long cs[] = new long[noOfJmpRecordToFlush];
+				long ss[] = new long[noOfJmpRecordToFlush];
+				long ds[] = new long[noOfJmpRecordToFlush];
+				long fs[] = new long[noOfJmpRecordToFlush];
+				long gs[] = new long[noOfJmpRecordToFlush];
+				byte bytes[] = new byte[noOfJmpRecordToFlush * rowSize];
+
+				int deeps[] = new int[noOfJmpRecordToFlush];
+
+				int byteRead = 0;
+				while (byteRead < bytes.length) {
+					int b = in.read(bytes, byteRead, bytes.length - byteRead);
+					if (b < 0) {
+						System.err.println("b<0");
 						System.exit(-1);
 					}
+					byteRead += b;
+				}
 
-					byte[] tempBytes = new byte[4];
-					in.readFully(tempBytes);
-					noOfJmpRecordToFlush = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+				noOfRecordRead += noOfJmpRecordToFlush;
+				GKD.instrumentStatusLabel.setText("jump : " + String.format("%,d", noOfRecordRead));
 
-					long fromAddress[] = new long[noOfJmpRecordToFlush];
-					long toAddress[] = new long[noOfJmpRecordToFlush];
-					long what[] = new long[noOfJmpRecordToFlush];
-					long segmentStart[] = new long[noOfJmpRecordToFlush];
-					long segmentEnd[] = new long[noOfJmpRecordToFlush];
+				int offset = 0;
+				offset += read(fromAddress, bytes, offset, physicalAddressSize);
+				offset += read(toAddress, bytes, offset, physicalAddressSize);
 
-					long eax[] = new long[noOfJmpRecordToFlush];
-					long ecx[] = new long[noOfJmpRecordToFlush];
-					long edx[] = new long[noOfJmpRecordToFlush];
-					long ebx[] = new long[noOfJmpRecordToFlush];
-					long esp[] = new long[noOfJmpRecordToFlush];
-					long ebp[] = new long[noOfJmpRecordToFlush];
-					long esi[] = new long[noOfJmpRecordToFlush];
-					long edi[] = new long[noOfJmpRecordToFlush];
+				offset += read(what, bytes, offset, whatSize);
 
-					long es[] = new long[noOfJmpRecordToFlush];
-					long cs[] = new long[noOfJmpRecordToFlush];
-					long ss[] = new long[noOfJmpRecordToFlush];
-					long ds[] = new long[noOfJmpRecordToFlush];
-					long fs[] = new long[noOfJmpRecordToFlush];
-					long gs[] = new long[noOfJmpRecordToFlush];
-					byte bytes[] = new byte[noOfJmpRecordToFlush * rowSize];
+				offset += read(segmentStart, bytes, offset, segmentAddressSize);
+				offset += read(segmentEnd, bytes, offset, segmentAddressSize);
 
-					int deeps[] = new int[noOfJmpRecordToFlush];
+				offset += read(eax, bytes, offset, registerSize);
+				offset += read(ecx, bytes, offset, registerSize);
+				offset += read(edx, bytes, offset, registerSize);
+				offset += read(ebx, bytes, offset, registerSize);
+				offset += read(esp, bytes, offset, registerSize);
+				offset += read(ebp, bytes, offset, registerSize);
+				offset += read(esi, bytes, offset, registerSize);
+				offset += read(edi, bytes, offset, registerSize);
 
-					int byteRead = 0;
-					while (byteRead < bytes.length) {
-						int b = in.read(bytes, byteRead, bytes.length - byteRead);
-						if (b < 0) {
-							System.err.println("b<0");
-							System.exit(-1);
-						}
-						byteRead += b;
+				offset += read(es, bytes, offset, segmentRegisterSize);
+				offset += read(cs, bytes, offset, segmentRegisterSize);
+				offset += read(ss, bytes, offset, segmentRegisterSize);
+				offset += read(ds, bytes, offset, segmentRegisterSize);
+				offset += read(fs, bytes, offset, segmentRegisterSize);
+				offset += read(gs, bytes, offset, segmentRegisterSize);
+
+				byte endBytes[] = new byte[3];
+				in.readFully(endBytes);
+
+				beacon = new String(endBytes);
+				if (!beacon.equals("end")) {
+					fstream.write("jmp socket - beacon error\n");
+					fstream.flush();
+					System.err.println("jmp socket error beacon!=end");
+					System.exit(-1);
+				}
+
+				//					tx = session.beginTransaction();
+				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
+					deeps[x] = deep;
+					switch ((int) what[x]) {
+					case 12:
+						deep++;
+						break;
+					case 13:
+						deep++;
+						break;
+					case 14:
+						deep--;
+						break;
+					case 15:
+						deep--;
+						break;
+					case 16:
+						deep++;
+						break;
+					case 17:
+						deep++;
+						break;
+					case 18:
+						deep--;
+						break;
+					case 19:
+						deep++;
+						break;
+					case 20:
+						deep--;
+						break;
 					}
+				}
+				//					try {
+				//						pstmt = conn
+				//								.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, what) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				//					} catch (SQLException e1) {
+				//						e1.printStackTrace();
+				//					}
 
-					noOfRecordRead += noOfJmpRecordToFlush;
-					GKD.instrumentStatusLabel.setText("jump : " + String.format("%,d", noOfRecordRead));
-
-					int offset = 0;
-					offset += read(fromAddress, bytes, offset, physicalAddressSize);
-					offset += read(toAddress, bytes, offset, physicalAddressSize);
-
-					offset += read(what, bytes, offset, whatSize);
-
-					offset += read(segmentStart, bytes, offset, segmentAddressSize);
-					offset += read(segmentEnd, bytes, offset, segmentAddressSize);
-
-					offset += read(eax, bytes, offset, registerSize);
-					offset += read(ecx, bytes, offset, registerSize);
-					offset += read(edx, bytes, offset, registerSize);
-					offset += read(ebx, bytes, offset, registerSize);
-					offset += read(esp, bytes, offset, registerSize);
-					offset += read(ebp, bytes, offset, registerSize);
-					offset += read(esi, bytes, offset, registerSize);
-					offset += read(edi, bytes, offset, registerSize);
-
-					offset += read(es, bytes, offset, segmentRegisterSize);
-					offset += read(cs, bytes, offset, segmentRegisterSize);
-					offset += read(ss, bytes, offset, segmentRegisterSize);
-					offset += read(ds, bytes, offset, segmentRegisterSize);
-					offset += read(fs, bytes, offset, segmentRegisterSize);
-					offset += read(gs, bytes, offset, segmentRegisterSize);
-
-					byte endBytes[] = new byte[3];
-					in.readFully(endBytes);
-
-					beacon = new String(endBytes);
-					if (!beacon.equals("end")) {
-						fstream.write("jmp socket - beacon error\n");
-						fstream.flush();
-						System.err.println("jmp socket error beacon!=end");
-						System.exit(-1);
-					}
-
-					//					tx = session.beginTransaction();
-					for (int x = 0; x < noOfJmpRecordToFlush; x++) {
-						deeps[x] = deep;
-						switch ((int) what[x]) {
-						case 12:
-							deep++;
-							break;
-						case 13:
-							deep++;
-							break;
-						case 14:
-							deep--;
-							break;
-						case 15:
-							deep--;
-							break;
-						case 16:
-							deep++;
-							break;
-						case 17:
-							deep++;
-							break;
-						case 18:
-							deep--;
-							break;
-						case 19:
-							deep++;
-							break;
-						case 20:
-							deep--;
-							break;
-						}
-					}
-					//					try {
-					//						pstmt = conn
-					//								.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, what) values (null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-					//					} catch (SQLException e1) {
-					//						e1.printStackTrace();
-					//					}
-
-					Date start = new Date();
-					for (int x = 0; x < noOfJmpRecordToFlush; x++) {
-						try {
-							JmpType w = null;
-							//							switch ((int) what[x]) {
-							//							case 10:
-							//								w = JmpType.JMP;
-							//								break;
-							//							case 11:
-							//								w = JmpType.JMP_INDIRECT;
-							//								break;
-							//							case 12:
-							//								w = JmpType.CALL;
-							//								break;
-							//							case 13:
-							//								w = JmpType.CALL_INDIRECT;
-							//								break;
-							//							case 14:
-							//								w = JmpType.RET;
-							//								break;
-							//							case 15:
-							//								w = JmpType.IRET;
-							//								break;
-							//							case 16:
-							//								w = JmpType.INT;
-							//								break;
-							//							case 17:
-							//								w = JmpType.SYSCALL;
-							//								break;
-							//							case 18:
-							//								w = JmpType.SYSRET;
-							//								break;
-							//							case 19:
-							//								w = JmpType.SYSENTER;
-							//								break;
-							//							case 20:
-							//								w = JmpType.SYSEXIT;
-							//								break;
-							//							default:
-							//								w = JmpType.unknown;
-							//							}
-
-							//						executorService.execute(new Runnable() {
-							//							public void run() {
-							JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], null, toAddress[x], null, w, segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x],
-									ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x]);
-							//								session.save(jmpData);
-
-							jmpDataVector.add(jmpData);
-							if (lineNo % 100000 == 0) {
-								logger.debug("processed " + lineNo);
-							}
-							//							}
-							//						});
-
-							//							pstmt.setInt(1, 12345);
-							//							pstmt.setDate(2, null);
-							//							pstmt.setInt(3, 12345);
-							//							pstmt.setInt(4, 12345);
-							//							pstmt.setInt(5, 12345);
-							//							pstmt.setInt(6, 12345);
-							//							pstmt.setInt(7, 12345);
-							//							pstmt.setInt(8, 12345);
-							//							pstmt.setInt(9, 12345);
-							//							pstmt.setInt(10, 12345);
-							//							pstmt.setInt(11, 12345);
-							//							pstmt.setInt(12, 12345);
-							//							pstmt.setInt(13, 12345);
-							//							pstmt.setInt(14, 12345);
-							//							pstmt.setString(15, "cheung");
-							//							pstmt.setInt(16, 12345);
-							//							pstmt.setInt(17, 12345);
-							//							pstmt.setInt(18, 12345);
-							//							pstmt.setInt(19, 12345);
-							//							pstmt.setInt(20, 12345);
-							//							pstmt.setInt(21, 12345);
-							//							pstmt.setInt(22, 12345);
-							//							pstmt.setString(23, "peter");
-							//							pstmt.setInt(24, 12345);
-							//
-							//							// Add row to the batch.
-							//
-							//							pstmt.addBatch();
-
-							//						executorService.execute(new InsertJmpDataThread(lineNo, new Date(), fromAddress[x], null, toAddress[x], null, w, segmentStart[x], segmentEnd[x], eax[x],
-							//								ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x]));
-							//								session.save(jmpData);
-
-							lineNo++;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-					//					if (session.isOpen() && session.isConnected()) {
-					//						tx.commit();
-					//					}
+				Date start = new Date();
+				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					try {
-						logger.debug("before commit");
-						//						pstmt.executeBatch();
+						JmpType w = null;
+						//							switch ((int) what[x]) {
+						//							case 10:
+						//								w = JmpType.JMP;
+						//								break;
+						//							case 11:
+						//								w = JmpType.JMP_INDIRECT;
+						//								break;
+						//							case 12:
+						//								w = JmpType.CALL;
+						//								break;
+						//							case 13:
+						//								w = JmpType.CALL_INDIRECT;
+						//								break;
+						//							case 14:
+						//								w = JmpType.RET;
+						//								break;
+						//							case 15:
+						//								w = JmpType.IRET;
+						//								break;
+						//							case 16:
+						//								w = JmpType.INT;
+						//								break;
+						//							case 17:
+						//								w = JmpType.SYSCALL;
+						//								break;
+						//							case 18:
+						//								w = JmpType.SYSRET;
+						//								break;
+						//							case 19:
+						//								w = JmpType.SYSENTER;
+						//								break;
+						//							case 20:
+						//								w = JmpType.SYSEXIT;
+						//								break;
+						//							default:
+						//								w = JmpType.unknown;
+						//							}
+
+						//						executorService.execute(new Runnable() {
+						//							public void run() {
+						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], null, toAddress[x], null, w, segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x],
+								ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x]);
+						//								session.save(jmpData);
+
+						jmpDataVector.add(jmpData);
+						if (lineNo % 100000 == 0) {
+							logger.debug("processed " + lineNo);
+						}
+						//							}
+						//						});
+
+						//							pstmt.setInt(1, 12345);
+						//							pstmt.setDate(2, null);
+						//							pstmt.setInt(3, 12345);
+						//							pstmt.setInt(4, 12345);
+						//							pstmt.setInt(5, 12345);
+						//							pstmt.setInt(6, 12345);
+						//							pstmt.setInt(7, 12345);
+						//							pstmt.setInt(8, 12345);
+						//							pstmt.setInt(9, 12345);
+						//							pstmt.setInt(10, 12345);
+						//							pstmt.setInt(11, 12345);
+						//							pstmt.setInt(12, 12345);
+						//							pstmt.setInt(13, 12345);
+						//							pstmt.setInt(14, 12345);
+						//							pstmt.setString(15, "cheung");
+						//							pstmt.setInt(16, 12345);
+						//							pstmt.setInt(17, 12345);
+						//							pstmt.setInt(18, 12345);
+						//							pstmt.setInt(19, 12345);
+						//							pstmt.setInt(20, 12345);
+						//							pstmt.setInt(21, 12345);
+						//							pstmt.setInt(22, 12345);
+						//							pstmt.setString(23, "peter");
+						//							pstmt.setInt(24, 12345);
+						//
+						//							// Add row to the batch.
+						//
+						//							pstmt.addBatch();
+
+						//						executorService.execute(new InsertJmpDataThread(lineNo, new Date(), fromAddress[x], null, toAddress[x], null, w, segmentStart[x], segmentEnd[x], eax[x],
+						//								ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x]));
+						//								session.save(jmpData);
+
+						lineNo++;
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
-					Date end = new Date();
-					System.out.println("h2 jdbc batch = " + ((double) end.getTime() - start.getTime()) / 1000 + " sec");
+				}
+				//					if (session.isOpen() && session.isConnected()) {
+				//						tx.commit();
+				//					}
+				try {
+					logger.debug("before commit");
+					//						pstmt.executeBatch();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				Date end = new Date();
+				System.out.println("h2 jdbc batch = " + ((double) end.getTime() - start.getTime()) / 1000 + " sec");
 
-					logger.debug("commited to db " + lineNo);
+				logger.debug("commited to db " + lineNo);
 
-					out.write("done".getBytes());
-					out.flush();
+				out.write("done".getBytes());
+				out.flush();
 
-				} // end while
+			} // end while
 
-				in.close();
-				clientSocket.close();
-			}
+			in.close();
+			clientSocket.close();
 			serverSocket.close();
 		} catch (BindException ex) {
 			JOptionPane.showMessageDialog(null, "You have turn on the profiling feature but the port " + port + " is not available. Program exit", "Error",

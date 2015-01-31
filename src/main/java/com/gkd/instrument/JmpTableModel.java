@@ -50,6 +50,8 @@ public class JmpTableModel extends DefaultTableModel {
 
 			Hashtable<String, Object> ht = new Hashtable<String, Object>();
 			ht.put("address", jmpData.fromAddress);
+			System.out.println(">>" + jmpData.fromAddress);
+			System.out.println(">>" + GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress));
 			ht.put("compileUnit", GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress));
 			ht.put("addressDescription", StringUtils.defaultString(fromAddressDescription));
 			ht.put("deep", jmpData.deep);

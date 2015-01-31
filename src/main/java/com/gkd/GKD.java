@@ -114,12 +114,14 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
+import org.h2.tools.DeleteDbFiles;
 
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.ApplicationListener;
 import com.gkd.components.segmentregister.SegmentRegister;
 import com.gkd.elf.ElfUtil;
 import com.gkd.helprequest.HelpRequestDialog;
+import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.InstrumentPanel;
 import com.gkd.logpanel.LogPanel;
 import com.gkd.osdebuginformation.JOSDebugInformationPanel;
@@ -551,7 +553,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public static void main(String[] args) {
 		WebServiceUtil.log("gkd", "start", null, null, null);
-
 		try {
 			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingWhiteLookAndFeel");
 		} catch (Exception e) {
