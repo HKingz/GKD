@@ -36,15 +36,17 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		Hashtable<String, Object> ht = (Hashtable<String, Object>) value;
 		Long address = (Long) ht.get("address");
 		CompileUnit cu = (CompileUnit) ht.get("compileUnit");
+		String filePath = "";
+		if (cu != null) {
+			if (showFullPath) {
+				filePath = cu.DW_AT_name;
+			} else {
+				filePath = new File(cu.DW_AT_name).getName();
+			}
+		}
 		String addressDescription = (String) ht.get("addressDescription");
 		int deep = (int) ht.get("deep");
 
-		String filePath;
-		if (showFullPath) {
-			filePath = cu.DW_AT_name;
-		} else {
-			filePath = new File(cu.DW_AT_name).getName();
-		}
 		int hashCode = Math.abs(filePath.hashCode());
 		//Color color = new Color(hashCode);
 		Color color = colors[hashCode % colors.length];

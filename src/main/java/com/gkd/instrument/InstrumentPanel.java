@@ -1608,7 +1608,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		Session session = HibernateUtil.openSession();
 		Query query = session.createQuery("from JmpData");
 		query.setMaxResults(MAX_NUMBER_OF_VERTEX);
-		Iterator<JmpData> iterator = query.iterate();
+		Iterator<JmpData> iterator = query.list().iterator();
 		while (iterator.hasNext()) {
 			JmpData jmpData = iterator.next();
 			if (jmpData.segmentStart < smallestSegmentStart) {
@@ -1630,10 +1630,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		String filterText = filterRawTableTextField.getText().toLowerCase();
 		int lastDeep = -1;
 
+		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
+
 		Session session = HibernateUtil.openSession();
 		Query query = session.createQuery("from JmpData");
-		query.setMaxResults(10);
-		Iterator<JmpData> iterator = query.iterate();
+		query.setMaxResults(pageSize);
+		query.setFirstResult(jmpPager.getPage() * pageSize);
+		Iterator<JmpData> iterator = query.list().iterator();
 		while (iterator.hasNext()) {
 			JmpData d = iterator.next();
 			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
@@ -1665,8 +1668,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		}
 		session.close();
 
-		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
-		jmpPager.maxPageNo = filteredData.size() / pageSize;
+		int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
+		jmpPager.maxPageNo = rowCount / pageSize;
 		if (filteredData.size() % pageSize != 0) {
 			jmpPager.maxPageNo++;
 		}
@@ -1708,7 +1711,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			Session session = HibernateUtil.openSession();
 			Query query = session.createQuery("from JmpData");
 			query.setMaxResults(MAX_NUMBER_OF_VERTEX);
-			Iterator<JmpData> iterator = query.iterate();
+			Iterator<JmpData> iterator = query.list().iterator();
 			int counter = 0;
 			int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
 			if (rowCount > MAX_NUMBER_OF_VERTEX) {
@@ -2959,7 +2962,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					Query query = session.createQuery("from JmpData");
 					query.setFirstResult(startRecordIndex);
 					query.setMaxResults(noOfInstruction);
-					Iterator<JmpData> iterator = query.iterate();
+					Iterator<JmpData> iterator = query.list().iterator();
 					int counter = 0;
 					while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
 						data.add(iterator.next());
