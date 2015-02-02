@@ -55,7 +55,11 @@ public class LogPanel extends javax.swing.JPanel implements LogFileTailerListene
 			e.printStackTrace();
 		}
 
-		tailer = new LogFileTailer(new File("gkd.log"), 1000, false);
+		File file = new File("gkd.log");
+		if (file.length() >= 200 * 1024 * 1024) {
+			file.delete();
+		}
+		tailer = new LogFileTailer(file, 1000, false);
 		tailer.addLogFileTailerListener(this);
 		tailer.start();
 	}
