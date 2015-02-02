@@ -52,10 +52,10 @@ public class JmpTableModel extends DefaultTableModel {
 
 				Hashtable<String, Object> ht = new Hashtable<String, Object>();
 				ht.put("address", jmpData.fromAddress);
-				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress);
-				if (cu != null) {
-					ht.put("compileUnit", cu);
-				}
+//				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress);
+//				if (cu != null) {
+//					ht.put("compileUnit", cu);
+//				}
 				ht.put("addressDescription", StringUtils.defaultString(fromAddressDescription));
 				ht.put("deep", jmpData.deep);
 				return ht;
@@ -65,10 +65,10 @@ public class JmpTableModel extends DefaultTableModel {
 
 				Hashtable<String, Object> ht = new Hashtable<String, Object>();
 				ht.put("address", jmpData.toAddress);
-				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress);
-				if (cu != null) {
-					ht.put("compileUnit", cu);
-				}
+//				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress);
+//				if (cu != null) {
+//					ht.put("compileUnit", cu);
+//				}
 				ht.put("addressDescription", StringUtils.defaultString(toAddressDescription));
 				ht.put("deep", jmpData.deep);
 				return ht;

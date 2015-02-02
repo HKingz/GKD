@@ -47,12 +47,16 @@ public class JmpData {
 	public long gs;
 
 	public int deep;
+	public String fromAddress_DW_AT_name;
+	public String toAddress_DW_AT_name;
+	public boolean showForDifferentDeep;
 
 	public JmpData() {
 	}
 
 	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, JmpType what, long segmentStart,
-			long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs, int deep) {
+			long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs, int deep,
+			String fromAddress_DW_AT_name, String toAddress_DW_AT_name, boolean showForDifferentDeep) {
 		this.lineNo = lineNo;
 		this.date = date;
 		this.fromAddress = fromAddress;
@@ -77,6 +81,9 @@ public class JmpData {
 		this.fs = fs;
 		this.gs = gs;
 		this.deep = deep;
+		this.fromAddress_DW_AT_name = fromAddress_DW_AT_name;
+		this.toAddress_DW_AT_name = toAddress_DW_AT_name;
+		this.showForDifferentDeep = showForDifferentDeep;
 	}
 
 	public boolean contains(String s) {

@@ -1464,8 +1464,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			jmpDataTable.getColumnModel().getColumn(2).setPreferredWidth(300);
 			jmpDataTable.getColumnModel().getColumn(3).setPreferredWidth(300);
-			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(addressCellRenderer);
-			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(addressCellRenderer);
+//			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(addressCellRenderer);
+//			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(addressCellRenderer);
 		}
 		return jmpDataTable;
 	}
@@ -1605,20 +1605,20 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		long smallestSegmentStart = Long.MAX_VALUE;
 		long largestSegmentEnd = Long.MIN_VALUE;
 
-		Session session = HibernateUtil.openSession();
-		Query query = session.createQuery("from JmpData");
-		query.setMaxResults(MAX_NUMBER_OF_VERTEX);
-		Iterator<JmpData> iterator = query.list().iterator();
-		while (iterator.hasNext()) {
-			JmpData jmpData = iterator.next();
-			if (jmpData.segmentStart < smallestSegmentStart) {
-				smallestSegmentStart = jmpData.segmentStart;
-			}
-			if (jmpData.segmentEnd > largestSegmentEnd) {
-				largestSegmentEnd = jmpData.segmentEnd;
-			}
-		}
-		session.close();
+//		Session session = HibernateUtil.openSession();
+//		Query query = session.createQuery("from JmpData");
+//		query.setMaxResults(MAX_NUMBER_OF_VERTEX);
+//		Iterator<JmpData> iterator = query.list().iterator();
+//		while (iterator.hasNext()) {
+//			JmpData jmpData = iterator.next();
+//			if (jmpData.segmentStart < smallestSegmentStart) {
+//				smallestSegmentStart = jmpData.segmentStart;
+//			}
+//			if (jmpData.segmentEnd > largestSegmentEnd) {
+//				largestSegmentEnd = jmpData.segmentEnd;
+//			}
+//		}
+//		session.close();
 		graphComponent.markerOffset = smallestSegmentStart;
 		graphComponent.markerEnd = largestSegmentEnd;
 	}
@@ -1632,61 +1632,65 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
+		/*
 		Session session = HibernateUtil.openSession();
 		Query query = session.createQuery("from JmpData");
 		query.setMaxResults(pageSize);
-		query.setFirstResult(jmpPager.getPage() * pageSize);
+		query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
 		Iterator<JmpData> iterator = query.list().iterator();
+		jmpTableModel.removeAll();
 		while (iterator.hasNext()) {
 			JmpData d = iterator.next();
-			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
-				String pattern = d.fromAddress + "-" + d.toAddress;
-				if (checkDuplicated.contains(pattern)) {
-					continue;
-				} else {
-					checkDuplicated.add(pattern);
-				}
-			}
-			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
-				continue;
-			}
-			if (d.contains(filterText)) {
-				filteredData.add(d);
-			} else {
-				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
-				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
-					filteredData.add(d);
-					continue;
-				}
-				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
-				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
-					filteredData.add(d);
-					continue;
-				}
-			}
-			lastDeep = d.deep;
+			//			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
+			//				String pattern = d.fromAddress + "-" + d.toAddress;
+			//				if (checkDuplicated.contains(pattern)) {
+			//					continue;
+			//				} else {
+			//					checkDuplicated.add(pattern);
+			//				}
+			//			}
+			//			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
+			//				continue;
+			//			}
+			//			if (d.contains(filterText)) {
+			//				filteredData.add(d);
+			//			} else {
+			//				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
+			//				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
+			//					filteredData.add(d);
+			//					continue;
+			//				}
+			//				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
+			//				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
+			//					filteredData.add(d);
+			//					continue;
+			//				}
+			//			}
+			//			lastDeep = d.deep;
+//			jmpTableModel.add(d);
 		}
 		session.close();
+		*/
 
-		int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
-		jmpPager.maxPageNo = rowCount / pageSize;
-		if (filteredData.size() % pageSize != 0) {
-			jmpPager.maxPageNo++;
-		}
-		if (jmpPager.getPage() > jmpPager.maxPageNo) {
-			jmpPager.setPageNo(jmpPager.maxPageNo);
-		} else if (jmpPager.getPage() == 0) {
-			jmpPager.setPageNo(1);
-		}
-		jmpTableModel.removeAll();
-
-		int startIndex = pageSize * (jmpPager.getPage() - 1);
-		if (startIndex >= 0) {
-			for (int x = startIndex; x < pageSize * jmpPager.getPage() && x < filteredData.size(); x++) {
-				JmpData jumpData = filteredData.get(x);
-				jmpTableModel.add(jumpData);
-			}
-		}
+		//		int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
+		//		jmpPager.maxPageNo = rowCount / pageSize;
+		//		if (filteredData.size() % pageSize != 0) {
+		//			jmpPager.maxPageNo++;
+		//		}
+		//		if (jmpPager.getPage() > jmpPager.maxPageNo) {
+		//			jmpPager.setPageNo(jmpPager.maxPageNo);
+		//		} else if (jmpPager.getPage() == 0) {
+		//			jmpPager.setPageNo(1);
+		//		}
+		//		jmpTableModel.removeAll();
+		//
+		//		int startIndex = pageSize * (jmpPager.getPage() - 1);
+		//		if (startIndex >= 0) {
+		//			for (int x = startIndex; x < pageSize * jmpPager.getPage() && x < filteredData.size(); x++) {
+		//				JmpData jumpData = filteredData.get(x);
+		//				jmpTableModel.add(jumpData);
+		//			}
+		//		}
 
 		jmpTableModel.fireTableDataChanged();
 		//$hide<<$
@@ -1708,41 +1712,41 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		try {
 			mxCell lastPort = null;
 			statusProgressBar.setMaximum(MAX_NUMBER_OF_VERTEX);
-			Session session = HibernateUtil.openSession();
-			Query query = session.createQuery("from JmpData");
-			query.setMaxResults(MAX_NUMBER_OF_VERTEX);
-			Iterator<JmpData> iterator = query.list().iterator();
-			int counter = 0;
-			int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
-			if (rowCount > MAX_NUMBER_OF_VERTEX) {
-				rowCount = MAX_NUMBER_OF_VERTEX;
-			}
-			while (iterator.hasNext()) {
-				//for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
-				//statusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
-				statusLabel.setText("Updating call graph " + counter + "/" + rowCount);
-				statusProgressBar.setValue(counter);
-				//JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
-				JmpData jumpData = iterator.next();
-				int positionX = (int) ((jumpData.segmentStart - graphComponent.markerOffset) / graphComponent.addressPerPixel);
-				positionX += minX;
-
-				mxCell node = (mxCell) graph.insertVertex(parent, null, "0x" + Long.toHexString(jumpData.segmentStart) + " -> " + "0x" + Long.toHexString(jumpData.segmentEnd),
-						positionX, minY + (counter * 30), (jumpData.segmentEnd - jumpData.segmentStart) / graphComponent.addressPerPixel, cellHeight);
-
-				mxCell ports[] = addPort(node);
-
-				if (lastPort != null) {
-					// graph.insertEdge(parent, null, x, lastPort, ports[0],
-					// "edgeStyle=elbowEdgeStyle;elbow=horizontal;"
-					// +
-					// "exitX=1;exitY=0.5;exitPerimeter=1;entryX=0;entryY=0;entryPerimeter=1;");
-					graph.insertEdge(parent, null, "", lastPort, ports[0], "edgeStyle=entityRelationEdgeStyle;");
-				}
-				lastPort = ports[1];
-				counter++;
-			}
-			session.close();
+//			Session session = HibernateUtil.openSession();
+//			Query query = session.createQuery("from JmpData");
+//			query.setMaxResults(MAX_NUMBER_OF_VERTEX);
+//			Iterator<JmpData> iterator = query.list().iterator();
+//			int counter = 0;
+//			int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
+//			if (rowCount > MAX_NUMBER_OF_VERTEX) {
+//				rowCount = MAX_NUMBER_OF_VERTEX;
+//			}
+//			while (iterator.hasNext()) {
+//				//for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
+//				//statusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
+//				statusLabel.setText("Updating call graph " + counter + "/" + rowCount);
+//				statusProgressBar.setValue(counter);
+//				//JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
+//				JmpData jumpData = iterator.next();
+//				int positionX = (int) ((jumpData.segmentStart - graphComponent.markerOffset) / graphComponent.addressPerPixel);
+//				positionX += minX;
+//
+//				mxCell node = (mxCell) graph.insertVertex(parent, null, "0x" + Long.toHexString(jumpData.segmentStart) + " -> " + "0x" + Long.toHexString(jumpData.segmentEnd),
+//						positionX, minY + (counter * 30), (jumpData.segmentEnd - jumpData.segmentStart) / graphComponent.addressPerPixel, cellHeight);
+//
+//				mxCell ports[] = addPort(node);
+//
+//				if (lastPort != null) {
+//					// graph.insertEdge(parent, null, x, lastPort, ports[0],
+//					// "edgeStyle=elbowEdgeStyle;elbow=horizontal;"
+//					// +
+//					// "exitX=1;exitY=0.5;exitPerimeter=1;entryX=0;entryY=0;entryPerimeter=1;");
+//					graph.insertEdge(parent, null, "", lastPort, ports[0], "edgeStyle=entityRelationEdgeStyle;");
+//				}
+//				lastPort = ports[1];
+//				counter++;
+//			}
+//			session.close();
 			statusProgressBar.setValue(statusProgressBar.getMaximum());
 		} finally {
 			graph.getModel().endUpdate();
@@ -2958,16 +2962,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					int pageSize = jmpDataTable.getRowCount();
 					int startRecordIndex = pageNo * pageSize + jmpDataTable.getSelectedRow();
 
-					Session session = HibernateUtil.openSession();
-					Query query = session.createQuery("from JmpData");
-					query.setFirstResult(startRecordIndex);
-					query.setMaxResults(noOfInstruction);
-					Iterator<JmpData> iterator = query.list().iterator();
-					int counter = 0;
-					while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
-						data.add(iterator.next());
-					}
-					session.close();
+//					Session session = HibernateUtil.openSession();
+//					Query query = session.createQuery("from JmpData");
+//					query.setFirstResult(startRecordIndex);
+//					query.setMaxResults(noOfInstruction);
+//					Iterator<JmpData> iterator = query.list().iterator();
+//					int counter = 0;
+//					while (iterator.hasNext() && counter <= MAX_NUMBER_OF_VERTEX) {
+//						data.add(iterator.next());
+//					}
+//					session.close();
 
 					new CallGraphDialog(gkd, data, noOfInstruction).setVisible(true);
 				}

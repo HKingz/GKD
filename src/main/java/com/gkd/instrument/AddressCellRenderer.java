@@ -35,15 +35,15 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		}
 		Hashtable<String, Object> ht = (Hashtable<String, Object>) value;
 		Long address = (Long) ht.get("address");
-		CompileUnit cu = (CompileUnit) ht.get("compileUnit");
+//		CompileUnit cu = (CompileUnit) ht.get("compileUnit");
 		String filePath = "";
-		if (cu != null) {
-			if (showFullPath) {
-				filePath = cu.DW_AT_name;
-			} else {
-				filePath = new File(cu.DW_AT_name).getName();
-			}
-		}
+//		if (cu != null) {
+//			if (showFullPath) {
+//				filePath = cu.DW_AT_name;
+//			} else {
+//				filePath = new File(cu.DW_AT_name).getName();
+//			}
+//		}
 		String addressDescription = (String) ht.get("addressDescription");
 		int deep = (int) ht.get("deep");
 
