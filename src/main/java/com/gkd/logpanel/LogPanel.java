@@ -56,9 +56,7 @@ public class LogPanel extends javax.swing.JPanel implements LogFileTailerListene
 		}
 
 		File file = new File("gkd.log");
-		if (file.length() >= 200 * 1024 * 1024) {
-			file.delete();
-		}
+		file.delete();
 		tailer = new LogFileTailer(file, 1000, false);
 		tailer.addLogFileTailerListener(this);
 		tailer.start();

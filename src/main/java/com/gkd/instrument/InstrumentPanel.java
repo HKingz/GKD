@@ -75,8 +75,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
@@ -109,7 +111,6 @@ import org.jzy3d.plot3d.primitives.AbstractDrawable;
 import org.jzy3d.plot3d.primitives.Shape;
 import org.jzy3d.plot3d.rendering.canvas.Quality;
 
-import com.gkd.AllRegisters;
 import com.gkd.GKD;
 import com.gkd.GKDCommonLib;
 import com.gkd.MyLanguage;
@@ -121,7 +122,6 @@ import com.gkd.instrument.callgraph.CallGraphConfigTableCellEditor;
 import com.gkd.instrument.callgraph.CallGraphConfigTableCellRenderer;
 import com.gkd.instrument.callgraph.CallGraphConfigTableModel;
 import com.gkd.instrument.callgraph.JmpData;
-import com.gkd.instrument.callgraph.JmpType;
 import com.gkd.instrument.jfreechart.MyXYBlockRenderer;
 import com.gkd.instrument.jfreechart.MyXYToolTipGenerator;
 import com.gkd.instrument.newcallgraph.CallGraphDialog;
@@ -1464,8 +1464,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			jmpDataTable.getColumnModel().getColumn(2).setPreferredWidth(300);
 			jmpDataTable.getColumnModel().getColumn(3).setPreferredWidth(300);
-			//			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(addressCellRenderer);
-			//			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(addressCellRenderer);
+			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(addressCellRenderer);
+			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(addressCellRenderer);
 		}
 		return jmpDataTable;
 	}
@@ -1633,10 +1633,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
 		Session session = HibernateUtil.openSession();
-		Query query = session.createQuery("from JmpData");
-		query.setMaxResults(pageSize);
-		query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-		Iterator<JmpData> iterator = query.list().iterator();
+		//		Query query = session.createQuery("from JmpData");
+
+		Criteria criteria = session.createCriteria(JmpData.class);
+
+		if (withSymbolCheckBox.isSelected()) {
+			criteria.add(Restrictions.isNotNull("toAddressDescription"));
+		}
+		criteria.setMaxResults(pageSize);
+		criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+		Iterator<JmpData> iterator = criteria.list().iterator();
 		jmpTableModel.removeAll();
 		while (iterator.hasNext()) {
 			JmpData d = iterator.next();
