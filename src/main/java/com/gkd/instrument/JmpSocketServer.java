@@ -39,6 +39,8 @@ public class JmpSocketServer implements Runnable {
 
 	public static Logger logger = Logger.getLogger(JmpSocketServer.class);
 
+	public static Statistic statistic = new Statistic();
+
 	public static void main(String args[]) {
 		JmpSocketServer jmpSocketServer = new JmpSocketServer();
 		jmpSocketServer.startServer(8765, new JmpTableModel());
@@ -90,15 +92,12 @@ public class JmpSocketServer implements Runnable {
 			int lineNo = 1;
 			int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
 
-			int noOfRecordRead = 0;
-			int deep = -99999;
+			int deep = 0;
 			logger.debug("client connected, port=" + clientSocket.getPort());
 
 			while (!shouldStop) {
-				logger.debug(">>>>>>>> start 1");
 				byte startBytes[] = new byte[5];
 				in.readFully(startBytes);
-				logger.debug(">>>>>>>> start 2");
 				String beacon = new String(startBytes);
 				if (!beacon.equals("start")) {
 					fstream.write("jmp socket - beacon error\n");
@@ -147,9 +146,6 @@ public class JmpSocketServer implements Runnable {
 					byteRead += b;
 				}
 
-				noOfRecordRead += noOfJmpRecordToFlush;
-				GKD.instrumentStatusLabel.setText("jump : " + String.format("%,d", noOfRecordRead));
-
 				int offset = 0;
 				offset += read(fromAddress, bytes, offset, physicalAddressSize);
 				offset += read(toAddress, bytes, offset, physicalAddressSize);
@@ -186,8 +182,6 @@ public class JmpSocketServer implements Runnable {
 					System.exit(-1);
 				}
 
-				logger.debug(">>>>>>>> start 3");
-				//					tx = session.beginTransaction();
 				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					deeps[x] = deep;
 					switch ((int) what[x]) {
@@ -226,7 +220,6 @@ public class JmpSocketServer implements Runnable {
 						showForDifferentDeeps[x] = false;
 					}
 				}
-				logger.debug(">>>>>>>> start 4");
 
 				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					try {
@@ -263,16 +256,10 @@ public class JmpSocketServer implements Runnable {
 						e.printStackTrace();
 					}
 				}
-				try {
-					logger.debug("before commit");
-					//						pstmt.executeBatch();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
+				statistic.noOfCachedRecord += jmpDataVector.size();
+				GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 				out.write("done".getBytes());
 				out.flush();
-
 			} // end while
 
 			in.close();
