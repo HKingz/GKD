@@ -47,29 +47,31 @@ public class JmpTableModel extends DefaultTableModel {
 			} else if (column == 1) {
 				return jmpData.date == null ? null : dateFormat.format(jmpData.date);
 			} else if (column == 2) {
-				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(jmpData.fromAddress);
-				String fromAddressDescription = (symbol == null) ? null : symbol.name;
+//				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(jmpData.fromAddress);
+//				String fromAddressDescription = (symbol == null) ? null : symbol.name;
 
 				Hashtable<String, Object> ht = new Hashtable<String, Object>();
 				ht.put("address", jmpData.fromAddress);
-//				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress);
-//				if (cu != null) {
-//					ht.put("compileUnit", cu);
-//				}
-				ht.put("addressDescription", StringUtils.defaultString(fromAddressDescription));
+				//				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.fromAddress);
+				//				if (cu != null) {
+				//					ht.put("compileUnit", cu);
+				//				}
+				ht.put("DW_AT_name", StringUtils.defaultString(jmpData.fromAddress_DW_AT_name));
+				ht.put("addressDescription", StringUtils.defaultString(jmpData.fromAddressDescription));
 				ht.put("deep", jmpData.deep);
 				return ht;
 			} else if (column == 3) {
-				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(jmpData.toAddress);
-				String toAddressDescription = (symbol == null) ? null : symbol.name;
+//				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(jmpData.toAddress);
+//				String toAddressDescription = (symbol == null) ? null : symbol.name;
 
 				Hashtable<String, Object> ht = new Hashtable<String, Object>();
 				ht.put("address", jmpData.toAddress);
-//				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress);
-//				if (cu != null) {
-//					ht.put("compileUnit", cu);
-//				}
-				ht.put("addressDescription", StringUtils.defaultString(toAddressDescription));
+				//				CompileUnit cu = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(jmpData.toAddress);
+				//				if (cu != null) {
+				//					ht.put("compileUnit", cu);
+				//				}
+				ht.put("DW_AT_name", StringUtils.defaultString(jmpData.toAddress_DW_AT_name));
+				ht.put("addressDescription", StringUtils.defaultString(jmpData.toAddressDescription));
 				ht.put("deep", jmpData.deep);
 				return ht;
 			} else if (column == 4) {

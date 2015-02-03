@@ -3132,11 +3132,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						CompileUnit cu = (CompileUnit) ht.get("compileUnit");
 						String addressDescription = (String) ht.get("addressDescription");
 						String filePath;
-						//						if (showFullPath) {
-						//							filePath = cu.DW_AT_name;
-						//						} else {
-						filePath = new File(cu.DW_AT_name).getName();
-						//						}
+
+						String DW_AT_name = (String) ht.get("DW_AT_name");
+						if (fullPathCheckbox.isSelected()) {
+							filePath = DW_AT_name;
+						} else {
+							filePath = new File(DW_AT_name).getName();
+						}
 						String text = Long.toHexString(address) + " " + filePath + " " + addressDescription;
 						cell.setCellValue(text);
 					} else {
