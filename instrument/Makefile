@@ -28,7 +28,7 @@ SHELL = /bin/sh
 CC = gcc
 CFLAGS =  -fpascal-strings -fno-common -Wno-four-char-constants -Wno-unknown-pragmas -Dmacintosh -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES 
 CXX = g++
-CXXFLAGS = -O3 -fpascal-strings -fno-common -Wno-four-char-constants -Wno-unknown-pragmas -Dmacintosh -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES 
+CXXFLAGS = -O2 -fpascal-strings -fno-common -Wno-four-char-constants -Wno-unknown-pragmas -Dmacintosh -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES 
 
 LDFLAGS = 
 LIBS = 

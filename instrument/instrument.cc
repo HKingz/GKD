@@ -634,9 +634,9 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
 
 		while (jumpIndex >= JMP_CACHE_SIZE) {
-			fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
-			fflush(log);
-			//sleep(1);
+			//fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
+			//fflush(log);
+			sleep(1);
 		}
 
 		pthread_mutex_lock(&jmpMutex);
