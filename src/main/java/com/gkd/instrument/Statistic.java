@@ -6,6 +6,6 @@ public class Statistic {
 	int noOfRecordWithSymbol;
 
 	public String toString() {
-		return noOfRecordWithSymbol + " (symbol) / " + noOfDBRecord + " (DB) / " + noOfDBRecord + " (cache)";
+		return String.format("%,d", noOfRecordWithSymbol) + " (symbol) / " + String.format("%,d", noOfDBRecord) + " (DB) / " + String.format("%,d", noOfCachedRecord) + " (cache)";
 	}
 }

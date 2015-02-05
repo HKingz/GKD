@@ -1,10 +1,12 @@
 package com.gkd.sourceleveldebugger;
 
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
 import com.gkd.MyLanguage;
+import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {
@@ -93,12 +95,28 @@ public class SymbolTableModel extends AbstractTableModel {
 		setSearchPattern(searchPattern);
 	}
 
+//	int hashCode = -99999;
+//	Hashtable<Long, Elf32_Sym> ht;
+//	Vector<Long> nullSymbols;
+
 	public Elf32_Sym searchSymbol(long address) {
+//		if (hashCode != symbols.hashCode()) {
+//			ht = new Hashtable<Long, Elf32_Sym>();
+//			nullSymbols = new Vector<Long>();
+//			hashCode = symbols.hashCode();
+//		}
+//		if (nullSymbols.contains(address)) {
+//			return null;
+//		} else if (ht.containsKey(address)) {
+//			return ht.get(address);
+//		}
 		for (Elf32_Sym symbol : symbols) {
 			if (symbol.st_value == address) {
+//				ht.put(address, symbol);
 				return symbol;
 			}
 		}
+//		nullSymbols.add(address);
 		return null;
 	}
 

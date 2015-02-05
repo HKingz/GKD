@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Date;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JOptionPane;
@@ -22,7 +23,6 @@ import com.gkd.GKD;
 import com.gkd.Global;
 import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.callgraph.JmpData;
-import com.gkd.instrument.callgraph.JmpType;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.elf.Elf32_Sym;
@@ -60,7 +60,6 @@ public class JmpSocketServer implements Runnable {
 		shouldStop = false;
 		new Thread(new DBThread()).start();
 		new Thread(this).start();
-
 	}
 
 	public void stopServer() {
@@ -221,7 +220,8 @@ public class JmpSocketServer implements Runnable {
 						showForDifferentDeeps[x] = false;
 					}
 				}
-
+				Vector<Long> fromNullSymbols = new Vector<Long>();
+				Vector<Long> toNullSymbols = new Vector<Long>();
 				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					try {
 						CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(fromAddress[x]);
@@ -237,17 +237,33 @@ public class JmpSocketServer implements Runnable {
 							toAddress_DW_AT_name = toCU.DW_AT_name;
 						}
 
-						Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress[x]);
-						String fromAddressDescription = (symbol == null) ? null : symbol.name;
+						String fromAddressDescription = null;
+						String toAddressDescription = null;
 
-						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
-						String toAddressDescription = (symbol == null) ? null : symbol.name;
+						if (!fromNullSymbols.contains(fromAddress[x])) {
+							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress[x]);
+							if (symbol == null) {
+								fromNullSymbols.add(fromAddress[x]);
+							} else {
+								fromAddressDescription = symbol.name;
+							}
+						}
+
+						if (!toNullSymbols.contains(fromAddress[x])) {
+							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
+							if (symbol == null) {
+								toNullSymbols.add(toAddress[x]);
+							} else {
+								toAddressDescription = symbol.name;
+							}
+						}
 
 						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, (int) what[x],
 								segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x],
 								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 
 						jmpDataVector.add(jmpData);
+						JmpSocketServer.statistic.noOfCachedRecord++;
 						if (lineNo % 100000 == 0) {
 							logger.debug("processed " + lineNo);
 							GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
@@ -257,7 +273,7 @@ public class JmpSocketServer implements Runnable {
 						e.printStackTrace();
 					}
 				}
-				statistic.noOfCachedRecord += jmpDataVector.size();
+				//	statistic.noOfCachedRecord += jmpDataVector.size();
 				GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 				out.write("done".getBytes());
 				out.flush();

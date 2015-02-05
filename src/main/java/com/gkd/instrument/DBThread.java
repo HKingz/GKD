@@ -65,7 +65,7 @@ public class DBThread implements Runnable {
 					pstmt.executeBatch();
 					conn.close();
 				}
-				Thread.sleep(10000);
+				Thread.sleep(2000);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
