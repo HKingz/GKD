@@ -25,7 +25,7 @@ public class JmpData {
 	public long toAddress;
 	public String toAddressDescription;
 
-	public JmpType what;
+	public int what;
 
 	public long segmentStart;
 	public long segmentEnd;
@@ -54,7 +54,7 @@ public class JmpData {
 	public JmpData() {
 	}
 
-	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, JmpType what, long segmentStart,
+	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, int what, long segmentStart,
 			long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs, int deep,
 			String fromAddress_DW_AT_name, String toAddress_DW_AT_name, boolean showForDifferentDeep) {
 		this.lineNo = lineNo;
@@ -108,7 +108,74 @@ public class JmpData {
 		return false;
 	}
 
+	public int getWhat() {
+		return what;
+	}
+
+	public void setWhat(int what) {
+		this.what = what;
+	}
+
+	public JmpType getWhatEnum() {
+		switch (what) {
+		case 10:
+			return JmpType.JMP;
+		case 11:
+			return JmpType.JMP_INDIRECT;
+		case 12:
+			return JmpType.CALL;
+		case 13:
+			return JmpType.CALL_INDIRECT;
+		case 14:
+			return JmpType.RET;
+		case 15:
+			return JmpType.IRET;
+		case 16:
+			return JmpType.INT;
+		case 17:
+			return JmpType.SYSCALL;
+		case 18:
+			return JmpType.SYSRET;
+		case 19:
+			return JmpType.SYSENTER;
+		case 20:
+			return JmpType.SYSEXIT;
+		default:
+			return JmpType.unknown;
+		}
+	}
+
+	public String getWhatStr() {
+		switch (what) {
+		case 10:
+			return "JMP";
+		case 11:
+			return "JMP_INDIRECT";
+		case 12:
+			return "CALL";
+		case 13:
+			return "CALL_INDIRECT";
+		case 14:
+			return "RET";
+		case 15:
+			return "IRET";
+		case 16:
+			return "INT";
+		case 17:
+			return "SYSCALL";
+		case 18:
+			return "SYSRET";
+		case 19:
+			return "SYSENTER";
+		case 20:
+			return "SYSEXIT";
+		default:
+			return "unknown";
+		}
+	}
+
 	public String toString() {
 		return fromAddress + "," + toAddress;
 	}
+
 }

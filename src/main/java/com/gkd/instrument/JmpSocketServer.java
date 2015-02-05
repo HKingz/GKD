@@ -109,6 +109,7 @@ public class JmpSocketServer implements Runnable {
 				byte[] tempBytes = new byte[4];
 				in.readFully(tempBytes);
 				noOfJmpRecordToFlush = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
+				logger.debug("jmp server incoming record = " + noOfJmpRecordToFlush);
 
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
 				long toAddress[] = new long[noOfJmpRecordToFlush];
@@ -223,7 +224,6 @@ public class JmpSocketServer implements Runnable {
 
 				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					try {
-						JmpType w = null;
 						CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(fromAddress[x]);
 						CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(toAddress[x]);
 
@@ -243,13 +243,14 @@ public class JmpSocketServer implements Runnable {
 						symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 						String toAddressDescription = (symbol == null) ? null : symbol.name;
 
-						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, w, segmentStart[x],
-								segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x],
+						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, (int) what[x],
+								segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x],
 								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 
 						jmpDataVector.add(jmpData);
 						if (lineNo % 100000 == 0) {
 							logger.debug("processed " + lineNo);
+							GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 						}
 						lineNo++;
 					} catch (Exception e) {

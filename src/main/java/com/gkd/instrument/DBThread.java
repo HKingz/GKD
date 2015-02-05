@@ -21,7 +21,7 @@ public class DBThread implements Runnable {
 				if (count > 0) {
 					Connection conn = DriverManager.getConnection("jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB");
 					PreparedStatement pstmt = conn
-							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, what, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep) values (null, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (null, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 					for (JmpData jmpData : JmpSocketServer.jmpDataVector) {
 						pstmt.setLong(1, jmpData.cs);
@@ -47,10 +47,10 @@ public class DBThread implements Runnable {
 						pstmt.setLong(20, jmpData.ss);
 						pstmt.setLong(21, jmpData.toAddress);
 						pstmt.setString(22, jmpData.toAddressDescription);
-						pstmt.setObject(23, jmpData.what);
-						pstmt.setObject(24, jmpData.fromAddress_DW_AT_name);
-						pstmt.setObject(25, jmpData.toAddress_DW_AT_name);
-						pstmt.setObject(26, jmpData.showForDifferentDeep);
+						pstmt.setObject(23, jmpData.fromAddress_DW_AT_name);
+						pstmt.setObject(24, jmpData.toAddress_DW_AT_name);
+						pstmt.setObject(25, jmpData.showForDifferentDeep);
+						pstmt.setObject(26, jmpData.what);
 						pstmt.addBatch();
 
 						JmpSocketServer.jmpDataVector.remove(jmpData);

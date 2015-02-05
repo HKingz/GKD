@@ -29,8 +29,8 @@ public class CallGraphDialog extends JDialog {
 			e.printStackTrace();
 		}
 		Vector<JmpData> jmpData = new Vector<JmpData>();
-		jmpData.add(new JmpData(0, new Date(), 1, "1", 5, "4", JmpType.CALL, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true));
-		jmpData.add(new JmpData(1, new Date(), 4, "4", 15, "15", JmpType.SYSCALL, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true));
+		jmpData.add(new JmpData(0, new Date(), 1, "1", 5, "4", 10, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true));
+		jmpData.add(new JmpData(1, new Date(), 4, "4", 15, "15", 12, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true));
 
 		CallGraphDialog dialog = new CallGraphDialog(null, jmpData, 0);
 		dialog.setVisible(true);

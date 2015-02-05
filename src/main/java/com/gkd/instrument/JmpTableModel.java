@@ -47,8 +47,8 @@ public class JmpTableModel extends DefaultTableModel {
 			} else if (column == 1) {
 				return jmpData.date == null ? null : dateFormat.format(jmpData.date);
 			} else if (column == 2) {
-//				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(jmpData.fromAddress);
-//				String fromAddressDescription = (symbol == null) ? null : symbol.name;
+				//				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbolWithinRange(jmpData.fromAddress);
+				//				String fromAddressDescription = (symbol == null) ? null : symbol.name;
 
 				Hashtable<String, Object> ht = new Hashtable<String, Object>();
 				ht.put("address", jmpData.fromAddress);
@@ -61,8 +61,8 @@ public class JmpTableModel extends DefaultTableModel {
 				ht.put("deep", jmpData.deep);
 				return ht;
 			} else if (column == 3) {
-//				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(jmpData.toAddress);
-//				String toAddressDescription = (symbol == null) ? null : symbol.name;
+				//				Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(jmpData.toAddress);
+				//				String toAddressDescription = (symbol == null) ? null : symbol.name;
 
 				Hashtable<String, Object> ht = new Hashtable<String, Object>();
 				ht.put("address", jmpData.toAddress);
@@ -75,7 +75,7 @@ public class JmpTableModel extends DefaultTableModel {
 				ht.put("deep", jmpData.deep);
 				return ht;
 			} else if (column == 4) {
-				return jmpData.what;
+				return jmpData.getWhatStr();
 			} else if (column == 5) {
 				return "0x" + Long.toHexString(jmpData.segmentStart);
 			} else if (column == 5) {
