@@ -249,7 +249,7 @@ public class JmpSocketServer implements Runnable {
 							}
 						}
 
-						if (!toNullSymbols.contains(fromAddress[x])) {
+						if (!toNullSymbols.contains(toAddress[x])) {
 							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 							if (symbol == null) {
 								toNullSymbols.add(toAddress[x]);
@@ -263,10 +263,12 @@ public class JmpSocketServer implements Runnable {
 								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 
 						jmpDataVector.add(jmpData);
-						JmpSocketServer.statistic.noOfCachedRecord++;
 						if (lineNo % 100000 == 0) {
 							logger.debug("processed " + lineNo);
 							GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
+						}
+						if (lineNo % 1000 == 0) {
+							JmpSocketServer.statistic.noOfCachedRecord = jmpDataVector.size();
 						}
 						lineNo++;
 					} catch (Exception e) {

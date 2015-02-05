@@ -11,8 +11,6 @@ import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.peterdwarf.dwarf.CompileUnit;
-
 public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 	public boolean showFullPath;
 	static Color colors[] = { Color.red, Color.blue, new Color(255, 0, 255), new Color(0, 128, 128), new Color(210, 105, 30), new Color(250, 128, 114), new Color(255, 140, 0),
@@ -35,16 +33,13 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 		}
 		Hashtable<String, Object> ht = (Hashtable<String, Object>) value;
 		Long address = (Long) ht.get("address");
-		//		CompileUnit cu = (CompileUnit) ht.get("compileUnit");
 		String DW_AT_name = (String) ht.get("DW_AT_name");
 		String filePath = "";
-		//		if (cu != null) {
 		if (showFullPath) {
 			filePath = DW_AT_name;
 		} else {
 			filePath = new File(DW_AT_name).getName();
 		}
-		//		}
 		String addressDescription = (String) ht.get("addressDescription");
 		int deep = (int) ht.get("deep");
 

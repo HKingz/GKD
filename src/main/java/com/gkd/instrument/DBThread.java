@@ -4,9 +4,11 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
+import com.gkd.GKD;
 import com.gkd.instrument.callgraph.JmpData;
 
 public class DBThread implements Runnable {
@@ -16,14 +18,19 @@ public class DBThread implements Runnable {
 	public void run() {
 		try {
 			Class.forName("org.h2.Driver");
+			String jdbcString = "jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB";
 			while (true) {
 				int count = JmpSocketServer.jmpDataVector.size();
 				if (count > 0) {
-					Connection conn = DriverManager.getConnection("jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB");
+					Connection conn = DriverManager.getConnection(jdbcString);
 					PreparedStatement pstmt = conn
 							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (null, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
+					Iterator<JmpData> iterator = JmpSocketServer.jmpDataVector.iterator();
 					for (JmpData jmpData : JmpSocketServer.jmpDataVector) {
+//					while (iterator.hasNext()) {
+//						JmpData jmpData = iterator.next();
+
 						pstmt.setLong(1, jmpData.cs);
 						//pstmt.setDate(2, new java.sql.Date(jmpData.date.getTime()));
 						pstmt.setLong(2, jmpData.deep);
@@ -53,13 +60,17 @@ public class DBThread implements Runnable {
 						pstmt.setObject(26, jmpData.what);
 						pstmt.addBatch();
 
-						JmpSocketServer.jmpDataVector.remove(jmpData);
 						JmpSocketServer.statistic.noOfDBRecord++;
 						if (jmpData.toAddressDescription != null) {
 							JmpSocketServer.statistic.noOfRecordWithSymbol++;
 						}
+						JmpSocketServer.jmpDataVector.remove(jmpData);
+						//						System.out.println(">>>>>>>>" + JmpSocketServer.jmpDataVector.size());
+						//						System.out.println(">>>>>>>>" + JmpSocketServer.jmpDataVector.remove(jmpData));
+						//						System.out.println(">>>>>>>>" + JmpSocketServer.jmpDataVector.size());
 					}
-					JmpSocketServer.statistic.noOfCachedRecord += JmpSocketServer.jmpDataVector.size();
+					//JmpSocketServer.statistic.noOfCachedRecord += JmpSocketServer.jmpDataVector.size();
+					GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 
 					logger.info("writted to db = " + count);
 					pstmt.executeBatch();
