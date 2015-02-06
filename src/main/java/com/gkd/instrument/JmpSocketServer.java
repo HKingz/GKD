@@ -279,6 +279,7 @@ public class JmpSocketServer implements Runnable {
 				GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 				out.write("done".getBytes());
 				out.flush();
+				System.gc();
 			} // end while
 
 			in.close();
