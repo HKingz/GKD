@@ -4,7 +4,6 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.util.Iterator;
 
 import org.apache.log4j.Logger;
 
@@ -26,13 +25,8 @@ public class DBThread implements Runnable {
 					PreparedStatement pstmt = conn
 							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (null, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-					//					Iterator<JmpData> iterator = JmpSocketServer.jmpDataVector.iterator();
 					for (JmpData jmpData : JmpSocketServer.jmpDataVector) {
-						//					while (iterator.hasNext()) {
-						//						JmpData jmpData = iterator.next();
-
 						pstmt.setLong(1, jmpData.cs);
-						//pstmt.setDate(2, new java.sql.Date(jmpData.date.getTime()));
 						pstmt.setLong(2, jmpData.deep);
 						pstmt.setLong(3, jmpData.ds);
 						pstmt.setLong(4, jmpData.eax);
@@ -65,11 +59,7 @@ public class DBThread implements Runnable {
 							JmpSocketServer.statistic.noOfRecordWithSymbol++;
 						}
 						JmpSocketServer.jmpDataVector.remove(jmpData);
-						//						System.out.println(">>>>>>>>" + JmpSocketServer.jmpDataVector.size());
-						//						System.out.println(">>>>>>>>" + JmpSocketServer.jmpDataVector.remove(jmpData));
-						//						System.out.println(">>>>>>>>" + JmpSocketServer.jmpDataVector.size());
 					}
-					//JmpSocketServer.statistic.noOfCachedRecord += JmpSocketServer.jmpDataVector.size();
 					GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 
 					logger.info("writted to db = " + count);
