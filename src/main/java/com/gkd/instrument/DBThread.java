@@ -26,10 +26,10 @@ public class DBThread implements Runnable {
 					PreparedStatement pstmt = conn
 							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (null, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-					Iterator<JmpData> iterator = JmpSocketServer.jmpDataVector.iterator();
+					//					Iterator<JmpData> iterator = JmpSocketServer.jmpDataVector.iterator();
 					for (JmpData jmpData : JmpSocketServer.jmpDataVector) {
-//					while (iterator.hasNext()) {
-//						JmpData jmpData = iterator.next();
+						//					while (iterator.hasNext()) {
+						//						JmpData jmpData = iterator.next();
 
 						pstmt.setLong(1, jmpData.cs);
 						//pstmt.setDate(2, new java.sql.Date(jmpData.date.getTime()));
