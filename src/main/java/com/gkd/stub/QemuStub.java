@@ -58,7 +58,7 @@ public class QemuStub implements VMStub {
 
 			p = Runtime.getRuntime().exec(path + " " + arguments);
 			qemuInputStream = p.getInputStream();
-			new Thread() {
+			new Thread("Qemu stub") {
 				public void run() {
 					try {
 						int x;
@@ -117,10 +117,10 @@ public class QemuStub implements VMStub {
 	@Override
 	public Vector<String[]> instruction(BigInteger physicalAddress, boolean is32Bit) {
 		Vector<String[]> r = new Vector<String[]>();
-//		if (address == null) {
-//			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
-//			address = cs.add(eip);
-//		}
+		//		if (address == null) {
+		//			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
+		//			address = cs.add(eip);
+		//		}
 		//		jStatusLabel.setText("Updating instruction");
 		int bytes[] = physicalMemory(physicalAddress, 200);
 		String result = Disassemble.disassemble(bytes, is32Bit, physicalAddress);

@@ -1202,7 +1202,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			profilingFromComboBox.setModel(jComboBox1Model);
 			profilingFromComboBox.setEditable(true);
 
-			new Thread() {
+			new Thread("InstrumentPanel::getProfilingFromComboBox()") {
 				public void run() {
 					LinkedList<Long> vector = Setting.getInstance().profileMemoryFromAddress;
 					Iterator<Long> iterator = vector.iterator();
@@ -1231,7 +1231,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			profilingToComboBox.setModel(jComboBox2Model);
 			profilingToComboBox.setEditable(true);
 
-			new Thread() {
+			new Thread("InstrumentPanel::getProfilingToComboBox()") {
 				public void run() {
 					LinkedList<Long> vector = Setting.getInstance().profileMemoryToAddress;
 					Iterator<Long> iterator = vector.iterator();

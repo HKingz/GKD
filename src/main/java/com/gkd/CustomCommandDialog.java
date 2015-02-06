@@ -192,7 +192,7 @@ public class CustomCommandDialog extends javax.swing.JDialog {
 	private void runButtonActionPerformed(ActionEvent evt) {
 		ok = true;
 
-		new Thread() {
+		new Thread("CustomCommandDialog::runButtonActionPerformed()") {
 			public void run() {
 				try {
 					// prevent repeatSpinner.getValue() get the old value

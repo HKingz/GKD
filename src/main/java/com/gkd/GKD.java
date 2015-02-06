@@ -1304,7 +1304,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				runVMButton.setText(MyLanguage.getString("pause"));
 				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
-				new Thread() {
+				new Thread("GKD wait thread") {
 					public void run() {
 						VMController.getVM().waitVMStop();
 						logger.debug("waitVMStop finished");

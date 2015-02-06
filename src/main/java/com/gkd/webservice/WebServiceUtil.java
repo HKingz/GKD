@@ -10,7 +10,7 @@ public class WebServiceUtil {
 
 	public static void log(final String software, final String message1, final String message2, final String message3, final String info) {
 		if (Setting.getInstance().logToPetersoftServer) {
-			new Thread() {
+			new Thread("WebServiceUtil::log()") {
 				public void run() {
 					try {
 						new MonitorSoftwareProxy().getMonitorSoftware().log2(software, message1, message2, message3, info, magicNumber, Global.version);
