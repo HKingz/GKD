@@ -450,7 +450,7 @@ void bxInstrumentation::branch_taken(unsigned what, bx_address branch_eip, bx_ad
 		return;
 
 	// find linear address
-	target_linear = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
+	//target_linear = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
 	jmpSampling(what, branch_eip, new_eip);
 	/*
 	 // find linear address
@@ -630,8 +630,8 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 	if (connectedToJmpServer && startRecordJump) {
 		bx_phy_address fromPhysicalAddress;
 		bx_phy_address toPhysicalAddress;
-		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, true);
-		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, true);
+		BX_CPU(cpu)->dbg_xlate_linear2phy(branch_eip, &fromPhysicalAddress, false);
+		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, false);
 
 		while (jumpIndex >= JMP_CACHE_SIZE) {
 			//fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
