@@ -19,15 +19,18 @@ public class CommandReceiver {
 		Pattern pattern = Pattern.compile("^.*<bochs:[0-9]+>.*", Pattern.DOTALL);
 		try {
 			int x;
-			StringBuffer content = new StringBuffer(40960);
+			StringBuffer content = new StringBuffer(4096);
 
 			String line = "";
 			char c;
 			while ((x = is.read()) != -1) {
 				c = (char) x;
-				//				System.out.print(c);
-				//				System.out.flush();
+								System.out.print(c);
+								System.out.flush();
 				content.append(c);
+//				if (content.length() > 1000) {
+//					System.out.println("c=" + content.length());
+//				}
 				line += c;
 				Matcher matcher = pattern.matcher(line);
 				if (matcher.matches()) {
