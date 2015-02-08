@@ -20,25 +20,28 @@
 //  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <assert.h>
-
-#include "bochs.h"
-#include "cpu/cpu.h"
-#include "disasm/disasm.h"
-
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include <bochs.h>
+#include <config.h>
+#include <cpu/cpu.h>
+#include <cpu/descriptor.h>
+#include <cpu/instr.h>
+#include <disasm/disasm.h>
+#include <gui/siminterface.h>
+#include <instrument/gkd/instrument.h>
 #include <netdb.h>
+#include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <fstream>
-#include <set>
-#include <strings.h>
-#include <sstream>
-
-#include <unistd.h>
+#include <pthread/pthread.h>
 #include <stdio.h>
-#include <pthread.h>
-#include <vector>
+#include <sys/_endian.h>
+#include <sys/_pthread/_pthread_mutex_t.h>
+#include <sys/_pthread/_pthread_t.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <cstdlib>
+#include <map>
+#include <set>
+#include <utility>
 
 using namespace std;
 using std::set;
