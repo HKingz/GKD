@@ -11,6 +11,9 @@ import java.util.Hashtable;
 
 import javax.swing.JOptionPane;
 
+import org.apache.log4j.Logger;
+
+import com.gkd.GKD;
 import com.gkd.Global;
 import com.peterswing.CommonLib;
 
@@ -22,6 +25,7 @@ public class InterruptSocketServer implements Runnable {
 	FileWriter fstream;
 
 	public static Hashtable<Long, Integer> interruptRecords = new Hashtable<Long, Integer>();
+	public static Logger logger = Logger.getLogger(InterruptSocketServer.class);
 
 	public void startServer(int port) {
 		this.port = port;
@@ -53,9 +57,7 @@ public class InterruptSocketServer implements Runnable {
 
 	@Override
 	public void run() {
-		if (Global.debug) {
-			System.out.println("Interrupt server start at port " + port);
-		}
+		logger.debug("Interrupt server start at port " + port);
 
 		try {
 			serverSocket = new ServerSocket(port);
