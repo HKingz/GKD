@@ -11,6 +11,8 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
+import org.apache.log4j.Logger;
+
 import com.gkd.Global;
 import com.peterswing.CommonLib;
 
@@ -20,6 +22,7 @@ public class MemorySocketServer implements Runnable {
 	boolean shouldStop;
 	ServerSocket serverSocket;
 	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 4;
+	public static Logger logger = Logger.getLogger(MemorySocketServer.class);
 
 	public void startServer(int port, JTextArea jTextArea) {
 		this.port = port;
@@ -48,9 +51,7 @@ public class MemorySocketServer implements Runnable {
 
 	@Override
 	public void run() {
-		if (Global.debug) {
-			System.out.println("Memory server start at port " + port);
-		}
+		logger.debug("Memory server start at port " + port);
 
 		try {
 			serverSocket = new ServerSocket(port);
