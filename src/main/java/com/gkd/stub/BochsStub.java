@@ -768,7 +768,6 @@ public class BochsStub implements VMStub {
 				}
 			}
 		}
-		System.out.println("pageTable() end");
 		return r;
 	}
 
