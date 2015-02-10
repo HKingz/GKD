@@ -53,7 +53,7 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 				//			} else if (table.getValueAt(row, 1).toString().startsWith("cCode")) {
 			} else if (column == 1 && value.toString().startsWith("cCode")) {
 				//				if (column == 1) {
-				String str = ((String) table.getValueAt(row, 1)).replaceAll("cCode : ", "").replaceAll("\t", "    ");
+				String str = ((String) value).replaceAll("cCode : ", "").replaceAll("\t", "    ");
 				//					this.setText(String.format("%40s", str));
 				this.setText(str);
 				this.setForeground(darkGreen);
@@ -71,6 +71,8 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 				this.setForeground(Color.black);
 				if (column == 2) {
 					String asmCode = (String) value;
+					asmCode = asmCode.replaceAll("<", "&lt;");
+					asmCode = asmCode.replaceAll(">", "&gt;");
 					if (!table.getValueAt(row, 1).toString().contains("cCode")) {
 						asmCode = asmCode.replaceAll(Keywords.asmKeywords.toLowerCase(), "<font color=blue>$0</font>");
 						asmCode = asmCode.replaceAll(Keywords.registers.toLowerCase(), "<font color=green>$0</font>");

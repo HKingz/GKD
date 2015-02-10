@@ -1,12 +1,10 @@
 package com.gkd.sourceleveldebugger;
 
-import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
 import com.gkd.MyLanguage;
-import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {

@@ -2388,18 +2388,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public String[] getCCode(BigInteger pc, boolean getFile) {
 		for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
 			try {
-				// if (pc.equals(BigInteger.valueOf(0x1600000))) {
-				// logger.debug("test");
-				// }
-				// if (pc.equals(BigInteger.valueOf(0x160000c))) {
-				// logger.debug("test");
-				// }
-				// if (pc.equals(BigInteger.valueOf(0x160000f))) {
-				// logger.debug("test");
-				// }
-				if (pc.equals(BigInteger.valueOf(0x1600943))) {
-					logger.debug("test");
-				}
 				DwarfLine startLine = null;
 				DwarfLine endLine = null;
 				DwarfDebugLineHeader startHeader = null;
@@ -5062,12 +5050,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JScrollPane getJScrollPane14() {
 		if (jScrollPane14 == null) {
 			jScrollPane14 = new JScrollPane();
-			jScrollPane14.setViewportView(getJELFTable());
+			jScrollPane14.setViewportView(getELFTable());
 		}
 		return jScrollPane14;
 	}
 
-	private JTable getJELFTable() {
+	private JTable getELFTable() {
 		if (elfTable == null) {
 			elfTable = new JTable();
 			elfTable.setModel(new SourceCodeTableModel());
