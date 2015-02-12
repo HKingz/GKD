@@ -26,7 +26,7 @@
 #include <cpu/descriptor.h>
 #include <cpu/instr.h>
 #include <disasm/disasm.h>
-#include <gui/siminterface.h>
+//#include <gui/siminterface.h>
 #include <instrument/gkd/instrument.h>
 #include <netdb.h>
 #include <netinet/in.h>

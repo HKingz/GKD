@@ -36,6 +36,9 @@ void bx_instr_initialize(unsigned cpu);
 // maximum physical addresses an instruction can generate
 #define MAX_DATA_ACCESSES 1024
 
+#ifndef CLASS_bxInstrumentation
+#define CLASS_bxInstrumentation
+
 class bxInstrumentation {
 public:
 
@@ -220,3 +223,5 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
 
 #endif // BX_INSTRUMENTATION
+
+#endif
