@@ -575,7 +575,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		if (cmd.hasOption("version") || cmd.hasOption("v")) {
-			logger.debug("version : " + Global.version);
+			logger.debug("version : " + PropertyUtil.getProperty("version"));
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar GDK.jar [OPTION]", options);
 			System.exit(1);
@@ -760,7 +760,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					logger.debug("checkLatestVersion()=" + map.get("latestVersion"));
 				}
 				if (map != null) {
-					if (map.get("latestVersion") != null && map.get("latestVersion").compareTo(Global.version) > 0) {
+					if (map.get("latestVersion") != null && map.get("latestVersion").compareTo(PropertyUtil.getProperty("version")) > 0) {
 						latestVersionLabel.setText(MyLanguage.getString("Latest_version_available") + " : " + map.get("latestVersion"));
 						latestVersionURL = map.get("downloadURL");
 					} else {
@@ -823,9 +823,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			{
 				this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 				if (Global.isBeta) {
-					this.setTitle(MyLanguage.getString("Title") + " " + Global.version + " , This is beta version, if you found a bug, please try older official release");
+					this.setTitle(MyLanguage.getString("Title") + " " + PropertyUtil.getProperty("version")
+							+ " , This is beta version, if you found a bug, please try older official release");
 				} else {
-					this.setTitle(MyLanguage.getString("Title") + " " + Global.version);
+					this.setTitle(MyLanguage.getString("Title") + " " + PropertyUtil.getProperty("version"));
 				}
 
 				this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());

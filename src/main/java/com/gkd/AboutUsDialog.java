@@ -31,7 +31,7 @@ public class AboutUsDialog extends javax.swing.JDialog {
 					str += "Website : http://code.google.com/p/peter-bochs\n";
 					str += "Blog : http://peter.kingofcoders.com\n";
 					str += "Contact : Peter (mcheung63@hotmail.com)\n";
-					str += "Version: " + Global.version;
+					str += "Version: " + PropertyUtil.getProperty("version");
 					textArea1.setText(str);
 					textArea1.setEditable(false);
 					textArea1.setMargin(new java.awt.Insets(20, 20, 20, 20));

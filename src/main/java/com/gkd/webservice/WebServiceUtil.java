@@ -2,7 +2,7 @@ package com.gkd.webservice;
 
 import java.util.Random;
 
-import com.gkd.Global;
+import com.gkd.PropertyUtil;
 import com.gkd.Setting;
 
 public class WebServiceUtil {
@@ -13,7 +13,7 @@ public class WebServiceUtil {
 			new Thread("WebServiceUtil::log()") {
 				public void run() {
 					try {
-						new MonitorSoftwareProxy().getMonitorSoftware().log2(software, message1, message2, message3, info, magicNumber, Global.version);
+						new MonitorSoftwareProxy().getMonitorSoftware().log2(software, message1, message2, message3, info, magicNumber, PropertyUtil.getProperty("version"));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
