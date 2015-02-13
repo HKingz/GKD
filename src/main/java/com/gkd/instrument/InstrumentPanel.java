@@ -286,7 +286,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	AddressCellRenderer addressCellRenderer = new AddressCellRenderer();
 	private JFormattedTextField lineTextField;
 	private JButton gotoLineButton;
-	private JCheckBox removeDuplcatedCheckBox;
+	private JCheckBox removeDuplicatedCheckBox;
 	private JButton callGraphButton;
 	GKD gkd;
 	private JButton exportJmpTableToExcelButton;
@@ -1395,7 +1395,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getNoOfLineLabel());
 			jmpToolBarPanel.add(getNoOfLineComboBox());
 			jmpToolBarPanel.add(getWithSymbolCheckBox());
-			jmpToolBarPanel.add(getRemoveDuplcatedCheckBox());
+			jmpToolBarPanel.add(getRemoveDuplicatedCheckBox());
 			jmpToolBarPanel.add(getFullPathCheckbox());
 			jmpToolBarPanel.add(getFilterRawTableTextField());
 			jmpToolBarPanel.add(getFilterButton());
@@ -1633,46 +1633,56 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
 		Session session = HibernateUtil.openSession();
-		//		Query query = session.createQuery("from JmpData");
 
-		Criteria criteria = session.createCriteria(JmpData.class);
+		Iterator<JmpData> iterator = null;
+		if (removeDuplicatedCheckBox.isSelected()) {
+			Query query = session.createSQLQuery("SELECT a.*, (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1) as lastAddress from JMPDATA as a where lastAddress!=a.toAddress").addEntity(
+					JmpData.class);
+			query.setMaxResults(pageSize);
+			query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+			iterator = query.list().iterator();
+		} else {
+			Criteria criteria = session.createCriteria(JmpData.class);
 
-		if (withSymbolCheckBox.isSelected()) {
-			criteria.add(Restrictions.isNotNull("toAddressDescription"));
+			if (withSymbolCheckBox.isSelected()) {
+				criteria.add(Restrictions.isNotNull("toAddressDescription"));
+			}
+			criteria.setMaxResults(pageSize);
+			criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+			iterator = criteria.list().iterator();
 		}
-		criteria.setMaxResults(pageSize);
-		criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-		Iterator<JmpData> iterator = criteria.list().iterator();
-		jmpTableModel.removeAll();
-		while (iterator.hasNext()) {
-			JmpData d = iterator.next();
-			//			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
-			//				String pattern = d.fromAddress + "-" + d.toAddress;
-			//				if (checkDuplicated.contains(pattern)) {
-			//					continue;
-			//				} else {
-			//					checkDuplicated.add(pattern);
-			//				}
-			//			}
-			//			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
-			//				continue;
-			//			}
-			//			if (d.contains(filterText)) {
-			//				filteredData.add(d);
-			//			} else {
-			//				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
-			//				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
-			//					filteredData.add(d);
-			//					continue;
-			//				}
-			//				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
-			//				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
-			//					filteredData.add(d);
-			//					continue;
-			//				}
-			//			}
-			//			lastDeep = d.deep;
-			jmpTableModel.add(d);
+		if (iterator != null) {
+			jmpTableModel.removeAll();
+			while (iterator.hasNext()) {
+				JmpData d = iterator.next();
+				//			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
+				//				String pattern = d.fromAddress + "-" + d.toAddress;
+				//				if (checkDuplicated.contains(pattern)) {
+				//					continue;
+				//				} else {
+				//					checkDuplicated.add(pattern);
+				//				}
+				//			}
+				//			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
+				//				continue;
+				//			}
+				//			if (d.contains(filterText)) {
+				//				filteredData.add(d);
+				//			} else {
+				//				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
+				//				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
+				//					filteredData.add(d);
+				//					continue;
+				//				}
+				//				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
+				//				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
+				//					filteredData.add(d);
+				//					continue;
+				//				}
+				//			}
+				//			lastDeep = d.deep;
+				jmpTableModel.add(d);
+			}
 		}
 		session.close();
 
@@ -2938,16 +2948,16 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return gotoLineButton;
 	}
 
-	private JCheckBox getRemoveDuplcatedCheckBox() {
-		if (removeDuplcatedCheckBox == null) {
-			removeDuplcatedCheckBox = new JCheckBox("Remove duplcated");
-			removeDuplcatedCheckBox.addActionListener(new ActionListener() {
+	private JCheckBox getRemoveDuplicatedCheckBox() {
+		if (removeDuplicatedCheckBox == null) {
+			removeDuplicatedCheckBox = new JCheckBox("Remove duplcated");
+			removeDuplicatedCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					updateJmpTable();
 				}
 			});
 		}
-		return removeDuplcatedCheckBox;
+		return removeDuplicatedCheckBox;
 	}
 
 	private JButton getCallGraphButton() {
