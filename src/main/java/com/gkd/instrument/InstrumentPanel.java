@@ -1636,8 +1636,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		Iterator<JmpData> iterator = null;
 		if (removeDuplicatedCheckBox.isSelected()) {
-			Query query = session.createSQLQuery("SELECT a.*, (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1) as lastAddress from JMPDATA as a where lastAddress!=a.toAddress").addEntity(
-					JmpData.class);
+			Query query;
+			if (withSymbolCheckBox.isSelected()) {
+				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and toAddressDescription!=null").addEntity(
+						JmpData.class);
+			} else {
+				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress").addEntity(
+						JmpData.class);
+			}
 			query.setMaxResults(pageSize);
 			query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
 			iterator = query.list().iterator();
