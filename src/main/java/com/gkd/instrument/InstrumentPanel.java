@@ -1638,7 +1638,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		if (removeDuplicatedCheckBox.isSelected()) {
 			Query query;
 			if (withSymbolCheckBox.isSelected()) {
-				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and toAddressDescription!=null").addEntity(
+				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressDescription!=null or toAddressDescription!='')").addEntity(
 						JmpData.class);
 			} else {
 				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress").addEntity(
