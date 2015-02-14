@@ -1637,11 +1637,19 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		Iterator<JmpData> iterator = null;
 		if (removeDuplicatedCheckBox.isSelected()) {
 			Query query;
+			String where1 = "";
+			if (filterRawTableTextField.getText().length() > 0) {
+				where1 += " and (fromAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
+				where1 += " or toAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
+				where1 += " or fromAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%'";
+				where1 += " or toAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%')";
+			}
 			if (withSymbolCheckBox.isSelected()) {
-				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressDescription!=null or toAddressDescription!='')").addEntity(
-						JmpData.class);
+				query = session.createSQLQuery(
+						"SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressDescription!=null or toAddressDescription!='')"
+								+ where1).addEntity(JmpData.class);
 			} else {
-				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress").addEntity(
+				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress" + where1).addEntity(
 						JmpData.class);
 			}
 			query.setMaxResults(pageSize);
@@ -1652,6 +1660,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 			if (withSymbolCheckBox.isSelected()) {
 				criteria.add(Restrictions.isNotNull("toAddressDescription"));
+			}
+			if (filterRawTableTextField.getText().length() > 0) {
+				criteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
+				criteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
 			}
 			criteria.setMaxResults(pageSize);
 			criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
