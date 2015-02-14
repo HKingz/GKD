@@ -1625,106 +1625,120 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private void updateJmpTable() {
 		//$hide>>$
-		HashSet<String> checkDuplicated = new HashSet<String>();
-		Vector<JmpData> filteredData = new Vector<JmpData>();
-		String filterText = filterRawTableTextField.getText().toLowerCase();
-		int lastDeep = -1;
+		final JProgressBarDialog d = new JProgressBarDialog(gkd, "JProgressBarDialog", true);
 
-		int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
+		d.progressBar.setIndeterminate(true);
+		d.progressBar.setString("Updating table");
+		d.progressBar.setStringPainted(true);
+		d.cancelButton.setVisible(false);
+		d.setLocationRelativeTo(gkd);
 
-		Session session = HibernateUtil.openSession();
+		Thread longRunningThread = new Thread() {
+			public void run() {
+				HashSet<String> checkDuplicated = new HashSet<String>();
+				Vector<JmpData> filteredData = new Vector<JmpData>();
+				String filterText = filterRawTableTextField.getText().toLowerCase();
+				int lastDeep = -1;
 
-		Iterator<JmpData> iterator = null;
-		if (removeDuplicatedCheckBox.isSelected()) {
-			Query query;
-			String where1 = "";
-			if (filterRawTableTextField.getText().length() > 0) {
-				where1 += " and (fromAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
-				where1 += " or toAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
-				where1 += " or fromAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%'";
-				where1 += " or toAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%')";
-			}
-			if (withSymbolCheckBox.isSelected()) {
-				query = session.createSQLQuery(
-						"SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressDescription!=null or toAddressDescription!='')"
-								+ where1).addEntity(JmpData.class);
-			} else {
-				query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress" + where1).addEntity(
-						JmpData.class);
-			}
-			query.setMaxResults(pageSize);
-			query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-			iterator = query.list().iterator();
-		} else {
-			Criteria criteria = session.createCriteria(JmpData.class);
+				int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
-			if (withSymbolCheckBox.isSelected()) {
-				criteria.add(Restrictions.isNotNull("toAddressDescription"));
-			}
-			if (filterRawTableTextField.getText().length() > 0) {
-				criteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
-				criteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
-			}
-			criteria.setMaxResults(pageSize);
-			criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-			iterator = criteria.list().iterator();
-		}
-		if (iterator != null) {
-			jmpTableModel.removeAll();
-			while (iterator.hasNext()) {
-				JmpData d = iterator.next();
-				//			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
-				//				String pattern = d.fromAddress + "-" + d.toAddress;
-				//				if (checkDuplicated.contains(pattern)) {
-				//					continue;
-				//				} else {
-				//					checkDuplicated.add(pattern);
-				//				}
+				Session session = HibernateUtil.openSession();
+
+				Iterator<JmpData> iterator = null;
+				if (removeDuplicatedCheckBox.isSelected()) {
+					Query query;
+					String where1 = "";
+					if (filterRawTableTextField.getText().length() > 0) {
+						where1 += " and (fromAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
+						where1 += " or toAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
+						where1 += " or fromAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%'";
+						where1 += " or toAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%')";
+					}
+					if (withSymbolCheckBox.isSelected()) {
+						query = session.createSQLQuery(
+								"SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressDescription!=null or toAddressDescription!='')"
+										+ where1).addEntity(JmpData.class);
+					} else {
+						query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress" + where1)
+								.addEntity(JmpData.class);
+					}
+					query.setMaxResults(pageSize);
+					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					iterator = query.list().iterator();
+				} else {
+					Criteria criteria = session.createCriteria(JmpData.class);
+
+					if (withSymbolCheckBox.isSelected()) {
+						criteria.add(Restrictions.isNotNull("toAddressDescription"));
+					}
+					if (filterRawTableTextField.getText().length() > 0) {
+						criteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
+						criteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
+					}
+					criteria.setMaxResults(pageSize);
+					criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					iterator = criteria.list().iterator();
+				}
+				if (iterator != null) {
+					jmpTableModel.removeAll();
+					while (iterator.hasNext()) {
+						JmpData d = iterator.next();
+						//			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
+						//				String pattern = d.fromAddress + "-" + d.toAddress;
+						//				if (checkDuplicated.contains(pattern)) {
+						//					continue;
+						//				} else {
+						//					checkDuplicated.add(pattern);
+						//				}
+						//			}
+						//			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
+						//				continue;
+						//			}
+						//			if (d.contains(filterText)) {
+						//				filteredData.add(d);
+						//			} else {
+						//				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
+						//				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
+						//					filteredData.add(d);
+						//					continue;
+						//				}
+						//				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
+						//				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
+						//					filteredData.add(d);
+						//					continue;
+						//				}
+						//			}
+						//			lastDeep = d.deep;
+						jmpTableModel.add(d);
+					}
+				}
+				session.close();
+
+				//		int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
+				//		jmpPager.maxPageNo = rowCount / pageSize;
+				//		if (filteredData.size() % pageSize != 0) {
+				//			jmpPager.maxPageNo++;
+				//		}
+				//		if (jmpPager.getPage() > jmpPager.maxPageNo) {
+				//			jmpPager.setPageNo(jmpPager.maxPageNo);
+				//		} else if (jmpPager.getPage() == 0) {
+				//			jmpPager.setPageNo(1);
+				//		}
+				//		jmpTableModel.removeAll();
+				//
+				//		int startIndex = pageSize * (jmpPager.getPage() - 1);
+				//		if (startIndex >= 0) {
+				//			for (int x = startIndex; x < pageSize * jmpPager.getPage() && x < filteredData.size(); x++) {
+				//				JmpData jumpData = filteredData.get(x);
+				//				jmpTableModel.add(jumpData);
 				//			}
-				//			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
-				//				continue;
-				//			}
-				//			if (d.contains(filterText)) {
-				//				filteredData.add(d);
-				//			} else {
-				//				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
-				//				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
-				//					filteredData.add(d);
-				//					continue;
-				//				}
-				//				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
-				//				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
-				//					filteredData.add(d);
-				//					continue;
-				//				}
-				//			}
-				//			lastDeep = d.deep;
-				jmpTableModel.add(d);
+				//		}
+
+				jmpTableModel.fireTableDataChanged();
 			}
-		}
-		session.close();
-
-		//		int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
-		//		jmpPager.maxPageNo = rowCount / pageSize;
-		//		if (filteredData.size() % pageSize != 0) {
-		//			jmpPager.maxPageNo++;
-		//		}
-		//		if (jmpPager.getPage() > jmpPager.maxPageNo) {
-		//			jmpPager.setPageNo(jmpPager.maxPageNo);
-		//		} else if (jmpPager.getPage() == 0) {
-		//			jmpPager.setPageNo(1);
-		//		}
-		//		jmpTableModel.removeAll();
-		//
-		//		int startIndex = pageSize * (jmpPager.getPage() - 1);
-		//		if (startIndex >= 0) {
-		//			for (int x = startIndex; x < pageSize * jmpPager.getPage() && x < filteredData.size(); x++) {
-		//				JmpData jumpData = filteredData.get(x);
-		//				jmpTableModel.add(jumpData);
-		//			}
-		//		}
-
-		jmpTableModel.fireTableDataChanged();
+		};
+		d.thread = longRunningThread;
+		d.setVisible(true);
 		//$hide<<$
 	}
 

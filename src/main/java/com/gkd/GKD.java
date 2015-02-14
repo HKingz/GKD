@@ -1885,7 +1885,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		d.setTitle("Updating gkd status");
 		d.progressBar.setIndeterminate(true);
 		d.progressBar.setStringPainted(true);
-		d.jCancelButton.setVisible(false);
+		d.cancelButton.setVisible(false);
 		d.setVisible(true);
 		//updateThread.start();
 
