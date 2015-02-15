@@ -33,9 +33,9 @@
 #include <netinet/tcp.h>
 #include <pthread.h>
 #include <stdio.h>
-#include <sys/_endian.h>
-#include <sys/_pthread/_pthread_mutex_t.h>
-#include <sys/_pthread/_pthread_t.h>
+//#include <sys/_endian.h>
+//#include <sys/_pthread/_pthread_mutex_t.h>
+//#include <sys/_pthread/_pthread_t.h>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <cstdlib>
