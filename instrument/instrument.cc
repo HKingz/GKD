@@ -31,7 +31,7 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
-#include <pthread/pthread.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <sys/_endian.h>
 #include <sys/_pthread/_pthread_mutex_t.h>
