@@ -53,68 +53,62 @@ public class DBThread implements Runnable {
 		try {
 			Class.forName("org.h2.Driver");
 			String jdbcString = "jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB";
+			int pk = 1;
 			while (true) {
 				int count = JmpSocketServer.jmpDataVector.size();
 				if (count > 0) {
 					Connection conn = DriverManager.getConnection(jdbcString);
 					PreparedStatement pstmt = conn
-							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (null, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (?, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
-					Vector<int[]> parametersIds = new Vector<int[]>();
-					Vector<JmpData> temp = new Vector<JmpData>();
 					for (JmpData jmpData : JmpSocketServer.jmpDataVector) {
-						pstmt.setLong(1, jmpData.cs);
-						pstmt.setLong(2, jmpData.deep);
-						pstmt.setLong(3, jmpData.ds);
-						pstmt.setLong(4, jmpData.eax);
-						pstmt.setLong(5, jmpData.ebp);
-						pstmt.setLong(6, jmpData.ebx);
-						pstmt.setLong(7, jmpData.es);
-						pstmt.setLong(8, jmpData.edi);
-						pstmt.setLong(9, jmpData.edx);
-						pstmt.setLong(10, jmpData.es);
-						pstmt.setLong(11, jmpData.esi);
-						pstmt.setLong(12, jmpData.esp);
-						pstmt.setLong(13, jmpData.fromAddress);
-						pstmt.setString(14, jmpData.fromAddressDescription);
-						pstmt.setLong(15, jmpData.fs);
-						pstmt.setLong(16, jmpData.gs);
-						pstmt.setLong(17, jmpData.lineNo);
-						pstmt.setLong(18, jmpData.segmentEnd);
-						pstmt.setLong(19, jmpData.segmentStart);
-						pstmt.setLong(20, jmpData.ss);
-						pstmt.setLong(21, jmpData.toAddress);
-						pstmt.setString(22, jmpData.toAddressDescription);
-						pstmt.setObject(23, jmpData.fromAddress_DW_AT_name);
-						pstmt.setObject(24, jmpData.toAddress_DW_AT_name);
-						pstmt.setObject(25, jmpData.showForDifferentDeep);
-						pstmt.setObject(26, jmpData.what);
+						pstmt.setLong(1, pk);
+						pstmt.setLong(2, jmpData.cs);
+						pstmt.setLong(3, jmpData.deep);
+						pstmt.setLong(4, jmpData.ds);
+						pstmt.setLong(5, jmpData.eax);
+						pstmt.setLong(6, jmpData.ebp);
+						pstmt.setLong(7, jmpData.ebx);
+						pstmt.setLong(8, jmpData.es);
+						pstmt.setLong(9, jmpData.edi);
+						pstmt.setLong(10, jmpData.edx);
+						pstmt.setLong(11, jmpData.es);
+						pstmt.setLong(12, jmpData.esi);
+						pstmt.setLong(13, jmpData.esp);
+						pstmt.setLong(14, jmpData.fromAddress);
+						pstmt.setString(15, jmpData.fromAddressDescription);
+						pstmt.setLong(16, jmpData.fs);
+						pstmt.setLong(17, jmpData.gs);
+						pstmt.setLong(18, jmpData.lineNo);
+						pstmt.setLong(19, jmpData.segmentEnd);
+						pstmt.setLong(20, jmpData.segmentStart);
+						pstmt.setLong(21, jmpData.ss);
+						pstmt.setLong(22, jmpData.toAddress);
+						pstmt.setString(23, jmpData.toAddressDescription);
+						pstmt.setObject(24, jmpData.fromAddress_DW_AT_name);
+						pstmt.setObject(25, jmpData.toAddress_DW_AT_name);
+						pstmt.setObject(26, jmpData.showForDifferentDeep);
+						pstmt.setObject(27, jmpData.what);
 						pstmt.addBatch();
+
+						PreparedStatement pstmt2 = conn.prepareStatement("insert into parameter (parameterId, name, jmpData_jmpDataId) values (null, ?, ?);");
+						for (Parameter parameter : jmpData.parameters) {
+							pstmt2.setString(1, parameter.name);
+							pstmt2.setInt(2, pk);
+							pstmt2.addBatch();
+						}
+						pstmt2.executeBatch();
 
 						JmpSocketServer.statistic.noOfDBRecord++;
 						if (jmpData.toAddressDescription != null) {
 							JmpSocketServer.statistic.noOfRecordWithSymbol++;
 						}
-						temp.addElement(jmpData);
+
 						JmpSocketServer.jmpDataVector.remove(jmpData);
+
+						pk++;
 					}
 
-					logger.info("s1");
-					ResultSet rs = pstmt.getGeneratedKeys();
-					int jmpDataIds[] = pstmt.executeBatch();
-					int x = 0;
-					PreparedStatement pstmt2 = conn.prepareStatement("insert into parameter (parameterId, name, jmpData_jmpDataId) values (null, ?, ?);");
-					for (JmpData jmpData : temp) {
-						for (Parameter parameter : jmpData.parameters) {
-							pstmt2.setString(1, parameter.name);
-							pstmt2.setInt(2, jmpDataIds[x]);
-							pstmt2.addBatch();
-						}
-						x++;
-					}
-					logger.info("s3");
-					pstmt2.executeBatch();
-					logger.info("s4");
 					conn.close();
 
 					GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
