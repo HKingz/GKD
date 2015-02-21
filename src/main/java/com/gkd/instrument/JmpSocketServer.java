@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -49,6 +50,8 @@ public class JmpSocketServer implements Runnable {
 		jmpSocketServer.startServer(8765, new JmpTableModel());
 		jmpSocketServer.stopServer();
 	}
+
+	HashMap<Long, DebugInfoEntry> cache = new HashMap<Long, DebugInfoEntry>();
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
@@ -264,9 +267,15 @@ public class JmpSocketServer implements Runnable {
 						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, (int) what[x],
 								segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x],
 								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
-						jmpData.parameters.add(new Parameter(jmpData, "fuck"));
 
-						DebugInfoEntry debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, fromAddress[x]);
+						DebugInfoEntry debugInfoEntry;
+						if (cache.containsKey(toAddress[x])) {
+							debugInfoEntry = cache.get(toAddress[x]);
+						} else {
+							debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
+							cache.put(toAddress[x], debugInfoEntry);
+						}
+
 						if (debugInfoEntry != null) {
 							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
 							for (DebugInfoEntry d : v) {
