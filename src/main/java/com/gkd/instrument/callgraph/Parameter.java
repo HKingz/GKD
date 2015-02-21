@@ -18,7 +18,7 @@ public class Parameter {
 	@Column(name = "parameterId", unique = true, nullable = false)
 	private Integer parameterId;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne
 	private JmpData jmpData;
 
 	public String name;
@@ -29,6 +29,10 @@ public class Parameter {
 	public Parameter(JmpData jmpData, String name) {
 		this.jmpData = jmpData;
 		this.name = name;
+	}
+
+	public String toString() {
+		return name;
 	}
 
 }

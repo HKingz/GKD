@@ -2,9 +2,9 @@ package com.gkd.instrument.callgraph;
 
 import static javax.persistence.GenerationType.IDENTITY;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +20,7 @@ public class JmpData {
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "jmpDataId", unique = true, nullable = false)
-	private Integer jmpDataId;
+	public Integer jmpDataId;
 
 	public int lineNo;
 	public Date date;
@@ -56,7 +56,7 @@ public class JmpData {
 	public boolean showForDifferentDeep;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "jmpData")
-	public Set<Parameter> parameters = new HashSet<Parameter>();
+	public List<Parameter> parameters = new ArrayList<Parameter>();
 
 	public JmpData() {
 	}

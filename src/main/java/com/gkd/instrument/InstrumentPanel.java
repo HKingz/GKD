@@ -1664,6 +1664,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					query.setMaxResults(pageSize);
 					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					iterator = query.list().iterator();
 				} else {
 					Criteria criteria = session.createCriteria(JmpData.class);
@@ -1677,62 +1678,17 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					criteria.setMaxResults(pageSize);
 					criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					iterator = criteria.list().iterator();
 				}
 				if (iterator != null) {
 					jmpTableModel.removeAll();
 					while (iterator.hasNext()) {
 						JmpData d = iterator.next();
-						//			if (lastDeep == d.deep && removeDuplcatedCheckBox.isSelected()) {
-						//				String pattern = d.fromAddress + "-" + d.toAddress;
-						//				if (checkDuplicated.contains(pattern)) {
-						//					continue;
-						//				} else {
-						//					checkDuplicated.add(pattern);
-						//				}
-						//			}
-						//			if (lastDeep == d.deep && withSymbolCheckBox.isSelected() && d.toAddressDescription == null && d.what == JmpType.unknown) {
-						//				continue;
-						//			}
-						//			if (d.contains(filterText)) {
-						//				filteredData.add(d);
-						//			} else {
-						//				CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.fromAddress);
-						//				if (fromCU.DW_AT_name.toLowerCase().contains(filterText)) {
-						//					filteredData.add(d);
-						//					continue;
-						//				}
-						//				CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(d.toAddress);
-						//				if (toCU.DW_AT_name.toLowerCase().contains(filterText)) {
-						//					filteredData.add(d);
-						//					continue;
-						//				}
-						//			}
-						//			lastDeep = d.deep;
 						jmpTableModel.add(d);
 					}
 				}
 				session.close();
-
-				//		int rowCount = ((Long) session.createQuery("select count(*) from JmpData").uniqueResult()).intValue();
-				//		jmpPager.maxPageNo = rowCount / pageSize;
-				//		if (filteredData.size() % pageSize != 0) {
-				//			jmpPager.maxPageNo++;
-				//		}
-				//		if (jmpPager.getPage() > jmpPager.maxPageNo) {
-				//			jmpPager.setPageNo(jmpPager.maxPageNo);
-				//		} else if (jmpPager.getPage() == 0) {
-				//			jmpPager.setPageNo(1);
-				//		}
-				//		jmpTableModel.removeAll();
-				//
-				//		int startIndex = pageSize * (jmpPager.getPage() - 1);
-				//		if (startIndex >= 0) {
-				//			for (int x = startIndex; x < pageSize * jmpPager.getPage() && x < filteredData.size(); x++) {
-				//				JmpData jumpData = filteredData.get(x);
-				//				jmpTableModel.add(jumpData);
-				//			}
-				//		}
 
 				jmpTableModel.fireTableDataChanged();
 			}

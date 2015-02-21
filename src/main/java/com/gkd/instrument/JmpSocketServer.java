@@ -26,6 +26,8 @@ import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterdwarf.dwarf.CompileUnit;
+import com.peterdwarf.dwarf.DebugInfoEntry;
+import com.peterdwarf.dwarf.DwarfLib;
 import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
 
@@ -263,7 +265,14 @@ public class JmpSocketServer implements Runnable {
 								segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x],
 								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 						jmpData.parameters.add(new Parameter(jmpData, "fuck"));
-						jmpData.parameters.add(new Parameter(jmpData, "you"));
+
+						DebugInfoEntry debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, fromAddress[x]);
+						if (debugInfoEntry != null) {
+							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
+							for (DebugInfoEntry d : v) {
+								jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value));
+							}
+						}
 						jmpDataVector.add(jmpData);
 						if (lineNo % 100000 == 0) {
 							logger.debug("processed " + lineNo);
