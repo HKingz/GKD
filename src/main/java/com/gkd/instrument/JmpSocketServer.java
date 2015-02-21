@@ -23,6 +23,7 @@ import com.gkd.GKD;
 import com.gkd.Global;
 import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.callgraph.JmpData;
+import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.elf.Elf32_Sym;
@@ -33,7 +34,7 @@ public class JmpSocketServer implements Runnable {
 	private boolean shouldStop;
 	private ServerSocket serverSocket;
 	FileWriter fstream;
-	int noOfJmpRecordToFlush = 100;
+	int noOfJmpRecordToFlush = 0;
 
 	public static ConcurrentLinkedQueue<JmpData> jmpDataVector = new ConcurrentLinkedQueue<JmpData>();
 
@@ -108,7 +109,7 @@ public class JmpSocketServer implements Runnable {
 				byte[] tempBytes = new byte[4];
 				in.readFully(tempBytes);
 				noOfJmpRecordToFlush = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
-				logger.debug("jmp server incoming record = " + noOfJmpRecordToFlush);
+				//logger.debug("jmp server incoming record = " + noOfJmpRecordToFlush);
 
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
 				long toAddress[] = new long[noOfJmpRecordToFlush];
@@ -261,7 +262,8 @@ public class JmpSocketServer implements Runnable {
 						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, (int) what[x],
 								segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x],
 								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
-
+						jmpData.parameters.add(new Parameter(jmpData, "fuck"));
+						jmpData.parameters.add(new Parameter(jmpData, "you"));
 						jmpDataVector.add(jmpData);
 						if (lineNo % 100000 == 0) {
 							logger.debug("processed " + lineNo);
@@ -279,7 +281,7 @@ public class JmpSocketServer implements Runnable {
 				GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 				out.write("done".getBytes());
 				out.flush();
-				
+
 				System.gc();
 			} // end while
 
