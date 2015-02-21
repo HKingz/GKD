@@ -61,6 +61,8 @@ public class DBThread implements Runnable {
 					PreparedStatement pstmt = conn
 							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (?, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
+					Vector<JmpData> temp = new Vector<JmpData>();
+					int oldPk = pk;
 					for (JmpData jmpData : JmpSocketServer.jmpDataVector) {
 						pstmt.setLong(1, pk);
 						pstmt.setLong(2, jmpData.cs);
@@ -91,13 +93,7 @@ public class DBThread implements Runnable {
 						pstmt.setObject(27, jmpData.what);
 						pstmt.addBatch();
 
-						PreparedStatement pstmt2 = conn.prepareStatement("insert into parameter (parameterId, name, jmpData_jmpDataId) values (null, ?, ?);");
-						for (Parameter parameter : jmpData.parameters) {
-							pstmt2.setString(1, parameter.name);
-							pstmt2.setInt(2, pk);
-							pstmt2.addBatch();
-						}
-						pstmt2.executeBatch();
+						temp.add(jmpData);
 
 						JmpSocketServer.statistic.noOfDBRecord++;
 						if (jmpData.toAddressDescription != null) {
@@ -108,6 +104,19 @@ public class DBThread implements Runnable {
 
 						pk++;
 					}
+
+					pstmt.executeBatch();
+
+					PreparedStatement pstmt2 = conn.prepareStatement("insert into parameter (parameterId, name, jmpData_jmpDataId) values (null, ?, ?);");
+					for (JmpData jmpData : temp) {
+						for (Parameter parameter : jmpData.parameters) {
+							pstmt2.setString(1, parameter.name);
+							pstmt2.setInt(2, oldPk);
+							pstmt2.addBatch();
+						}
+						oldPk++;
+					}
+					pstmt2.executeBatch();
 
 					conn.close();
 
