@@ -90,7 +90,7 @@ int segmentRegisterSize = sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value)
 pthread_t jmpThread;
 pthread_mutex_t jmpMutex;
 
-#define JMP_CACHE_SIZE 500000
+#define JMP_CACHE_SIZE 100000
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
 unsigned whatVector[JMP_CACHE_SIZE];
