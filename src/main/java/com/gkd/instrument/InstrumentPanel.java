@@ -1726,7 +1726,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			while (iterator.hasNext()) {
 				//for (int x = JmpSocketServer.jmpDataVector.size() - 1, counter = 0; x >= 0 && counter <= MAX_NUMBER_OF_VERTEX; x--, counter++) {
 				//statusLabel.setText("Updating call graph " + x + "/" + JmpSocketServer.jmpDataVector.size());
-				statusLabel.setText("Updating call graph " + counter + "/" + rowCount);
+				statusLabel.setText("Updating call graph " + (counter + 1) + "/" + rowCount);
 				statusProgressBar.setValue(counter);
 				//JmpData jumpData = JmpSocketServer.jmpDataVector.get(x);
 				JmpData jumpData = iterator.next();
