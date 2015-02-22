@@ -23,8 +23,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -492,19 +492,6 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	}
 
 	public void loadELF(String elfPaths[]) {
-		final JDialog dialog = new JDialog(gkd, true);
-		JLabel jLabel = new JLabel();
-		jLabel.setHorizontalAlignment(JTextField.CENTER);
-		dialog.setContentPane(jLabel);
-		dialog.setSize(500, 100);
-		dialog.setLocationRelativeTo(gkd);
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				dialog.setVisible(true);
-			}
-		}).start();
-
 		//$hide>>$
 		if (Global.debug) {
 			System.out.println("load elf");
@@ -520,18 +507,16 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			} else {
 				file = new File(elfPath);
 			}
-			loadELF(file, dialog, memoryOffset);
+			loadELF(file, gkd, memoryOffset);
 		}
 
 		if (Global.debug) {
 			System.out.println("load elf end");
 		}
 		//$hide<<$
-
-		dialog.setVisible(false);
 	}
 
-	public void loadELF(File file, JDialog dialog, long memoryOffset) {
+	public void loadELF(File file, JFrame frame, long memoryOffset) {
 		this.elfFile = file;
 		if (!elfFile.isFile()) {
 			JOptionPane.showMessageDialog(this, elfFile.getAbsolutePath() + " is not a file !!!");
@@ -542,7 +527,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		}
 
 		gkd.enableAllButtons(false, false);
-		peterDwarfPanel.init(elfFile, memoryOffset, dialog);
+		peterDwarfPanel.init(elfFile, memoryOffset, true, frame);
 		gkd.disasmHereMenuItem.setEnabled(true);
 		gkd.clearInstructionTableMenuItem.setEnabled(true);
 		//gkd.sourceLevelDebuggerToggleButtonActionPerformed(null);
