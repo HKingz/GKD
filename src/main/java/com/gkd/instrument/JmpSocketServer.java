@@ -279,7 +279,9 @@ public class JmpSocketServer implements Runnable {
 						if (debugInfoEntry != null) {
 							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
 							for (DebugInfoEntry d : v) {
-								jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value));
+								if (d.debugInfoAbbrevEntries.get("DW_AT_name") != null) {
+									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value));
+								}
 							}
 						}
 						jmpDataVector.add(jmpData);
