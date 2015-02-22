@@ -1625,7 +1625,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private void updateJmpTable() {
 		//$hide>>$
-		final JProgressBarDialog d = new JProgressBarDialog(gkd, "JProgressBarDialog", true);
+		final JProgressBarDialog d = new JProgressBarDialog(gkd, "Message", true);
 
 		d.progressBar.setIndeterminate(true);
 		d.progressBar.setString("Updating table");
