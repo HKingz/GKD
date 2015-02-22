@@ -58,7 +58,8 @@ public:
     bx_address laddr;     // linear address
     bx_phy_address paddr; // physical address
     unsigned rw;          // BX_READ, BX_WRITE or BX_RW
-    unsigned size;        // 1 .. 32
+    unsigned size;        // 1 .. 64
+    unsigned memtype;
   } data_access[MAX_DATA_ACCESSES];
 
   /* branch resolution and target */
@@ -90,12 +91,12 @@ public:
   void bx_instr_exception(unsigned vector, unsigned error_code);
   void bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip);
 
-  void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned rw);
+  void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned memtype, unsigned rw);
 
   void memorySampling(bx_phy_address);
   void jmpSampling(unsigned, bx_address, bx_address);
 private:
-  void branch_taken(unsigned, bx_address branch_eip, bx_address new_eip);
+  void branch_taken(unsigned what, bx_address branch_eip, bx_address new_eip);
 
   void bx_print_instruction(void);
 };
@@ -147,10 +148,10 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
 
 /* memory access */
-#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, rw) \
-                    icpu[cpu_id].bx_instr_lin_access(lin, phy, len, rw)
+#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, memtype, rw) \
+                    icpu[cpu_id].bx_instr_lin_access(lin, phy, len, memtype, rw)
 
-#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, rw)
+#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, memtype, rw)
 
 /* feedback from device units */
 #define BX_INSTR_INP(addr, len)
@@ -206,10 +207,10 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
 
 /* linear memory access */
-#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, rw)
+#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, memtype, rw)
 
 /* physical memory access */
-#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, rw)
+#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, memtype, rw)
 
 /* feedback from device units */
 #define BX_INSTR_INP(addr, len)
