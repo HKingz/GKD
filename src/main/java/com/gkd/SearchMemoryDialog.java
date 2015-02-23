@@ -38,7 +38,7 @@ public class SearchMemoryDialog extends JDialog {
 	public SearchMemoryDialog(JFrame frame, JTable jTable, String pattern, long from, long to) {
 		super(frame, true);
 		this.table = jTable;
-		this.pattern = pattern.trim().toLowerCase();
+		this.pattern = pattern;
 		this.from = from;
 		this.to = to;
 
@@ -88,9 +88,9 @@ public class SearchMemoryDialog extends JDialog {
 	class SearchThread implements Runnable {
 		public void run() {
 			if (pattern.startsWith("0x")) {
-				patternByte = CommonLib.hexStringToByteArray(pattern.substring(2));
+				patternByte = CommonLib.hexStringToByteArray(pattern.trim().substring(2));
 			} else if (CommonLib.isNumeric(pattern)) {
-				patternByte = CommonLib.integerStringToByteArray(pattern);
+				patternByte = CommonLib.integerStringToByteArray(pattern.trim());
 			} else {
 				patternByte = CommonLib.stringToByteArray(pattern);
 			}
