@@ -96,12 +96,7 @@ public class BochsStub implements VMStub {
 		try {
 			logger.debug("startVM");
 
-			ProcessBuilder pb = new ProcessBuilder((path + " " + arguments).split(" "));
-			pb.redirectErrorStream(true);
-			p = pb.start();
-			commandReceiver = new CommandReceiver(p.getInputStream());
-			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
-
+			// profiling server has to start before run the bochs
 			if (Setting.getInstance().memoryProfiling) {
 				if (Global.debug) {
 					logger.debug("Memory profiling port " + Global.profilingMemoryPort);
@@ -120,6 +115,12 @@ public class BochsStub implements VMStub {
 				}
 				InterruptSocketServerController.start(Global.profilingInterruptPort);
 			}
+
+			ProcessBuilder pb = new ProcessBuilder((path + " " + arguments).split(" "));
+			pb.redirectErrorStream(true);
+			p = pb.start();
+			commandReceiver = new CommandReceiver(p.getInputStream());
+			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 
 			if (GKDCommonLib.readConfigInt(gkd.cmd, "/gkd/vncPort/text()") != -1) {
 				gkd.tabbedPane3.addTab("VNC", null, gkd.getVncPanel(), null);
