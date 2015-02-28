@@ -6,7 +6,6 @@ public class Global {
 	public static boolean debug = true;
 	public static BigInteger osDebug = BigInteger.valueOf(-1);
 	public static String jmpLog = "jmp.log";
-	public static String osLog = "os.log";
 	public static String interruptLog = "interrupt.log";
 	public static int profilingMemoryPort = 1980;
 	public static int profilingJmpPort = 1981;

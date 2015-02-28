@@ -4127,10 +4127,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		memoryPanel = new JPanel();
 		BorderLayout jPanel8Layout = new BorderLayout();
 		memoryPanel.setLayout(jPanel8Layout);
-//		if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
-//			tabbedPane3.addTab("VNC", null, getVncPanel(), null);
-//			TightVNC.initVNCPanel(this, getVncPanel(), "localhost", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
-//		}
+		//		if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
+		//			tabbedPane3.addTab("VNC", null, getVncPanel(), null);
+		//			TightVNC.initVNCPanel(this, getVncPanel(), "localhost", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
+		//		}
 		tabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), memoryPanel, null);
 
 		jScrollPane2 = new JScrollPane();
