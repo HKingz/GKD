@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Date;
@@ -71,7 +72,9 @@ public class JmpSocketServer implements Runnable {
 	public void stopServer() {
 		shouldStop = true;
 		try {
-			serverSocket.close();
+			if (serverSocket != null) {
+				serverSocket.close();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -312,6 +315,8 @@ public class JmpSocketServer implements Runnable {
 			JOptionPane.showMessageDialog(null, "You have turn on the profiling feature but the port " + port + " is not available. Program exit", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
+		} catch (SocketException ex) {
+			logger.info("Jmp socket closed");
 		} catch (IOException ex2) {
 			ex2.printStackTrace();
 		}

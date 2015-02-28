@@ -114,18 +114,13 @@ import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.log4j.Logger;
-import org.h2.tools.DeleteDbFiles;
-import org.hibernate.Query;
-import org.hibernate.Session;
 
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.ApplicationListener;
 import com.gkd.components.segmentregister.SegmentRegister;
 import com.gkd.elf.ElfUtil;
 import com.gkd.helprequest.HelpRequestDialog;
-import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.InstrumentPanel;
-import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.logpanel.LogPanel;
 import com.gkd.osdebuginformation.JOSDebugInformationPanel;
 import com.gkd.osdebuginformation.OSDebugInfoHelper;
@@ -176,7 +171,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel jPanel7;
 	private JPanel jPanel6;
 	private JPanel jPanel5;
-	private JMaximizableTabbedPane tabbedPane3;
+	public JMaximizableTabbedPane tabbedPane3;
 	private JMenuItem pauseVMMenuItem;
 	private JPanel jPanel3;
 	public JMaximizableTabbedPane bottomTabbedPane;
@@ -4132,10 +4127,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		memoryPanel = new JPanel();
 		BorderLayout jPanel8Layout = new BorderLayout();
 		memoryPanel.setLayout(jPanel8Layout);
-		if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
-			tabbedPane3.addTab("VNC", null, getVncPanel(), null);
-			TightVNC.initVNCPanel(this, getVncPanel(), "localhost", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
-		}
+//		if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
+//			tabbedPane3.addTab("VNC", null, getVncPanel(), null);
+//			TightVNC.initVNCPanel(this, getVncPanel(), "localhost", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
+//		}
 		tabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), memoryPanel, null);
 
 		jScrollPane2 = new JScrollPane();
@@ -8109,7 +8104,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateInstruction(address.subtract(BigInteger.valueOf(0x100)));
 	}
 
-	private JPanel getVncPanel() {
+	public JPanel getVncPanel() {
 		if (vncPanel == null) {
 			vncPanel = new JPanel();
 		}

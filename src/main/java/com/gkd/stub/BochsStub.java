@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 import com.gkd.CommandReceiver;
 import com.gkd.Disassemble;
 import com.gkd.GKD;
+import com.gkd.GKDCommonLib;
 import com.gkd.GKD.OSType;
 import com.gkd.Global;
 import com.gkd.MyLanguage;
@@ -24,6 +25,7 @@ import com.gkd.Setting;
 import com.gkd.instrument.InterruptSocketServerController;
 import com.gkd.instrument.JmpSocketServerController;
 import com.gkd.instrument.MemorySocketServerController;
+import com.peter.tightvncpanel.TightVNC;
 import com.peterswing.CommonLib;
 
 public class BochsStub implements VMStub {
@@ -94,6 +96,12 @@ public class BochsStub implements VMStub {
 		try {
 			logger.debug("startVM");
 
+			ProcessBuilder pb = new ProcessBuilder((path + " " + arguments).split(" "));
+			pb.redirectErrorStream(true);
+			p = pb.start();
+			commandReceiver = new CommandReceiver(p.getInputStream());
+			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+
 			if (Setting.getInstance().memoryProfiling) {
 				if (Global.debug) {
 					logger.debug("Memory profiling port " + Global.profilingMemoryPort);
@@ -113,11 +121,10 @@ public class BochsStub implements VMStub {
 				InterruptSocketServerController.start(Global.profilingInterruptPort);
 			}
 
-			ProcessBuilder pb = new ProcessBuilder((path + " " + arguments).split(" "));
-			pb.redirectErrorStream(true);
-			p = pb.start();
-			commandReceiver = new CommandReceiver(p.getInputStream());
-			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
+			if (GKDCommonLib.readConfigInt(gkd.cmd, "/gkd/vncPort/text()") != -1) {
+				gkd.tabbedPane3.addTab("VNC", null, gkd.getVncPanel(), null);
+				TightVNC.initVNCPanel(gkd, gkd.getVncPanel(), "localhost", GKDCommonLib.readConfigInt(gkd.cmd, "/gkd/vncPort/text()"), null, false);
+			}
 
 			String versionLines[] = commandReceiver.getCommandResult().split("\n");
 			for (String line : versionLines) {
@@ -134,7 +141,15 @@ public class BochsStub implements VMStub {
 	@Override
 	public void stopVM() {
 		logger.debug("stopVM");
-		JmpSocketServerController.stop();
+		if (Setting.getInstance().memoryProfiling) {
+			MemorySocketServerController.stop();
+		}
+		if (Setting.getInstance().jmpProfiling) {
+			JmpSocketServerController.stop();
+		}
+		if (Setting.getInstance().interruptProfiling) {
+			InterruptSocketServerController.stop();
+		}
 		if (p != null) {
 			p.destroy();
 		}
