@@ -13,6 +13,7 @@ public class SymbolTableModel extends AbstractTableModel {
 	Vector<Elf32_Sym> symbols;
 	private String searchPattern;
 	public boolean exactMatch;
+	private String filterType = "all";
 
 	public SymbolTableModel() {
 	}
@@ -71,11 +72,38 @@ public class SymbolTableModel extends AbstractTableModel {
 		if (symbols == null) {
 			return;
 		}
+		Vector<Elf32_Sym> symbols2;
+		if (filterType.equals("all")) {
+			symbols2 = (Vector<Elf32_Sym>) symbols.clone();
+		} else {
+			symbols2 = new Vector<Elf32_Sym>();
+			for (Elf32_Sym symbol : symbols) {
+				int st_type = symbol.st_info & 0xf;
+				String type = null;
+				if (st_type == 0) {
+					type = "type";
+				} else if (st_type == 1) {
+					type = "object";
+				} else if (st_type == 2) {
+					type = "function";
+				} else if (st_type == 3) {
+					type = "section";
+				} else if (st_type == 4) {
+					type = "file";
+				} else {
+					type = "unknown";
+				}
+				System.out.println(filterType + "==" + type);
+				if (filterType.equals(type)) {
+					symbols2.add(symbol);
+				}
+			}
+		}
 		if (searchPattern != null && !searchPattern.equals("")) {
 			displaySymbols.clear();
 
-			for (int x = 0; x < symbols.size(); x++) {
-				Elf32_Sym symbol = (Elf32_Sym) symbols.toArray()[x];
+			for (int x = 0; x < symbols2.size(); x++) {
+				Elf32_Sym symbol = (Elf32_Sym) symbols2.toArray()[x];
 				if ((!exactMatch && symbol.name.toLowerCase().contains(searchPattern.toLowerCase()))
 						|| (exactMatch && symbol.name.toLowerCase().equals(searchPattern.toLowerCase())) || Long.toHexString(symbol.st_value).contains(searchPattern)) {
 					displaySymbols.add(symbol);
@@ -84,37 +112,42 @@ public class SymbolTableModel extends AbstractTableModel {
 				}
 			}
 		} else {
-			displaySymbols = (Vector<Elf32_Sym>) symbols.clone();
+			displaySymbols = (Vector<Elf32_Sym>) symbols2.clone();
 		}
 		fireTableDataChanged();
+	}
+
+	public void setSearchFilterType(String filterType) {
+		this.filterType = filterType;
+		setSearchPattern(searchPattern);
 	}
 
 	public void reload() {
 		setSearchPattern(searchPattern);
 	}
 
-//	int hashCode = -99999;
-//	Hashtable<Long, Elf32_Sym> ht;
-//	Vector<Long> nullSymbols;
+	//	int hashCode = -99999;
+	//	Hashtable<Long, Elf32_Sym> ht;
+	//	Vector<Long> nullSymbols;
 
 	public Elf32_Sym searchSymbol(long address) {
-//		if (hashCode != symbols.hashCode()) {
-//			ht = new Hashtable<Long, Elf32_Sym>();
-//			nullSymbols = new Vector<Long>();
-//			hashCode = symbols.hashCode();
-//		}
-//		if (nullSymbols.contains(address)) {
-//			return null;
-//		} else if (ht.containsKey(address)) {
-//			return ht.get(address);
-//		}
+		//		if (hashCode != symbols.hashCode()) {
+		//			ht = new Hashtable<Long, Elf32_Sym>();
+		//			nullSymbols = new Vector<Long>();
+		//			hashCode = symbols.hashCode();
+		//		}
+		//		if (nullSymbols.contains(address)) {
+		//			return null;
+		//		} else if (ht.containsKey(address)) {
+		//			return ht.get(address);
+		//		}
 		for (Elf32_Sym symbol : symbols) {
 			if (symbol.st_value == address) {
-//				ht.put(address, symbol);
+				//				ht.put(address, symbol);
 				return symbol;
 			}
 		}
-//		nullSymbols.add(address);
+		//		nullSymbols.add(address);
 		return null;
 	}
 
@@ -126,4 +159,5 @@ public class SymbolTableModel extends AbstractTableModel {
 		}
 		return null;
 	}
+
 }

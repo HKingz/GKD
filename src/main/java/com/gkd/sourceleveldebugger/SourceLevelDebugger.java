@@ -72,6 +72,8 @@ import com.peterswing.advancedswing.jtable.SortableTableModel;
 import com.peterswing.advancedswing.jtable.TableSorterColumnListener;
 import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
+import javax.swing.JRadioButton;
+import javax.swing.ButtonGroup;
 
 public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
 	private JSplitPane mainSplitPane;
@@ -134,6 +136,12 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	TableRowSorter<TableModel> sorter;
 	mxGraph graph;
 	CallGraphComponent graphComponent;
+	private JPanel panel;
+	private JRadioButton allSymbolsRadioButton;
+	private JRadioButton allFunctionsRadioButton;
+	private JRadioButton allTypesRadioButton;
+	private JRadioButton allObjectsRadioButton;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	public SourceLevelDebugger(GKD gkd) {
 		this.gkd = gkd;
@@ -626,6 +634,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			symbolTablePanel.setLayout(jFunctionListPanelLayout);
 			symbolTablePanel.add(getJScrollPane11(), BorderLayout.CENTER);
 			symbolTablePanel.add(getJToolBar1(), BorderLayout.NORTH);
+			symbolTablePanel.add(getPanel(), BorderLayout.SOUTH);
 		}
 		return symbolTablePanel;
 	}
@@ -1079,5 +1088,77 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 				break;
 			}
 		}
+	}
+
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.add(getAllSymbolsRadioButton());
+			panel.add(getAllFunctionsRadioButton());
+			panel.add(getAllTypesRadioButton());
+			panel.add(getAllObjectsRadioButton());
+		}
+		return panel;
+	}
+
+	private JRadioButton getAllSymbolsRadioButton() {
+		if (allSymbolsRadioButton == null) {
+			allSymbolsRadioButton = new JRadioButton("All");
+			allSymbolsRadioButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					((SymbolTableModel) sortableTableModel.model).setSearchFilterType("all");
+					sortableTableModel.updateSorter();
+					sortableTableModel.fireTableDataChanged();
+				}
+			});
+			buttonGroup.add(allSymbolsRadioButton);
+			allSymbolsRadioButton.setSelected(true);
+		}
+		return allSymbolsRadioButton;
+	}
+
+	private JRadioButton getAllFunctionsRadioButton() {
+		if (allFunctionsRadioButton == null) {
+			allFunctionsRadioButton = new JRadioButton("Function");
+			allFunctionsRadioButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					((SymbolTableModel) sortableTableModel.model).setSearchFilterType("function");
+					sortableTableModel.updateSorter();
+					sortableTableModel.fireTableDataChanged();
+				}
+			});
+			buttonGroup.add(allFunctionsRadioButton);
+		}
+		return allFunctionsRadioButton;
+	}
+
+	private JRadioButton getAllTypesRadioButton() {
+		if (allTypesRadioButton == null) {
+			allTypesRadioButton = new JRadioButton("Type");
+			allTypesRadioButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					((SymbolTableModel) sortableTableModel.model).setSearchFilterType("type");
+					sortableTableModel.updateSorter();
+					sortableTableModel.fireTableDataChanged();
+				}
+			});
+			buttonGroup.add(allTypesRadioButton);
+		}
+		return allTypesRadioButton;
+	}
+
+	private JRadioButton getAllObjectsRadioButton() {
+		if (allObjectsRadioButton == null) {
+			allObjectsRadioButton = new JRadioButton("Object");
+			allObjectsRadioButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					((SymbolTableModel) sortableTableModel.model).setSearchFilterType("object");
+					sortableTableModel.updateSorter();
+					sortableTableModel.fireTableDataChanged();
+				}
+			});
+			buttonGroup.add(allObjectsRadioButton);
+		}
+		return allObjectsRadioButton;
 	}
 }
