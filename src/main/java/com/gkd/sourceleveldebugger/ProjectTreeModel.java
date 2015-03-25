@@ -6,13 +6,13 @@ import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 public class ProjectTreeModel implements TreeModel {
-	MyMutableTreeNode root;
+	ProjectTreeNode root;
 
-	public ProjectTreeModel(MyMutableTreeNode root) {
+	public ProjectTreeModel(ProjectTreeNode root) {
 		this.root = root;
 	}
 
-	public void setRoot(MyMutableTreeNode root) {
+	public void setRoot(ProjectTreeNode root) {
 		this.root = root;
 	}
 
@@ -23,17 +23,17 @@ public class ProjectTreeModel implements TreeModel {
 
 	@Override
 	public Object getChild(Object parent, int index) {
-		return ((MyMutableTreeNode) parent).getChildAt(index);
+		return ((ProjectTreeNode) parent).getChildAt(index);
 	}
 
 	@Override
 	public int getChildCount(Object parent) {
-		return ((MyMutableTreeNode) parent).getChildCount();
+		return ((ProjectTreeNode) parent).getChildCount();
 	}
 
 	@Override
 	public boolean isLeaf(Object node) {
-		return ((MyMutableTreeNode) node).isLeaf();
+		return ((ProjectTreeNode) node).isLeaf();
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class ProjectTreeModel implements TreeModel {
 
 	@Override
 	public int getIndexOfChild(Object parent, Object child) {
-		return ((MyMutableTreeNode) parent).getIndex((TreeNode) child);
+		return ((ProjectTreeNode) parent).getIndex((TreeNode) child);
 	}
 
 	@Override

@@ -8,10 +8,11 @@ import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import com.peterswing.CommonLib;
+import com.peterswing.FilterTreeNode;
 
-public class ProjectTreeNode implements MyMutableTreeNode {
+public class ProjectTreeNode extends FilterTreeNode {
 	File file;
-	Vector<MyMutableTreeNode> children = new Vector<MyMutableTreeNode>();
+	Vector<ProjectTreeNode> children = new Vector<ProjectTreeNode>();
 	public MutableTreeNode parent;
 	boolean visible = true;
 
@@ -22,7 +23,7 @@ public class ProjectTreeNode implements MyMutableTreeNode {
 	@Override
 	public TreeNode getChildAt(int childIndex) {
 		int count = -1;
-		for (MyMutableTreeNode node : children) {
+		for (ProjectTreeNode node : children) {
 			if (node.isVisible()) {
 				count++;
 			}
@@ -37,7 +38,7 @@ public class ProjectTreeNode implements MyMutableTreeNode {
 	@Override
 	public int getChildCount() {
 		int count = 0;
-		for (MyMutableTreeNode node : children) {
+		for (ProjectTreeNode node : children) {
 			if (node.isVisible()) {
 				count++;
 			}
@@ -110,18 +111,14 @@ public class ProjectTreeNode implements MyMutableTreeNode {
 		}
 	}
 
-	@Override
 	public boolean isVisible() {
 		return visible;
 	}
-
-	@Override
 	public void setVisible(boolean b) {
 		visible = b;
 	}
 
-	@Override
-	public Vector<MyMutableTreeNode> getChildren() {
+	public Vector<ProjectTreeNode> getChildren() {
 		return children;
 	}
 
