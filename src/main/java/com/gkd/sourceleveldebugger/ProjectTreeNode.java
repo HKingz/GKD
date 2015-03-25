@@ -7,6 +7,7 @@ import java.util.Vector;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import com.peterdwarf.gui.DwarfTreeNode;
 import com.peterswing.CommonLib;
 import com.peterswing.FilterTreeNode;
 
@@ -21,28 +22,12 @@ public class ProjectTreeNode extends FilterTreeNode {
 
 	@Override
 	public TreeNode getChildAt(int childIndex) {
-		int count = -1;
-		for (ProjectTreeNode node : children) {
-			if (node.isShown) {
-				count++;
-			}
-			if (count == childIndex) {
-				return node;
-			}
-
-		}
-		return null;
+		return children.get(childIndex);
 	}
 
 	@Override
 	public int getChildCount() {
-		int count = 0;
-		for (ProjectTreeNode node : children) {
-			if (node.isShown) {
-				count++;
-			}
-		}
-		return count;
+		return children.size();
 	}
 
 	@Override
@@ -52,10 +37,12 @@ public class ProjectTreeNode extends FilterTreeNode {
 
 	@Override
 	public int getIndex(TreeNode node) {
-		for (int x = 0; x < children.size(); x++) {
-			if (children.get(x) == node) {
+		int x = 0;
+		for (ProjectTreeNode treeNode : children) {
+			if (treeNode == node) {
 				return x;
 			}
+			x++;
 		}
 		return -1;
 	}
@@ -67,12 +54,12 @@ public class ProjectTreeNode extends FilterTreeNode {
 
 	@Override
 	public boolean isLeaf() {
-		return children.size() == 0 || isShown == false ? true : false;
+		return children.size() == 0;
 	}
 
 	@Override
 	public Enumeration children() {
-		return CommonLib.makeEnumeration(children.toArray());
+		return children.elements();
 	}
 
 	@Override
@@ -109,7 +96,6 @@ public class ProjectTreeNode extends FilterTreeNode {
 			return "";
 		}
 	}
-
 
 	public Vector<ProjectTreeNode> getChildren() {
 		return children;
