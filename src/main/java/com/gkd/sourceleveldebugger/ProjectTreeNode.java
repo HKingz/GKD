@@ -14,7 +14,6 @@ public class ProjectTreeNode extends FilterTreeNode {
 	File file;
 	Vector<ProjectTreeNode> children = new Vector<ProjectTreeNode>();
 	public MutableTreeNode parent;
-	boolean visible = true;
 
 	public ProjectTreeNode(File file) {
 		this.file = file;
@@ -24,7 +23,7 @@ public class ProjectTreeNode extends FilterTreeNode {
 	public TreeNode getChildAt(int childIndex) {
 		int count = -1;
 		for (ProjectTreeNode node : children) {
-			if (node.isVisible()) {
+			if (node.isShown) {
 				count++;
 			}
 			if (count == childIndex) {
@@ -39,7 +38,7 @@ public class ProjectTreeNode extends FilterTreeNode {
 	public int getChildCount() {
 		int count = 0;
 		for (ProjectTreeNode node : children) {
-			if (node.isVisible()) {
+			if (node.isShown) {
 				count++;
 			}
 		}
@@ -68,7 +67,7 @@ public class ProjectTreeNode extends FilterTreeNode {
 
 	@Override
 	public boolean isLeaf() {
-		return children.size() == 0 || visible == false ? true : false;
+		return children.size() == 0 || isShown == false ? true : false;
 	}
 
 	@Override
@@ -111,12 +110,6 @@ public class ProjectTreeNode extends FilterTreeNode {
 		}
 	}
 
-	public boolean isVisible() {
-		return visible;
-	}
-	public void setVisible(boolean b) {
-		visible = b;
-	}
 
 	public Vector<ProjectTreeNode> getChildren() {
 		return children;
