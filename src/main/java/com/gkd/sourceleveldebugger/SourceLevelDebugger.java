@@ -19,6 +19,7 @@ import java.math.BigInteger;
 import java.util.TreeSet;
 import java.util.Vector;
 
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
@@ -58,8 +60,8 @@ import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.view.mxCellState;
 import com.mxgraph.view.mxGraph;
+import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.Dwarf;
-import com.peterdwarf.dwarf.DwarfDebugLineHeader;
 import com.peterdwarf.dwarf.DwarfHeaderFilename;
 import com.peterdwarf.elf.Elf32_Sym;
 import com.peterdwarf.gui.PeterDwarfPanel;
@@ -72,8 +74,6 @@ import com.peterswing.advancedswing.jtable.SortableTableModel;
 import com.peterswing.advancedswing.jtable.TableSorterColumnListener;
 import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
-import javax.swing.JRadioButton;
-import javax.swing.ButtonGroup;
 
 public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
 	private JSplitPane mainSplitPane;
@@ -560,8 +560,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 
 		TreeSet<File> allSourceFiles = new TreeSet<File>();
 		for (Dwarf dwarf : peterDwarfPanel.dwarfs) {
-			for (DwarfDebugLineHeader header : dwarf.headers) {
-				for (DwarfHeaderFilename filename : header.filenames) {
+			for (CompileUnit cu : dwarf.compileUnits) {
+				for (DwarfHeaderFilename filename : cu.dwarfDebugLineHeader.filenames) {
 					allSourceFiles.add(filename.file);
 				}
 			}

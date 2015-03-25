@@ -129,7 +129,7 @@ import com.gkd.structurePanel.StructurePanel;
 import com.gkd.stub.VMController;
 import com.gkd.stub.VMType;
 import com.gkd.webservice.WebServiceUtil;
-import com.peter.tightvncpanel.TightVNC;
+import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
 import com.peterdwarf.dwarf.DwarfLine;
@@ -2387,8 +2387,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				DwarfLine startLine = null;
 				DwarfLine endLine = null;
 				DwarfDebugLineHeader startHeader = null;
-
-				outerloop: for (DwarfDebugLineHeader header : dwarf.headers) {
+				for (CompileUnit cu : dwarf.compileUnits) {
+					DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
 					boolean toggle = false;
 					for (DwarfLine line : header.lines) {
 						if (!toggle && line.address.equals(pc)) {
@@ -2399,7 +2399,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						}
 						if (toggle && !line.address.equals(startLine.address) && line.line_num != startLine.line_num) {
 							endLine = line;
-							break outerloop;
+							break;
 						}
 					}
 					startLine = null;

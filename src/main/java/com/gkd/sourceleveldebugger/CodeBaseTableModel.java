@@ -9,6 +9,7 @@ import javax.swing.table.AbstractTableModel;
 
 import org.apache.commons.io.FileUtils;
 
+import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
 import com.peterdwarf.dwarf.DwarfLine;
@@ -56,11 +57,12 @@ public class CodeBaseTableModel extends AbstractTableModel {
 	public void refresh() {
 		data = new Vector<Data>();
 		for (Dwarf dwarf : peterDwarfPanel.dwarfs) {
-			for (DwarfDebugLineHeader header : dwarf.headers) {
+			for (CompileUnit cu : dwarf.compileUnits) {
+				DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
 				loop1: for (int x = 0; x < header.lines.size(); x++) {
 					try {
 						DwarfLine line = header.lines.get(x);
-						File file = header.filenames.get((int) line.file_num).file;
+						File file = cu.dwarfDebugLineHeader.filenames.get((int) line.file_num).file;
 						if (!file.exists()) {
 							break loop1;
 						}
