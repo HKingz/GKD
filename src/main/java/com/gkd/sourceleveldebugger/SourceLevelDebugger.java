@@ -16,7 +16,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
-import java.util.TreeSet;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -558,14 +560,25 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		root = new ProjectTreeNode(elfFile);
 		((FilterTreeModel) projectTree.getModel()).setRoot(root);
 
-		TreeSet<File> allSourceFiles = new TreeSet<File>();
+		HashSet<String> filterDuplicate = new HashSet<String>();
+		Vector<File> allSourceFiles = new Vector<File>();
 		for (Dwarf dwarf : peterDwarfPanel.dwarfs) {
 			for (CompileUnit cu : dwarf.compileUnits) {
 				for (DwarfHeaderFilename filename : cu.dwarfDebugLineHeader.filenames) {
-					allSourceFiles.add(filename.file);
+					if (!filterDuplicate.contains(filename.file.getName())) {
+						allSourceFiles.add(filename.file);
+						filterDuplicate.add(filename.file.getName());
+					}
 				}
 			}
 		}
+
+		Collections.sort(allSourceFiles, new Comparator<File>() {
+			@Override
+			public int compare(File o1, File o2) {
+				return o1.getName().compareToIgnoreCase(o2.getName());
+			}
+		});
 		for (File file : allSourceFiles) {
 			ProjectTreeNode subnode = new ProjectTreeNode(file);
 			root.children.add(subnode);
