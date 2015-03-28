@@ -202,7 +202,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel pagingPanel;
 	private JTable gdtTable;
 	private JScrollPane jScrollPane3;
-	private JMenuItem jupdateVMStatusMenuItem;
+	private JMenuItem updateVMStatusMenuItem;
 	private JButton goMemoryButton;
 	private JPanel jPanel9;
 	private JMenu jMenu3;
@@ -1026,13 +1026,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						});
 					}
 					{
-						jupdateVMStatusMenuItem = new JMenuItem();
-						bochsMenu.add(jupdateVMStatusMenuItem);
-						jupdateVMStatusMenuItem.setText(MyLanguage.getString("update_status"));
-						jupdateVMStatusMenuItem.setBounds(83, 86, 79, 20);
-						jupdateVMStatusMenuItem.addActionListener(new ActionListener() {
+						updateVMStatusMenuItem = new JMenuItem();
+						bochsMenu.add(updateVMStatusMenuItem);
+						updateVMStatusMenuItem.setText(MyLanguage.getString("update_status"));
+						updateVMStatusMenuItem.setBounds(83, 86, 79, 20);
+						updateVMStatusMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								jupdateVMStatusMenuItemActionPerformed(evt);
+								updateVMStatusMenuItemActionPerformed(evt);
 							}
 						});
 					}
@@ -1714,7 +1714,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionComboBox.addItem(str.trim());
 	}
 
-	private void jupdateVMStatusMenuItemActionPerformed(ActionEvent evt) {
+	private void updateVMStatusMenuItemActionPerformed(ActionEvent evt) {
 		updateVMStatus(true);
 	}
 
@@ -2162,7 +2162,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				pauseVMMenuItem.setEnabled(b);
 				runBochsMenuItem.setEnabled(b);
-				jupdateVMStatusMenuItem.setEnabled(b);
+				updateVMStatusMenuItem.setEnabled(b);
 				runBochsAndSkipBreakpointMenuItem.setEnabled(b);
 				runCustomCommandMenuItem.setEnabled(b);
 				nextOverButton.setEnabled(b);
