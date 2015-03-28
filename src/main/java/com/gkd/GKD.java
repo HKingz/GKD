@@ -1723,9 +1723,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		isupdateVMStatusEnd = false;
 		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);
 		final JProgressBarDialog d = new JProgressBarDialog(this, true);
-		enableAllButtons(false, skipBreakpointTime > 0);
 		Thread updateThread = new Thread("updateVMStatus thread") {
 			public void run() {
+				enableAllButtons(false, skipBreakpointTime > 0);
 				if (Global.debug) {
 					logger.debug("updateVMStatus thread start");
 				}
@@ -1840,15 +1840,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						logger.debug("updateHistoryTable");
 					}
 
-					//					String result = VMController.getVM().disasm(getRealEIP());
-					//					BigInteger cs;
-					//					if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
-					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-					//					} else {
-					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-					//					}
-					//					BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-					//					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 					String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 					updateHistoryTable(result);
 				}
@@ -1876,13 +1867,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		};
 
 		d.thread = updateThread;
-		//updateThread.setDaemon(true);
 		d.setTitle("Updating gkd status");
 		d.progressBar.setIndeterminate(true);
 		d.progressBar.setStringPainted(true);
 		d.cancelButton.setVisible(false);
 		d.setVisible(true);
-		//updateThread.start();
 
 		if (Global.debug) {
 			logger.debug("updateVMStatus() end");
@@ -2152,29 +2141,33 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	public void enableAllButtons(boolean b, boolean exceptRunButton) {
-		if (!exceptRunButton) {
-			runVMButton.setEnabled(b);
-		}
-		stepVMButton.setEnabled(b);
-		stepOverDropDownButton.setEnabled(b);
-		nextButton.setEnabled(b);
-		fastStepBochsButton.setEnabled(b);
-		updateBochsButton.setEnabled(b);
-		settingButton.setEnabled(b);
-		registerToggleButton.setEnabled(b);
-		sourceLevelDebuggerToggleButton.setEnabled(b);
-		profilerToggleButton.setEnabled(b);
+	public void enableAllButtons(final boolean b, final boolean exceptRunButton) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (!exceptRunButton) {
+					runVMButton.setEnabled(b);
+				}
+				stepVMButton.setEnabled(b);
+				stepOverDropDownButton.setEnabled(b);
+				nextButton.setEnabled(b);
+				fastStepBochsButton.setEnabled(b);
+				updateBochsButton.setEnabled(b);
+				settingButton.setEnabled(b);
+				registerToggleButton.setEnabled(b);
+				sourceLevelDebuggerToggleButton.setEnabled(b);
+				profilerToggleButton.setEnabled(b);
 
-		pageDirectoryTable.setEnabled(b);
-		pageTableTable.setEnabled(b);
+				pageDirectoryTable.setEnabled(b);
+				pageTableTable.setEnabled(b);
 
-		pauseVMMenuItem.setEnabled(b);
-		runBochsMenuItem.setEnabled(b);
-		jupdateVMStatusMenuItem.setEnabled(b);
-		runBochsAndSkipBreakpointMenuItem.setEnabled(b);
-		runCustomCommandMenuItem.setEnabled(b);
-		nextOverButton.setEnabled(b);
+				pauseVMMenuItem.setEnabled(b);
+				runBochsMenuItem.setEnabled(b);
+				jupdateVMStatusMenuItem.setEnabled(b);
+				runBochsAndSkipBreakpointMenuItem.setEnabled(b);
+				runCustomCommandMenuItem.setEnabled(b);
+				nextOverButton.setEnabled(b);
+			}
+		});
 	}
 
 	public void updatePageTable(BigInteger pageDirectoryBaseAddress) {
@@ -2197,13 +2190,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void updateStack() {
 		try {
-			System.out.println("updateStack 1");
 			statusLabel.setText("Updating stack");
 			registerPanel.stackList.removeAll();
-			System.out.println("updateStack 2");
 			DefaultListModel model = new DefaultListModel();
 			Vector<String> r = VMController.getVM().stack();
-			System.out.println("updateStack 3");
 			for (String s : r) {
 				model.addElement(s);
 			}
@@ -7903,27 +7893,28 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void stepOverDropDownButtonActionPerformed(ActionEvent evt) {
-		if (stepOverDropDownButton.getEventSource() != null) {
-			stepThread = new StepThread(stepOverDropDownButton.getEventSource());
-			if (stepOverDropDownButton.getEventSource() == stepOverNTimesMenuItem) {
-				String s = JOptionPane.showInputDialog("Please input the instruction count?");
-				if (s == null) {
-					return;
-				}
-				stepThread.instructionCount = Integer.parseInt(s);
-			}
-
-			// if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
-			CardLayout cl = (CardLayout) (mainPanel.getLayout());
-			cl.show(mainPanel, "Running Panel");
-			// }
-			new Thread(stepThread, "Step until thread").start();
-		} else {
-			VMController.getVM().stepOver();
-			WebServiceUtil.log("gkd", "step over", null, null, null);
-			updateVMStatus(true);
-			// updateHistoryTable(re);
-		}
+		System.out.println(stepVMButton.isEnabled());
+		//		if (stepOverDropDownButton.getEventSource() != null) {
+		//			stepThread = new StepThread(stepOverDropDownButton.getEventSource());
+		//			if (stepOverDropDownButton.getEventSource() == stepOverNTimesMenuItem) {
+		//				String s = JOptionPane.showInputDialog("Please input the instruction count?");
+		//				if (s == null) {
+		//					return;
+		//				}
+		//				stepThread.instructionCount = Integer.parseInt(s);
+		//			}
+		//
+		//			// if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
+		//			CardLayout cl = (CardLayout) (mainPanel.getLayout());
+		//			cl.show(mainPanel, "Running Panel");
+		//			// }
+		//			new Thread(stepThread, "Step until thread").start();
+		//		} else {
+		//			VMController.getVM().stepOver();
+		//			WebServiceUtil.log("gkd", "step over", null, null, null);
+		//			updateVMStatus(true);
+		//			// updateHistoryTable(re);
+		//		}
 	}
 
 	private JMenuItem getStepOver10MenuItem() {
