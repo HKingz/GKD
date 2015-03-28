@@ -117,7 +117,7 @@ public class JmpTableModel extends DefaultTableModel {
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			return "shit";
+			return "";
 		}
 	}
 
