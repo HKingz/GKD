@@ -4,7 +4,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -22,17 +21,19 @@ public class Parameter {
 	private JmpData jmpData;
 
 	public String name;
+	public String type;
 
 	public Parameter() {
 	}
 
-	public Parameter(JmpData jmpData, String name) {
+	public Parameter(JmpData jmpData, String name, String type) {
 		this.jmpData = jmpData;
 		this.name = name;
+		this.type = type;
 	}
 
 	public String toString() {
-		return name;
+		return name + "(" + type + ")";
 	}
 
 }

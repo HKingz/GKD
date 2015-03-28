@@ -283,7 +283,8 @@ public class JmpSocketServer implements Runnable {
 							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
 							for (DebugInfoEntry d : v) {
 								if (d.debugInfoAbbrevEntries.get("DW_AT_name") != null) {
-									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value));
+									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value, DwarfLib.getParameterType(toCU,
+											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value))));
 								}
 							}
 						}
