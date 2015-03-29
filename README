@@ -5,9 +5,9 @@ Here are steps to compile GKD. GKD is depends on some my other projects, all are
 Check out these project in order, run “mvn clean install” on every of them:
 
 1. https://github.com/mcheung63/peter-swing
-2. https://code.google.com/p/tightvncpanel/
-3. https://code.google.com/p/peter-ar/
-4. https://code.google.com/p/peter-dwarf/
+2. https://sourceforge.net/projects/tightvncpanel/
+3. https://sourceforge.net/projects/peter-ar/
+4. https://sourceforge.net/projects/peter-dwarf/
 
 Finally, get GKD source from svn://svn.petersoft.com/GKD, username : gkd, password : gkd.
 
