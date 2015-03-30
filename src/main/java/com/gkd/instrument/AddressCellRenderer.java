@@ -4,12 +4,15 @@ import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import org.apache.commons.lang3.StringUtils;
+
+import com.gkd.instrument.callgraph.Parameter;
 
 public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 	public boolean showFullPath;
@@ -31,28 +34,33 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 				this.setBackground(new Color(0xf4f4f4));
 			}
 		}
-		Hashtable<String, Object> ht = (Hashtable<String, Object>) value;
-		Long address = (Long) ht.get("address");
-		String DW_AT_name = (String) ht.get("DW_AT_name");
-		String filePath = "";
-		if (showFullPath) {
-			filePath = DW_AT_name;
-		} else {
-			filePath = new File(DW_AT_name).getName();
+		if (value instanceof Hashtable) {
+			Hashtable<String, Object> ht = (Hashtable<String, Object>) value;
+			Long address = (Long) ht.get("address");
+			String DW_AT_name = (String) ht.get("DW_AT_name");
+			String filePath = "";
+			if (showFullPath) {
+				filePath = DW_AT_name;
+			} else {
+				filePath = new File(DW_AT_name).getName();
+			}
+			String addressDescription = (String) ht.get("addressDescription");
+			int deep = (int) ht.get("deep");
+
+			int hashCode = Math.abs(filePath.hashCode());
+			//Color color = new Color(hashCode);
+			Color color = colors[hashCode % colors.length];
+			//		String hex = String.format("#%02x%02x%02x", (int) (color.getRed() * 0.5), (int) (color.getGreen() * 0.5), (int) (color.getBlue() * 0.5));
+			String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+
+			String spacer = StringUtils.repeat("&nbsp;", deep);
+
+			setText("<html><body>" + spacer + "0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=" + hex + ">" + addressDescription
+					+ "</font></body></html>");
+		} else if (value instanceof List) {
+			List<Parameter> parameters = (List<Parameter>) value;
+			
 		}
-		String addressDescription = (String) ht.get("addressDescription");
-		int deep = (int) ht.get("deep");
-
-		int hashCode = Math.abs(filePath.hashCode());
-		//Color color = new Color(hashCode);
-		Color color = colors[hashCode % colors.length];
-		//		String hex = String.format("#%02x%02x%02x", (int) (color.getRed() * 0.5), (int) (color.getGreen() * 0.5), (int) (color.getBlue() * 0.5));
-		String hex = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
-
-		String spacer = StringUtils.repeat("&nbsp;", deep);
-
-		setText("<html><body>" + spacer + "0x" + Long.toHexString(address) + " <font color=" + hex + ">" + filePath + "</font> <font color=" + hex + ">" + addressDescription
-				+ "</font></body></html>");
 		//setBackground(color);
 		return this;
 	}

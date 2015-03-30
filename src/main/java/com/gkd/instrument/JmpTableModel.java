@@ -8,11 +8,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.gkd.GKD;
 import com.gkd.instrument.callgraph.JmpData;
-import com.gkd.sourceleveldebugger.SourceLevelDebugger;
-import com.peterdwarf.dwarf.CompileUnit;
-import com.peterdwarf.elf.Elf32_Sym;
 
 public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "What", "Parameter", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs",

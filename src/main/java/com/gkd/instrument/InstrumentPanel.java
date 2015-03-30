@@ -1466,6 +1466,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpDataTable.getColumnModel().getColumn(3).setPreferredWidth(300);
 			jmpDataTable.getColumnModel().getColumn(2).setCellRenderer(addressCellRenderer);
 			jmpDataTable.getColumnModel().getColumn(3).setCellRenderer(addressCellRenderer);
+			jmpDataTable.getColumnModel().getColumn(5).setCellRenderer(addressCellRenderer);
 		}
 		return jmpDataTable;
 	}
