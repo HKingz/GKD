@@ -28,7 +28,9 @@ import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterdwarf.dwarf.CompileUnit;
+import com.peterdwarf.dwarf.DebugInfoAbbrevEntry;
 import com.peterdwarf.dwarf.DebugInfoEntry;
+import com.peterdwarf.dwarf.Definition;
 import com.peterdwarf.dwarf.DwarfLib;
 import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
@@ -283,8 +285,18 @@ public class JmpSocketServer implements Runnable {
 							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
 							for (DebugInfoEntry d : v) {
 								if (d.debugInfoAbbrevEntries.get("DW_AT_name") != null) {
+									DebugInfoAbbrevEntry debugInfoAbbrevEntry = d.debugInfoAbbrevEntries.get("DW_AT_location");
+									String values[] = debugInfoAbbrevEntry.value.toString().split(",");
+									String value = "";
+									if (values.length > 1) {
+										value = Definition.getOPName(CommonLib.string2int(values[0]));
+										value += " +" + values[1];
+									} else {
+										value = Definition.getOPName(CommonLib.string2int(values[0]));
+									}
+
 									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value, DwarfLib.getParameterType(toCU,
-											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value))));
+											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value)) + ", " + value));
 								}
 							}
 						}
