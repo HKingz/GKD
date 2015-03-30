@@ -107,11 +107,12 @@ public class DBThread implements Runnable {
 
 					pstmt.executeBatch();
 
-					PreparedStatement pstmt2 = conn.prepareStatement("insert into parameter (parameterId, name, type, jmpData_jmpDataId) values (null, ?, ?, ?);");
+					PreparedStatement pstmt2 = conn.prepareStatement("insert into parameter (parameterId, name, type, address, jmpData_jmpDataId) values (null, ?, ?, ?,?);");
 					for (JmpData jmpData : temp) {
 						for (Parameter parameter : jmpData.parameters) {
 							pstmt2.setString(1, parameter.name);
 							pstmt2.setString(2, parameter.type);
+							pstmt2.setString(3, parameter.location);
 							pstmt2.setInt(3, oldPk);
 							pstmt2.addBatch();
 						}

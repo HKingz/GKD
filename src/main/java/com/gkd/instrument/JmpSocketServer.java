@@ -287,16 +287,16 @@ public class JmpSocketServer implements Runnable {
 								if (d.debugInfoAbbrevEntries.get("DW_AT_name") != null) {
 									DebugInfoAbbrevEntry debugInfoAbbrevEntry = d.debugInfoAbbrevEntries.get("DW_AT_location");
 									String values[] = debugInfoAbbrevEntry.value.toString().split(",");
-									String value = "";
+									String location = "";
 									if (values.length > 1) {
-										value = Definition.getOPName(CommonLib.string2int(values[0]));
-										value += " +" + values[1];
+										location = Definition.getOPName(CommonLib.string2int(values[0]));
+										location += " +" + values[1];
 									} else {
-										value = Definition.getOPName(CommonLib.string2int(values[0]));
+										location = Definition.getOPName(CommonLib.string2int(values[0]));
 									}
 
 									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value, DwarfLib.getParameterType(toCU,
-											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value)) + ", " + value));
+											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value)), location));
 								}
 							}
 						}
