@@ -59,7 +59,11 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 					+ "</font></body></html>");
 		} else if (value instanceof List) {
 			List<Parameter> parameters = (List<Parameter>) value;
-			
+			String html = "";
+			for (Parameter parameter : parameters) {
+				html += parameter.name + " <font color=\"blue\">" + parameter.type + "</font>,";
+			}
+			setText("<html><body>" + html + "</body></html>");
 		}
 		//setBackground(color);
 		return this;
