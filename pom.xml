@@ -3,7 +3,11 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.peter</groupId>
 	<artifactId>GKD</artifactId>
+<<<<<<< .mine
+	<version>20150330</version>
+=======
 	<version>20150329</version>
+>>>>>>> .r11005
 	<name>General Kernel Debugger</name>
 	<description>GKD is a gui debug tool for kernel development. It was originally call &quot;peter-bochs&quot; (http://peter-bochs.googlecode.com). Bochs' command line is not productive, so I make a GUI for it. Now, I adding support to QEMU is rename the project to GKD. Tutorials of peter-bochs can be found in https://code.google.com/p/peter-bochs/w/list</description>
 	<url>http://peter.kingofcoders.com</url>
@@ -140,12 +144,12 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-ar</artifactId>
-			<version>20150128</version>
+			<version>20150330</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-dwarf</artifactId>
-			<version>20150128</version>
+			<version>20150330</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -160,7 +164,7 @@
 		<dependency>
 			<groupId>com.github.mcheung63</groupId>
 			<artifactId>peter-swing</artifactId>
-			<version>20150128</version>
+			<version>20150330</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
@@ -190,7 +194,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>tightvncpanel</artifactId>
-			<version>20150128</version>
+			<version>20150330</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
