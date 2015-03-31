@@ -33,6 +33,7 @@ public class Setting {
 	public int height;
 	public int divX;
 	public int divY;
+	public int jmpSplitPanel_divY;
 
 	public int osDebugSplitPane_DividerLocation;
 
@@ -115,6 +116,7 @@ public class Setting {
 		divX = 400;
 		divY = 200;
 		osDebugSplitPane_DividerLocation = 150;
+		jmpSplitPanel_divY = 600;
 
 		updateFastStepCommand_register = true;
 		updateFastStepCommand_memory = true;

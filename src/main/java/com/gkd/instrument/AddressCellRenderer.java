@@ -61,7 +61,8 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 			List<Parameter> parameters = (List<Parameter>) value;
 			String html = "";
 			for (Parameter parameter : parameters) {
-				html += parameter.name + " <font color=\"blue\">" + parameter.type + "</font> <font color=\"red\">" + parameter.location + "</font>,";
+				//html += parameter.name + " <font color=\"blue\">" + parameter.type + "</font> <font color=\"red\">" + parameter.location + "</font>,";
+				html += parameter.name + ", ";
 			}
 			setText("<html><body>" + html + "</body></html>");
 		}

@@ -122,6 +122,7 @@ import com.gkd.instrument.callgraph.CallGraphConfigTableCellEditor;
 import com.gkd.instrument.callgraph.CallGraphConfigTableCellRenderer;
 import com.gkd.instrument.callgraph.CallGraphConfigTableModel;
 import com.gkd.instrument.callgraph.JmpData;
+import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.instrument.jfreechart.MyXYBlockRenderer;
 import com.gkd.instrument.jfreechart.MyXYToolTipGenerator;
 import com.gkd.instrument.newcallgraph.CallGraphDialog;
@@ -230,7 +231,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JLabel noOfLineLabel10;
 	private JComboBox noOfLineComboBox;
 	private JPanel jmpToolBarPanel;
-	private JScrollPane jScrollPane3;
+	private JScrollPane jmpScrollPane;
 	private JPanel jmpPanel;
 	private JButton deleteZoneButton;
 	private JButton addZoneButton;
@@ -290,6 +291,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton callGraphButton;
 	GKD gkd;
 	private JButton exportJmpTableToExcelButton;
+	private JSplitPane jmpSplitPane;
+	private JPanel jmpTablePanel;
+	private JPanel jmpTableParameterPanel;
+	private JScrollPane scrollPane;
+	private JTable jmpParameterTable;
 
 	public InstrumentPanel(GKD gkd) {
 		this.gkd = gkd;
@@ -1371,18 +1377,21 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpPanel = new JPanel();
 			BorderLayout jmpPanelLayout = new BorderLayout();
 			jmpPanel.setLayout(jmpPanelLayout);
-			jmpPanel.add(getJScrollPane3(), BorderLayout.CENTER);
-			jmpPanel.add(getJmpToolbarPanel(), BorderLayout.NORTH);
+			jmpPanel.add(getJmpSplitPane(), BorderLayout.CENTER);
+			getJmpTablePanel().add(getJmpToolbarPanel(), BorderLayout.NORTH);
+			getJmpTablePanel().add(getJmpScrollPane(), BorderLayout.CENTER);
+			jmpSplitPane.add(getJmpTablePanel(), JSplitPane.TOP);
+			jmpSplitPane.setDividerLocation(Setting.getInstance().jmpSplitPanel_divY);
 		}
 		return jmpPanel;
 	}
 
-	private JScrollPane getJScrollPane3() {
-		if (jScrollPane3 == null) {
-			jScrollPane3 = new JScrollPane();
-			jScrollPane3.setViewportView(getJTable1());
+	private JScrollPane getJmpScrollPane() {
+		if (jmpScrollPane == null) {
+			jmpScrollPane = new JScrollPane();
+			jmpScrollPane.setViewportView(getJmpDataTable());
 		}
-		return jScrollPane3;
+		return jmpScrollPane;
 	}
 
 	private JPanel getJmpToolbarPanel() {
@@ -1453,9 +1462,18 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		updateJmpTable();
 	}
 
-	private JTable getJTable1() {
+	private JTable getJmpDataTable() {
 		if (jmpDataTable == null) {
 			jmpDataTable = new JTable();
+			jmpDataTable.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					List<Parameter> parameters = (List<Parameter>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 5);
+					JmpParameterTableModel model = (JmpParameterTableModel) jmpParameterTable.getModel();
+					model.parameters = parameters;
+					model.fireTableDataChanged();
+				}
+			});
 			jmpDataTable.setModel(jmpTableModel);
 			jmpDataTable.getTableHeader().setReorderingAllowed(false);
 			jmpDataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -3151,5 +3169,47 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			row.setHeight((short) (GKDCommonLib.rowHeight * max));
 		}
 
+	}
+
+	public JSplitPane getJmpSplitPane() {
+		if (jmpSplitPane == null) {
+			jmpSplitPane = new JSplitPane();
+			jmpSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+			jmpSplitPane.setRightComponent(getJmpTableParameterPanel());
+		}
+		return jmpSplitPane;
+	}
+
+	private JPanel getJmpTablePanel() {
+		if (jmpTablePanel == null) {
+			jmpTablePanel = new JPanel();
+			jmpTablePanel.setLayout(new BorderLayout(0, 0));
+		}
+		return jmpTablePanel;
+	}
+
+	private JPanel getJmpTableParameterPanel() {
+		if (jmpTableParameterPanel == null) {
+			jmpTableParameterPanel = new JPanel();
+			jmpTableParameterPanel.setLayout(new BorderLayout(0, 0));
+			jmpTableParameterPanel.add(getScrollPane(), BorderLayout.CENTER);
+		}
+		return jmpTableParameterPanel;
+	}
+
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setViewportView(getJmpParameterTable());
+		}
+		return scrollPane;
+	}
+
+	private JTable getJmpParameterTable() {
+		if (jmpParameterTable == null) {
+			jmpParameterTable = new JTable();
+			jmpParameterTable.setModel(new JmpParameterTableModel());
+		}
+		return jmpParameterTable;
 	}
 }

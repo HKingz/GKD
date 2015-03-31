@@ -2646,6 +2646,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Setting.getInstance().y = this.getLocation().y;
 		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
 		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
+		Setting.getInstance().jmpSplitPanel_divY = instrumentPanel.getJmpSplitPane().getDividerLocation();
 		Setting.getInstance().osDebugSplitPane_DividerLocation = this.osDebugInformationPanel1.getMainSplitPane().getDividerLocation();
 		Setting.getInstance().save();
 	}
