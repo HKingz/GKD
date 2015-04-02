@@ -54,7 +54,8 @@ public class JmpSocketServer implements Runnable {
 		jmpSocketServer.stopServer();
 	}
 
-	HashMap<Long, DebugInfoEntry> cache = new HashMap<Long, DebugInfoEntry>();
+	HashMap<Long, DebugInfoEntry> toAddressCache = new HashMap<Long, DebugInfoEntry>();
+	HashMap<Long, DebugInfoEntry> fromAddressCache = new HashMap<Long, DebugInfoEntry>();
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
@@ -256,7 +257,22 @@ public class JmpSocketServer implements Runnable {
 							if (symbol == null) {
 								fromNullSymbols.add(fromAddress[x]);
 							} else {
-								fromAddressDescription = symbol.name;
+								DebugInfoEntry debugInfoEntry;
+								if (fromAddressCache.containsKey(fromAddress[x])) {
+									debugInfoEntry = fromAddressCache.get(fromAddress[x]);
+								} else {
+									debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, fromAddress[x]);
+									fromAddressCache.put(fromAddress[x], debugInfoEntry);
+								}
+
+								if (fromAddress[x] == 0x1600000 || symbol.name.equals("kernel.c")) {
+									System.out.println("end");
+								}
+								if (debugInfoEntry != null) {
+									fromAddressDescription = symbol.name + " : " + debugInfoEntry.debugInfoAbbrevEntries.get("DW_AT_decl_line").value;
+								} else {
+									fromAddressDescription = symbol.name;
+								}
 							}
 						}
 
@@ -274,11 +290,11 @@ public class JmpSocketServer implements Runnable {
 								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 
 						DebugInfoEntry debugInfoEntry;
-						if (cache.containsKey(toAddress[x])) {
-							debugInfoEntry = cache.get(toAddress[x]);
+						if (toAddressCache.containsKey(toAddress[x])) {
+							debugInfoEntry = toAddressCache.get(toAddress[x]);
 						} else {
 							debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
-							cache.put(toAddress[x], debugInfoEntry);
+							toAddressCache.put(toAddress[x], debugInfoEntry);
 						}
 
 						if (debugInfoEntry != null) {
