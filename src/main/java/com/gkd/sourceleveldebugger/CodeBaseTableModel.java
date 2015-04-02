@@ -1,7 +1,6 @@
 package com.gkd.sourceleveldebugger;
 
 import java.io.File;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Vector;
 
@@ -18,14 +17,7 @@ import com.peterdwarf.gui.PeterDwarfPanel;
 public class CodeBaseTableModel extends AbstractTableModel {
 	private String[] columnNames = { "PC", "Line No.", "Code", "ELF" };
 	PeterDwarfPanel peterDwarfPanel;
-	Vector<Data> data;
-
-	class Data {
-		File file;
-		BigInteger PC;
-		String[] codeLines;
-		int lineNo;
-	}
+	Vector<CodeBaseData> data;
 
 	public CodeBaseTableModel(PeterDwarfPanel peterDwarfPanel) {
 		this.peterDwarfPanel = peterDwarfPanel;
@@ -55,7 +47,7 @@ public class CodeBaseTableModel extends AbstractTableModel {
 	}
 
 	public void refresh() {
-		data = new Vector<Data>();
+		data = new Vector<CodeBaseData>();
 		for (Dwarf dwarf : peterDwarfPanel.dwarfs) {
 			for (CompileUnit cu : dwarf.compileUnits) {
 				DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
@@ -83,7 +75,7 @@ public class CodeBaseTableModel extends AbstractTableModel {
 							s[index] = cCode;
 						}
 
-						Data d = new Data();
+						CodeBaseData d = new CodeBaseData();
 						d.file = file;
 						d.PC = line.address;
 						d.codeLines = s;

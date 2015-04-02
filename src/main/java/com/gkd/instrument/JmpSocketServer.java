@@ -5,19 +5,24 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.h2.tools.DeleteDbFiles;
 
@@ -26,12 +31,16 @@ import com.gkd.Global;
 import com.gkd.hibernate.HibernateUtil;
 import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.callgraph.Parameter;
+import com.gkd.sourceleveldebugger.CodeBaseData;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.DebugInfoAbbrevEntry;
 import com.peterdwarf.dwarf.DebugInfoEntry;
 import com.peterdwarf.dwarf.Definition;
+import com.peterdwarf.dwarf.Dwarf;
+import com.peterdwarf.dwarf.DwarfDebugLineHeader;
 import com.peterdwarf.dwarf.DwarfLib;
+import com.peterdwarf.dwarf.DwarfLine;
 import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
 
@@ -257,21 +266,66 @@ public class JmpSocketServer implements Runnable {
 							if (symbol == null) {
 								fromNullSymbols.add(fromAddress[x]);
 							} else {
-								DebugInfoEntry debugInfoEntry;
-								if (fromAddressCache.containsKey(fromAddress[x])) {
-									debugInfoEntry = fromAddressCache.get(fromAddress[x]);
-								} else {
-									debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, fromAddress[x]);
-									fromAddressCache.put(fromAddress[x], debugInfoEntry);
+								Vector<CodeBaseData> data = new Vector<CodeBaseData>();
+								for (Dwarf dwarf : GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs) {
+									for (CompileUnit cu : dwarf.compileUnits) {
+										DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
+										loop1: for (int xx = 0; xx < header.lines.size(); xx++) {
+											try {
+												DwarfLine line = header.lines.get(xx);
+												File file = cu.dwarfDebugLineHeader.filenames.get((int) line.file_num).file;
+												if (!file.exists()) {
+													break loop1;
+												}
+												List<String> sourceLines = FileUtils.readLines(file);
+
+												int endLineNo = 0;
+												if (xx == header.lines.size() - 1 || line.file_num != header.lines.get(xx + 1).file_num) {
+													endLineNo = sourceLines.size() - line.line_num;
+												} else {
+													endLineNo = header.lines.get(xx + 1).line_num - 1;
+												}
+												if (endLineNo - line.line_num < 0) {
+													endLineNo = line.line_num;
+												}
+												String s[] = new String[endLineNo - line.line_num + 1];
+												for (int z = line.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {
+													String cCode = sourceLines.get(z);
+													s[index] = cCode;
+												}
+
+												CodeBaseData d = new CodeBaseData();
+												d.file = file;
+												d.PC = line.address;
+												d.codeLines = s;
+												d.lineNo = line.line_num;
+												data.add(d);
+											} catch (Exception e) {
+												e.printStackTrace();
+											}
+										}
+									}
+								}
+								Collections.sort(data, new Comparator<CodeBaseData>() {
+									@Override
+									public int compare(CodeBaseData o1, CodeBaseData o2) {
+										return o1.PC.compareTo(o2.PC);
+									}
+								});
+
+								CodeBaseData temp = null;
+								for (CodeBaseData d : data) {
+									System.out.println(d.PC+","+fromAddress[x]);
+									if (d.PC.compareTo(BigInteger.valueOf(fromAddress[x])) >= 0) {
+										temp = d;
+										break;
+									}
 								}
 
-								if (fromAddress[x] == 0x1600000 || symbol.name.equals("kernel.c")) {
-									System.out.println("end");
-								}
-								if (debugInfoEntry != null) {
-									fromAddressDescription = symbol.name + " : " + debugInfoEntry.debugInfoAbbrevEntries.get("DW_AT_decl_line").value;
-								} else {
+								if (temp == null) {
 									fromAddressDescription = symbol.name;
+								} else {
+									fromAddressDescription = symbol.name + " : " + temp.lineNo;
 								}
 							}
 						}

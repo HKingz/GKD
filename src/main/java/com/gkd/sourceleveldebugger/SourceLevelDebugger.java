@@ -131,7 +131,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private JTextField searchCodeBaseTextField;
 	private JButton refreshCodeBaseButton;
 	private JToolBar jToolBar2;
-	private JTable codeBaseTable;
+	public JTable codeBaseTable;
 	private JScrollPane codeBaseScrollPane;
 	private JPanel codeBasePanel;
 	private OnOffButton onOffButton;
