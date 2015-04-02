@@ -312,10 +312,12 @@ public class JmpSocketServer implements Runnable {
 										return o1.PC.compareTo(o2.PC);
 									}
 								});
-
+								if (symbol.name.equals("kernel.c")) {
+									System.out.println("aa");
+								}
 								CodeBaseData temp = null;
 								for (CodeBaseData d : data) {
-									System.out.println(d.PC+","+fromAddress[x]);
+									//System.out.println(d.PC+","+fromAddress[x]);
 									if (d.PC.compareTo(BigInteger.valueOf(fromAddress[x])) >= 0) {
 										temp = d;
 										break;
@@ -327,6 +329,8 @@ public class JmpSocketServer implements Runnable {
 								} else {
 									fromAddressDescription = symbol.name + " : " + temp.lineNo;
 								}
+								System.out.println("fromAddressDescription=" + fromAddressDescription);
+								fromAddressDescription = "ss";
 							}
 						}
 
