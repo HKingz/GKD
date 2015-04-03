@@ -63,6 +63,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.LayoutStyle;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
@@ -1465,6 +1466,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTable getJmpDataTable() {
 		if (jmpDataTable == null) {
 			jmpDataTable = new JTable();
+			jmpDataTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			jmpDataTable.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {

@@ -825,19 +825,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 
 				this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
-				this.addWindowListener(new WindowAdapter() {
-					public void windowOpened(WindowEvent evt) {
-						thisWindowOpened(evt);
-					}
-
-					public void windowActivated(WindowEvent evt) {
-						thisWindowActivated(evt);
-					}
-
-					public void windowClosing(WindowEvent evt) {
-						thisWindowClosing(evt);
-					}
-				});
+				this.addWindowListener(this);
 			}
 			progressBarDialog.progressBar.setValue(40);
 			progressBarDialog.progressBar.setString("Init GUI - 2");
@@ -2372,7 +2360,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public String[] getCCode(BigInteger pc, boolean getFile) {
-		if (pc.equals(CommonLib.string2BigInteger("0x1600000"))){
+		if (pc.equals(CommonLib.string2BigInteger("0x1600000"))) {
 			System.out.println("16");
 		}
 		for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
@@ -2630,22 +2618,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void exitMenuItemActionPerformed(ActionEvent evt) {
-		thisWindowClosing(null);
+		windowClosing(null);
 		System.exit(0);
-	}
-
-	private void thisWindowClosing(WindowEvent evt) {
-		VMController.getVM().stopVM();
-
-		Setting.getInstance().width = this.getWidth();
-		Setting.getInstance().height = this.getHeight();
-		Setting.getInstance().x = this.getLocation().x;
-		Setting.getInstance().y = this.getLocation().y;
-		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
-		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
-		Setting.getInstance().jmpSplitPanel_divY = instrumentPanel.getJmpSplitPane().getDividerLocation();
-		Setting.getInstance().osDebugSplitPane_DividerLocation = this.osDebugInformationPanel1.getMainSplitPane().getDividerLocation();
-		Setting.getInstance().save();
 	}
 
 	private void gdtTableMouseClicked(MouseEvent evt) {
@@ -5357,10 +5331,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void thisWindowActivated(WindowEvent evt) {
-
-	}
-
 	private JPanel getELFDumpScrollPane() {
 		if (elfDumpPanel == null) {
 			elfDumpPanel = new JPanel();
@@ -5678,16 +5648,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void elfComboBoxActionPerformed(ActionEvent evt) {
 		parseELF((File) elfComboBox.getSelectedItem());
-	}
-
-	private void thisWindowOpened(WindowEvent evt) {
-		if (Global.debug) {
-			logger.debug("updateVMStatus");
-		}
-		updateVMStatus(true);
-		if (Global.debug) {
-			logger.debug("updateVMStatus end");
-		}
 	}
 
 	private JScrollPane getJScrollPane15() {
@@ -8102,6 +8062,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	@Override
 	public void windowOpened(WindowEvent e) {
+		if (Global.debug) {
+			logger.debug("updateVMStatus");
+		}
+		updateVMStatus(true);
+		if (Global.debug) {
+			logger.debug("updateVMStatus end");
+		}
 	}
 
 	@Override
@@ -8155,16 +8122,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	@Override
 	public void handleQuit(ApplicationEvent arg0) {
+		VMController.getVM().stopVM();
+
 		Setting.getInstance().width = this.getWidth();
 		Setting.getInstance().height = this.getHeight();
 		Setting.getInstance().x = this.getLocation().x;
 		Setting.getInstance().y = this.getLocation().y;
 		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
 		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
+		Setting.getInstance().jmpSplitPanel_divY = instrumentPanel.getJmpSplitPane().getDividerLocation();
 		Setting.getInstance().osDebugSplitPane_DividerLocation = this.osDebugInformationPanel1.getMainSplitPane().getDividerLocation();
 		Setting.getInstance().save();
-
-		VMController.getVM().stopVM();
 		System.exit(0);
 	}
 
