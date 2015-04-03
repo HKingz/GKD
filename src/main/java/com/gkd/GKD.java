@@ -2372,12 +2372,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public String[] getCCode(BigInteger pc, boolean getFile) {
+		if (pc.equals(CommonLib.string2BigInteger("0x1600000"))){
+			System.out.println("16");
+		}
 		for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
 			try {
 				DwarfLine startLine = null;
 				DwarfLine endLine = null;
 				DwarfDebugLineHeader startHeader = null;
-				for (CompileUnit cu : dwarf.compileUnits) {
+				loop1: for (CompileUnit cu : dwarf.compileUnits) {
 					DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
 					boolean toggle = false;
 					for (DwarfLine line : header.lines) {
@@ -2389,7 +2392,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						}
 						if (toggle && !line.address.equals(startLine.address) && line.line_num != startLine.line_num) {
 							endLine = line;
-							break;
+							break loop1;
 						}
 					}
 					startLine = null;
@@ -2412,12 +2415,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				} else {
 					endLineNo = endLine.line_num - 1;
 				}
-				// if (endLineNo - startLine.line_num < 0) {
-				// endLineNo = startLine.line_num;
-				// }
-
-				// logger.debug(pc.toString(16) + ", " +
-				// startLine.line_num + ", " + endLineNo);
 				if (sourceLines != null) {
 					String s[] = new String[endLineNo - startLine.line_num + 1];
 					for (int z = startLine.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {

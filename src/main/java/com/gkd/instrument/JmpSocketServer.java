@@ -276,6 +276,9 @@ public class JmpSocketServer implements Runnable {
 
 						for (CodeBaseData d : data) {
 							if (d.PC.compareTo(BigInteger.valueOf(fromAddress[x])) >= 0) {
+								if (fromAddressDescription == null) {
+									fromAddressDescription = "";
+								}
 								fromAddressDescription += " : " + d.lineNo;
 								break;
 							}
@@ -294,6 +297,9 @@ public class JmpSocketServer implements Runnable {
 
 						for (CodeBaseData d : data) {
 							if (d.PC.compareTo(BigInteger.valueOf(toAddress[x])) >= 0) {
+								if (toAddressDescription == null) {
+									toAddressDescription = "";
+								}
 								toAddressDescription += " : " + d.lineNo;
 								break;
 							}
