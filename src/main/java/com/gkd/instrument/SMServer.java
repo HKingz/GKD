@@ -2,13 +2,17 @@ package com.gkd.instrument;
 
 import javax.swing.JTextArea;
 
+import org.apache.log4j.Logger;
+
 import com.gkd.Global;
+import com.gkd.instrument.newcallgraph.UIComponent;
 
 
 public class SMServer implements Runnable {
 	JTextArea jTextArea;
 	boolean shouldStop;
 	MySHStub mySHStub = new MySHStub();
+	public static Logger logger = Logger.getLogger(SMServer.class);
 
 	public void startServer(JTextArea jTextArea) {
 		this.jTextArea = jTextArea;
@@ -27,7 +31,7 @@ public class SMServer implements Runnable {
 	@Override
 	public void run() {
 		if (Global.debug) {
-			System.out.println("SH server started");
+			logger.debug("SH server started");
 		}
 
 		while (!shouldStop) {

@@ -210,7 +210,7 @@ public class BochsStub implements VMStub {
 		//			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 		//			csBaseAddress = csBaseAddress.add(eip);
 		//		}
-		//		System.out.println("csBaseAddress=" + csBaseAddress.toString());
+		//		logger.debug("csBaseAddress=" + csBaseAddress.toString());
 
 		int bytes[] = physicalMemory(physicalAddress, 200);
 		String result = Disassemble.disassemble(bytes, is32Bit, physicalAddress);
@@ -776,7 +776,7 @@ public class BochsStub implements VMStub {
 							long baseL = value & 0xfffff000;
 							base = "0x" + Long.toHexString(baseL);
 						}
-						//						System.out.println((x / 4) + "=" + value);
+						//						logger.debug((x / 4) + "=" + value);
 						r.add(new String[] { String.valueOf(x / 4), base, avl, g, ps, d, a, pcd, pwt, us, wr, p });
 					}
 				} else {

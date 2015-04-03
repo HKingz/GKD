@@ -27,7 +27,7 @@ public class CallGraphComponent extends mxGraphComponent {
 
 	// public Component[] createComponents(mxCellState state) {
 	// if (getGraph().getModel().isVertex(state.getCell())) {
-	// System.out.println(state.getCell());
+	// logger.debug(state.getCell());
 	// // return new Component[] { new JTableRenderer(state.getCell(),
 	// // this) };
 	// return new Component[] { new JButton(((mxCell)

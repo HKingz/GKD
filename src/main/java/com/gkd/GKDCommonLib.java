@@ -31,6 +31,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.io.FileUtils;
+import org.apache.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -47,6 +48,7 @@ import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
 public class GKDCommonLib {
 	public final static int max_row_limit_in_xls = 1000000;
 	public final static short rowHeight = 250;
+	public static Logger logger = Logger.getLogger(GKDCommonLib.class);
 
 	public GKDCommonLib() {
 	}
@@ -407,11 +409,11 @@ public class GKDCommonLib {
 	//		BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 22, 31);
 	//		BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 12, 21);
 	//		BigInteger offset = CommonLib.getBigInteger(linearAddress, 0, 11);
-	//		System.out.println("pd=" + pdNo);
-	//		System.out.println("pt=" + ptNo);
+	//		logger.debug("pd=" + pdNo);
+	//		logger.debug("pt=" + ptNo);
 	//
 	//		BigInteger pdAddr = cr3.add(pdNo);
-	//		System.out.println("pdAddr=" + pdAddr.toString(16));
+	//		logger.debug("pdAddr=" + pdAddr.toString(16));
 	//		GKD.commandReceiver.clearBuffer();
 	//		GKD.sendBochsCommand("xp /8bx " + pdAddr);
 	//		String result = GKD.commandReceiver.getCommandResult(String.format("%08x", pdAddr));
@@ -421,10 +423,10 @@ public class GKDCommonLib {
 	//			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).intValue();
 	//		}
 	//		BigInteger pde = CommonLib.getBigInteger(CommonLib.getLong(bytes, 0), 12, 31).shiftLeft(12);
-	//		System.out.println("pde=" + pde.toString(16));
+	//		logger.debug("pde=" + pde.toString(16));
 	//
 	//		BigInteger ptAddr = pde.shiftLeft(10).add(ptNo);
-	//		System.out.println("ptAddr=" + ptAddr.toString(16));
+	//		logger.debug("ptAddr=" + ptAddr.toString(16));
 	//		GKD.commandReceiver.clearBuffer();
 	//		GKD.sendBochsCommand("xp /8bx " + ptAddr);
 	//		result = GKD.commandReceiver.getCommandResult(String.format("%08x", ptAddr));
@@ -434,7 +436,7 @@ public class GKDCommonLib {
 	//			bytes[y - 1] = CommonLib.string2BigInteger(b[y]).byteValue();
 	//		}
 	//		BigInteger pageAddr = CommonLib.getBigInteger(CommonLib.getLong(bytes, 0), 12, 31).shiftLeft(12);
-	//		System.out.println("pageAddr=" + pageAddr.toString(16));
+	//		logger.debug("pageAddr=" + pageAddr.toString(16));
 	//
 	//		return pageAddr.add(offset);
 	//	}
@@ -467,19 +469,19 @@ public class GKDCommonLib {
 	//			realStartAddressStr = String.format("%08x", realStartAddress);
 	//			BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
 	//			realEndAddressStr = String.format("%08x", realEndAddress);
-	//			// System.out.println(realStartAddressStr);
-	//			// System.out.println(realEndAddressStr);
+	//			// logger.debug(realStartAddressStr);
+	//			// logger.debug(realEndAddressStr);
 	//			String result = GKD.commandReceiver.getCommandResult(realStartAddressStr, realEndAddressStr, null);
-	//			// System.out.println(result);
+	//			// logger.debug(result);
 	//			if (result != null) {
 	//				String[] lines = result.split("\n");
 	//
 	//				int offset = 0;
-	//				// System.out.println(result);
+	//				// logger.debug(result);
 	//
 	//				for (int y = 0; y < lines.length; y++) {
 	//					String[] b = lines[y].replaceFirst("^.*:", "").split("\t");
-	//					// System.out.println(lines[y]);
+	//					// logger.debug(lines[y]);
 	//					for (int x = 1; x < b.length && x < 200; x++) {
 	//						// System.out.print(offset + " ");
 	//						bytes[offset] = (byte) Long.parseLong(b[x].substring(2).trim(), 16);
@@ -503,7 +505,7 @@ public class GKDCommonLib {
 			map.put("downloadURL", properties.getProperty("downloadURL"));
 			return map;
 		} catch (Exception ex) {
-			System.out.println("unable to connect to http://peter-bochs.googlecode.com/files/latestVersion.ini");
+			logger.debug("unable to connect to http://peter-bochs.googlecode.com/files/latestVersion.ini");
 		}
 
 		return null;

@@ -100,7 +100,7 @@ public class MemorySocketServer implements Runnable {
 								treeset.add(zoneHitAddress);
 							}
 
-							// System.out.println(Long.toHexString(zoneFrom) +
+							// logger.debug(Long.toHexString(zoneFrom) +
 							// "-" + Long.toHexString(zoneTo));
 							for (int y = 0; y < Data.memoryProfilingZone.getRowCount(); y++) {
 								long from = CommonLib.convertFilesize(Data.memoryProfilingZone.getValueAt(y, 0).toString());
@@ -124,7 +124,7 @@ public class MemorySocketServer implements Runnable {
 						out.writeInt(Data.memoryProfilingZone.getRowCount());
 
 						for (int y = 0; y < Data.memoryProfilingZone.getRowCount(); y++) {
-							// System.out.println((int)
+							// logger.debug((int)
 							// CommonLib.convertFilesize(Data.memoryProfilingZone.getValueAt(y,
 							// 0).toString()) + "---"
 							// + (int)

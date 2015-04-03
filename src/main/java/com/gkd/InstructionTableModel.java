@@ -150,7 +150,7 @@ public class InstructionTableModel extends AbstractTableModel {
 					total++;
 				}
 			}
-			//			System.out.println("total=" + total + ", data.size()=" + data.size());
+			//			logger.debug("total=" + total + ", data.size()=" + data.size());
 			return total;
 		}
 	}

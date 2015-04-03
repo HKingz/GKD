@@ -126,7 +126,7 @@ public class SearchMemoryDialog extends JDialog {
 						temp[z] = bytes[x + z];
 					}
 					if (Arrays.equals(patternByte, temp)) {
-						// System.out.println("match " + (addr + x));
+						// logger.debug("match " + (addr + x));
 						((SearchTableModel) table.getModel()).addRow(addr + x, patternByte);
 					}
 				}

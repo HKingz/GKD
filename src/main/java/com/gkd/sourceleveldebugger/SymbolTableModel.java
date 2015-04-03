@@ -4,7 +4,10 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.log4j.Logger;
+
 import com.gkd.MyLanguage;
+import com.gkd.TSSPanel;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {
@@ -14,6 +17,7 @@ public class SymbolTableModel extends AbstractTableModel {
 	private String searchPattern;
 	public boolean exactMatch;
 	private String filterType = "all";
+	public static Logger logger = Logger.getLogger(SymbolTableModel.class);
 
 	public SymbolTableModel() {
 	}
@@ -93,7 +97,7 @@ public class SymbolTableModel extends AbstractTableModel {
 				} else {
 					type = "unknown";
 				}
-				System.out.println(filterType + "==" + type);
+				logger.debug(filterType + "==" + type);
 				if (filterType.equals(type)) {
 					symbols2.add(symbol);
 				}

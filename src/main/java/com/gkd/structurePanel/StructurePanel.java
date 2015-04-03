@@ -8,7 +8,10 @@ import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import org.apache.log4j.Logger;
+
 import com.gkd.instrument.InstrumentCanvas;
+import com.gkd.sourceleveldebugger.SymbolTableModel;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -21,6 +24,7 @@ public class StructurePanel extends JPanel {
 	mxGraph graph;
 	StructureGraphComponent graphComponent;
 	mxGraphOutline graphOutline;
+	public static Logger logger = Logger.getLogger(StructurePanel.class);
 
 	public StructurePanel() {
 		graph = new mxGraph() {
@@ -72,7 +76,7 @@ public class StructurePanel extends JPanel {
 
 				if (cell != null) {
 					String label = graph.getLabel(cell);
-					System.out.println(label);
+					logger.debug(label);
 				}
 			}
 		});

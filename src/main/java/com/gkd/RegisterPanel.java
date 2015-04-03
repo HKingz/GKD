@@ -30,6 +30,8 @@ import javax.swing.border.LineBorder;
 
 import net.miginfocom.swing.MigLayout;
 
+import org.apache.log4j.Logger;
+
 import com.gkd.components.segmentregister.SegmentRegister;
 import com.gkd.components.segmentregister.SegmentRegisterFactory;
 import com.gkd.components.segmentregister.SegmentRegisterHeader;
@@ -164,6 +166,7 @@ public class RegisterPanel extends JPanel {
 	private JScrollPane stackScrollPane;
 	private SegmentRegisterHeader segmentRegisterHeader;
 	public JLabel cr4DetailLabel;
+	public static Logger logger = Logger.getLogger(RegisterPanel.class);
 
 	public RegisterPanel() {
 		super();
@@ -1158,7 +1161,7 @@ public class RegisterPanel extends JPanel {
 
 	private void textFieldKeyTyped(KeyEvent evt) {
 		if (evt.getKeyChar() == '\n') {
-			System.out.println("haven't implement yet");
+			logger.debug("haven't implement yet");
 		}
 	}
 

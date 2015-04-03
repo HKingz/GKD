@@ -49,6 +49,7 @@ import javax.swing.table.TableRowSorter;
 import javax.swing.tree.TreePath;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.log4j.Logger;
 
 import com.gkd.GKD;
 import com.gkd.GKDCommonLib;
@@ -144,6 +145,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private JRadioButton allTypesRadioButton;
 	private JRadioButton allObjectsRadioButton;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+
+	public static Logger logger = Logger.getLogger(SourceLevelDebugger.class);
 
 	public SourceLevelDebugger(GKD gkd) {
 		this.gkd = gkd;
@@ -504,7 +507,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	public void loadELF(String elfPaths[]) {
 		//$hide>>$
 		if (Global.debug) {
-			System.out.println("load elf");
+			logger.debug("load elf");
 		}
 
 		for (String elfPath : elfPaths) {
@@ -521,7 +524,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		}
 
 		if (Global.debug) {
-			System.out.println("load elf end");
+			logger.debug("load elf end");
 		}
 		//$hide<<$
 	}
@@ -554,7 +557,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private void initProjectTree() {
 		//$hide>>$
 		if (Global.debug) {
-			System.out.println("--initProjectTree");
+			logger.debug("--initProjectTree");
 		}
 
 		root = new ProjectTreeNode(elfFile);
@@ -586,7 +589,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		((FilterTreeModel) projectTree.getModel()).reload();
 
 		if (Global.debug) {
-			System.out.println("--initProjectTree end");
+			logger.debug("--initProjectTree end");
 		}
 		//$hide<<$
 	}
@@ -594,7 +597,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private void initSymbolTable() {
 		//$hide>>$
 		if (Global.debug) {
-			System.out.println("--initSymbolTable");
+			logger.debug("--initSymbolTable");
 		}
 
 		Vector<Elf32_Sym> allSymbols = new Vector<Elf32_Sym>();
@@ -609,7 +612,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		sortableTableModel.fireTableDataChanged();
 
 		if (Global.debug) {
-			System.out.println("--initSymbolTable end");
+			logger.debug("--initSymbolTable end");
 		}
 		//$hide<<$
 	}

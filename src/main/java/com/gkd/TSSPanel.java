@@ -36,6 +36,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
 
+import org.apache.log4j.Logger;
+
 import com.gkd.architecture.IA32PageDirectory;
 import com.gkd.stub.VMController;
 import com.jgoodies.forms.layout.CellConstraints;
@@ -89,6 +91,7 @@ public class TSSPanel extends JPanel {
 	private BigInteger gdtAddress;
 	private BigInteger ldtr;
 	private BigInteger cr3;
+	public static Logger logger = Logger.getLogger(TSSPanel.class);
 
 	public TSSPanel(GKD gkd, int type, BigInteger gdtAddress, int gdtNo, int bytes[]) {
 		this.gkd = gkd;
@@ -464,7 +467,7 @@ public class TSSPanel extends JPanel {
 	}
 
 	private void jDumpPageDirectoryButtonActionPerformed(ActionEvent evt) {
-		System.out.println("jDumpPageDirectoryButton.actionPerformed, event=" + evt);
+		logger.debug("jDumpPageDirectoryButton.actionPerformed, event=" + evt);
 	}
 
 	private void jPageDirectoryTableMouseClicked(MouseEvent evt) {
@@ -735,14 +738,14 @@ public class TSSPanel extends JPanel {
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
 				BigInteger gdtBase = CommonLib.getBigInteger(VMController.getVM().physicalMemory(cr3, 8), 0);
-				System.out.println("gdtBase=" + gdtBase.toString(16));
+				logger.debug("gdtBase=" + gdtBase.toString(16));
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
 				int bytes[] = VMController.getVM().physicalMemory(gdtBase, 8);
 
 				Long gdtDescriptor = CommonLib.getLong(bytes, 0);
-				System.out.println(Long.toHexString(gdtDescriptor));
+				logger.debug(Long.toHexString(gdtDescriptor));
 				BigInteger base = CommonLib.getBigInteger(bytes[2], bytes[3], bytes[4], bytes[7], 0, 0, 0, 0);
-				System.out.println(base.toString(16));
+				logger.debug(base.toString(16));
 
 				model.linearAddress.set(x, base.add(model.searchAddress.get(x)));
 			}

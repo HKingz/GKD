@@ -16,6 +16,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 
+import org.apache.log4j.Logger;
+
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxCellHandler;
 import com.mxgraph.view.mxGraph;
@@ -31,6 +33,7 @@ public class UIComponent extends JPanel {
 	protected Object cell;
 	protected mxGraph graph;
 	protected CallGraphComponent graphxComponent;
+	public static Logger logger = Logger.getLogger(UIComponent.class);
 
 	public UIComponent(final Object cell, final CallGraphComponent graphxComponent) {
 		this.cell = cell;
@@ -108,7 +111,7 @@ public class UIComponent extends JPanel {
 		}
 
 		public void mousePressed(MouseEvent e) {
-			System.out.println("mousePressed");
+			logger.debug("mousePressed");
 			// Selects to create a handler for resizing
 			if (!graph.isCellSelected(cell)) {
 				graphxComponent.selectCellForEvent(cell, e);
@@ -116,7 +119,7 @@ public class UIComponent extends JPanel {
 
 			// Initiates a resize event in the handler
 			mxCellHandler handler = graphxComponent.getSelectionCellsHandler().getHandler(cell);
-			System.out.println(handler);
+			logger.debug(handler);
 			if (handler != null) {
 				// Starts the resize at index 7 (bottom right)
 				handler.start(SwingUtilities.convertMouseEvent((Component) e.getSource(), e, graphxComponent.getGraphControl()), index);

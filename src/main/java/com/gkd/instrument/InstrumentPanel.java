@@ -735,7 +735,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				//
 				// public void controllerEventFired(ControllerEvent e) {
 				// if (e.getType() == ControllerType.ROTATE) {
-				// // System.out.println("Mouse[ROTATE]:" +
+				// // logger.debug("Mouse[ROTATE]:" +
 				// // (Coord3d)e.getValue());
 				//
 				// }
@@ -899,7 +899,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	public void chartMouseClicked(ChartMouseEvent event) {
 		try {
 			//$hide>>$
-			// System.out.println(event.getTrigger().getX());
+			// logger.debug(event.getTrigger().getX());
 			JFreeChart chart = event.getChart();
 			XYPlot xyplot = chart.getXYPlot();
 			MyXYBlockRenderer renderer = (MyXYBlockRenderer) xyplot.getRenderer();
@@ -949,7 +949,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	@Override
 	public void chartMouseMoved(ChartMouseEvent event) {
-		// System.out.println("chartMouseMoved");
+		// logger.debug("chartMouseMoved");
 
 	}
 

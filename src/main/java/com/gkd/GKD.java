@@ -1187,7 +1187,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				VMController.getVM().stopVM();
 			} else {
 				String r = VMController.getVM().sendVMCommand(command);
-				System.out.println("r=" + r);
+				logger.debug("r=" + r);
 				if (r != null) {
 					vmCommandEditorPane.setText(vmCommandEditorPane.getText() + "\n" + r);
 				}
@@ -1417,7 +1417,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					result = "";
 				}
 			}
-			System.out.println("-----------------------------------------------------------------------------");
+			logger.debug("-----------------------------------------------------------------------------");
 			return result;
 		}
 
@@ -2693,7 +2693,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (!CommonLib.isNumber(pageTableAddress)) {
 			return;
 		}
-		System.out.println("pageTableAddress=" + pageTableAddress);
+		logger.debug("pageTableAddress=" + pageTableAddress);
 		int bytes[] = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(pageTableAddress), 4096);
 		PageTableTableModel model = (PageTableTableModel) pageTableTable.getModel();
 		while (model.getRowCount() > 0) {
@@ -2845,7 +2845,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = fc.getSelectedFile();
-				System.out.println("===" + file.getParentFile().getAbsolutePath());
+				logger.debug("===" + file.getParentFile().getAbsolutePath());
 				Setting.getInstance().setLastLoadElfOpenDir(file.getParentFile().getAbsolutePath());
 				sourceLevelDebugger.loadELF(file, null, 0);
 			}
@@ -4720,10 +4720,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 				model.pdNo.add(pdNo);
 				int pdeBytes[];
-				System.out.println("this.registerPanel.cr3TextField.getText()=" + this.registerPanel.cr3TextField.getText());
-				System.out.println("pdNo=" + pdNo);
+				logger.debug("this.registerPanel.cr3TextField.getText()=" + this.registerPanel.cr3TextField.getText());
+				logger.debug("pdNo=" + pdNo);
 				pdeBytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
-				System.out.println("CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4)))="
+				logger.debug("CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4)))="
 						+ CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))));
 
 				BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
@@ -4735,7 +4735,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					BigInteger ptNo = CommonLib.getBigInteger(linearAddress, 21, 12);
 					model.ptNo.add(ptNo);
 					BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
-					System.out.println("pageTableBaseAddress=" + pageTableBaseAddress.toString(16));
+					logger.debug("pageTableBaseAddress=" + pageTableBaseAddress.toString(16));
 					int pteBytes[];
 					pteBytes = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 
@@ -7894,7 +7894,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void stepOverDropDownButtonActionPerformed(ActionEvent evt) {
-		System.out.println(stepVMButton.isEnabled());
+		logger.debug(stepVMButton.isEnabled());
 		//		if (stepOverDropDownButton.getEventSource() != null) {
 		//			stepThread = new StepThread(stepOverDropDownButton.getEventSource());
 		//			if (stepOverDropDownButton.getEventSource() == stepOverNTimesMenuItem) {

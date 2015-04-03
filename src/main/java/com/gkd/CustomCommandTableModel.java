@@ -11,11 +11,14 @@ import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.log4j.Logger;
+
 public class CustomCommandTableModel extends DefaultTableModel {
 	String columnNames[] = { "Command", "Count" };
 	Vector<String> command = new Vector<String>();
 	Vector<Integer> count = new Vector<Integer>();
 	JButton button = new JButton("Add");
+	public static Logger logger = Logger.getLogger(CustomCommandTableModel.class);
 
 	public CustomCommandTableModel() {
 		button.addActionListener(new ActionListener() {
@@ -27,27 +30,27 @@ public class CustomCommandTableModel extends DefaultTableModel {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("mouseClicked");
+				logger.debug("mouseClicked");
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				System.out.println("mousePressed");
+				logger.debug("mousePressed");
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				System.out.println("mouseReleased");
+				logger.debug("mouseReleased");
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e) {
-				System.out.println("mouseEntered");
+				logger.debug("mouseEntered");
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
-				System.out.println("mouseExited");
+				logger.debug("mouseExited");
 			}
 
 		});
@@ -58,7 +61,7 @@ public class CustomCommandTableModel extends DefaultTableModel {
 
 			@Override
 			public void mouseMoved(MouseEvent e) {
-				System.out.println("mouseMoved");
+				logger.debug("mouseMoved");
 			}
 		});
 	}

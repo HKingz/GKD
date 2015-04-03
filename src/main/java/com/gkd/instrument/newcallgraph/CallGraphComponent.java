@@ -7,6 +7,9 @@ import java.util.Vector;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 
+import org.apache.log4j.Logger;
+
+import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxPoint;
@@ -16,6 +19,7 @@ import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 
 public class CallGraphComponent extends mxGraphComponent {
+	public static Logger logger = Logger.getLogger(CallGraphComponent.class);
 	public HashMap<String, Vector<String[]>> tableData = new HashMap<String, Vector<String[]>>();
 
 	public CallGraphComponent(mxGraph graph) {
@@ -40,7 +44,7 @@ public class CallGraphComponent extends mxGraphComponent {
 			}
 
 			public void updateFloatingTerminalPoint(mxCellState edge, mxCellState start, mxCellState end, boolean isSource) {
-				System.out.println("updateFloatingTerminalPoint=" + edge + "," + start + "," + end + "," + isSource);
+				logger.debug("updateFloatingTerminalPoint=" + edge + "," + start + "," + end + "," + isSource);
 				int col = getColumn(edge, isSource);
 
 				if (col >= 0) {
@@ -57,14 +61,14 @@ public class CallGraphComponent extends mxGraphComponent {
 
 					double x = (left) ? start.getX() : start.getX() + start.getWidth();
 					double x2 = (left) ? start.getX() - 20 : start.getX() + start.getWidth() + 20;
-					System.out.println("\t\t" + x + "," + y);
-					//					System.out.println("\t\t" + x2 + "," + y);
+					logger.debug("\t\t" + x + "," + y);
+					//					logger.debug("\t\t" + x2 + "," + y);
 
 					int index2 = (isSource) ? 1 : edge.getAbsolutePointCount() - 1;
 					edge.getAbsolutePoints().add(index2, new mxPoint(x2, y));
 
 					int index = (isSource) ? 0 : edge.getAbsolutePointCount() - 1;
-					System.out.println("index=" + index);
+					logger.debug("index=" + index);
 					edge.setAbsolutePoint(index, new mxPoint(x, y));
 				} else {
 					//					super.updateFloatingTerminalPoint(edge, start, end, isSource);
@@ -76,10 +80,10 @@ public class CallGraphComponent extends mxGraphComponent {
 	}
 
 	public Component[] createComponents(mxCellState state) {
-		System.out.println("components=" + components);
-		System.out.println("---- createComponents");
+		logger.debug("components=" + components);
+		logger.debug("---- createComponents");
 		if (getGraph().getModel().isVertex(state.getCell())) {
-			System.out.println(((mxCell) state.getCell()).getAttribute("type"));
+			logger.debug(((mxCell) state.getCell()).getAttribute("type"));
 			String label = state.getLabel();
 			if (label.equals("port")) {
 				return null;
@@ -96,14 +100,14 @@ public class CallGraphComponent extends mxGraphComponent {
 	}
 
 	public int getColumn(mxCellState state, boolean isSource) {
-		System.out.println("components 3=" + components);
-		System.out.println("getColumn " + state);
+		logger.debug("components 3=" + components);
+		logger.debug("getColumn " + state);
 		if (state != null) {
 			if (isSource) {
-				System.out.println("sourceRow=" + mxUtils.getInt(state.getStyle(), "sourceRow", -1));
+				logger.debug("sourceRow=" + mxUtils.getInt(state.getStyle(), "sourceRow", -1));
 				return mxUtils.getInt(state.getStyle(), "sourceRow", -1);
 			} else {
-				System.out.println("targetRow=" + mxUtils.getInt(state.getStyle(), "targetRow", -1));
+				logger.debug("targetRow=" + mxUtils.getInt(state.getStyle(), "targetRow", -1));
 				return mxUtils.getInt(state.getStyle(), "targetRow", -1);
 			}
 		}
@@ -112,9 +116,9 @@ public class CallGraphComponent extends mxGraphComponent {
 	}
 
 	public int getColumnLocation(mxCellState edge, mxCellState terminal, int column) {
-		System.out.println("components 2=" + components);
+		logger.debug("components 2=" + components);
 		Component[] c = components.get(terminal.getCell());
-		System.out.println("c=" + c);
+		logger.debug("c=" + c);
 		int y = 0;
 
 		if (c != null) {
@@ -130,7 +134,7 @@ public class CallGraphComponent extends mxGraphComponent {
 			}
 		}
 
-		System.out.println("getColumnLocation=" + y);
+		logger.debug("getColumnLocation=" + y);
 		return y;
 	}
 }

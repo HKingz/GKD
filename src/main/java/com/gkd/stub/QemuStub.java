@@ -10,11 +10,14 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import org.apache.log4j.Logger;
+
 import com.gkd.Disassemble;
 import com.gkd.GKD;
 import com.gkd.GKDCommonLib;
 import com.gkd.Global;
 import com.gkd.Setting;
+import com.gkd.structurePanel.StructurePanel;
 import com.jlibgdb.JLibGDB;
 import com.jlibgdb.QemuMonitor;
 import com.peterswing.CommonLib;
@@ -27,6 +30,7 @@ public class QemuStub implements VMStub {
 	Process p;
 	InputStream qemuInputStream;
 	private String arguments;
+	public static Logger logger = Logger.getLogger(QemuStub.class);
 
 	public void initStub(String para[]) {
 		libGDB = new JLibGDB(para[0], Integer.parseInt(para[1]));
@@ -336,7 +340,7 @@ public class QemuStub implements VMStub {
 		}
 
 		int allBytes[] = libGDB.virtualMemory(address, noOfByte);
-		System.out.println("==" + address);
+		logger.debug("==" + address);
 		for (int x = 0; x < noOfByte && x < 400; x += 8) {
 			Vector<String> v = new Vector<String>();
 			int bytes[] = new int[8];
@@ -469,11 +473,11 @@ public class QemuStub implements VMStub {
 	//	@Override
 	//	public String getInstruction(BigInteger address, BigInteger csBaseAddress, BigInteger eip, boolean is32Bit) {
 	//		Hashtable<String, String> registers = registers();
-	//		System.out.println("ip=" + registers.get("ip"));
+	//		logger.debug("ip=" + registers.get("ip"));
 	//		int bytes[] = virtualMemory(new BigInteger(registers.get("ip")), 40);
 	//		String result = Disassemble.disassemble(bytes, false, BigInteger.valueOf(0));
 	//		String instruction = result.split("\n")[0].split("  +")[2];
-	//		System.out.println("instruction=" + instruction);
+	//		logger.debug("instruction=" + instruction);
 	//		return instruction;
 	//	}
 

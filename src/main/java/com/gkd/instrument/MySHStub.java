@@ -8,7 +8,7 @@ public class MySHStub {
 		MySHStub mySHStub = new MySHStub();
 		while (true) {
 			String s = mySHStub.getSharedMemory();
-			// System.out.println("return=" + mySHStub.getSharedMemory());
+			// logger.debug("return=" + mySHStub.getSharedMemory());
 		}
 	}
 }

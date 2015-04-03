@@ -105,8 +105,8 @@ public class IDTDescriptorPanel extends JPanel {
 			//			GKD.commandReceiver.clearBuffer();
 			//			GKD.sendBochsCommand("x /8bx " + String.format("0x%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
 			//			result = GKD.commandReceiver.getCommandResult(String.format("%08x", idtAddress.add(BigInteger.valueOf(idtNo * 8))));
-			//			System.out.println("idtNo=" + idtNo + " , idtAddress+" + idtAddress + " , " + (idtAddress.add(BigInteger.valueOf(idtNo * 8))));
-			//			System.out.println(result);
+			//			logger.debug("idtNo=" + idtNo + " , idtAddress+" + idtAddress + " , " + (idtAddress.add(BigInteger.valueOf(idtNo * 8))));
+			//			logger.debug(result);
 			//			String lines[] = result.split("\n");
 			//
 			//			String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");

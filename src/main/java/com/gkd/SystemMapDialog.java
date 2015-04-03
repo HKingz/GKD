@@ -13,6 +13,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import org.apache.log4j.Logger;
+
 import com.peterswing.CommonLib;
 
 public class SystemMapDialog extends JDialog {
@@ -24,6 +26,7 @@ public class SystemMapDialog extends JDialog {
 	private JTable table1;
 	File file;
 	SystemMapTableModel model = new SystemMapTableModel();
+	public static Logger logger = Logger.getLogger(SystemMapDialog.class);
 
 	public SystemMapDialog(JFrame frame, File file) {
 		super(frame, true);
@@ -78,7 +81,7 @@ public class SystemMapDialog extends JDialog {
 	}
 
 	private void setButtonActionPerformed(ActionEvent evt) {
-		System.out.println("jSetButton.actionPerformed, event=" + evt);
+		logger.debug("jSetButton.actionPerformed, event=" + evt);
 	}
 
 	private void cancelButtonActionPerformed(ActionEvent evt) {

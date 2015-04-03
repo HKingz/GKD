@@ -18,9 +18,12 @@ import javax.swing.JMenuBar;
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 
+import org.apache.log4j.Logger;
+
 public class MyGlassPane extends JComponent implements ItemListener {
 	Point point;
 	JLabel jLabel1 = new JLabel();
+	public static Logger logger = Logger.getLogger(MyGlassPane.class);
 
 	public MyGlassPane(JMenuBar menuBar, Container contentPane) {
 		URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
@@ -57,6 +60,7 @@ class CBListener extends MouseInputAdapter {
 	JMenuBar menuBar;
 	MyGlassPane glassPane;
 	Container contentPane;
+	public static Logger logger = Logger.getLogger(CBListener.class);
 
 	public CBListener(JMenuBar menuBar, MyGlassPane glassPane, Container contentPane) {
 		toolkit = Toolkit.getDefaultToolkit();
@@ -100,7 +104,7 @@ class CBListener extends MouseInputAdapter {
 		Container container = contentPane;
 		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, contentPane);
 		if (containerPoint.y < 0) { // we're not in the content pane
-			System.out.println("menu");
+			logger.debug("menu");
 			if (containerPoint.y + menuBar.getHeight() >= 0) {
 				// The mouse event is over the menu bar.
 				// Could handle specially.

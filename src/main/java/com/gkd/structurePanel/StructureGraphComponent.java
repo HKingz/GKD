@@ -16,13 +16,13 @@ public class StructureGraphComponent extends mxGraphComponent {
 	}
 
 //	public mxInteractiveCanvas createCanvas() {
-//		System.out.println("createCanvas");
+//		logger.debug("createCanvas");
 //		return new StructureCanvas(this);
 //	}
 
 	// public Component[] createComponents(mxCellState state) {
 	// if (getGraph().getModel().isVertex(state.getCell())) {
-	// System.out.println(state.getCell());
+	// logger.debug(state.getCell());
 	// // return new Component[] { new JTableRenderer(state.getCell(),
 	// // this) };
 	// return new Component[] { new JButton(((mxCell)

@@ -18,7 +18,7 @@ public class PropertyUtil {
 
 		return prop.getProperty(name);
 	}
-	
+
 	public static Properties getLangProperty(String lang) {
 		Properties langProp = new Properties();
 		try {
