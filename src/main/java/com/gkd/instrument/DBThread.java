@@ -59,7 +59,7 @@ public class DBThread implements Runnable {
 				if (count > 0) {
 					Connection conn = DriverManager.getConnection(jdbcString);
 					PreparedStatement pstmt = conn
-							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what) values (?, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what, toAddressSymbol) values (?, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
 					Vector<JmpData> temp = new Vector<JmpData>();
 					int oldPk = pk;
@@ -91,12 +91,13 @@ public class DBThread implements Runnable {
 						pstmt.setObject(25, jmpData.toAddress_DW_AT_name);
 						pstmt.setObject(26, jmpData.showForDifferentDeep);
 						pstmt.setObject(27, jmpData.what);
+						pstmt.setObject(28, jmpData.toAddressSymbol);
 						pstmt.addBatch();
 
 						temp.add(jmpData);
 
 						JmpSocketServer.statistic.noOfDBRecord++;
-						if (jmpData.toAddressDescription != null) {
+						if (jmpData.toAddressSymbol != null) {
 							JmpSocketServer.statistic.noOfRecordWithSymbol++;
 						}
 

@@ -243,6 +243,10 @@ public class JmpSocketServer implements Runnable {
 				}
 				Vector<Long> fromNullSymbols = new Vector<Long>();
 				Vector<Long> toNullSymbols = new Vector<Long>();
+
+				Vector<CodeBaseData> data = new Vector<CodeBaseData>();
+				initCodeDaseData(data);
+
 				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					try {
 						CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(fromAddress[x]);
@@ -266,86 +270,38 @@ public class JmpSocketServer implements Runnable {
 							if (symbol == null) {
 								fromNullSymbols.add(fromAddress[x]);
 							} else {
-								Vector<CodeBaseData> data = new Vector<CodeBaseData>();
-								for (Dwarf dwarf : GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs) {
-									for (CompileUnit cu : dwarf.compileUnits) {
-										DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
-										loop1: for (int xx = 0; xx < header.lines.size(); xx++) {
-											try {
-												DwarfLine line = header.lines.get(xx);
-												File file = cu.dwarfDebugLineHeader.filenames.get((int) line.file_num).file;
-												if (!file.exists()) {
-													break loop1;
-												}
-												List<String> sourceLines = FileUtils.readLines(file);
-
-												int endLineNo = 0;
-												if (xx == header.lines.size() - 1 || line.file_num != header.lines.get(xx + 1).file_num) {
-													endLineNo = sourceLines.size() - line.line_num;
-												} else {
-													endLineNo = header.lines.get(xx + 1).line_num - 1;
-												}
-												if (endLineNo - line.line_num < 0) {
-													endLineNo = line.line_num;
-												}
-												String s[] = new String[endLineNo - line.line_num + 1];
-												for (int z = line.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {
-													String cCode = sourceLines.get(z);
-													s[index] = cCode;
-												}
-
-												CodeBaseData d = new CodeBaseData();
-												d.file = file;
-												d.PC = line.address;
-												d.codeLines = s;
-												d.lineNo = line.line_num;
-												data.add(d);
-											} catch (Exception e) {
-												e.printStackTrace();
-											}
-										}
-									}
-								}
-								Collections.sort(data, new Comparator<CodeBaseData>() {
-									@Override
-									public int compare(CodeBaseData o1, CodeBaseData o2) {
-										return o1.PC.compareTo(o2.PC);
-									}
-								});
-								if (symbol.name.equals("kernel.c")) {
-									System.out.println("aa");
-								}
-								CodeBaseData temp = null;
-								for (CodeBaseData d : data) {
-									//System.out.println(d.PC+","+fromAddress[x]);
-									if (d.PC.compareTo(BigInteger.valueOf(fromAddress[x])) >= 0) {
-										temp = d;
-										break;
-									}
-								}
-
-								if (temp == null) {
-									fromAddressDescription = symbol.name;
-								} else {
-									fromAddressDescription = symbol.name + " : " + temp.lineNo;
-								}
-								System.out.println("fromAddressDescription=" + fromAddressDescription);
-								fromAddressDescription = "ss";
+								fromAddressDescription = symbol.name;
 							}
 						}
 
+						for (CodeBaseData d : data) {
+							if (d.PC.compareTo(BigInteger.valueOf(fromAddress[x])) >= 0) {
+								fromAddressDescription += " : " + d.lineNo;
+								break;
+							}
+						}
+
+						String toAddressSymbol = null;
 						if (!toNullSymbols.contains(toAddress[x])) {
 							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 							if (symbol == null) {
 								toNullSymbols.add(toAddress[x]);
 							} else {
 								toAddressDescription = symbol.name;
+								toAddressSymbol = symbol.name;
 							}
 						}
 
-						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, (int) what[x],
-								segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x], gs[x], deeps[x],
-								fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
+						for (CodeBaseData d : data) {
+							if (d.PC.compareTo(BigInteger.valueOf(toAddress[x])) >= 0) {
+								toAddressDescription += " : " + d.lineNo;
+								break;
+							}
+						}
+
+						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, toAddressSymbol,
+								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
+								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 
 						DebugInfoEntry debugInfoEntry;
 						if (toAddressCache.containsKey(toAddress[x])) {
@@ -407,6 +363,54 @@ public class JmpSocketServer implements Runnable {
 		} catch (IOException ex2) {
 			ex2.printStackTrace();
 		}
+	}
+
+	private void initCodeDaseData(Vector<CodeBaseData> data) {
+		for (Dwarf dwarf : GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs) {
+			for (CompileUnit cu : dwarf.compileUnits) {
+				DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
+				loop1: for (int xx = 0; xx < header.lines.size(); xx++) {
+					try {
+						DwarfLine line = header.lines.get(xx);
+						File file = cu.dwarfDebugLineHeader.filenames.get((int) line.file_num).file;
+						if (!file.exists()) {
+							break loop1;
+						}
+						List<String> sourceLines = FileUtils.readLines(file);
+
+						int endLineNo = 0;
+						if (xx == header.lines.size() - 1 || line.file_num != header.lines.get(xx + 1).file_num) {
+							endLineNo = sourceLines.size() - line.line_num;
+						} else {
+							endLineNo = header.lines.get(xx + 1).line_num - 1;
+						}
+						if (endLineNo - line.line_num < 0) {
+							endLineNo = line.line_num;
+						}
+						String s[] = new String[endLineNo - line.line_num + 1];
+						for (int z = line.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {
+							String cCode = sourceLines.get(z);
+							s[index] = cCode;
+						}
+
+						CodeBaseData d = new CodeBaseData();
+						d.file = file;
+						d.PC = line.address;
+						d.codeLines = s;
+						d.lineNo = line.line_num;
+						data.add(d);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		Collections.sort(data, new Comparator<CodeBaseData>() {
+			@Override
+			public int compare(CodeBaseData o1, CodeBaseData o2) {
+				return o1.PC.compareTo(o2.PC);
+			}
+		});
 	}
 
 	int read(long arr[], byte bytes[], int offset, int size) throws IOException {

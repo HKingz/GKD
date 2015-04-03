@@ -58,16 +58,19 @@ public class JmpData {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "jmpData")
 	public List<Parameter> parameters = new ArrayList<Parameter>();
 
+	public String toAddressSymbol;
+
 	public JmpData() {
 	}
 
-	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, int what, long segmentStart,
-			long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs, long gs, int deep,
-			String fromAddress_DW_AT_name, String toAddress_DW_AT_name, boolean showForDifferentDeep) {
+	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, String toAddressSymbol, int what,
+			long segmentStart, long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs,
+			long gs, int deep, String fromAddress_DW_AT_name, String toAddress_DW_AT_name, boolean showForDifferentDeep) {
 		this.lineNo = lineNo;
 		this.date = date;
 		this.fromAddress = fromAddress;
 		this.fromAddressDescription = fromAddressDescription;
+		this.toAddressSymbol = toAddressSymbol;
 		this.toAddress = toAddress;
 		this.toAddressDescription = toAddressDescription;
 		this.what = what;

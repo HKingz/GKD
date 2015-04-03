@@ -1675,7 +1675,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					if (withSymbolCheckBox.isSelected()) {
 						query = session.createSQLQuery(
-								"SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressDescription!=null or toAddressDescription!='')"
+								"SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1).addEntity(JmpData.class);
 					} else {
 						query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress" + where1)
@@ -1689,7 +1689,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					Criteria criteria = session.createCriteria(JmpData.class);
 
 					if (withSymbolCheckBox.isSelected()) {
-						criteria.add(Restrictions.isNotNull("toAddressDescription"));
+						criteria.add(Restrictions.isNotNull("toAddressSymbol"));
 					}
 					if (filterRawTableTextField.getText().length() > 0) {
 						criteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
