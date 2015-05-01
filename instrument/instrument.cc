@@ -72,7 +72,7 @@ bx_bool connectedToJmpServer;
 bx_bool connectedToInterruptServer;
 bx_bool triedToContectToServer;
 
-bx_address startRecordJumpAddress = 0x1600000;
+bx_address startRecordJumpAddress = 0x100000;
 bx_bool startRecordJump;
 
 bx_address segmentBegin = startRecordJumpAddress;
