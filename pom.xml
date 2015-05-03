@@ -165,7 +165,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>JLibGDB</artifactId>
-			<version>20150128</version>
+			<version>20150330</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-discovery</groupId>
