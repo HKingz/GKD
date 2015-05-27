@@ -46,7 +46,7 @@
 using namespace std;
 using std::set;
 
-#define GKD_INSTRUMENT_VERSION "20150122"
+#define GKD_INSTRUMENT_VERSION "20150527"
 bxInstrumentation *icpu = NULL;
 
 #define MAX_SEND_BYTE 500
@@ -72,7 +72,7 @@ bx_bool connectedToJmpServer;
 bx_bool connectedToInterruptServer;
 bx_bool triedToContectToServer;
 
-bx_address startRecordJumpAddress = 0x100000;
+bx_address startRecordJumpAddress = 0x1600000;
 bx_bool startRecordJump;
 
 bx_address segmentBegin = startRecordJumpAddress;
