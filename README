@@ -24,7 +24,9 @@ Gossip:
 1) "mvn versions:display-dependency-updates" to check outdated dependencies
 2) "mvn graph:reactor" to generate maven dependency graph
 
+To run GKD with profiling feature, compile bochs with this cnofig:
 
+./configure --prefix=/toolchain/ --enable-debugger --enable-disasm --disable-debugger-gui --with-rfb --disable-readline --with-sdl2 --enable-all-optimizations --enable-fpu --enable-show-ips --enable-instrumentation=instrument/gkd
 
 
 Contact:
