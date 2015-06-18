@@ -2863,7 +2863,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		deleteBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			VMController.getVM().deletePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 2).toString()));
+			VMController.getVM()
+					.deletePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
