@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -34,13 +35,12 @@ import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.sourceleveldebugger.CodeBaseData;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterdwarf.dwarf.CompileUnit;
-import com.peterdwarf.dwarf.DebugInfoAbbrevEntry;
 import com.peterdwarf.dwarf.DebugInfoEntry;
-import com.peterdwarf.dwarf.Definition;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
 import com.peterdwarf.dwarf.DwarfLib;
 import com.peterdwarf.dwarf.DwarfLine;
+import com.peterdwarf.dwarf.DwarfParameter;
 import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
 
@@ -309,33 +309,55 @@ public class JmpSocketServer implements Runnable {
 								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
 								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 
-						DebugInfoEntry debugInfoEntry;
-						if (toAddressCache.containsKey(toAddress[x])) {
-							debugInfoEntry = toAddressCache.get(toAddress[x]);
-						} else {
-							debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
-							toAddressCache.put(toAddress[x], debugInfoEntry);
-						}
+						//						DebugInfoEntry debugInfoEntry;
+						//						if (toAddressCache.containsKey(toAddress[x])) {
+						//							debugInfoEntry = toAddressCache.get(toAddress[x]);
+						//						} else {
+						//							debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
+						//							toAddressCache.put(toAddress[x], debugInfoEntry);
+						//						}
+						//
+						//						if (debugInfoEntry != null) {
+						//							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
+						//							for (DebugInfoEntry d : v) {
+						//								if (d.debugInfoAbbrevEntries.get("DW_AT_name") != null) {
+						//									DebugInfoAbbrevEntry debugInfoAbbrevEntry = d.debugInfoAbbrevEntries.get("DW_AT_location");
+						//									String values[] = debugInfoAbbrevEntry.value.toString().split(",");
+						//									String location = "";
+						//									if (values.length > 1) {
+						//										location = Definition.getOPName(CommonLib.string2int(values[0]));
+						//										location += " +" + values[1];
+						//									} else {
+						//										location = Definition.getOPName(CommonLib.string2int(values[0]));
+						//									}
+						//
+						//									
+						//									
+						//									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value, DwarfLib.getParameterType(toCU,
+						//											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value)), location));
+						//								}
+						//							}
+						//						}
 
-						if (debugInfoEntry != null) {
-							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
-							for (DebugInfoEntry d : v) {
-								if (d.debugInfoAbbrevEntries.get("DW_AT_name") != null) {
-									DebugInfoAbbrevEntry debugInfoAbbrevEntry = d.debugInfoAbbrevEntries.get("DW_AT_location");
-									String values[] = debugInfoAbbrevEntry.value.toString().split(",");
-									String location = "";
-									if (values.length > 1) {
-										location = Definition.getOPName(CommonLib.string2int(values[0]));
-										location += " +" + values[1];
-									} else {
-										location = Definition.getOPName(CommonLib.string2int(values[0]));
-									}
+						Hashtable<String, DwarfParameter> parameters = DwarfLib.getParameters(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
 
-									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value, DwarfLib.getParameterType(toCU,
-											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value)), location));
-								}
+						//CIE
+						long cfsBaseOffset = -1;
+						// shit, i hardcode, fix later
+						for (int z = 0; z < GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.size(); z++) {
+							if (GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.get(z).equals("DW_CFA_def_cfa")) {
+								cfsBaseOffset = (long) GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetails.get(z)[2];
+								break;
 							}
 						}
+						System.out.println("cfsBaseOffset=" + cfsBaseOffset);
+						//CIE end
+						for (String parameterName : parameters.keySet()) {
+							DwarfParameter parameter = parameters.get(parameterName);
+							long value = 0;
+							jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
+						}
+
 						jmpDataVector.add(jmpData);
 						if (lineNo % 100000 == 0) {
 							logger.debug("processed " + lineNo);

@@ -23,15 +23,17 @@ public class Parameter {
 	public String name;
 	public String type;
 	public String location;
+	public long value;
 
 	public Parameter() {
 	}
 
-	public Parameter(JmpData jmpData, String name, String type, String location) {
+	public Parameter(JmpData jmpData, String name, String type, String location, long value) {
 		this.jmpData = jmpData;
 		this.name = name;
 		this.type = type;
 		this.location = location;
+		this.value = value;
 	}
 
 	public String toString() {
