@@ -63,8 +63,10 @@ public class JmpSocketServer implements Runnable {
 		jmpSocketServer.stopServer();
 	}
 
-	HashMap<Long, DebugInfoEntry> toAddressCache = new HashMap<Long, DebugInfoEntry>();
+	HashMap<Long, Hashtable<String, DwarfParameter>> toAddressCache = new HashMap<Long, Hashtable<String, DwarfParameter>>();
 	HashMap<Long, DebugInfoEntry> fromAddressCache = new HashMap<Long, DebugInfoEntry>();
+
+	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
@@ -339,23 +341,41 @@ public class JmpSocketServer implements Runnable {
 						//							}
 						//						}
 
-						Hashtable<String, DwarfParameter> parameters = DwarfLib.getParameters(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
+						Hashtable<String, DwarfParameter> parameters;
+
+						if (toAddressCache.containsKey(toAddress[x])) {
+							parameters = toAddressCache.get(toAddress[x]);
+						} else {
+							parameters = DwarfLib.getParameters(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
+							toAddressCache.put(toAddress[x], parameters);
+						}
 
 						//CIE
 						long cfsBaseOffset = -1;
-						// shit, i hardcode, fix later
-						for (int z = 0; z < GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.size(); z++) {
-							if (GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.get(z).equals("DW_CFA_def_cfa")) {
-								cfsBaseOffset = (long) GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetails.get(z)[2];
-								break;
+
+						if (cfaBaseOffsetCache.containsKey(toAddress[x])) {
+							cfsBaseOffset = cfaBaseOffsetCache.get(toAddress[x]);
+						} else {
+							for (int z = 0; z < GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.size(); z++) {
+								if (GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.get(z).equals("DW_CFA_def_cfa")) {
+									cfsBaseOffset = (long) GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetails.get(z)[2];
+								}
 							}
+
+							cfaBaseOffsetCache.put(toAddress[x], cfsBaseOffset);
 						}
-						System.out.println("cfsBaseOffset=" + cfsBaseOffset);
+
+						// shit, i hardcode, fix later
+
+						//System.out.println("cfsBaseOffset=" + cfsBaseOffset);
+
 						//CIE end
-						for (String parameterName : parameters.keySet()) {
-							DwarfParameter parameter = parameters.get(parameterName);
-							long value = 0;
-							jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
+						if (parameters != null) {
+							for (String parameterName : parameters.keySet()) {
+								DwarfParameter parameter = parameters.get(parameterName);
+								long value = 0;
+								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
+							}
 						}
 
 						jmpDataVector.add(jmpData);
