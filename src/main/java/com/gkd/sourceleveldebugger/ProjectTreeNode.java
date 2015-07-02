@@ -7,8 +7,6 @@ import java.util.Vector;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import com.peterdwarf.gui.DwarfTreeNode;
-import com.peterswing.CommonLib;
 import com.peterswing.FilterTreeNode;
 
 public class ProjectTreeNode extends FilterTreeNode {
