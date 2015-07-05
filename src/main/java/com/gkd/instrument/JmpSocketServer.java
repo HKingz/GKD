@@ -311,36 +311,6 @@ public class JmpSocketServer implements Runnable {
 								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
 								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
 
-						//						DebugInfoEntry debugInfoEntry;
-						//						if (toAddressCache.containsKey(toAddress[x])) {
-						//							debugInfoEntry = toAddressCache.get(toAddress[x]);
-						//						} else {
-						//							debugInfoEntry = DwarfLib.getSubProgram(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
-						//							toAddressCache.put(toAddress[x], debugInfoEntry);
-						//						}
-						//
-						//						if (debugInfoEntry != null) {
-						//							Vector<DebugInfoEntry> v = debugInfoEntry.getDebugInfoEntryByName("DW_TAG_formal_parameter");
-						//							for (DebugInfoEntry d : v) {
-						//								if (d.debugInfoAbbrevEntries.get("DW_AT_name") != null) {
-						//									DebugInfoAbbrevEntry debugInfoAbbrevEntry = d.debugInfoAbbrevEntries.get("DW_AT_location");
-						//									String values[] = debugInfoAbbrevEntry.value.toString().split(",");
-						//									String location = "";
-						//									if (values.length > 1) {
-						//										location = Definition.getOPName(CommonLib.string2int(values[0]));
-						//										location += " +" + values[1];
-						//									} else {
-						//										location = Definition.getOPName(CommonLib.string2int(values[0]));
-						//									}
-						//
-						//									
-						//									
-						//									jmpData.parameters.add(new Parameter(jmpData, (String) d.debugInfoAbbrevEntries.get("DW_AT_name").value, DwarfLib.getParameterType(toCU,
-						//											CommonLib.string2int("0x" + d.debugInfoAbbrevEntries.get("DW_AT_type").value)), location));
-						//								}
-						//							}
-						//						}
-
 						Hashtable<String, DwarfParameter> parameters;
 
 						if (toAddressCache.containsKey(toAddress[x])) {
@@ -364,12 +334,10 @@ public class JmpSocketServer implements Runnable {
 
 							cfaBaseOffsetCache.put(toAddress[x], cfsBaseOffset);
 						}
-
-						// shit, i hardcode, fix later
-
+						// shit, i hardcoded dwarfs.get(0), fix later
 						//System.out.println("cfsBaseOffset=" + cfsBaseOffset);
-
 						//CIE end
+
 						if (parameters != null) {
 							for (String parameterName : parameters.keySet()) {
 								DwarfParameter parameter = parameters.get(parameterName);
