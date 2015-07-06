@@ -37,6 +37,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -95,6 +96,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.FontUIResource;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.text.BadLocationException;
@@ -3045,15 +3047,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void initGlobalFontSetting(Font fnt) {
-		//		FontUIResource fontRes = new FontUIResource(fnt);
-		//		for (Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
-		//			Object key = keys.nextElement();
-		//			Object value = UIManager.get(key);
-		//			if (value instanceof FontUIResource) {
-		//				UIManager.put(key, fontRes);
-		//			}
-		//		}
-		//		SwingUtilities.updateComponentTreeUI(this);
+		FontUIResource fontRes = new FontUIResource(fnt);
+		for (Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
+			Object key = keys.nextElement();
+			Object value = UIManager.get(key);
+			if (value instanceof FontUIResource) {
+				UIManager.put(key, fontRes);
+			}
+		}
+		SwingUtilities.updateComponentTreeUI(this);
 	}
 
 	private JMenu getSizeMenu() {
