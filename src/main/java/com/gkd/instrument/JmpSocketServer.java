@@ -341,7 +341,8 @@ public class JmpSocketServer implements Runnable {
 						if (parameters != null) {
 							for (String parameterName : parameters.keySet()) {
 								DwarfParameter parameter = parameters.get(parameterName);
-								System.out.println("\tParameter=" + parameter);
+								System.out.println("write " + parameter.offset);
+								//System.out.println("\tParameter=" + parameter);
 								out.writeByte(0);
 								out.writeLong(parameter.offset);
 
