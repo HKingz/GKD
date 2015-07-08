@@ -167,10 +167,13 @@ void * jmpTimer(void *arg) {
 
 			while (temp[1] == 0) {
 				Bit64u address;
-				read(jmpSockfd, &address, 4);
+				int noOfByte=read(jmpSockfd, &address, 8);
+				printf("noOfByte %d\n",noOfByte);
+
+				printf("read %xl\n",address);
 
 				Bit64u value = 0x12345678;
-				writeToSocket(jmpSockfd, &value, 4);
+				writeToSocket(jmpSockfd, &value, 8);
 
 				read(jmpSockfd, &temp, 1);
 			}
