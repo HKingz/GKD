@@ -170,6 +170,12 @@ void * jmpTimer(void *arg) {
 				exit(-1);
 			}
 
+			// handle read parameter values
+			char noOfParameterStr[1];
+			read(jmpSockfd, noOfParameterStr, 1);
+			int noOfParameter=noOfParameterStr;
+			// end handle read parameter values
+
 			jumpIndex = 0;
 		}
 		pthread_mutex_unlock(&jmpMutex);

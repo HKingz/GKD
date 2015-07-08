@@ -57,16 +57,16 @@ public class JmpSocketServer implements Runnable {
 
 	public static Statistic statistic = new Statistic();
 
+	HashMap<Long, Hashtable<String, DwarfParameter>> toAddressCache = new HashMap<Long, Hashtable<String, DwarfParameter>>();
+	HashMap<Long, DebugInfoEntry> fromAddressCache = new HashMap<Long, DebugInfoEntry>();
+
+	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
+
 	public static void main(String args[]) {
 		JmpSocketServer jmpSocketServer = new JmpSocketServer();
 		jmpSocketServer.startServer(8765, new JmpTableModel());
 		jmpSocketServer.stopServer();
 	}
-
-	HashMap<Long, Hashtable<String, DwarfParameter>> toAddressCache = new HashMap<Long, Hashtable<String, DwarfParameter>>();
-	HashMap<Long, DebugInfoEntry> fromAddressCache = new HashMap<Long, DebugInfoEntry>();
-
-	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
