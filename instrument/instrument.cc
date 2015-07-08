@@ -162,13 +162,17 @@ void * jmpTimer(void *arg) {
 
 			writeToSocket(jmpSockfd, "end", 3);
 
-			for (int x = 0; x < jumpIndex; x++) {
-				Bit32u address;
+			char temp[1];
+			read(jmpSockfd, &temp, 1);
+
+			while (temp[1] == 0) {
+				Bit64u address;
 				read(jmpSockfd, &address, 4);
 
-				Bit32u value = 0x12345678;
-				write(jmpSockfd, &value, 4);
+				Bit64u value = 0x12345678;
+				writeToSocket(jmpSockfd, &value, 4);
 
+				read(jmpSockfd, &temp, 1);
 			}
 
 			char readBytes[4];
