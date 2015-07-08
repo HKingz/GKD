@@ -341,8 +341,12 @@ public class JmpSocketServer implements Runnable {
 						if (parameters != null) {
 							for (String parameterName : parameters.keySet()) {
 								DwarfParameter parameter = parameters.get(parameterName);
-								long value = 0;
 								System.out.println("\tParameter=" + parameter);
+								out.writeByte(0);
+								out.writeLong(parameter.offset);
+
+								long value = in.readLong();
+
 								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
 							}
 						}
@@ -360,9 +364,12 @@ public class JmpSocketServer implements Runnable {
 						e.printStackTrace();
 					}
 				}
-				//	statistic.noOfCachedRecord += jmpDataVector.size();
+				//statistic.noOfCachedRecord += jmpDataVector.size();
 				GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
+
+				out.writeByte(1);
 				out.write("done".getBytes());
+
 				out.flush();
 
 				System.gc();
