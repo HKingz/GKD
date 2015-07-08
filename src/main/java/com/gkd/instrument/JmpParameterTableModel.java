@@ -37,6 +37,8 @@ public class JmpParameterTableModel extends DefaultTableModel {
 			return parameters.get(row).type;
 		} else if (column == 2) {
 			return parameters.get(row).location;
+		} else if (column == 3) {
+			return "0x" + Long.toHexString(parameters.get(row).value);
 		} else {
 			return "";
 		}
