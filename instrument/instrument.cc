@@ -162,6 +162,15 @@ void * jmpTimer(void *arg) {
 
 			writeToSocket(jmpSockfd, "end", 3);
 
+			for (int x = 0; x < jumpIndex; x++) {
+				Bit32u address;
+				read(jmpSockfd, &address, 4);
+
+				Bit32u value = 0x12345678;
+				write(jmpSockfd, &value, 4);
+
+			}
+
 			char readBytes[4];
 			read(jmpSockfd, readBytes, 4);
 			if (strncmp(readBytes, "done", 4) != 0) {
@@ -171,10 +180,28 @@ void * jmpTimer(void *arg) {
 			}
 
 			// handle read parameter values
-			char noOfParameterStr[1];
-			read(jmpSockfd, noOfParameterStr, 1);
-			int noOfParameter=noOfParameterStr;
-			// end handle read parameter values
+//			char noOfParameterStr[1];
+//			read(jmpSockfd, noOfParameterStr, 1);
+//			int noOfParameter = noOfParameterStr[0];
+//
+//			Bit32u values[noOfParameter];
+//			for (int x = 0; x < noOfParameter; x++) {
+//				char address[4];
+//				read(jmpSockfd, address, 4);
+//				values[x * 4] = 0x12345678;
+//			}
+//
+//			// end handle read parameter values
+//			writeToSocket(jmpSockfd, esVector, noOfParameter * 4);
+//			writeToSocket(jmpSockfd, "end", 3);
+//
+//			char readBytes[4];
+//			read(jmpSockfd, readBytes, 4);
+//			if (strncmp(readBytes, "done", 4) != 0) {
+//				fprintf(log, "jmp socket read/write error = %s\n", readBytes);
+//				fflush(log);
+//				exit(-1);
+//			}
 
 			jumpIndex = 0;
 		}
