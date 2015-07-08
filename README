@@ -18,7 +18,6 @@ Finally, get GKD source from svn://svn.petersoft.com/GKD, username : gkd, passwo
 5) read gkd_bochs.xml, then you know everything.
 
 
-
 Gossip:
 
 1) "mvn versions:display-dependency-updates" to check outdated dependencies
