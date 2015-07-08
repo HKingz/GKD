@@ -165,14 +165,16 @@ void * jmpTimer(void *arg) {
 			char temp[1];
 			read(jmpSockfd, &temp, 1);
 
-			while (temp[1] == 0) {
+			while (temp[0] == 0) {
 				Bit64u address;
 				int noOfByte=read(jmpSockfd, &address, 8);
 				printf("noOfByte %d\n",noOfByte);
 
 				printf("read %xl\n",address);
 
-				Bit64u value = 0x12345678;
+				BX_CPU(dbg_cpu)->
+
+				Bit64u value = address+1;
 				writeToSocket(jmpSockfd, &value, 8);
 
 				read(jmpSockfd, &temp, 1);
@@ -261,8 +263,8 @@ void initMemorySocket() {
 	if (ret == -1) {
 		fprintf(log, "memorySockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
-	fflush(log);
 	fprintf(log, "initMemorySocket end\n");
+	fflush(log);
 }
 
 void initJmpSocket() {
@@ -309,6 +311,9 @@ void initJmpSocket() {
 	pthread_mutex_init(&jmpMutex, NULL);
 	int err = pthread_create(&jmpThread, NULL, jmpTimer, NULL);
 	//logGKD("initJmpSocket end\n");
+
+	fprintf(log, "initJmpSocket end\n");
+	fflush(log);
 }
 
 void initInterruptSocket() {
@@ -372,6 +377,7 @@ void bx_instr_initialize(unsigned cpu) {
 	 */
 
 	initMemorySocket();
+	fprintf(log, "shit end\n");
 	initJmpSocket();
 	initInterruptSocket();
 	if (connectedToMemoryServer) {
