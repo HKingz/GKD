@@ -166,16 +166,19 @@ void * jmpTimer(void *arg) {
 			read(jmpSockfd, &temp, 1);
 
 			while (temp[0] == 0) {
-				Bit64u address;
-				int noOfByte=read(jmpSockfd, &address, 8);
-				printf("noOfByte %d\n",noOfByte);
+				Bit64u offset;
+				int noOfByte=read(jmpSockfd, &offset, 8);
 
-				printf("read %xl\n",address);
+				//Bit64u value = address+1;
+				bx_address linear_sp;
+				linear_sp = BX_CPU(dbg_cpu)->get_reg32(BX_32BIT_REG_ESP);
+				linear_sp = BX_CPU(dbg_cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
+				Bit8u buf[8];
 
-				BX_CPU(dbg_cpu)->
+				fprintf(log, "read stack = %lx\n", (linear_sp+offset));
+				bx_dbg_read_linear(dbg_cpu, linear_sp+offset, 8, buf);
 
-				Bit64u value = address+1;
-				writeToSocket(jmpSockfd, &value, 8);
+				writeToSocket(jmpSockfd, &buf, 8);
 
 				read(jmpSockfd, &temp, 1);
 			}
