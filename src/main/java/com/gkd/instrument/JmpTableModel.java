@@ -9,10 +9,11 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.commons.lang3.StringUtils;
 
 import com.gkd.instrument.callgraph.JmpData;
+import com.peterswing.CommonLib;
 
 public class JmpTableModel extends DefaultTableModel {
 	String columnNames[] = { "No.", "Date", "From", "To", "What", "Parameter", "Segment start", "Segment End", "eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", "es", "cs",
-			"ss", "ds", "fs", "gs" };
+			"ss", "ds", "fs", "gs", "stack" };
 	public Vector<JmpData> data = new Vector<JmpData>();
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.S");
 
@@ -94,6 +95,8 @@ public class JmpTableModel extends DefaultTableModel {
 				return "0x" + Long.toHexString(jmpData.fs);
 			} else if (column == 22) {
 				return "0x" + Long.toHexString(jmpData.gs);
+			} else if (column == 23) {
+				return CommonLib.arrayToHexString(jmpData.stack);
 			} else {
 				return "";
 			}

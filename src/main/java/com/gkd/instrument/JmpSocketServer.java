@@ -62,6 +62,8 @@ public class JmpSocketServer implements Runnable {
 
 	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
 
+	final int STACK_SIZE = 32;
+
 	public static void main(String args[]) {
 		JmpSocketServer jmpSocketServer = new JmpSocketServer();
 		jmpSocketServer.startServer(8765, new JmpTableModel());
@@ -112,7 +114,7 @@ public class JmpSocketServer implements Runnable {
 			int segmentRegisterSize = in.read();
 
 			int lineNo = 1;
-			int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6;
+			int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6 + STACK_SIZE;
 
 			int deep = 0;
 			logger.debug("client connected, port=" + clientSocket.getPort());
@@ -154,6 +156,9 @@ public class JmpSocketServer implements Runnable {
 				long ds[] = new long[noOfJmpRecordToFlush];
 				long fs[] = new long[noOfJmpRecordToFlush];
 				long gs[] = new long[noOfJmpRecordToFlush];
+
+				byte stack[][] = new byte[noOfJmpRecordToFlush][STACK_SIZE];
+
 				byte bytes[] = new byte[noOfJmpRecordToFlush * rowSize];
 
 				int deeps[] = new int[noOfJmpRecordToFlush];
@@ -193,6 +198,8 @@ public class JmpSocketServer implements Runnable {
 				offset += read(ds, bytes, offset, segmentRegisterSize);
 				offset += read(fs, bytes, offset, segmentRegisterSize);
 				offset += read(gs, bytes, offset, segmentRegisterSize);
+
+				offset += read(stack, bytes, STACK_SIZE, offset, 1);
 
 				byte endBytes[] = new byte[3];
 				in.readFully(endBytes);
@@ -309,7 +316,7 @@ public class JmpSocketServer implements Runnable {
 
 						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, toAddressSymbol,
 								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
-								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x]);
+								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x], stack[x]);
 
 						Hashtable<String, DwarfParameter> parameters;
 
@@ -343,14 +350,14 @@ public class JmpSocketServer implements Runnable {
 								DwarfParameter parameter = parameters.get(parameterName);
 								//								System.out.println("write " + parameter.offset);
 								//System.out.println("\tParameter=" + parameter);
-								out.writeByte(0);
-								out.writeLong(Long.reverseBytes(parameter.offset));
+								//								out.writeByte(0);
+								//								out.writeLong(Long.reverseBytes(parameter.offset));
 
-								tempBytes = new byte[8];
-								in.readFully(tempBytes);
-								long value = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getLong();
+								//								tempBytes = new byte[8];
+								//								in.readFully(tempBytes);
+								//								long value = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getLong();
 
-								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
+								//jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
 							}
 						}
 
@@ -370,7 +377,7 @@ public class JmpSocketServer implements Runnable {
 				//statistic.noOfCachedRecord += jmpDataVector.size();
 				GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 
-				out.writeByte(1);
+				//				out.writeByte(1);
 				out.write("done".getBytes());
 
 				out.flush();
@@ -440,25 +447,37 @@ public class JmpSocketServer implements Runnable {
 		});
 	}
 
-	int read(long arr[], byte bytes[], int offset, int size) throws IOException {
+	int read(long dest[], byte src[], int offset, int size) throws IOException {
 		int totalByteRead = 0;
-		for (int x = 0; x < arr.length; x++) {
-			long value = read(bytes, offset + (x * size), size);
+		for (int x = 0; x < dest.length; x++) {
+			long value = read(src, offset + (x * size), size);
 			totalByteRead += size;
-			arr[x] = value;
+			dest[x] = value;
 		}
 		return totalByteRead;
 	}
 
-	long read(byte bytes[], int offset, int size) throws IOException {
+	int read(byte dest[][], byte src[], int secondLevelLength, int offset, int size) throws IOException {
+		int totalByteRead = 0;
+		for (int x = 0; x < dest.length; x++) {
+			for (int y = 0; y < secondLevelLength; y++) {
+				byte value = (byte) read(src, offset + (x * size), size);
+				totalByteRead += size;
+				dest[y][x] = value;
+			}
+		}
+		return totalByteRead;
+	}
+
+	long read(byte src[], int offset, int size) throws IOException {
 		if (size == 8) {
-			return CommonLib.get64BitsInt(bytes, offset);
+			return CommonLib.get64BitsInt(src, offset);
 		} else if (size == 4) {
-			return CommonLib.getInt(bytes, offset);
+			return CommonLib.getInt(src, offset);
 		} else if (size == 2) {
-			return CommonLib.getShort(bytes[offset], bytes[offset + 1]);
+			return CommonLib.getShort(src[offset], src[offset + 1]);
 		} else {
-			return bytes[offset];
+			return src[offset];
 		}
 	}
 }
