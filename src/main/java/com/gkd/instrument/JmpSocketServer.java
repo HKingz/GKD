@@ -463,7 +463,7 @@ public class JmpSocketServer implements Runnable {
 			for (int y = 0; y < secondLevelLength; y++) {
 				byte value = (byte) read(src, offset + (x * size), size);
 				totalByteRead += size;
-				dest[y][x] = value;
+				dest[x][y] = value;
 			}
 		}
 		return totalByteRead;
