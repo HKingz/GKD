@@ -118,25 +118,27 @@ Bit8u stack[JMP_CACHE_SIZE][STACK_SIZE];
 
 unsigned int jumpIndex = 0;
 
-void writeToSocket(int sock, char *data, int size) {
+//int writeToSocket(int sock, const void *data, int size) {
+//	return writeToSocket(sock, (char *) data, size);
+//}
+
+int writeToSocket(int sock, const void *data, int size) {
 	int byteSent = 0;
+
 	while (byteSent < size) {
 		int b = write(jmpSockfd, data + byteSent, size - byteSent);
 		byteSent += b;
 	}
-}
-
-void writeToSocket(int sock, void *data, int size) {
-	writeToSocket(sock, (char *) data, size);
+	return byteSent;
 }
 
 void * jmpTimer(void *arg) {
 	while (1) {
 		sleep(1);
 		pthread_mutex_lock(&jmpMutex);
+
 		if (jumpIndex > 0) {
 			writeToSocket(jmpSockfd, "start", 5);
-
 			writeToSocket(jmpSockfd, &jumpIndex, 4);
 
 			writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * jumpIndex);
@@ -162,10 +164,9 @@ void * jmpTimer(void *arg) {
 			writeToSocket(jmpSockfd, dsVector, segmentRegisterSize * jumpIndex);
 			writeToSocket(jmpSockfd, fsVector, segmentRegisterSize * jumpIndex);
 			writeToSocket(jmpSockfd, gsVector, segmentRegisterSize * jumpIndex);
-			fprintf(log, "writeToSocket 1\n");
+
 			writeToSocket(jmpSockfd, stack, STACK_SIZE * jumpIndex);
 
-			fprintf(log, "writeToSocket 2\n");
 			writeToSocket(jmpSockfd, "end", 3);
 
 //			char temp[1];
@@ -320,6 +321,9 @@ void initJmpSocket() {
 
 	pthread_mutex_init(&jmpMutex, NULL);
 	int err = pthread_create(&jmpThread, NULL, jmpTimer, NULL);
+	if (err != 0) {
+		fprintf(log, "pthread_create error\n");
+	}
 	//logGKD("initJmpSocket end\n");
 
 	fprintf(log, "initJmpSocket end\n");
@@ -387,7 +391,6 @@ void bx_instr_initialize(unsigned cpu) {
 	 */
 
 	initMemorySocket();
-	fprintf(log, "shit end\n");
 	initJmpSocket();
 	initInterruptSocket();
 	if (connectedToMemoryServer) {
@@ -693,8 +696,8 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, false);
 
 		while (jumpIndex >= JMP_CACHE_SIZE) {
-			//fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
-			//fflush(log);
+//			fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
+//			fflush(log);
 			sleep(1);
 		}
 
@@ -724,10 +727,10 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		gsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value;
 
 		bx_address linear_sp = BX_CPU(dbg_cpu)->get_reg32(BX_32BIT_REG_ESP);
-		fprintf(log, "read stack 1 = %lx\n", linear_sp);
+		//fprintf(log, "read stack 1 = %lx\n", linear_sp);
 		linear_sp = BX_CPU(dbg_cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
 		Bit8u buf[STACK_SIZE];
-		fprintf(log, "read stack 2 = %lx\n", linear_sp);
+		//fprintf(log, "read stack 2 = %lx\n", linear_sp);
 		bx_dbg_read_linear(dbg_cpu, linear_sp, STACK_SIZE, buf);
 
 		memcpy(stack[jumpIndex], buf, STACK_SIZE);
