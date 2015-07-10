@@ -55,6 +55,7 @@ public class JmpData {
 	public String toAddress_DW_AT_name;
 	public boolean showForDifferentDeep;
 
+	@Column(columnDefinition = "binary(256)")
 	public byte[] stack;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "jmpData")

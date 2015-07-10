@@ -64,38 +64,36 @@ public class JmpTableModel extends DefaultTableModel {
 			} else if (column == 6) {
 				return "0x" + Long.toHexString(jmpData.segmentStart);
 			} else if (column == 7) {
-				return "0x" + Long.toHexString(jmpData.segmentStart);
-			} else if (column == 8) {
 				return "0x" + Long.toHexString(jmpData.segmentEnd);
-			} else if (column == 9) {
+			} else if (column == 8) {
 				return "0x" + Long.toHexString(jmpData.eax);
-			} else if (column == 10) {
+			} else if (column == 9) {
 				return "0x" + Long.toHexString(jmpData.ecx);
-			} else if (column == 11) {
+			} else if (column == 10) {
 				return "0x" + Long.toHexString(jmpData.edx);
-			} else if (column == 12) {
+			} else if (column == 11) {
 				return "0x" + Long.toHexString(jmpData.ebx);
-			} else if (column == 13) {
+			} else if (column == 12) {
 				return "0x" + Long.toHexString(jmpData.esp);
-			} else if (column == 14) {
+			} else if (column == 13) {
 				return "0x" + Long.toHexString(jmpData.ebp);
-			} else if (column == 15) {
+			} else if (column == 14) {
 				return "0x" + Long.toHexString(jmpData.esi);
-			} else if (column == 16) {
+			} else if (column == 15) {
 				return "0x" + Long.toHexString(jmpData.edi);
-			} else if (column == 17) {
+			} else if (column == 16) {
 				return "0x" + Long.toHexString(jmpData.es);
-			} else if (column == 18) {
+			} else if (column == 17) {
 				return "0x" + Long.toHexString(jmpData.cs);
-			} else if (column == 19) {
+			} else if (column == 18) {
 				return "0x" + Long.toHexString(jmpData.ss);
-			} else if (column == 20) {
+			} else if (column == 19) {
 				return "0x" + Long.toHexString(jmpData.ds);
-			} else if (column == 21) {
+			} else if (column == 20) {
 				return "0x" + Long.toHexString(jmpData.fs);
-			} else if (column == 22) {
+			} else if (column == 21) {
 				return "0x" + Long.toHexString(jmpData.gs);
-			} else if (column == 23) {
+			} else if (column == 22) {
 				return CommonLib.arrayToHexString(jmpData.stack);
 			} else {
 				return "";

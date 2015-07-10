@@ -62,7 +62,7 @@ public class JmpSocketServer implements Runnable {
 
 	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
 
-	final int STACK_SIZE = 32;
+	final int STACK_SIZE = 256;
 
 	public static void main(String args[]) {
 		JmpSocketServer jmpSocketServer = new JmpSocketServer();
@@ -357,7 +357,8 @@ public class JmpSocketServer implements Runnable {
 								//								in.readFully(tempBytes);
 								//								long value = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getLong();
 
-								//jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
+								long value = stack[x][(int) parameter.offset];
+								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
 							}
 						}
 
