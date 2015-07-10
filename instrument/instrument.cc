@@ -46,7 +46,7 @@
 using namespace std;
 using std::set;
 
-#define GKD_INSTRUMENT_VERSION "20150527"
+#define GKD_INSTRUMENT_VERSION "20150709"
 bxInstrumentation *icpu = NULL;
 
 #define MAX_SEND_BYTE 500
@@ -113,7 +113,7 @@ Bit16u dsVector[JMP_CACHE_SIZE];
 Bit16u fsVector[JMP_CACHE_SIZE];
 Bit16u gsVector[JMP_CACHE_SIZE];
 
-#define STACK_SIZE 32
+#define STACK_SIZE 256
 Bit8u stack[JMP_CACHE_SIZE][STACK_SIZE];
 
 unsigned int jumpIndex = 0;
