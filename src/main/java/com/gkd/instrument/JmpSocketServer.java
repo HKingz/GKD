@@ -175,31 +175,31 @@ public class JmpSocketServer implements Runnable {
 				}
 
 				int offset = 0;
-				offset += read(fromAddress, bytes, offset, physicalAddressSize);
-				offset += read(toAddress, bytes, offset, physicalAddressSize);
+				offset += getValuesFromByteArray(fromAddress, bytes, offset, physicalAddressSize);
+				offset += getValuesFromByteArray(toAddress, bytes, offset, physicalAddressSize);
 
-				offset += read(what, bytes, offset, whatSize);
+				offset += getValuesFromByteArray(what, bytes, offset, whatSize);
 
-				offset += read(segmentStart, bytes, offset, segmentAddressSize);
-				offset += read(segmentEnd, bytes, offset, segmentAddressSize);
+				offset += getValuesFromByteArray(segmentStart, bytes, offset, segmentAddressSize);
+				offset += getValuesFromByteArray(segmentEnd, bytes, offset, segmentAddressSize);
 
-				offset += read(eax, bytes, offset, registerSize);
-				offset += read(ecx, bytes, offset, registerSize);
-				offset += read(edx, bytes, offset, registerSize);
-				offset += read(ebx, bytes, offset, registerSize);
-				offset += read(esp, bytes, offset, registerSize);
-				offset += read(ebp, bytes, offset, registerSize);
-				offset += read(esi, bytes, offset, registerSize);
-				offset += read(edi, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(eax, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(ecx, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(edx, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(ebx, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(esp, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(ebp, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(esi, bytes, offset, registerSize);
+				offset += getValuesFromByteArray(edi, bytes, offset, registerSize);
 
-				offset += read(es, bytes, offset, segmentRegisterSize);
-				offset += read(cs, bytes, offset, segmentRegisterSize);
-				offset += read(ss, bytes, offset, segmentRegisterSize);
-				offset += read(ds, bytes, offset, segmentRegisterSize);
-				offset += read(fs, bytes, offset, segmentRegisterSize);
-				offset += read(gs, bytes, offset, segmentRegisterSize);
+				offset += getValuesFromByteArray(es, bytes, offset, segmentRegisterSize);
+				offset += getValuesFromByteArray(cs, bytes, offset, segmentRegisterSize);
+				offset += getValuesFromByteArray(ss, bytes, offset, segmentRegisterSize);
+				offset += getValuesFromByteArray(ds, bytes, offset, segmentRegisterSize);
+				offset += getValuesFromByteArray(fs, bytes, offset, segmentRegisterSize);
+				offset += getValuesFromByteArray(gs, bytes, offset, segmentRegisterSize);
 
-				offset += read(stack, bytes, STACK_SIZE, offset, 1);
+				offset += getValuesFromByteArray(stack, bytes, STACK_SIZE, offset, 1);
 
 				byte endBytes[] = new byte[3];
 				in.readFully(endBytes);
@@ -448,7 +448,7 @@ public class JmpSocketServer implements Runnable {
 		});
 	}
 
-	int read(long dest[], byte src[], int offset, int size) throws IOException {
+	int getValuesFromByteArray(long dest[], byte src[], int offset, int size) throws IOException {
 		int totalByteRead = 0;
 		for (int x = 0; x < dest.length; x++) {
 			long value = read(src, offset + (x * size), size);
@@ -458,13 +458,15 @@ public class JmpSocketServer implements Runnable {
 		return totalByteRead;
 	}
 
-	int read(byte dest[][], byte src[], int secondLevelLength, int offset, int size) throws IOException {
+	int getValuesFromByteArray(byte dest[][], byte src[], int secondLevelLength, int offset, int size) throws IOException {
 		int totalByteRead = 0;
+		int index = 0;
 		for (int x = 0; x < dest.length; x++) {
 			for (int y = 0; y < secondLevelLength; y++) {
-				byte value = (byte) read(src, offset + (x * size), size);
+				byte value = (byte) read(src, offset + index, size);
 				totalByteRead += size;
 				dest[x][y] = value;
+				index++;
 			}
 		}
 		return totalByteRead;
