@@ -126,7 +126,7 @@ int writeToSocket(int sock, const void *data, int size) {
 	int byteSent = 0;
 
 	while (byteSent < size) {
-		int b = write(jmpSockfd, data + byteSent, size - byteSent);
+		int b = write(jmpSockfd, (char *) data + byteSent, size - byteSent);
 		byteSent += b;
 	}
 	return byteSent;
@@ -726,12 +726,31 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		fsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value;
 		gsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value;
 
-		bx_address linear_sp = BX_CPU(dbg_cpu)->get_reg32(BX_32BIT_REG_ESP);
-		//fprintf(log, "read stack 1 = %lx\n", linear_sp);
-		linear_sp = BX_CPU(dbg_cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
+//		bx_address linear_sp = BX_CPU(dbg_cpu)->get_reg32(BX_32BIT_REG_ESP);
+//		linear_sp = BX_CPU(dbg_cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
+//		Bit8u buf[STACK_SIZE];
+//		//fprintf(log, "read stack 2 = %lx\n", linear_sp);
+//		bx_dbg_read_linear(dbg_cpu, linear_sp, STACK_SIZE, buf);
+
+		bx_address linear_sp = BX_CPU(0)->get_reg32(BX_32BIT_REG_ESP);
+		linear_sp = BX_CPU(0)->get_laddr(BX_SEG_REG_SS, linear_sp);
 		Bit8u buf[STACK_SIZE];
 		//fprintf(log, "read stack 2 = %lx\n", linear_sp);
-		bx_dbg_read_linear(dbg_cpu, linear_sp, STACK_SIZE, buf);
+		bx_dbg_read_linear(0, linear_sp, STACK_SIZE, buf);
+
+//		fprintf(log, "jmp %lx, %lx > ", toPhysicalAddress, linear_sp);
+//		fflush(log);
+//
+//		for (int x = 0; x < STACK_SIZE; x++) {
+//			fprintf(log, "%x ", buf[x]);
+//			fflush(log);
+//		}
+//		fprintf(log, "\n");
+//		fflush(log);
+
+		buf[0]=0xab;
+		buf[1]=0xcd;
+		buf[2]=0xef;
 
 		memcpy(stack[jumpIndex], buf, STACK_SIZE);
 
