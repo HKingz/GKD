@@ -1668,6 +1668,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 				Iterator<JmpData> iterator = null;
 				if (removeDuplicatedCheckBox.isSelected()) {
 					Query query;
+					Query countQuery;
 					String where1 = "";
 					if (filterRawTableTextField.getText().length() > 0) {
 						where1 += " and (fromAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
@@ -1679,14 +1680,23 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						query = session.createSQLQuery(
 								"SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1).addEntity(JmpData.class);
+						countQuery = session
+								.createSQLQuery("SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
+										+ where1);
 					} else {
 						query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress" + where1)
 								.addEntity(JmpData.class);
+						countQuery = session.createSQLQuery("SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress"
+								+ where1);
 					}
 					query.setMaxResults(pageSize);
 					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
 					query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					iterator = query.list().iterator();
+
+					countQuery.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+					int count = Integer.parseInt(countQuery.list().get(0).toString());
+					jmpPager.maxPageNo = count / pageSize;
 				} else {
 					Criteria criteria = session.createCriteria(JmpData.class);
 
@@ -1701,6 +1711,20 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
 					criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					iterator = criteria.list().iterator();
+
+					Criteria countCriteria = session.createCriteria(JmpData.class);
+
+					if (withSymbolCheckBox.isSelected()) {
+						countCriteria.add(Restrictions.isNotNull("toAddressSymbol"));
+					}
+					if (filterRawTableTextField.getText().length() > 0) {
+						countCriteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
+						countCriteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
+					}
+					countCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+					int count = countCriteria.list().size();
+
+					jmpPager.maxPageNo = count / pageSize;
 				}
 				if (iterator != null) {
 					jmpTableModel.removeAll();
