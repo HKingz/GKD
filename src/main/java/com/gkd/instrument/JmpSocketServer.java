@@ -358,7 +358,7 @@ public class JmpSocketServer implements Runnable {
 								//								long value = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getLong();
 
 								long value = CommonLib.getInt(stack[x], (int) parameter.offset);
-								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, String.valueOf(parameter.offset), value));
+								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, parameter.size, String.valueOf(parameter.offset), value));
 							}
 						}
 

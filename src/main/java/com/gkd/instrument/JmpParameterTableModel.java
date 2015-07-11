@@ -8,7 +8,7 @@ import javax.swing.table.DefaultTableModel;
 import com.gkd.instrument.callgraph.Parameter;
 
 public class JmpParameterTableModel extends DefaultTableModel {
-	String columnNames[] = { "Name", "Type", "Location", "Value" };
+	String columnNames[] = { "Name", "Type", "Size", "Location", "Value" };
 	List<Parameter> parameters = new ArrayList<Parameter>();
 
 	public String getColumnName(int column) {
@@ -36,8 +36,10 @@ public class JmpParameterTableModel extends DefaultTableModel {
 		} else if (column == 1) {
 			return parameters.get(row).type;
 		} else if (column == 2) {
-			return parameters.get(row).location;
+			return parameters.get(row).size;
 		} else if (column == 3) {
+			return parameters.get(row).location;
+		} else if (column == 4) {
 			return "0x" + Long.toHexString(parameters.get(row).value);
 		} else {
 			return "";
