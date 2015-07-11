@@ -21,14 +21,14 @@
 srcdir = .
 
 
-SHELL = /bin/sh
+SHELL = /bin/bash
 
 
 
 CC = gcc
-CFLAGS =  -fpascal-strings -fno-common -Wno-four-char-constants -Wno-unknown-pragmas -Dmacintosh -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES 
+CFLAGS = -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -pthread
 CXX = g++
-CXXFLAGS =  -fpascal-strings -fno-common -Wno-four-char-constants -Wno-unknown-pragmas -Dmacintosh -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES 
+CXXFLAGS = -g -O2 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -pthread
 
 LDFLAGS = 
 LIBS = 
