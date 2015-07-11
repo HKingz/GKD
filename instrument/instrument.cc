@@ -124,9 +124,15 @@ unsigned int jumpIndex = 0;
 
 int writeToSocket(int sock, const void *data, int size) {
 	int byteSent = 0;
+//	for (int x=0;x<10;x++){
+//		fprintf(log, "%d ", x);
+//	}
+//	fprintf(log, "\n");
+//	fflush(log);
 
 	while (byteSent < size) {
 		int b = write(jmpSockfd, (char *) data + byteSent, size - byteSent);
+
 		byteSent += b;
 	}
 	return byteSent;
@@ -748,9 +754,9 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 //		fprintf(log, "\n");
 //		fflush(log);
 
-		buf[0]=0xab;
-		buf[1]=0xcd;
-		buf[2]=0xef;
+//		for (int x = 0; x < STACK_SIZE; x++) {
+//			buf[x] = x;
+//		}
 
 		memcpy(stack[jumpIndex], buf, STACK_SIZE);
 
