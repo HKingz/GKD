@@ -79,6 +79,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
@@ -1675,6 +1676,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						where1 += " or toAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
 						where1 += " or fromAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%'";
 						where1 += " or toAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%')";
+						//where1 += " and jmpDataId >=" + (jmpPager.getPage() - 1) * pageSize + ")";
+
 					}
 					if (withSymbolCheckBox.isSelected()) {
 						query = session.createSQLQuery(
@@ -1691,7 +1694,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					query.setMaxResults(pageSize);
 					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-					System.out.println("s="+(jmpPager.getPage() - 1) * pageSize);
+					System.out.println("s=" + (jmpPager.getPage() - 1) * pageSize);
 					query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 					d.progressBar.setString("Executing SQL");
@@ -1714,10 +1717,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						criteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
 					}
 					criteria.setMaxResults(pageSize);
-					criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-					System.out.println("s="+(jmpPager.getPage() - 1) * pageSize);
+					//criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					criteria.add(Restrictions.ge("jmpDataId", (jmpPager.getPage() - 1) * pageSize));
+					System.out.println("s=" + (jmpPager.getPage() - 1) * pageSize);
 					criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					d.progressBar.setString("Executing SQL");
+
+					System.out.println("count=" + criteria.list().size());
 					iterator = criteria.list().iterator();
 
 					Criteria countCriteria = session.createCriteria(JmpData.class);
@@ -1731,6 +1737,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					countCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					int count = countCriteria.list().size();
+					System.out.println("count=" + count);
 					jmpPager.maxPageNo = count / pageSize;
 					if (count % pageSize != 0) {
 						jmpPager.maxPageNo++;

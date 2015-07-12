@@ -14,6 +14,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.hibernate.FetchMode;
+import org.hibernate.annotations.Fetch;
+
 @Entity
 @Table(name = "jmpData")
 public class JmpData {
@@ -58,7 +61,7 @@ public class JmpData {
 	@Column(columnDefinition = "binary(256)")
 	public byte[] stack;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "jmpData")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "jmpData")
 	public List<Parameter> parameters = new ArrayList<Parameter>();
 
 	public String toAddressSymbol;
