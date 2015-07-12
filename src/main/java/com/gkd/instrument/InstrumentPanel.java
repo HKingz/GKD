@@ -1691,6 +1691,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					query.setMaxResults(pageSize);
 					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					System.out.println("s="+(jmpPager.getPage() - 1) * pageSize);
 					query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 					d.progressBar.setString("Executing SQL");
@@ -1714,6 +1715,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					criteria.setMaxResults(pageSize);
 					criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					System.out.println("s="+(jmpPager.getPage() - 1) * pageSize);
 					criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					d.progressBar.setString("Executing SQL");
 					iterator = criteria.list().iterator();

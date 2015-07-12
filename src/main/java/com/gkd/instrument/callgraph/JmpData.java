@@ -58,7 +58,7 @@ public class JmpData {
 	@Column(columnDefinition = "binary(256)")
 	public byte[] stack;
 
-	@OneToMany(fetch = FetchType.EAGER, mappedBy = "jmpData")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "jmpData")
 	public List<Parameter> parameters = new ArrayList<Parameter>();
 
 	public String toAddressSymbol;

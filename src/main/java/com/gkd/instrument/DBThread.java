@@ -127,7 +127,7 @@ public class DBThread implements Runnable {
 					pstmt2.executeBatch();
 
 					conn.close();
-					JmpSocketServer.statistic.noOfDBRecord = noOdDBRecord;
+					JmpSocketServer.statistic.noOfDBRecord += noOdDBRecord;
 					JmpSocketServer.statistic.noOfCachedRecord = JmpSocketServer.jmpDataVector.size();
 					GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 					logger.info("writted to db = " + count);
