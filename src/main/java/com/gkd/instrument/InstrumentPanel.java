@@ -1656,10 +1656,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		Thread longRunningThread = new Thread() {
 			public void run() {
-//				HashSet<String> checkDuplicated = new HashSet<String>();
-//				Vector<JmpData> filteredData = new Vector<JmpData>();
-//				String filterText = filterRawTableTextField.getText().toLowerCase();
-//				int lastDeep = -1;
+				//				HashSet<String> checkDuplicated = new HashSet<String>();
+				//				Vector<JmpData> filteredData = new Vector<JmpData>();
+				//				String filterText = filterRawTableTextField.getText().toLowerCase();
+				//				int lastDeep = -1;
 
 				int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
@@ -1698,8 +1698,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 					countQuery.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					int count = Integer.parseInt(countQuery.list().get(0).toString());
-					System.out.println("count="+count);
 					jmpPager.maxPageNo = count / pageSize;
+					if (count % pageSize != 0) {
+						jmpPager.maxPageNo++;
+					}
 				} else {
 					Criteria criteria = session.createCriteria(JmpData.class);
 
@@ -1727,8 +1729,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					countCriteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					int count = countCriteria.list().size();
-
 					jmpPager.maxPageNo = count / pageSize;
+					if (count % pageSize != 0) {
+						jmpPager.maxPageNo++;
+					}
 				}
 				if (iterator != null) {
 					jmpTableModel.removeAll();

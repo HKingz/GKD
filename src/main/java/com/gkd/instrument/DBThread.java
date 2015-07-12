@@ -63,6 +63,7 @@ public class DBThread implements Runnable {
 
 					Vector<JmpData> temp = new Vector<JmpData>();
 					int oldPk = pk;
+					int noOdDBRecord = 0;
 					for (JmpData jmpData : JmpSocketServer.jmpDataVector) {
 						pstmt.setLong(1, pk);
 						pstmt.setLong(2, jmpData.cs);
@@ -97,7 +98,7 @@ public class DBThread implements Runnable {
 
 						temp.add(jmpData);
 
-						JmpSocketServer.statistic.noOfDBRecord++;
+						noOdDBRecord++;
 						if (jmpData.toAddressSymbol != null) {
 							JmpSocketServer.statistic.noOfRecordWithSymbol++;
 						}
@@ -126,7 +127,7 @@ public class DBThread implements Runnable {
 					pstmt2.executeBatch();
 
 					conn.close();
-
+					JmpSocketServer.statistic.noOfDBRecord = noOdDBRecord;
 					JmpSocketServer.statistic.noOfCachedRecord = JmpSocketServer.jmpDataVector.size();
 					GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 					logger.info("writted to db = " + count);
