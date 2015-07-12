@@ -55,7 +55,6 @@ public class DBThread implements Runnable {
 			String jdbcString = "jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB";
 			int pk = 1;
 			while (true) {
-				System.out.println("DBThread");
 				int count = JmpSocketServer.jmpDataVector.size();
 				if (count > 0) {
 					Connection conn = DriverManager.getConnection(jdbcString);

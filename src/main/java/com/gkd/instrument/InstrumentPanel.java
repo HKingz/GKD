@@ -1656,10 +1656,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		Thread longRunningThread = new Thread() {
 			public void run() {
-				HashSet<String> checkDuplicated = new HashSet<String>();
-				Vector<JmpData> filteredData = new Vector<JmpData>();
-				String filterText = filterRawTableTextField.getText().toLowerCase();
-				int lastDeep = -1;
+//				HashSet<String> checkDuplicated = new HashSet<String>();
+//				Vector<JmpData> filteredData = new Vector<JmpData>();
+//				String filterText = filterRawTableTextField.getText().toLowerCase();
+//				int lastDeep = -1;
 
 				int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
@@ -1692,10 +1692,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					query.setMaxResults(pageSize);
 					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
 					query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+					d.progressBar.setString("Executing SQL");
 					iterator = query.list().iterator();
 
 					countQuery.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					int count = Integer.parseInt(countQuery.list().get(0).toString());
+					System.out.println("count="+count);
 					jmpPager.maxPageNo = count / pageSize;
 				} else {
 					Criteria criteria = session.createCriteria(JmpData.class);
@@ -1710,6 +1713,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					criteria.setMaxResults(pageSize);
 					criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
 					criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+					d.progressBar.setString("Executing SQL");
 					iterator = criteria.list().iterator();
 
 					Criteria countCriteria = session.createCriteria(JmpData.class);
