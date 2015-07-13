@@ -1657,11 +1657,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		Thread longRunningThread = new Thread() {
 			public void run() {
-				//				HashSet<String> checkDuplicated = new HashSet<String>();
-				//				Vector<JmpData> filteredData = new Vector<JmpData>();
-				//				String filterText = filterRawTableTextField.getText().toLowerCase();
-				//				int lastDeep = -1;
-
 				int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
 				Session session = HibernateUtil.openSession();
@@ -2888,7 +2883,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			});
 			jmpPager.addPagerTextFieldEventListener(new PagerTextFieldEventListener() {
 				public void KeyReleased(PagerTextFieldEvent evt) {
-					updateJmpTable();
+					if (evt.getKeyCode() == 10) {
+						updateJmpTable();
+					}
 				}
 			});
 		}
