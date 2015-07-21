@@ -158,11 +158,6 @@
 			<version>1.3.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.github.mcheung63</groupId>
-			<artifactId>peter-swing</artifactId>
-			<version>20150709</version>
-		</dependency>
-		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>JLibGDB</artifactId>
 			<version>20150709</version>
@@ -221,6 +216,11 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.12</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.mcheung63</groupId>
+			<artifactId>peter-swing</artifactId>
+			<version>20150709</version>
 		</dependency>
 	</dependencies>
 	<scm>

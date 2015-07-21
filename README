@@ -2,7 +2,7 @@ Compile:
 
 Here are steps to compile GKD. GKD is depends on some my other projects, all are open source and written in Java & maven. So just do “mvn clean install” in every of them.
 
-Check out these project in order, run “mvn clean install” on every of them:
+Check out these projects in order, run “mvn clean install” on every of them:
 
 1. https://github.com/mcheung63/peter-swing
 2. https://sourceforge.net/projects/tightvncpanel/
