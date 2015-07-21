@@ -173,7 +173,7 @@ void * jmpTimer(void *arg) {
 			writeToSocket(jmpSockfd, gsVector, segmentRegisterSize * jumpIndex);
 
 			writeToSocket(jmpSockfd, stack, STACK_SIZE * jumpIndex);
-			writeToSocket(jmpSockfd, stackBase, STACK_SIZE * jumpIndex);
+			writeToSocket(jmpSockfd, stackBase, physicalAddressSize * jumpIndex);
 
 
 			writeToSocket(jmpSockfd, "end", 3);
