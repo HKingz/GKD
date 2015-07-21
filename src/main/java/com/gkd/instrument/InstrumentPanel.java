@@ -79,7 +79,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartMouseEvent;
