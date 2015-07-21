@@ -115,6 +115,7 @@ Bit16u gsVector[JMP_CACHE_SIZE];
 
 #define STACK_SIZE 256
 Bit8u stack[JMP_CACHE_SIZE][STACK_SIZE];
+bx_phy_address stackBase[JMP_CACHE_SIZE];
 
 unsigned int jumpIndex = 0;
 
@@ -172,6 +173,8 @@ void * jmpTimer(void *arg) {
 			writeToSocket(jmpSockfd, gsVector, segmentRegisterSize * jumpIndex);
 
 			writeToSocket(jmpSockfd, stack, STACK_SIZE * jumpIndex);
+			writeToSocket(jmpSockfd, stackBase, STACK_SIZE * jumpIndex);
+
 
 			writeToSocket(jmpSockfd, "end", 3);
 
@@ -707,7 +710,7 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 			sleep(1);
 		}
 
-		pthread_mutex_lock(&jmpMutex);
+		pthread_mutex_lock (&jmpMutex);
 		fromAddressVector[jumpIndex] = fromPhysicalAddress;
 		toAddressVector[jumpIndex] = toPhysicalAddress;
 
@@ -732,33 +735,20 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		fsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value;
 		gsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value;
 
-//		bx_address linear_sp = BX_CPU(dbg_cpu)->get_reg32(BX_32BIT_REG_ESP);
-//		linear_sp = BX_CPU(dbg_cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
-//		Bit8u buf[STACK_SIZE];
-//		//fprintf(log, "read stack 2 = %lx\n", linear_sp);
-//		bx_dbg_read_linear(dbg_cpu, linear_sp, STACK_SIZE, buf);
-
 		bx_address linear_sp = BX_CPU(0)->get_reg32(BX_32BIT_REG_ESP);
 		linear_sp = BX_CPU(0)->get_laddr(BX_SEG_REG_SS, linear_sp);
 		Bit8u buf[STACK_SIZE];
-		//fprintf(log, "read stack 2 = %lx\n", linear_sp);
 		bx_dbg_read_linear(0, linear_sp, STACK_SIZE, buf);
 
-//		fprintf(log, "jmp %lx, %lx > ", toPhysicalAddress, linear_sp);
-//		fflush(log);
-//
-//		for (int x = 0; x < STACK_SIZE; x++) {
-//			fprintf(log, "%x ", buf[x]);
-//			fflush(log);
-//		}
-//		fprintf(log, "\n");
-//		fflush(log);
-
-//		for (int x = 0; x < STACK_SIZE; x++) {
-//			buf[x] = x;
-//		}
-
 		memcpy(stack[jumpIndex], buf, STACK_SIZE);
+
+		bx_phy_address paddr;
+		bx_bool paddr_valid = BX_CPU(dbg_cpu)->dbg_xlate_linear2phy(linear_sp, &paddr);
+		if (paddr_valid) {
+			stackBase[jumpIndex] = paddr;
+		} else {
+			stackBase[jumpIndex] = -1;
+		}
 
 		jumpIndex++;
 		pthread_mutex_unlock(&jmpMutex);

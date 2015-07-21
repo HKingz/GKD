@@ -60,7 +60,7 @@ public class JmpSocketServer implements Runnable {
 	HashMap<Long, Hashtable<String, DwarfParameter>> toAddressCache = new HashMap<Long, Hashtable<String, DwarfParameter>>();
 	HashMap<Long, DebugInfoEntry> fromAddressCache = new HashMap<Long, DebugInfoEntry>();
 
-	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
+//	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
 
 	final int STACK_SIZE = 256;
 
@@ -114,7 +114,7 @@ public class JmpSocketServer implements Runnable {
 			int segmentRegisterSize = in.read();
 
 			int lineNo = 1;
-			int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6 + STACK_SIZE;
+			int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6 + STACK_SIZE + physicalAddressSize;
 
 			int deep = 0;
 			logger.debug("client connected, port=" + clientSocket.getPort());
@@ -158,6 +158,7 @@ public class JmpSocketServer implements Runnable {
 				long gs[] = new long[noOfJmpRecordToFlush];
 
 				byte stack[][] = new byte[noOfJmpRecordToFlush][STACK_SIZE];
+				long stackBase[] = new long[noOfJmpRecordToFlush];
 
 				byte bytes[] = new byte[noOfJmpRecordToFlush * rowSize];
 
@@ -200,6 +201,7 @@ public class JmpSocketServer implements Runnable {
 				offset += getValuesFromByteArray(gs, bytes, offset, segmentRegisterSize);
 
 				offset += getValuesFromByteArray(stack, bytes, STACK_SIZE, offset, 1);
+				offset += getValuesFromByteArray(stackBase, bytes, offset, physicalAddressSize);
 
 				byte endBytes[] = new byte[3];
 				in.readFully(endBytes);
@@ -316,7 +318,7 @@ public class JmpSocketServer implements Runnable {
 
 						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, toAddressSymbol,
 								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
-								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x], stack[x]);
+								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x], stack[x], stackBase[x]);
 
 						Hashtable<String, DwarfParameter> parameters;
 
@@ -328,19 +330,19 @@ public class JmpSocketServer implements Runnable {
 						}
 
 						//CIE
-						long cfsBaseOffset = -1;
-
-						if (cfaBaseOffsetCache.containsKey(toAddress[x])) {
-							cfsBaseOffset = cfaBaseOffsetCache.get(toAddress[x]);
-						} else {
-							for (int z = 0; z < GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.size(); z++) {
-								if (GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.get(z).equals("DW_CFA_def_cfa")) {
-									cfsBaseOffset = (long) GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetails.get(z)[2];
-								}
-							}
-
-							cfaBaseOffsetCache.put(toAddress[x], cfsBaseOffset);
-						}
+//						long cfsBaseOffset = -1;
+//
+//						if (cfaBaseOffsetCache.containsKey(toAddress[x])) {
+//							cfsBaseOffset = cfaBaseOffsetCache.get(toAddress[x]);
+//						} else {
+//							for (int z = 0; z < GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.size(); z++) {
+//								if (GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.get(z).equals("DW_CFA_def_cfa")) {
+//									cfsBaseOffset = (long) GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetails.get(z)[2];
+//								}
+//							}
+//
+//							cfaBaseOffsetCache.put(toAddress[x], cfsBaseOffset);
+//						}
 						// shit, i hardcoded dwarfs.get(0), fix later
 						//System.out.println("cfsBaseOffset=" + cfsBaseOffset);
 						//CIE end

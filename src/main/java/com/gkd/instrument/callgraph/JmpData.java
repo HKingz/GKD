@@ -61,6 +61,8 @@ public class JmpData {
 	@Column(columnDefinition = "binary(256)")
 	public byte[] stack;
 
+	public long stackBase;
+
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "jmpData")
 	public List<Parameter> parameters = new ArrayList<Parameter>();
 
@@ -71,7 +73,7 @@ public class JmpData {
 
 	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, String toAddressSymbol, int what,
 			long segmentStart, long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs,
-			long gs, int deep, String fromAddress_DW_AT_name, String toAddress_DW_AT_name, boolean showForDifferentDeep, byte[] stack) {
+			long gs, int deep, String fromAddress_DW_AT_name, String toAddress_DW_AT_name, boolean showForDifferentDeep, byte[] stack, long stackBase) {
 		this.lineNo = lineNo;
 		this.date = date;
 		this.fromAddress = fromAddress;
@@ -101,6 +103,7 @@ public class JmpData {
 		this.toAddress_DW_AT_name = toAddress_DW_AT_name;
 		this.showForDifferentDeep = showForDifferentDeep;
 		this.stack = stack;
+		this.stackBase = stackBase;
 	}
 
 	public boolean contains(String s) {
