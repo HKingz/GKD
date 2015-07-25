@@ -77,6 +77,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
@@ -1573,8 +1574,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						where1 += " or toAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
 						where1 += " or fromAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%'";
 						where1 += " or toAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%')";
-						//where1 += " and jmpDataId >=" + (jmpPager.getPage() - 1) * pageSize + ")";
-
 					}
 					if (withSymbolCheckBox.isSelected()) {
 						query = session.createSQLQuery(
@@ -1592,15 +1591,12 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					query.setMaxResults(pageSize);
 					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-					System.out.println("s=" + (jmpPager.getPage() - 1) * pageSize);
-					//query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 
 					d.progressBar.setString("Executing SQL");
 					iterator = query.list().iterator();
 
-					//countQuery.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-					//int count = Integer.parseInt(countQuery.list().get(0).toString());
-					int count = (int) countQuery.uniqueResult();
+					int count = ((BigInteger) countQuery.uniqueResult()).intValue();
+					System.out.println("count=" + count);
 					jmpPager.maxPageNo = count / pageSize;
 					if (count % pageSize != 0) {
 						jmpPager.maxPageNo++;
@@ -1610,38 +1606,45 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 					if (withSymbolCheckBox.isSelected()) {
 						criteria.add(Restrictions.isNotNull("toAddressSymbol"));
+						// use .ge(PK) is much faster than sql limit
+						criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					} else {
+						criteria.add(Restrictions.ge("jmpDataId", (jmpPager.getPage() - 1) * pageSize));
 					}
 					if (filterRawTableTextField.getText().length() > 0) {
 						criteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
 						criteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
 					}
+					criteria.setFetchMode("parameters", FetchMode.SELECT);
 					criteria.setMaxResults(pageSize);
-					//criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
-					criteria.add(Restrictions.ge("jmpDataId", (jmpPager.getPage() - 1) * pageSize));
-					System.out.println("s=" + (jmpPager.getPage() - 1) * pageSize);
 					criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 					d.progressBar.setString("Executing SQL");
 
-					System.out.println("count=" + criteria.list().size());
 					iterator = criteria.list().iterator();
 
+					System.out.println("1");
+					// count
 					Criteria countCriteria = session.createCriteria(JmpData.class);
-
+					System.out.println("2");
 					if (withSymbolCheckBox.isSelected()) {
 						countCriteria.add(Restrictions.isNotNull("toAddressSymbol"));
 					}
+					System.out.println("3");
 					if (filterRawTableTextField.getText().length() > 0) {
 						countCriteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
 						countCriteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
 					}
-
+					System.out.println("4");
 					countCriteria.setProjection(Projections.rowCount());
+					System.out.println("5");
 					long count = (long) countCriteria.uniqueResult();
+					System.out.println("6");
 					System.out.println("count=" + count);
 					jmpPager.maxPageNo = (int) (count / pageSize);
 					if (count % pageSize != 0) {
 						jmpPager.maxPageNo++;
 					}
+					System.out.println("7");
 				}
 				if (iterator != null) {
 					jmpTableModel.removeAll();
@@ -1650,6 +1653,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						jmpTableModel.add(d);
 					}
 				}
+
+				System.out.println("8");
 				session.close();
 
 				jmpTableModel.fireTableDataChanged();

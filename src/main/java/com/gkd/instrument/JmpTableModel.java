@@ -37,7 +37,7 @@ public class JmpTableModel extends DefaultTableModel {
 	}
 
 	public Object getValueAt(int row, int column) {
-		try {
+		//try {
 			JmpData jmpData = data.get(row);
 			if (column == 0) {
 				return jmpData.lineNo;
@@ -100,10 +100,10 @@ public class JmpTableModel extends DefaultTableModel {
 			} else {
 				return "";
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return "";
-		}
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//			return "";
+//		}
 	}
 
 	public boolean isCellEditable(int row, int column) {
