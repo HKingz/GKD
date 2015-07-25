@@ -1552,6 +1552,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 		Thread longRunningThread = new Thread() {
 			public void run() {
+				while (JmpSocketServer.statistic.noOfCachedRecord > 0) {
+					try {
+						Thread.sleep(200);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
 				int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
 
 				Session session = HibernateUtil.openSession();
