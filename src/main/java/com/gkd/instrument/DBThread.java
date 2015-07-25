@@ -4,12 +4,16 @@ import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.util.Iterator;
 import java.util.Vector;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 
 import com.gkd.GKD;
 import com.gkd.hibernate.HibernateUtil;
@@ -18,6 +22,102 @@ import com.gkd.instrument.callgraph.Parameter;
 
 public class DBThread implements Runnable {
 	public static Logger logger = Logger.getLogger(JmpSocketServer.class);
+
+	public static void main(String args[]) {
+		Session session = HibernateUtil.openSession();
+		try {
+			Class.forName("org.h2.Driver");
+			String jdbcString = "jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB";
+			Connection conn = DriverManager.getConnection(jdbcString);
+			PreparedStatement pstmt = conn.prepareStatement(
+					"insert into jmpData (cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what, toAddressSymbol, stack, stackBase) values (?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			//			int pk = 1;
+			//			pstmt.setLong(1, pk);
+			pstmt.setLong(1, 0x12345678);
+			for (int x = 2; x <= 29; x++) {
+				pstmt.setLong(x, x);
+			}
+			pstmt.addBatch();
+			//			pk++;
+			//
+			//			pstmt.setLong(1, pk);
+			pstmt.setLong(1, 0x98765432);
+			for (int x = 2; x <= 29; x++) {
+				pstmt.setLong(x, x);
+			}
+			pstmt.addBatch();
+			//			pk++;
+			pstmt.executeBatch();
+
+			PreparedStatement pstmt2 = conn
+					.prepareStatement("insert into parameter (parameterId, name, type, size, location, value, jmpData_jmpDataId) values (null, ?, ?, ?, ?, ?, ?);");
+			pstmt2.setString(1, "name1");
+			pstmt2.setInt(2, 0);
+			for (int x = 3; x <= 5; x++) {
+				pstmt2.setLong(x, x);
+			}
+			pstmt2.setInt(6, 1);
+			pstmt2.addBatch();
+
+			pstmt2.setString(1, "name2");
+			pstmt2.setInt(2, 0);
+			for (int x = 3; x <= 5; x++) {
+				pstmt2.setLong(x, x);
+			}
+			pstmt2.setInt(6, 1);
+			pstmt2.addBatch();
+			pstmt2.executeBatch();
+			Criteria countCriteria = session.createCriteria(JmpData.class);
+			countCriteria.setProjection(Projections.rowCount());
+			long count = (long) countCriteria.uniqueResult();
+			System.out.println("count=" + count);
+
+			////////////////
+			Criteria criteria = session.createCriteria(JmpData.class);
+			criteria.setMaxResults(50);
+			criteria.add(Restrictions.ge("jmpDataId", 0));
+			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+			Iterator<JmpData> iterator = criteria.list().iterator();
+			int c = 0;
+			while (iterator.hasNext()) {
+				JmpData d = iterator.next();
+				System.out.println(d.parameters.size());
+				c++;
+			}
+			System.out.println("c=" + c);
+
+			////////////////
+
+			Query query;
+			Query countQuery;
+			String where1 = "";
+			where1 += " and (fromAddressDescription like '%%'";
+			where1 += " or toAddressDescription like '%%'";
+			where1 += " or fromAddress_DW_AT_name like '%%'";
+			where1 += " or toAddress_DW_AT_name like '%%')";
+			query = session.createSQLQuery(
+					"SELECT a.* from JMPDATA as a where (toAddressSymbol!=null or toAddressSymbol!='')"
+							+ where1)
+					.addEntity(JmpData.class);
+
+			query.setMaxResults(50);
+			query.setFirstResult(0);
+			//query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+			iterator = query.list().iterator();
+			c = 0;
+			while (iterator.hasNext()) {
+				JmpData d = iterator.next();
+				System.out.println(d.parameters.size());
+				c++;
+			}
+			System.out.println("c=" + c);
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		HibernateUtil.getSessionFactory().close();
+	}
 
 	public void run2() {
 		final Session session = HibernateUtil.openSession();
@@ -58,8 +158,8 @@ public class DBThread implements Runnable {
 				int count = JmpSocketServer.jmpDataVector.size();
 				if (count > 0) {
 					Connection conn = DriverManager.getConnection(jdbcString);
-					PreparedStatement pstmt = conn
-							.prepareStatement("insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what, toAddressSymbol, stack, stackBase) values (?, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+					PreparedStatement pstmt = conn.prepareStatement(
+							"insert into jmpData (jmpDataId, cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what, toAddressSymbol, stack, stackBase) values (?, ?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
 
 					Vector<JmpData> temp = new Vector<JmpData>();
 					int oldPk = pk;
