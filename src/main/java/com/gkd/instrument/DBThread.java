@@ -27,7 +27,7 @@ public class DBThread implements Runnable {
 		Session session = HibernateUtil.openSession();
 		try {
 			Class.forName("org.h2.Driver");
-			String jdbcString = "jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB";
+			String jdbcString = "jdbc:h2:" + new File(".").getAbsolutePath() + "/jmpDB;TRACE_LEVEL_SYSTEM_OUT=2";
 			Connection conn = DriverManager.getConnection(jdbcString);
 			PreparedStatement pstmt = conn.prepareStatement(
 					"insert into jmpData (cs, date, deep, ds, eax, ebp, ebx, ecx, edi, edx, es, esi, esp, fromAddress, fromAddressDescription, fs, gs, lineNo, segmentEnd, segmentStart, ss, toAddress, toAddressDescription, fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeep, what, toAddressSymbol, stack, stackBase) values (?, CURRENT_TIMESTAMP(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
@@ -82,6 +82,9 @@ public class DBThread implements Runnable {
 			while (iterator.hasNext()) {
 				JmpData d = iterator.next();
 				System.out.println(d.parameters.size());
+				for (Parameter p : d.parameters) {
+					System.out.println("\t" + p.name);
+				}
 				c++;
 			}
 			System.out.println("c=" + c);
@@ -89,25 +92,24 @@ public class DBThread implements Runnable {
 			////////////////
 
 			Query query;
-			Query countQuery;
 			String where1 = "";
 			where1 += " and (fromAddressDescription like '%%'";
 			where1 += " or toAddressDescription like '%%'";
 			where1 += " or fromAddress_DW_AT_name like '%%'";
 			where1 += " or toAddress_DW_AT_name like '%%')";
-			query = session.createSQLQuery(
-					"SELECT a.* from JMPDATA as a where (toAddressSymbol!=null or toAddressSymbol!='')"
-							+ where1)
-					.addEntity(JmpData.class);
+			query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (toAddressSymbol!=null or toAddressSymbol!='')" + where1).addEntity(JmpData.class);
 
 			query.setMaxResults(50);
 			query.setFirstResult(0);
 			//query.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-			iterator = query.list().iterator();
+			Iterator<JmpData> iterator2 = query.list().iterator();
 			c = 0;
-			while (iterator.hasNext()) {
-				JmpData d = iterator.next();
+			while (iterator2.hasNext()) {
+				JmpData d = iterator2.next();
 				System.out.println(d.parameters.size());
+				for (Parameter p : d.parameters) {
+					System.out.println("\t" + p.name);
+				}
 				c++;
 			}
 			System.out.println("c=" + c);
