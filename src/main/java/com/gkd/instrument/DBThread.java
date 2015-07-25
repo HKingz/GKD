@@ -67,6 +67,7 @@ public class DBThread implements Runnable {
 			pstmt2.setInt(6, 1);
 			pstmt2.addBatch();
 			pstmt2.executeBatch();
+
 			Criteria countCriteria = session.createCriteria(JmpData.class);
 			countCriteria.setProjection(Projections.rowCount());
 			long count = (long) countCriteria.uniqueResult();
@@ -88,7 +89,6 @@ public class DBThread implements Runnable {
 				c++;
 			}
 			System.out.println("c=" + c);
-
 			////////////////
 
 			Query query;
