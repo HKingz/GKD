@@ -57,10 +57,10 @@ public class JmpSocketServer implements Runnable {
 
 	public static Statistic statistic = new Statistic();
 
-	HashMap<Long, Hashtable<String, DwarfParameter>> toAddressCache = new HashMap<Long, Hashtable<String, DwarfParameter>>();
+	HashMap<Long, Hashtable<String, DwarfParameter>> parametersCache = new HashMap<Long, Hashtable<String, DwarfParameter>>();
 	HashMap<Long, DebugInfoEntry> fromAddressCache = new HashMap<Long, DebugInfoEntry>();
 
-//	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
+	//	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
 
 	final int STACK_SIZE = 256;
 
@@ -322,45 +322,19 @@ public class JmpSocketServer implements Runnable {
 
 						Hashtable<String, DwarfParameter> parameters;
 
-						if (toAddressCache.containsKey(toAddress[x])) {
-							parameters = toAddressCache.get(toAddress[x]);
+						if (parametersCache.containsKey(toAddress[x])) {
+							parameters = parametersCache.get(toAddress[x]);
 						} else {
 							parameters = DwarfLib.getParameters(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
-							toAddressCache.put(toAddress[x], parameters);
+							parametersCache.put(toAddress[x], parameters);
 						}
-
-						//CIE
-//						long cfsBaseOffset = -1;
-//
-//						if (cfaBaseOffsetCache.containsKey(toAddress[x])) {
-//							cfsBaseOffset = cfaBaseOffsetCache.get(toAddress[x]);
-//						} else {
-//							for (int z = 0; z < GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.size(); z++) {
-//								if (GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetailsKeys.get(z).equals("DW_CFA_def_cfa")) {
-//									cfsBaseOffset = (long) GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs.get(0).ehFrames.get(0).fieDetails.get(z)[2];
-//								}
-//							}
-//
-//							cfaBaseOffsetCache.put(toAddress[x], cfsBaseOffset);
-//						}
-						// shit, i hardcoded dwarfs.get(0), fix later
-						//System.out.println("cfsBaseOffset=" + cfsBaseOffset);
-						//CIE end
 
 						if (parameters != null) {
 							for (String parameterName : parameters.keySet()) {
 								DwarfParameter parameter = parameters.get(parameterName);
-								//								System.out.println("write " + parameter.offset);
-								//System.out.println("\tParameter=" + parameter);
-								//								out.writeByte(0);
-								//								out.writeLong(Long.reverseBytes(parameter.offset));
-
-								//								tempBytes = new byte[8];
-								//								in.readFully(tempBytes);
-								//								long value = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getLong();
-
-								long value = CommonLib.getInt(stack[x], (int) parameter.offset);
-								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, parameter.size, String.valueOf(parameter.offset), value));
+								long value = CommonLib.getInt(stack[x], (int) parameter.parameterOffset);
+								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, parameter.size, stackBase[x] + parameter.parameterOffset,
+										String.valueOf(parameter.parameterOffset), value));
 							}
 						}
 

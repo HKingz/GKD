@@ -49,11 +49,11 @@ public class DBThread implements Runnable {
 			//			pk++;
 			pstmt.executeBatch();
 
-			PreparedStatement pstmt2 = conn
-					.prepareStatement("insert into parameter (parameterId, name, type, size, location, value, jmpData_jmpDataId) values (null, ?, ?, ?, ?, ?, ?);");
+			PreparedStatement pstmt2 = conn.prepareStatement(
+					"insert into parameter (parameterId, name, type, size, physicalAddress, parameterOffset, value, jmpData_jmpDataId) values (null, ?, ?, ?, ?, ?, ?, ?);");
 			pstmt2.setString(1, "name1");
 			pstmt2.setInt(2, 0);
-			for (int x = 3; x <= 5; x++) {
+			for (int x = 3; x <= 6; x++) {
 				pstmt2.setLong(x, x);
 			}
 			pstmt2.setInt(6, 1);
@@ -213,16 +213,17 @@ public class DBThread implements Runnable {
 
 					pstmt.executeBatch();
 
-					PreparedStatement pstmt2 = conn
-							.prepareStatement("insert into parameter (parameterId, name, type, size, location, value, jmpData_jmpDataId) values (null, ?, ?, ?, ?, ?, ?);");
+					PreparedStatement pstmt2 = conn.prepareStatement(
+							"insert into parameter (parameterId, name, type, size, physicalAddress, parameterOffset, value, jmpData_jmpDataId) values (null, ?, ?, ?, ?, ?, ?, ?);");
 					for (JmpData jmpData : temp) {
 						for (Parameter parameter : jmpData.parameters) {
 							pstmt2.setString(1, parameter.name);
 							pstmt2.setString(2, parameter.type);
 							pstmt2.setInt(3, parameter.size);
-							pstmt2.setString(4, parameter.location);
-							pstmt2.setLong(5, parameter.value);
-							pstmt2.setInt(6, oldPk);
+							pstmt2.setLong(4, parameter.physicalAddress);
+							pstmt2.setString(5, parameter.parameterOffset);
+							pstmt2.setLong(6, parameter.value);
+							pstmt2.setInt(7, oldPk);
 							pstmt2.addBatch();
 						}
 						oldPk++;

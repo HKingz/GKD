@@ -1596,7 +1596,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					iterator = query.list().iterator();
 
 					int count = ((BigInteger) countQuery.uniqueResult()).intValue();
-					System.out.println("count=" + count);
+//					System.out.println("count=" + count);
 					jmpPager.maxPageNo = count / pageSize;
 					if (count % pageSize != 0) {
 						jmpPager.maxPageNo++;
@@ -1622,29 +1622,22 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 					iterator = criteria.list().iterator();
 
-					System.out.println("1");
 					// count
 					Criteria countCriteria = session.createCriteria(JmpData.class);
-					System.out.println("2");
 					if (withSymbolCheckBox.isSelected()) {
 						countCriteria.add(Restrictions.isNotNull("toAddressSymbol"));
 					}
-					System.out.println("3");
 					if (filterRawTableTextField.getText().length() > 0) {
 						countCriteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
 						countCriteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
 					}
-					System.out.println("4");
 					countCriteria.setProjection(Projections.rowCount());
-					System.out.println("5");
 					long count = (long) countCriteria.uniqueResult();
-					System.out.println("6");
-					System.out.println("count=" + count);
+//					System.out.println("count=" + count);
 					jmpPager.maxPageNo = (int) (count / pageSize);
 					if (count % pageSize != 0) {
 						jmpPager.maxPageNo++;
 					}
-					System.out.println("7");
 				}
 				if (iterator != null) {
 					jmpTableModel.removeAll();
@@ -1654,7 +1647,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 				}
 
-				System.out.println("8");
 				session.close();
 
 				jmpTableModel.fireTableDataChanged();
