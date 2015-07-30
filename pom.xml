@@ -3,7 +3,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.peter</groupId>
 	<artifactId>GKD</artifactId>
-	<version>20150728</version>
 	<name>General Kernel Debugger</name>
 	<description>GKD is a gui debug tool for kernel development. It was originally call &quot;peter-bochs&quot; (http://peter-bochs.googlecode.com). Bochs' command line is not productive, so I make a GUI for it. Now, I adding support to QEMU is rename the project to GKD. Tutorials of peter-bochs can be found in https://code.google.com/p/peter-bochs/w/list</description>
 	<url>http://peter.kingofcoders.com</url>
@@ -254,4 +253,5 @@
 			<comments>A business-friendly license</comments>
 		</license>
 	</licenses>
+	<version>20150731</version>
 </project>
