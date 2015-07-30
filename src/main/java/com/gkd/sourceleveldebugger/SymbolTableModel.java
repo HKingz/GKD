@@ -7,7 +7,6 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.log4j.Logger;
 
 import com.gkd.MyLanguage;
-import com.gkd.TSSPanel;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {

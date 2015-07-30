@@ -1,7 +1,5 @@
 package com.gkd;
 
-import info.clearthought.layout.TableLayout;
-
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -43,6 +41,8 @@ import com.gkd.stub.VMController;
 import com.jgoodies.forms.layout.CellConstraints;
 import com.jgoodies.forms.layout.FormLayout;
 import com.peterswing.CommonLib;
+
+import info.clearthought.layout.TableLayout;
 
 public class TSSPanel extends JPanel {
 	private JTable table1;
@@ -125,8 +125,8 @@ public class TSSPanel extends JPanel {
 			jSplitPane1.add(jScrollPane3, JSplitPane.RIGHT);
 			jScrollPane3.setPreferredSize(new java.awt.Dimension(457, 600));
 
-			TableModel jTSSTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("Offset"), MyLanguage.getString("Field"),
-					MyLanguage.getString("Value"), "" });
+			TableModel jTSSTableModel = new DefaultTableModel(new String[][] {},
+					new String[] { MyLanguage.getString("Offset"), MyLanguage.getString("Field"), MyLanguage.getString("Value"), "" });
 			tssTable = new JTable();
 			jScrollPane3.setViewportView(tssTable);
 			tssTable.setModel(jTSSTableModel);

@@ -1,7 +1,5 @@
 package com.gkd;
 
-import info.clearthought.layout.TableLayout;
-
 import java.math.BigInteger;
 
 import javax.swing.JFrame;
@@ -13,6 +11,8 @@ import javax.swing.table.TableModel;
 
 import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
+
+import info.clearthought.layout.TableLayout;
 
 public class HelperDialog extends javax.swing.JDialog {
 	BigInteger address;
@@ -79,10 +79,8 @@ public class HelperDialog extends javax.swing.JDialog {
 					model.addRow(new String[] { String.valueOf(x / 8), "Data descriptor, value=0x" + Long.toHexString(value) });
 					// parseDataDescriptor();
 				} else if (bit[44] == 0 && bit[43] == 0 && bit[42] == 0 && bit[41] == 1 && bit[40] == 0) {
-					model.addRow(new String[] {
-							String.valueOf(x / 8),
-							"LDT descriptor, value=0x" + Long.toHexString(value) + ", base=0x" + Long.toHexString(CommonLib.getInt(b[2], b[3], b[4], b[7])) + ", limit=0x"
-									+ Long.toHexString(CommonLib.getShort(b[0], b[1])) });
+					model.addRow(new String[] { String.valueOf(x / 8), "LDT descriptor, value=0x" + Long.toHexString(value) + ", base=0x"
+							+ Long.toHexString(CommonLib.getInt(b[2], b[3], b[4], b[7])) + ", limit=0x" + Long.toHexString(CommonLib.getShort(b[0], b[1])) });
 					// parseLDT();
 				} else if (bit[44] == 0 && bit[42] == 0 && bit[40] == 1) {
 					model.addRow(new String[] { String.valueOf(x / 8), "TSS descriptor, value=0x" + Long.toHexString(value) });

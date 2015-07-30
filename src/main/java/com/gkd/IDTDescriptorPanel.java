@@ -205,8 +205,8 @@ public class IDTDescriptorPanel extends JPanel {
 			JScrollPane pane = new JScrollPane();
 			tabbedPane1.addTab(MyLanguage.getString("Descriptor"), null, pane, null);
 			JTable table = new JTable();
-			DefaultTableModel model2 = new DefaultTableModel(new String[][] {}, new String[] { "No.", "Type", "Value", "Base", "Limit", "A", "R/W", "C/E", "X", "S", "DPL", "P",
-					"AVL", "D/B", "G" });
+			DefaultTableModel model2 = new DefaultTableModel(new String[][] {},
+					new String[] { "No.", "Type", "Value", "Base", "Limit", "A", "R/W", "C/E", "X", "S", "DPL", "P", "AVL", "D/B", "G" });
 
 			if (limit > 1000) {
 				limit = 1000;

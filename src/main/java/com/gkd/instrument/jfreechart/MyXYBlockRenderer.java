@@ -37,6 +37,7 @@ public class MyXYBlockRenderer extends AbstractXYItemRenderer implements XYItemR
 
 	private PaintScale paintScale;
 	private int realX = -1;
+
 	public int getRealX() {
 		return realX;
 	}

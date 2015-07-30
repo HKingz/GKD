@@ -40,11 +40,11 @@ public class TestJFrame extends JFrame {
 		BochsSegmentRegister bochsSegmentRegister = new BochsSegmentRegister();
 		bochsSegmentRegister.setBounds(66, 89, 134, 28);
 		contentPane.add(bochsSegmentRegister);
-		
+
 		JCheckBox btnNewButton = new JCheckBox("New button");
 		btnNewButton.setBounds(58, 46, 117, 29);
 		contentPane.add(btnNewButton);
-		
+
 		SegmentRegister segmentRegister = SegmentRegisterFactory.createSegmentRegister();
 		segmentRegister.setBounds(66, 200, 172, 34);
 		contentPane.add(segmentRegister);

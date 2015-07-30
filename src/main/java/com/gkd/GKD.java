@@ -1,7 +1,5 @@
 package com.gkd;
 
-import info.clearthought.layout.TableLayout;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -144,6 +142,8 @@ import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialogEventListener;
 import com.peterswing.advancedswing.jvmdialog.JVMInfoDialog;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
+
+import info.clearthought.layout.TableLayout;
 
 @SuppressWarnings("serial")
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
@@ -492,8 +492,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton jumpToInstructionButton;
 	public static JLabel instrumentStatusLabel;
 
-	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"),
-			"Disp Enb Address", MyLanguage.getString("Hit") }) {
+	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {},
+			new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit") }) {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
@@ -2876,8 +2876,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		disableBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			VMController.getVM().disablePhysicalBreakpoint(
-					CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
+			VMController.getVM()
+					.disablePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
@@ -3786,12 +3786,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void searchMemoryButtonActionPerformed(ActionEvent evt) {
 		try {
 			if (this.searchMemoryToComboBox.getSelectedItem().toString().trim().startsWith("+")) {
-				this.searchMemoryToComboBox.setSelectedItem("0x"
-						+ Long.toHexString(CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem().toString())
-								+ CommonLib.string2long(this.searchMemoryToComboBox.getSelectedItem().toString().substring(1))));
+				this.searchMemoryToComboBox.setSelectedItem("0x" + Long.toHexString(CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem().toString())
+						+ CommonLib.string2long(this.searchMemoryToComboBox.getSelectedItem().toString().substring(1))));
 			}
-			new SearchMemoryDialog(this, this.searchMemoryTable, this.searchMemoryTextField.getText(), CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem()
-					.toString()), CommonLib.string2long(this.searchMemoryToComboBox.getSelectedItem().toString())).setVisible(true);
+			new SearchMemoryDialog(this, this.searchMemoryTable, this.searchMemoryTextField.getText(),
+					CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem().toString()),
+					CommonLib.string2long(this.searchMemoryToComboBox.getSelectedItem().toString())).setVisible(true);
 		} catch (Exception ex) {
 
 		}
@@ -4321,15 +4321,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			new Thread("JRunningLabel thread") {
 				public void run() {
 					if (Setting.getInstance().currentLanguage.equals("zh_TW")) {
-						jRunningLabel
-								.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
-										+ url
-										+ "\" /><br><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????www.kingofcoders.com</a></center></html>");
+						jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
+								+ "\" /><br><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????www.kingofcoders.com</a></center></html>");
 					} else if (Setting.getInstance().currentLanguage.equals("zh_CN")) {
-						jRunningLabel
-								.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
-										+ url
-										+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">??????????????????????????????????????????www.kingofcoders.com</a></center></html>");
+						jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
+								+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">??????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 					} else {
 						jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /></center></html>");
 					}
@@ -4778,9 +4774,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
-				BigInteger gdtBase = CommonLib.getBigInteger(
-						VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()),
-								CommonLib.string2int(this.registerPanel.gdtrTextField.getText())), 0);
+				BigInteger gdtBase = CommonLib.getBigInteger(VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()),
+						CommonLib.string2int(this.registerPanel.gdtrTextField.getText())), 0);
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
 				int bytes[] = new int[8];
 				bytes = VMController.getVM().physicalMemory(gdtBase, 8);
@@ -5662,8 +5657,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getJSectionTable() {
 		if (elfSectionTable == null) {
-			TableModel jSectionTableModel = new DefaultTableModel(null, new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link",
-					"sh_info", "sh_addralign", "sh_entsize" });
+			TableModel jSectionTableModel = new DefaultTableModel(null,
+					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize" });
 			elfSectionTable = new JTable();
 			elfSectionTable.setModel(jSectionTableModel);
 			elfSectionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -6331,8 +6326,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			fastStepBochsButton = new JButton();
 			fastStepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 			fastStepBochsButton.setText(MyLanguage.getString("Fast_Step"));
-			fastStepBochsButton
-					.setToolTipText("<html><body>A faster step<br><br>It will only update:<br>1) Memory panel<br>2) Instruction panel<br>3) Register panel<br>4) EFlags</body></html>");
+			fastStepBochsButton.setToolTipText(
+					"<html><body>A faster step<br><br>It will only update:<br>1) Memory panel<br>2) Instruction panel<br>3) Register panel<br>4) EFlags</body></html>");
 			fastStepBochsButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					fastStepButtonActionPerformed(evt);
@@ -7048,70 +7043,53 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			GroupLayout jRunningPanelLayout = new GroupLayout((JComponent) runningPanel);
 			runningPanel.setLayout(jRunningPanelLayout);
 			runningPanel.setPreferredSize(new java.awt.Dimension(1073, 758));
-			jRunningPanelLayout.setHorizontalGroup(jRunningPanelLayout
-					.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(
-							jRunningPanelLayout
-									.createParallelGroup()
+			jRunningPanelLayout
+					.setHorizontalGroup(
+							jRunningPanelLayout.createSequentialGroup().addContainerGap()
 									.addGroup(
-											GroupLayout.Alignment.LEADING,
-											jRunningPanelLayout.createSequentialGroup().addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-													.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+											jRunningPanelLayout.createParallelGroup()
+													.addGroup(GroupLayout.Alignment.LEADING,
+															jRunningPanelLayout.createSequentialGroup()
+																	.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+																	.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+																			GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
+													.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
+															jRunningPanelLayout.createSequentialGroup().addGap(65).addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
+																	GroupLayout.PREFERRED_SIZE)
 													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-													.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
-									.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE)
-									.addGroup(
-											GroupLayout.Alignment.LEADING,
-											jRunningPanelLayout
-													.createSequentialGroup()
-													.addGap(65)
-													.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-													.addGroup(
-															jRunningPanelLayout
-																	.createParallelGroup()
-																	.addGroup(
-																			GroupLayout.Alignment.LEADING,
-																			jRunningPanelLayout
-																					.createSequentialGroup()
-																					.addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-																					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																					.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158,
-																							GroupLayout.PREFERRED_SIZE))
-																	.addGroup(
-																			GroupLayout.Alignment.LEADING,
-																			jRunningPanelLayout
-																					.createSequentialGroup()
-																					.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
-																							LayoutStyle.ComponentPlacement.INDENT)
-																					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-																					.addGap(0, 25, Short.MAX_VALUE))))));
-			jRunningPanelLayout.setVerticalGroup(jRunningPanelLayout
-					.createSequentialGroup()
-					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(
-							jRunningPanelLayout
-									.createParallelGroup(GroupLayout.Alignment.BASELINE)
+													.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING,
+															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
+															.addGroup(GroupLayout.Alignment.LEADING,
+																	jRunningPanelLayout.createSequentialGroup()
+																			.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
+																					LayoutStyle.ComponentPlacement.INDENT)
+																			.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+																			.addGap(0, 25, Short.MAX_VALUE))))));
+			jRunningPanelLayout
+					.setVerticalGroup(jRunningPanelLayout.createSequentialGroup().addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 									.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 											GroupLayout.PREFERRED_SIZE)
-									.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
-									.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+							.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
+							.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(
-							jRunningPanelLayout
-									.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE)
-									.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+									GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getJTextArea1(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
 		}
 		return runningPanel;
@@ -7122,15 +7100,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			runningLabel = new JLabel();
 			URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader_red.gif");
 			if (Setting.getInstance().currentLanguage.equals("zh_TW")) {
-				runningLabel
-						.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
-								+ url
-								+ "\" /><br><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">?????????????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
+				runningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
+						+ "\" /><br><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">?????????????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 			} else if (Setting.getInstance().currentLanguage.equals("zh_CN")) {
-				runningLabel
-						.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
-								+ url
-								+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
+				runningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
+						+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 			} else {
 				runningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /></center></html>");
 			}

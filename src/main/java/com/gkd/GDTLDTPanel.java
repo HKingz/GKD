@@ -101,12 +101,12 @@ public class GDTLDTPanel extends JPanel {
 					String gdtNoHex = String.format("0x%02x", gdtNo);
 					result = GKD.commandReceiver.getCommandResult("LDT[" + gdtNoHex + "]");
 				}
-
+			
 				GKD.commandReceiver.clearBuffer();
 				GKD.sendBochsCommand("x /8bx " + "0x" + gdtAddress.add(BigInteger.valueOf(gdtNo * 8)).toString(16));
 				result = GKD.commandReceiver.getCommandResult(String.format("%08x", gdtAddress.add(BigInteger.valueOf(gdtNo * 8))));
 				String lines[] = result.split("\n");
-
+			
 				String byteStr[] = lines[0].replaceFirst("^.*>:\t", "").split("\t");
 				for (int x = 0; x < 8; x++) {
 					bytes[x] = (byte) Long.parseLong(byteStr[x].substring(2), 16);
@@ -225,8 +225,8 @@ public class GDTLDTPanel extends JPanel {
 			JScrollPane pane = new JScrollPane();
 			tabbedPane1.addTab(MyLanguage.getString("Descriptor"), null, pane, null);
 			JTable table = new JTable();
-			DefaultTableModel model2 = new DefaultTableModel(new String[][] {}, new String[] { "No.", "Type", "Value", "Base", "Limit", "A", "R/W", "C/E", "X", "S", "DPL", "P",
-					"AVL", "D/B", "G" });
+			DefaultTableModel model2 = new DefaultTableModel(new String[][] {},
+					new String[] { "No.", "Type", "Value", "Base", "Limit", "A", "R/W", "C/E", "X", "S", "DPL", "P", "AVL", "D/B", "G" });
 
 			if (limit > 1000) {
 				limit = 1000;

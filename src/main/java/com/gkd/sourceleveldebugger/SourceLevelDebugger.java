@@ -394,14 +394,14 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 					// dialog.setSize(new Dimension(750, 150));
 					dialog.addCancelEventListener(this);
 					CommonLib.centerDialog(dialog);
-
+		
 					Thread thread = new Thread() {
 						public void run() {
 							try {
 								String objectFile = selectedTreeNode.file.getAbsolutePath();
 								Process process = Runtime.getRuntime().exec("objdump -dlS " + objectFile);
 								InputStream input = process.getInputStream();
-
+		
 								String str = "";
 								byte b[] = new byte[10240000];
 								int len;

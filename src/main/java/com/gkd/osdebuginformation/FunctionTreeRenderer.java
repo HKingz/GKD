@@ -16,7 +16,7 @@ public class FunctionTreeRenderer extends JLabel implements TreeCellRenderer {
 		this.setText(node.toString());
 		if (hasFocus) {
 			this.setBackground(selectedBackgroundColor);
-		}else{
+		} else {
 			this.setBackground(Color.white);
 		}
 		this.setOpaque(true);

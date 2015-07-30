@@ -9,7 +9,6 @@ import javax.swing.JViewport;
 
 import org.apache.log4j.Logger;
 
-import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxPoint;

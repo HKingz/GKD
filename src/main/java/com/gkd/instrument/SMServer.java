@@ -5,8 +5,6 @@ import javax.swing.JTextArea;
 import org.apache.log4j.Logger;
 
 import com.gkd.Global;
-import com.gkd.instrument.newcallgraph.UIComponent;
-
 
 public class SMServer implements Runnable {
 	JTextArea jTextArea;

@@ -200,8 +200,8 @@ public class JOSDebugInformationPanel extends JPanel {
 							scrollPane7 = new JScrollPane();
 							memoryPanel.add(scrollPane7, BorderLayout.CENTER);
 							{
-								TableModel memoryTableModel = new DefaultTableModel(new String[][] { { "One", "Two" }, { "Three", "Four" } }, new String[] { "Column 1",
-										"Column 2" });
+								TableModel memoryTableModel = new DefaultTableModel(new String[][] { { "One", "Two" }, { "Three", "Four" } },
+										new String[] { "Column 1", "Column 2" });
 								memoryTable = new JTable();
 								scrollPane7.setViewportView(memoryTable);
 								memoryTable.setModel(memoryTableModel);

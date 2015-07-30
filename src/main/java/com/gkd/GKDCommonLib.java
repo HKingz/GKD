@@ -123,12 +123,12 @@ public class GKDCommonLib {
 		sheet.setColumnWidth(6, 30000);
 
 		// Create a row and put some cells in it. Rows are 0 based.
-		String columnNames[] = { "row no.", "time", "ptime", "cs", "eip", "instruction", "c code", "ds", "es", "fs", "gs", "ss", "eflags", "eax", "ebx", "ecx", "edx", "esi",
-				"edi", "ebp", "esp", "cr0", "cr2", "cr3", "cr4", "gdtr", "ldtr", "idtr", "tr" };
-		Vector data[] = { AllRegisters.time, AllRegisters.ptime, AllRegisters.cs, AllRegisters.eip, AllRegisters.instructions, AllRegisters.cCode, AllRegisters.ds,
-				AllRegisters.es, AllRegisters.fs, AllRegisters.gs, AllRegisters.ss, AllRegisters.eflags, AllRegisters.eax, AllRegisters.ebx, AllRegisters.ecx, AllRegisters.edx,
-				AllRegisters.esi, AllRegisters.edi, AllRegisters.ebp, AllRegisters.esp, AllRegisters.cr0, AllRegisters.cr2, AllRegisters.cr3, AllRegisters.cr4, AllRegisters.gdtr,
-				AllRegisters.ldtr, AllRegisters.idtr, AllRegisters.tr };
+		String columnNames[] = { "row no.", "time", "ptime", "cs", "eip", "instruction", "c code", "ds", "es", "fs", "gs", "ss", "eflags", "eax", "ebx", "ecx", "edx", "esi", "edi",
+				"ebp", "esp", "cr0", "cr2", "cr3", "cr4", "gdtr", "ldtr", "idtr", "tr" };
+		Vector data[] = { AllRegisters.time, AllRegisters.ptime, AllRegisters.cs, AllRegisters.eip, AllRegisters.instructions, AllRegisters.cCode, AllRegisters.ds, AllRegisters.es,
+				AllRegisters.fs, AllRegisters.gs, AllRegisters.ss, AllRegisters.eflags, AllRegisters.eax, AllRegisters.ebx, AllRegisters.ecx, AllRegisters.edx, AllRegisters.esi,
+				AllRegisters.edi, AllRegisters.ebp, AllRegisters.esp, AllRegisters.cr0, AllRegisters.cr2, AllRegisters.cr3, AllRegisters.cr4, AllRegisters.gdtr, AllRegisters.ldtr,
+				AllRegisters.idtr, AllRegisters.tr };
 		Row row = sheet.createRow(0);
 
 		Cell cell;

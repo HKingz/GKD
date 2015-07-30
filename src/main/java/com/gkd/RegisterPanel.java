@@ -28,8 +28,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
-import net.miginfocom.swing.MigLayout;
-
 import org.apache.log4j.Logger;
 
 import com.gkd.components.segmentregister.SegmentRegister;
@@ -38,6 +36,8 @@ import com.gkd.components.segmentregister.SegmentRegisterHeader;
 import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.jprogressbardialog.JProgressBarDialog;
+
+import net.miginfocom.swing.MigLayout;
 
 public class RegisterPanel extends JPanel {
 	private JLabel eaxLabel;

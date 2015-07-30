@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 
 import org.apache.log4j.Logger;
 
-import com.gkd.GKD;
 import com.gkd.Global;
 import com.peterswing.CommonLib;
 

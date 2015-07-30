@@ -1,7 +1,5 @@
 package com.gkd;
 
-import info.clearthought.layout.TableLayout;
-
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +25,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
+
+import info.clearthought.layout.TableLayout;
 
 public class SettingDialog extends JDialog {
 	private JCheckBox checkBox1;
@@ -123,8 +123,8 @@ public class SettingDialog extends JDialog {
 
 			jPanel1 = new JPanel();
 			jPanel3.add(jPanel1, "0, 2, 3, 2");
-			TableLayout jPanel1Layout = new TableLayout(new double[][] { { 34.0, TableLayout.FILL, TableLayout.FILL, TableLayout.PREFERRED },
-					{ 15.0, 15.0, 15.0, TableLayout.PREFERRED } });
+			TableLayout jPanel1Layout = new TableLayout(
+					new double[][] { { 34.0, TableLayout.FILL, TableLayout.FILL, TableLayout.PREFERRED }, { 15.0, 15.0, 15.0, TableLayout.PREFERRED } });
 			jPanel1Layout.setHGap(10);
 			jPanel1Layout.setVGap(5);
 			jPanel1.setLayout(jPanel1Layout);
@@ -234,8 +234,8 @@ public class SettingDialog extends JDialog {
 
 			jPanel2 = new JPanel();
 			jPanel3.add(jPanel2, "0, 4, 3, 4");
-			TableLayout jPanel2Layout = new TableLayout(new double[][] { { 34.0, TableLayout.FILL, TableLayout.FILL, TableLayout.PREFERRED },
-					{ 15.0, 15.0, 15.0, TableLayout.FILL } });
+			TableLayout jPanel2Layout = new TableLayout(
+					new double[][] { { 34.0, TableLayout.FILL, TableLayout.FILL, TableLayout.PREFERRED }, { 15.0, 15.0, 15.0, TableLayout.FILL } });
 			jPanel2Layout.setHGap(10);
 			jPanel2Layout.setVGap(5);
 			jPanel2.setLayout(jPanel2Layout);
@@ -380,58 +380,39 @@ public class SettingDialog extends JDialog {
 				}
 			});
 
+			jProfilingPanelLayout.setHorizontalGroup(jProfilingPanelLayout.createSequentialGroup().addContainerGap()
+					.addGroup(jProfilingPanelLayout.createParallelGroup()
+							.addGroup(GroupLayout.Alignment.LEADING,
+									jProfilingPanelLayout.createSequentialGroup()
+											.addComponent(jInterruptProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 203, GroupLayout.PREFERRED_SIZE).addGap(0, 208, Short.MAX_VALUE))
+							.addGroup(GroupLayout.Alignment.LEADING,
+									jProfilingPanelLayout.createSequentialGroup().addComponent(jUpdateGraphCheckBox, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
+											.addGap(0, 268, Short.MAX_VALUE))
+					.addGroup(GroupLayout.Alignment.LEADING,
+							jProfilingPanelLayout.createSequentialGroup().addComponent(jJmpProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE).addGap(0,
+									251, Short.MAX_VALUE))
+					.addGroup(GroupLayout.Alignment.LEADING,
+							jProfilingPanelLayout.createSequentialGroup().addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 212, GroupLayout.PREFERRED_SIZE)
+									.addGap(0, 199, Short.MAX_VALUE))
+							.addComponent(jLabel1, GroupLayout.Alignment.LEADING, 0, 411, Short.MAX_VALUE)
+							.addComponent(jProfileInfoLabel, GroupLayout.Alignment.LEADING, 0, 411, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
+									jProfilingPanelLayout.createSequentialGroup().addGap(19)
+											.addComponent(jHitZoneCheckBox, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(jCustomZoneCheckBox, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE).addGap(0, 167, Short.MAX_VALUE)))
+					.addContainerGap());
 			jProfilingPanelLayout
-					.setHorizontalGroup(jProfilingPanelLayout
-							.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(
-									jProfilingPanelLayout
-											.createParallelGroup()
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													jProfilingPanelLayout.createSequentialGroup()
-															.addComponent(jInterruptProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 203, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 208, Short.MAX_VALUE))
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													jProfilingPanelLayout.createSequentialGroup()
-															.addComponent(jUpdateGraphCheckBox, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 268, Short.MAX_VALUE))
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													jProfilingPanelLayout.createSequentialGroup()
-															.addComponent(jJmpProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 251, Short.MAX_VALUE))
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													jProfilingPanelLayout.createSequentialGroup()
-															.addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 212, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 199, Short.MAX_VALUE))
-											.addComponent(jLabel1, GroupLayout.Alignment.LEADING, 0, 411, Short.MAX_VALUE)
-											.addComponent(jProfileInfoLabel, GroupLayout.Alignment.LEADING, 0, 411, Short.MAX_VALUE)
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													jProfilingPanelLayout.createSequentialGroup().addGap(19)
-															.addComponent(jHitZoneCheckBox, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-															.addComponent(jCustomZoneCheckBox, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 167, Short.MAX_VALUE))).addContainerGap());
-			jProfilingPanelLayout.setVerticalGroup(jProfilingPanelLayout
-					.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(jProfileInfoLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addGap(24)
-					.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-					.addGroup(
-							jProfilingPanelLayout
-									.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.setVerticalGroup(jProfilingPanelLayout.createSequentialGroup().addContainerGap()
+							.addComponent(jProfileInfoLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(24)
+							.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+							.addGroup(jProfilingPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 									.addComponent(jHitZoneCheckBox, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 											GroupLayout.PREFERRED_SIZE)
-									.addComponent(jCustomZoneCheckBox, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE)).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+							.addComponent(jCustomZoneCheckBox, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 					.addComponent(jJmpProfilingCheckBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 					.addComponent(jInterruptProfilingCheckBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -439,8 +420,8 @@ public class SettingDialog extends JDialog {
 					.addContainerGap(50, Short.MAX_VALUE));
 
 			jThirdPartyProgramPanel = new JPanel();
-			TableLayout jThirdPartyProgramPanelLayout = new TableLayout(new double[][] { { 7.0, TableLayout.FILL, TableLayout.FILL, 159.0, 54.0, 7.0 },
-					{ 7.0, 15.0, 20.0, 7.0, 20.0, TableLayout.FILL } });
+			TableLayout jThirdPartyProgramPanelLayout = new TableLayout(
+					new double[][] { { 7.0, TableLayout.FILL, TableLayout.FILL, 159.0, 54.0, 7.0 }, { 7.0, 15.0, 20.0, 7.0, 20.0, TableLayout.FILL } });
 			jThirdPartyProgramPanelLayout.setHGap(5);
 			jThirdPartyProgramPanelLayout.setVGap(5);
 			jThirdPartyProgramPanel.setLayout(jThirdPartyProgramPanelLayout);

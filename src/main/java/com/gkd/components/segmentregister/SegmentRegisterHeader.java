@@ -16,7 +16,7 @@ public class SegmentRegisterHeader extends JPanel {
 		setLayout(new MigLayout("insets 0 0 0 0", "[grow][70px][70px]", "[]"));
 
 		valueLabel = new JLabel("Value");
-		Font font=new Font(valueLabel.getFont().getFamily(),Font.PLAIN,8);
+		Font font = new Font(valueLabel.getFont().getFamily(), Font.PLAIN, 8);
 		valueLabel.setFont(font);
 		add(valueLabel, "cell 0 0,growx,alignx left");
 

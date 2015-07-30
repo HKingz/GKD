@@ -18,7 +18,9 @@ public class LogFileTailer extends Thread {
 	private File logfile;
 
 	/**
-	 * Defines whether the log file tailer should include the entire contents of the exising log file or tail from the end of the file when the tailer starts
+	 * Defines whether the log file tailer should include the entire contents of
+	 * the exising log file or tail from the end of the file when the tailer
+	 * starts
 	 */
 	private boolean startAtBeginning = false;
 
@@ -33,7 +35,8 @@ public class LogFileTailer extends Thread {
 	private Set listeners = new HashSet();
 
 	/**
-	 * Creates a new log file tailer that tails an existing file and checks the file for updates every 5000ms
+	 * Creates a new log file tailer that tails an existing file and checks the
+	 * file for updates every 5000ms
 	 */
 	public LogFileTailer(File file) {
 		this.logfile = file;
@@ -45,9 +48,12 @@ public class LogFileTailer extends Thread {
 	 * @param file
 	 *            The file to tail
 	 * @param sampleInterval
-	 *            How often to check for updates to the log file (default = 5000ms)
+	 *            How often to check for updates to the log file (default =
+	 *            5000ms)
 	 * @param startAtBeginning
-	 *            Should the tailer simply tail or should it process the entire file and continue tailing (true) or simply start tailing from the end of the file
+	 *            Should the tailer simply tail or should it process the entire
+	 *            file and continue tailing (true) or simply start tailing from
+	 *            the end of the file
 	 */
 	public LogFileTailer(File file, long sampleInterval, boolean startAtBeginning) {
 		this.logfile = file;

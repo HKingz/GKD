@@ -63,8 +63,8 @@ public class ProjectTreeRenderer extends JPanel implements TreeCellRenderer {
 		Dimension nameLabelDimension = nameLabel.getPreferredSize();
 		Dimension sizeLabelDimension = sizeLabel.getPreferredSize();
 
-		return new Dimension(20 + nameLabelDimension.width + sizeLabelDimension.width, nameLabelDimension.height < sizeLabelDimension.height ? sizeLabelDimension.height
-				: nameLabelDimension.height);
+		return new Dimension(20 + nameLabelDimension.width + sizeLabelDimension.width,
+				nameLabelDimension.height < sizeLabelDimension.height ? sizeLabelDimension.height : nameLabelDimension.height);
 	}
 
 }

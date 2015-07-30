@@ -155,8 +155,8 @@ public class CallGraphPanel extends JPanel {
 			cells.add(cell);
 		}
 
-//		graphxComponent.updateComponents();
-//		logger.debug(">>"+graphxComponent.getGraph().getModel().getChildCount(graphxComponent.getGraph().getModel().getRoot()));
+		//		graphxComponent.updateComponents();
+		//		logger.debug(">>"+graphxComponent.getGraph().getModel().getChildCount(graphxComponent.getGraph().getModel().getRoot()));
 
 		Object edge = graphxComponent.getGraph().insertEdge(parent, null, null, cells.get(0), cells.get(1), "sourceRow=" + 2 + ";targetRow=" + 5);
 		//		graph.setSelectionCell(edge);

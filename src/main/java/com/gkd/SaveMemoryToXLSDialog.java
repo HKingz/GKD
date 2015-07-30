@@ -1,7 +1,5 @@
 package com.gkd;
 
-import info.clearthought.layout.TableLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -25,6 +23,8 @@ import javax.swing.UIManager;
 
 import com.gkd.stub.VMController;
 import com.peterswing.CommonLib;
+
+import info.clearthought.layout.TableLayout;
 
 public class SaveMemoryToXLSDialog extends JDialog {
 	public JRadioButton currentWindowRadioButton;

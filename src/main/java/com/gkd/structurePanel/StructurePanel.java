@@ -11,7 +11,6 @@ import javax.swing.border.LineBorder;
 import org.apache.log4j.Logger;
 
 import com.gkd.instrument.InstrumentCanvas;
-import com.gkd.sourceleveldebugger.SymbolTableModel;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;

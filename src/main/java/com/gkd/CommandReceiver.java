@@ -25,8 +25,8 @@ public class CommandReceiver {
 			char c;
 			while ((x = is.read()) != -1) {
 				c = (char) x;
-//												System.out.print(c);
-//												System.out.flush();
+				//												System.out.print(c);
+				//												System.out.flush();
 				content.append(c);
 				//				if (content.length() > 1000) {
 				//					logger.debug("c=" + content.length());

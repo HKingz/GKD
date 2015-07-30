@@ -13,7 +13,7 @@ public class IA32PageTable implements Serializable {
 
 	@Override
 	public String toString() {
-		return "PT="+base;
+		return "PT=" + base;
 	}
 
 	public String base;

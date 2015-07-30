@@ -10,13 +10,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
 import com.gkd.GKDCommonLib;
-import com.gkd.sourceleveldebugger.SourceLevelDebugger;
 import com.peterswing.CommonLib;
 
 public class ElfUtil {
 
 	public static Logger logger = Logger.getLogger(ElfUtil.class);
-	
+
 	public static void main(String args[]) {
 		logger.debug(getDebugLine(new File(args[0])));
 	}

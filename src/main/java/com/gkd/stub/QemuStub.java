@@ -17,7 +17,6 @@ import com.gkd.GKD;
 import com.gkd.GKDCommonLib;
 import com.gkd.Global;
 import com.gkd.Setting;
-import com.gkd.structurePanel.StructurePanel;
 import com.jlibgdb.JLibGDB;
 import com.jlibgdb.QemuMonitor;
 import com.peterswing.CommonLib;

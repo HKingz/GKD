@@ -1,6 +1,5 @@
 package com.gkd.instrument;
 
-
 public class InterruptSocketServerController {
 	static InterruptSocketServer server = new InterruptSocketServer();
 

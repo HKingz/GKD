@@ -1596,7 +1596,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					iterator = query.list().iterator();
 
 					int count = ((BigInteger) countQuery.uniqueResult()).intValue();
-//					System.out.println("count=" + count);
+					//					System.out.println("count=" + count);
 					jmpPager.maxPageNo = count / pageSize;
 					if (count % pageSize != 0) {
 						jmpPager.maxPageNo++;
@@ -1633,7 +1633,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					countCriteria.setProjection(Projections.rowCount());
 					long count = (long) countCriteria.uniqueResult();
-//					System.out.println("count=" + count);
+					//					System.out.println("count=" + count);
 					jmpPager.maxPageNo = (int) (count / pageSize);
 					if (count % pageSize != 0) {
 						jmpPager.maxPageNo++;

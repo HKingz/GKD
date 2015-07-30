@@ -85,81 +85,43 @@ public class HelpRequestDialog extends javax.swing.JDialog {
 			}
 
 			thisLayout
-					.setVerticalGroup(thisLayout
-							.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(
-									thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+					.setVerticalGroup(
+							thisLayout.createSequentialGroup().addContainerGap()
+									.addGroup(thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 											.addComponent(sendButton, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
 											.addComponent(label1, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 22, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(
-									thisLayout
-											.createParallelGroup(GroupLayout.Alignment.BASELINE)
-											.addComponent(emailTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-													GroupLayout.PREFERRED_SIZE)
-											.addComponent(label2, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-													GroupLayout.PREFERRED_SIZE)
-											.addComponent(label5, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-													GroupLayout.PREFERRED_SIZE)
-											.addComponent(nameTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-													GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(
-									thisLayout
-											.createParallelGroup()
-											.addComponent(scrollPane1, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													thisLayout.createSequentialGroup().addGap(8)
-															.addComponent(label3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(42)))
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(label4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(infoTextArea, 0, 207, Short.MAX_VALUE).addContainerGap());
-			thisLayout
-					.setHorizontalGroup(thisLayout
-							.createSequentialGroup()
-							.addContainerGap()
-							.addGroup(
-									thisLayout
-											.createParallelGroup()
-											.addGroup(
-													thisLayout
-															.createSequentialGroup()
-															.addGroup(
-																	thisLayout
-																			.createParallelGroup()
-																			.addComponent(label3, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 54,
-																					GroupLayout.PREFERRED_SIZE)
-																			.addGroup(
-																					GroupLayout.Alignment.LEADING,
-																					thisLayout.createSequentialGroup()
-																							.addComponent(label2, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE)
-																							.addGap(18)))
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-															.addGroup(
-																	thisLayout
-																			.createParallelGroup()
-																			.addComponent(scrollPane1, GroupLayout.Alignment.LEADING, 0, 560, Short.MAX_VALUE)
-																			.addGroup(
-																					GroupLayout.Alignment.LEADING,
-																					thisLayout
-																							.createSequentialGroup()
-																							.addComponent(emailTextField, GroupLayout.PREFERRED_SIZE, 254,
-																									GroupLayout.PREFERRED_SIZE)
-																							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																							.addComponent(label5, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
-																							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																							.addComponent(nameTextField, 0, 239, Short.MAX_VALUE))))
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													thisLayout.createSequentialGroup().addComponent(sendButton, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(label1, 0, 474, Short.MAX_VALUE))
-											.addGroup(
-													GroupLayout.Alignment.LEADING,
-													thisLayout.createSequentialGroup().addComponent(label4, GroupLayout.PREFERRED_SIZE, 449, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 177, Short.MAX_VALUE)).addComponent(infoTextArea, GroupLayout.Alignment.LEADING, 0, 626, Short.MAX_VALUE))
-							.addContainerGap());
+							.addGroup(thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+									.addComponent(emailTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+											GroupLayout.PREFERRED_SIZE)
+									.addComponent(label2, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addComponent(label5, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addComponent(nameTextField, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+											GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(thisLayout.createParallelGroup().addComponent(scrollPane1, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 68, GroupLayout.PREFERRED_SIZE)
+							.addGroup(GroupLayout.Alignment.LEADING,
+									thisLayout.createSequentialGroup().addGap(8)
+											.addComponent(label3, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(42)))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addComponent(label4, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(infoTextArea, 0, 207, Short.MAX_VALUE).addContainerGap());
+			thisLayout.setHorizontalGroup(thisLayout.createSequentialGroup().addContainerGap().addGroup(thisLayout.createParallelGroup().addGroup(thisLayout.createSequentialGroup()
+					.addGroup(thisLayout.createParallelGroup().addComponent(label3, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE)
+							.addGroup(GroupLayout.Alignment.LEADING,
+									thisLayout.createSequentialGroup().addComponent(label2, GroupLayout.PREFERRED_SIZE, 36, GroupLayout.PREFERRED_SIZE).addGap(18)))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(thisLayout.createParallelGroup().addComponent(scrollPane1, GroupLayout.Alignment.LEADING, 0, 560, Short.MAX_VALUE).addGroup(
+							GroupLayout.Alignment.LEADING,
+							thisLayout.createSequentialGroup().addComponent(emailTextField, GroupLayout.PREFERRED_SIZE, 254, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(label5, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(nameTextField, 0, 239, Short.MAX_VALUE))))
+					.addGroup(GroupLayout.Alignment.LEADING,
+							thisLayout.createSequentialGroup().addComponent(sendButton, GroupLayout.PREFERRED_SIZE, 141, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(label1, 0, 474, Short.MAX_VALUE))
+					.addGroup(GroupLayout.Alignment.LEADING,
+							thisLayout.createSequentialGroup().addComponent(label4, GroupLayout.PREFERRED_SIZE, 449, GroupLayout.PREFERRED_SIZE).addGap(0, 177, Short.MAX_VALUE))
+					.addComponent(infoTextArea, GroupLayout.Alignment.LEADING, 0, 626, Short.MAX_VALUE)).addContainerGap());
 
 			this.setSize(666, 425);
 			infoTextArea.setEnabled(false);

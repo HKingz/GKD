@@ -57,7 +57,7 @@ public class SegmentRegister extends JPanel {
 	}
 
 	@Override
-	public void setForeground(Color color){
-		
+	public void setForeground(Color color) {
+
 	}
 }

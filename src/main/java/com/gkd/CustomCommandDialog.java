@@ -1,7 +1,5 @@
 package com.gkd;
 
-import info.clearthought.layout.TableLayout;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -18,6 +16,8 @@ import javax.swing.LayoutStyle;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
+
+import info.clearthought.layout.TableLayout;
 
 public class CustomCommandDialog extends javax.swing.JDialog {
 	private JPanel panel1;
@@ -148,41 +148,25 @@ public class CustomCommandDialog extends javax.swing.JDialog {
 		jLabel3.setText("Repeat all above commands");
 		jLabel3.setHorizontalAlignment(SwingConstants.RIGHT);
 
-		thisLayout.setVerticalGroup(thisLayout
-				.createSequentialGroup()
-				.addContainerGap()
-				.addComponent(panel1, 0, 174, Short.MAX_VALUE)
-				.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-				.addGroup(
-						thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-								.addComponent(repeatSpinner, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+		thisLayout
+				.setVerticalGroup(
+						thisLayout.createSequentialGroup().addContainerGap().addComponent(panel1, 0, 174, Short.MAX_VALUE).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+								.addGroup(thisLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+										.addComponent(repeatSpinner, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.PREFERRED_SIZE)
 								.addComponent(jLabel3, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-				.addComponent(runButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addContainerGap());
-		thisLayout.setHorizontalGroup(thisLayout
-				.createSequentialGroup()
-				.addContainerGap()
-				.addGroup(
-						thisLayout
-								.createParallelGroup()
-								.addComponent(panel1, GroupLayout.Alignment.LEADING, 0, 279, Short.MAX_VALUE)
-								.addGroup(
-										GroupLayout.Alignment.LEADING,
-										thisLayout
-												.createSequentialGroup()
-												.addGap(0, 15, Short.MAX_VALUE)
-												.addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, 184, GroupLayout.PREFERRED_SIZE)
-												.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-												.addGroup(
-														thisLayout
-																.createParallelGroup()
-																.addComponent(repeatSpinner, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-																		GroupLayout.PREFERRED_SIZE)
-																.addGroup(
-																		GroupLayout.Alignment.LEADING,
-																		thisLayout.createSequentialGroup()
-																				.addPreferredGap(repeatSpinner, runButton, LayoutStyle.ComponentPlacement.INDENT)
-																				.addComponent(runButton, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)))))
+				.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(runButton, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addContainerGap());
+		thisLayout.setHorizontalGroup(thisLayout.createSequentialGroup().addContainerGap()
+				.addGroup(thisLayout.createParallelGroup().addComponent(panel1, GroupLayout.Alignment.LEADING, 0, 279, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
+						thisLayout.createSequentialGroup().addGap(0, 15, Short.MAX_VALUE).addComponent(jLabel3, GroupLayout.PREFERRED_SIZE, 184, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+								.addGroup(thisLayout.createParallelGroup()
+										.addComponent(repeatSpinner, GroupLayout.Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+												GroupLayout.PREFERRED_SIZE)
+										.addGroup(GroupLayout.Alignment.LEADING,
+												thisLayout.createSequentialGroup().addPreferredGap(repeatSpinner, runButton, LayoutStyle.ComponentPlacement.INDENT)
+														.addComponent(runButton, GroupLayout.PREFERRED_SIZE, 63, GroupLayout.PREFERRED_SIZE)))))
 				.addContainerGap());
 
 		this.setSize(301, 281);

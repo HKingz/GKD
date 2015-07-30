@@ -8,9 +8,9 @@
 package com.gkd.webservice;
 
 public interface MonitorSoftwareService extends javax.xml.rpc.Service {
-    public java.lang.String getMonitorSoftwareAddress();
+	public java.lang.String getMonitorSoftwareAddress();
 
-    public MonitorSoftware getMonitorSoftware() throws javax.xml.rpc.ServiceException;
+	public MonitorSoftware getMonitorSoftware() throws javax.xml.rpc.ServiceException;
 
-    public MonitorSoftware getMonitorSoftware(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
+	public MonitorSoftware getMonitorSoftware(java.net.URL portAddress) throws javax.xml.rpc.ServiceException;
 }
