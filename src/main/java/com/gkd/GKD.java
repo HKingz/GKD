@@ -634,9 +634,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						System.err.println("Solution : Please add \"-Djava.library.path=.\" to start peter-bochs\n" + e);
 					}
 				} else if (System.getProperty("os.name").toLowerCase().contains("windows")) {
-					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/PauseBochs.exe")), new File("PauseBochs.exe"));
-					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/StopBochs.exe")), new File("StopBochs.exe"));
-					CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/ndisasm.exe")), new File("ndisasm.exe"));
+					if (!new File("PauseBochs.exe").exists()) {
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/PauseBochs.exe")), new File("PauseBochs.exe"));
+					}
+					if (!new File("StopBochs.exe").exists()) {
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/StopBochs.exe")), new File("StopBochs.exe"));
+					}
+					if (!new File("ndisasm.exe").exists()) {
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/ndisasm.exe")), new File("ndisasm.exe"));
+					}
 
 					if (System.getProperty("os.arch").contains("64")) {
 						if (Global.debug) {
