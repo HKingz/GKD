@@ -50,23 +50,11 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 					this.setIcon(null);
 				}
 				this.setText(null);
-				//			} else if (table.getValueAt(row, 1).toString().startsWith("cCode")) {
 			} else if (column == 1 && value.toString().startsWith("cCode")) {
-				//				if (column == 1) {
-				String str = ((String) value).replaceAll("cCode : ", "").replaceAll("\t", "    ");
-				//					this.setText(String.format("%40s", str));
+				String str = ((String) value).replaceAll("cCode : ", "");//.replaceAll("\t", "    ");
 				this.setText(str);
 				this.setForeground(darkGreen);
 				this.setIcon(null);
-				//				} else {
-				//					String code = ((String) value);
-				//					if (code != null) {
-				//						code = code.replaceAll("\\t", "    ");
-				//						this.setText(code);
-				//					}
-				//					this.setForeground(darkBlue);
-				//					this.setIcon(null);
-				//				}
 			} else {
 				this.setForeground(Color.black);
 				if (column == 2) {
@@ -76,6 +64,8 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 					if (!table.getValueAt(row, 1).toString().contains("cCode")) {
 						asmCode = asmCode.replaceAll(Keywords.asmKeywords.toLowerCase(), "<font color=blue>$0</font>");
 						asmCode = asmCode.replaceAll(Keywords.registers.toLowerCase(), "<font color=green>$0</font>");
+					}else{
+						asmCode = asmCode.replaceAll("\t", "&nbsp;&nbsp;&nbsp;&nbsp;");
 					}
 					this.setText("<html><body>&nbsp;" + asmCode + "</body></html>");
 					this.setIcon(null);
@@ -84,25 +74,12 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 					this.setIcon(null);
 				} else {
 					String s = (String) value;
-					//					if (s.contains(":")) {
-					//						String ss[] = s.split(":");
-					//						if (ss.length > 1) {
-					//							this.setText("<html><body>" + ss[0] + ":<font color=green>" + ss[1] + "</font></body></html>");
-					//						} else {
-					//							this.setText(s);
-					//						}
-					//					} else {
 					this.setText(StringUtils.leftPad(CommonLib.string2BigInteger(s).toString(16), 16, '0'));
-					//					}
 					this.setIcon(null);
 				}
 			}
 
-			//			if (column == 1) {
-			//				this.setHorizontalAlignment(JLabel.CENTER);
-			//			} else {
 			this.setHorizontalAlignment(JLabel.LEFT);
-			//			}
 		} catch (Exception ex) {
 			setText(ex.getMessage());
 		}
