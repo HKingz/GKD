@@ -20,14 +20,14 @@ public class ElfUtil {
 		logger.debug(getDebugLine(new File(args[0])));
 	}
 
-	public static HashMap getELFDetail(File elfFile) {
+	public static HashMap<String, Object> getELFDetail(File elfFile) {
 		// read .text bytes
 		try {
-			HashMap map = new HashMap();
+			HashMap<String, Object> map = new HashMap<String, Object>();
 			int bytes[] = CommonLib.byteArrayToIntArray(FileUtils.readFileToByteArray(elfFile));
 
 			// header
-			LinkedHashMap header = new LinkedHashMap();
+			LinkedHashMap<String, Object> header = new LinkedHashMap<String, Object>();
 			header.put("e_ident", Arrays.copyOfRange(bytes, 0, 16));
 			header.put("e_type", CommonLib.getShort(bytes[16], bytes[17]));
 			header.put("e_machine", CommonLib.getShort(bytes[18], bytes[19]));
@@ -60,12 +60,12 @@ public class ElfUtil {
 			int dynstrOffset = 0;
 			int dynstrSize = 0;
 
-			Vector<HashMap> noteSection = new Vector<HashMap>();
+			Vector<HashMap<String, Object>> noteSection = new Vector<HashMap<String, Object>>();
 
-			Vector<HashMap> symtabTables = new Vector<HashMap>();
+			Vector<HashMap<String, Object>> symtabTables = new Vector<HashMap<String, Object>>();
 
 			for (int x = 0; x < e_shnum; x++) {
-				LinkedHashMap section = new LinkedHashMap();
+				LinkedHashMap<String, Object> section = new LinkedHashMap<String, Object>();
 				section.put("No.", x);
 				long sh_name = CommonLib.getInt(bytes, offset + 0);
 				try {
@@ -85,13 +85,13 @@ public class ElfUtil {
 				section.put("sh_entsize", CommonLib.getInt(bytes, offset + 36));
 
 				if ((Long) section.get("sh_type") == 2 || (Long) section.get("sh_type") == 0xb) {
-					HashMap hm = new HashMap();
+					HashMap<String, Object> hm = new HashMap<String, Object>();
 					hm.put("name", section.get("sh_name"));
 					hm.put("offset", (Long) section.get("sh_offset"));
 					hm.put("size", (Long) section.get("sh_size") / 16);
 					symtabTables.add(hm);
 				} else if ((Long) section.get("sh_type") == 7) {
-					HashMap tempMap = new HashMap();
+					HashMap<String, Object> tempMap = new HashMap<String, Object>();
 					tempMap.put("name", section.get("sh_name"));
 					tempMap.put("offset", (Long) section.get("sh_offset"));
 					tempMap.put("size", (Long) section.get("sh_size"));
@@ -117,7 +117,7 @@ public class ElfUtil {
 			short e_phnum = (short) ((Long) header.get("e_phnum")).intValue();
 			offset = e_phoff;
 			for (int x = 0; x < e_phnum; x++) {
-				LinkedHashMap programHeader = new LinkedHashMap();
+				LinkedHashMap<String, Object> programHeader = new LinkedHashMap<String, Object>();
 				programHeader.put("No.", x);
 				int pt_type = (int) CommonLib.getInt(bytes, offset + 0);
 				String pt_type_str;
@@ -209,12 +209,12 @@ public class ElfUtil {
 
 			// all the symbol table
 			for (int x = 0; x < symtabTables.size(); x++) {
-				HashMap tempMap = new HashMap();
+				HashMap<String, Object> tempMap = new HashMap<String, Object>();
 				tempMap.put("name", symtabTables.get(x).get("name"));
-				Vector<LinkedHashMap> v = new Vector<LinkedHashMap>();
+				Vector<LinkedHashMap<String, Object>> v = new Vector<LinkedHashMap<String, Object>>();
 				offset = ((Long) symtabTables.get(x).get("offset")).intValue();
 				for (int z = 0; z < ((Long) symtabTables.get(x).get("size")).intValue(); z++) {
-					LinkedHashMap symbolTable = new LinkedHashMap();
+					LinkedHashMap<String, Object> symbolTable = new LinkedHashMap<String, Object>();
 
 					symbolTable.put("No.", z);
 
@@ -240,15 +240,15 @@ public class ElfUtil {
 
 			// .note* sections
 			for (int x = 0; x < noteSection.size(); x++) {
-				HashMap tempMap = new HashMap();
+				HashMap<String, Object> tempMap = new HashMap<String, Object>();
 				tempMap.put("name", noteSection.get(x).get("name"));
 
-				Vector<LinkedHashMap> v = new Vector<LinkedHashMap>();
+				Vector<LinkedHashMap<String, Object>> v = new Vector<LinkedHashMap<String, Object>>();
 
 				int tempOffset = ((Long) noteSection.get(x).get("offset")).intValue();
 				int z = 0;
 				while (tempOffset < (Long) noteSection.get(x).get("offset") + (Long) noteSection.get(x).get("size")) {
-					LinkedHashMap noteSectionMap = new LinkedHashMap();
+					LinkedHashMap<String, Object> noteSectionMap = new LinkedHashMap<String, Object>();
 
 					noteSectionMap.put("No.", z);
 
