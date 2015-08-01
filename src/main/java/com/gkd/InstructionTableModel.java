@@ -12,13 +12,11 @@ import com.peterswing.CommonLib;
 public class InstructionTableModel extends AbstractTableModel {
 	private String[] columnNames = { "", MyLanguage.getString("Address"), MyLanguage.getString("Instruction"), MyLanguage.getString("Bytes") };
 	private HashMap<BigInteger, Boolean> breakpoint = new HashMap<BigInteger, Boolean>();
-	private Vector<String[]> data = new Vector<String[]>();
+	public Vector<String[]> data = new Vector<String[]>();
+	public Vector<String[]> originalData = new Vector<String[]>();
 	private BigInteger eip;
 	public boolean showAsmLevel = true;
-
-	public Vector<String[]> getData() {
-		return data;
-	}
+	public boolean removeOutOfOrderLine;
 
 	public Object getValueAt(int row, int column) {
 		try {
@@ -76,6 +74,7 @@ public class InstructionTableModel extends AbstractTableModel {
 	}
 
 	public void clearData() {
+		originalData.clear();
 		data.clear();
 		this.fireTableDataChanged();
 	}
@@ -91,7 +90,11 @@ public class InstructionTableModel extends AbstractTableModel {
 			}
 		}
 		if (!exist) {
-			data.add(array);
+			originalData.add(array);
+			data = (Vector<String[]>) originalData.clone();
+			if (this.removeOutOfOrderLine) {
+				removeNonOrderCCodeInstruction();
+			}
 			this.fireTableDataChanged();
 		}
 	}
@@ -164,23 +167,54 @@ public class InstructionTableModel extends AbstractTableModel {
 		}
 	}
 
-	public void removeNonOrderInstruction() {
+	//	public void removeNonOrderInstruction() {
+	//		if (data.size() == 0) {
+	//			return;
+	//		}
+	//		try {
+	//			long lastAddress = CommonLib.string2long(data.get(data.size() - 1)[1]);
+	//			for (int x = data.size() - 2; x >= 0; x--) {
+	//				long address;
+	//				if (data.get(x)[1].contains("cCode")) {
+	//					address = CommonLib.string2long(data.get(x)[1].split(":")[1]);
+	//				} else {
+	//					address = CommonLib.string2long(data.get(x)[1]);
+	//				}
+	//				if (address > lastAddress) {
+	//					data.remove(x);
+	//				} else {
+	//					lastAddress = address;
+	//				}
+	//			}
+	//		} catch (Exception ex) {
+	//			ex.printStackTrace();
+	//		}
+	//	}
+
+	public void removeNonOrderCCodeInstruction() {
 		if (data.size() == 0) {
 			return;
 		}
 		try {
-			long lastAddress = CommonLib.string2long(data.get(data.size() - 1)[1]);
-			for (int x = data.size() - 2; x >= 0; x--) {
-				long address;
+			int x;
+			long lastLineNo = -9999999;
+			for (x = data.size() - 2; x >= 0; x--) {
 				if (data.get(x)[1].contains("cCode")) {
-					address = CommonLib.string2long(data.get(x)[1].split(":")[1]);
-				} else {
-					address = CommonLib.string2long(data.get(x)[1]);
+					lastLineNo = CommonLib.string2long(data.get(data.size() - 1)[3]);
+					break;
 				}
-				if (address > lastAddress) {
-					data.remove(x);
-				} else {
-					lastAddress = address;
+			}
+			if (lastLineNo == -9999999) {
+				return;
+			}
+			for (; x >= 0; x--) {
+				if (data.get(x)[1].contains("cCode")) {
+					long lineNo = CommonLib.string2long(data.get(x)[1].split(":")[3]);
+					if (lineNo > lastLineNo) {
+						data.remove(x);
+					} else {
+						lastLineNo = lineNo;
+					}
 				}
 			}
 		} catch (Exception ex) {

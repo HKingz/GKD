@@ -147,11 +147,13 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	public static Logger logger = Logger.getLogger(SourceLevelDebugger.class);
+	private JLabel lblOutOfOrder;
+	private OnOffButton outOfOrderOnOffButton;
 
 	public SourceLevelDebugger(GKD gkd) {
 		this.gkd = gkd;
 		try {
-			this.setPreferredSize(new java.awt.Dimension(975, 563));
+			this.setPreferredSize(new Dimension(1242, 563));
 			{
 				mainSplitPane = new JSplitPane();
 				this.add(getJErrorLabel(), "errorLabel");
@@ -312,6 +314,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 												onOffButton.setPreferredSize(new Dimension(53, 18));
 												instructionControlPanel.add(onOffButton);
 											}
+											instructionControlPanel.add(getLblOutOfOrder());
+											instructionControlPanel.add(getOutOfOrderOnOffButton());
 											excelButton.addActionListener(new ActionListener() {
 												public void actionPerformed(ActionEvent evt) {
 													jButton12ActionPerformed(evt);
@@ -1176,5 +1180,35 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			buttonGroup.add(allObjectsRadioButton);
 		}
 		return allObjectsRadioButton;
+	}
+
+	private JLabel getLblOutOfOrder() {
+		if (lblOutOfOrder == null) {
+			lblOutOfOrder = new JLabel("out of order");
+		}
+		return lblOutOfOrder;
+	}
+
+	private OnOffButton getOutOfOrderOnOffButton() {
+		if (outOfOrderOnOffButton == null) {
+			outOfOrderOnOffButton = new OnOffButton();
+			outOfOrderOnOffButton.setPreferredSize(new Dimension(53, 18));
+			outOfOrderOnOffButton.addItemListener(new ItemListener() {
+				public void itemStateChanged(ItemEvent e) {
+					InstructionTableModel model = (InstructionTableModel) GKD.instructionTable.getModel();
+					if (e.getStateChange() == ItemEvent.SELECTED) {
+						model.removeOutOfOrderLine = true;
+						model.removeNonOrderCCodeInstruction();
+					} else {
+						model.removeOutOfOrderLine = false;
+						System.out.println(model.originalData.size());
+						System.out.println(model.data.size());
+						model.data = (Vector<String[]>) model.originalData.clone();
+					}
+					model.fireTableDataChanged();
+				}
+			});
+		}
+		return outOfOrderOnOffButton;
 	}
 }

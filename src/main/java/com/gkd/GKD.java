@@ -712,7 +712,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			VMController.getVM().initStub(new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
 		}
 
-		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
+//		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
 
 		String elf = GKDCommonLib.readConfig(cmd, "/gkd/elf/text()");
 		if (elf != null && !elf.equals("")) {
@@ -2231,7 +2231,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 			lastAddress = s[1];
 		}
-		Collections.sort(model.getData(), new Comparator<String[]>() {
+		Collections.sort(model.data, new Comparator<String[]>() {
 			@Override
 			public int compare(String[] o1, String[] o2) {
 				String o1Address;
@@ -2332,7 +2332,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 				}
 
-				model.removeNonOrderInstruction();
+				model.removeNonOrderCCodeInstruction();
 				model.fireTableDataChanged();
 			}
 		} catch (Exception e) {
