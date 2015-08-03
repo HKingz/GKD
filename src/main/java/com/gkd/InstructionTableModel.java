@@ -17,6 +17,7 @@ public class InstructionTableModel extends AbstractTableModel {
 	private BigInteger eip;
 	public boolean showAsmLevel = true;
 	public boolean removeOutOfOrderLine;
+	boolean haveCCode = false;
 
 	public Object getValueAt(int row, int column) {
 		try {
@@ -97,6 +98,16 @@ public class InstructionTableModel extends AbstractTableModel {
 			}
 			this.fireTableDataChanged();
 		}
+
+		// check have cCode
+		for (int x = 0; x < data.size(); x++) {
+			String arr[] = data.get(x);
+			if (arr[1].contains("cCode")) {
+				haveCCode = true;
+				break;
+			}
+		}
+		// end check have cCode
 	}
 
 	public String[] getRow(int rowNo) {
@@ -197,17 +208,18 @@ public class InstructionTableModel extends AbstractTableModel {
 		}
 		try {
 			int x;
-			long lastLineNo = -9999999;
-			for (x = data.size() - 2; x >= 0; x--) {
-				if (data.get(x)[1].contains("cCode")) {
-					lastLineNo = CommonLib.string2long(data.get(data.size() - 1)[3]);
-					break;
-				}
-			}
-			if (lastLineNo == -9999999) {
-				return;
-			}
-			for (; x >= 0; x--) {
+			long lastLineNo = Long.MAX_VALUE;
+			//			for (x = data.size() - 1; x >= 0; x--) {
+			//				if (data.get(x)[1].contains("cCode")) {
+			//					lastLineNo = CommonLib.string2long(data.get(x)[1].split(":")[3].trim());
+			//					break;
+			//				}
+			//			}
+			//			if (lastLineNo == -9999999) {
+			//				return;
+			//			}
+			for (x = data.size() - 1; x >= 0; x--) {
+				System.out.println(data.get(x).length + "=" + data.get(x)[0] + "," + data.get(x)[1] + "," + data.get(x)[2] + "," + data.get(x)[3]);
 				if (data.get(x)[1].contains("cCode")) {
 					long lineNo = CommonLib.string2long(data.get(x)[1].split(":")[3]);
 					if (lineNo > lastLineNo) {

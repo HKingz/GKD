@@ -798,7 +798,9 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 				long address = symbol.st_value;
 
 				instructionComboBox.setSelectedItem("0x" + Long.toHexString(address));
-				mainTabbedPane.setSelectedIndex(0);
+				if (mainTabbedPane.getComponentCount() > 0) {
+					mainTabbedPane.setSelectedIndex(0);
+				}
 
 				gkd.jumpToRowInstructionTable(BigInteger.valueOf(address));
 			}

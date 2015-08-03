@@ -712,7 +712,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			VMController.getVM().initStub(new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
 		}
 
-//		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
+		//		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
 
 		String elf = GKDCommonLib.readConfig(cmd, "/gkd/elf/text()");
 		if (elf != null && !elf.equals("")) {
@@ -2211,14 +2211,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		statusLabel.setText("Updating instruction");
 		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 
-		//		BigInteger cs;
-		//		if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
-		//			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-		//		} else {
-		//			cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-		//		}
-		//		BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
-
 		if (physicalAddress == null) {
 			physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase()).add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
 		}
@@ -2242,7 +2234,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					s1 = CommonLib.string2BigInteger("0x" + o1Address);
 				} else {
 					o1Address = o1[1];
-					//					s1 = StringUtils.leftPad(CommonLib.string2BigInteger(o1Address).toString(16), 16, '0');
 
 					s1 = CommonLib.string2BigInteger(o1Address);
 				}
@@ -2251,19 +2242,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (o2[1].contains("cCode")) {
 					o2Address = o2[1].split(":")[1].trim();
 					s2 = CommonLib.string2BigInteger("0x" + o2Address);
-					//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(), 16, '0');
 				} else {
 					o2Address = o2[1];
 					s2 = CommonLib.string2BigInteger(o2Address);
-					//					s2 = StringUtils.leftPad(CommonLib.string2BigInteger(o2Address).toString(16), 16, '0');
 				}
-				//				s1 = CommonLib.string2BigInteger(o1Address);
-				//				s2 = CommonLib.string2BigInteger(o2Address);
 				return s1.compareTo(s2);
 			}
 		});
 
-		//		model.removeNonOrderInstruction();
 		model.fireTableDataChanged();
 
 		if (!registerPanel.eipTextField.getText().equals("")) {
@@ -2298,11 +2284,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					statusProgressBar.setValue(x);
 					try {
 						// load cCode
-						//						logger.debug("pcStr=" + pcStr);
-						//						if (!pcStr.matches("^[0-9a-fA-F].*")) {
-						//							logger.debug("ar=" + pcStr);
-						//							System.exit(1);
-						//						}
 						String temp[] = lines[x].split("  +");
 						if (temp.length == 3) {
 							String pcStr = temp[0].substring(0, 8).trim();
@@ -2322,8 +2303,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							}
 							// end load cCode
 							model.addRow(new String[] { "", pc.toString(), instruction, decodedBytes });
-
-							//model.addRow(new String[] { "", "0x" + StringUtils.leftPad(address.add(pc).toString(16), 16, "0"), lines[x].substring(25).trim(),lines[x].substring(8, 8).trim() });
 						} else {
 							model.replace(model.getRowCount() - 1, 3, model.getRow(model.getRowCount() - 1)[3] + temp[1].trim().replaceAll("-", ""));
 						}
