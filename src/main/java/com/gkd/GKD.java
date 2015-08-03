@@ -535,19 +535,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		progressBarDialog.addCancelEventListener(this);
 		progressBarDialog.setVisible(true);
 		//$hide<<$
-		//		new Thread("preventSetVisibleHang thread") {
-		//			public void run() {
-		//				try {
-		//					Thread.sleep(1000000);
-		//					if (preventSetVisibleHang) {
-		//						logger.debug("setVisible(true) cause system hang, this probably a swing bug, so force exit, please restart");
-		//						System.exit(-1);
-		//					}
-		//				} catch (InterruptedException e) {
-		//					e.printStackTrace();
-		//				}
-		//			}
-		//		}.start();
 	}
 
 	public static void main(String[] args) {
