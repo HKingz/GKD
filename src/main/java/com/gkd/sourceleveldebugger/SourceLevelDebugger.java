@@ -2,6 +2,7 @@ package com.gkd.sourceleveldebugger;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -29,8 +30,10 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -60,6 +63,7 @@ import com.gkd.InstructionTableModel;
 import com.gkd.MyLanguage;
 import com.gkd.instrument.CallGraphComponent;
 import com.gkd.instrument.InstrumentCanvas;
+import com.gkd.stub.VMController;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.view.mxCellState;
@@ -78,9 +82,6 @@ import com.peterswing.advancedswing.jtable.SortableTableModel;
 import com.peterswing.advancedswing.jtable.TableSorterColumnListener;
 import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
-import javax.swing.JPopupMenu;
-import java.awt.Component;
-import javax.swing.JMenuItem;
 
 public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
 	private JSplitPane mainSplitPane;
@@ -1261,6 +1262,11 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			mntmSetPhysicalBreakpoint = new JMenuItem("set physical breakpoint");
 			mntmSetPhysicalBreakpoint.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					int row = symbolTable.getSelectedRow();
+					Elf32_Sym symbol = (Elf32_Sym) ((SymbolTableModel) sortableTableModel.model).getValueAt(row, 0);
+					VMController.getVM().addPhysicalBreakpoint(CommonLib.string2BigInteger("0x" + Long.toHexString(symbol.st_value)));
+					gkd.updateBreakpoint();
+					gkd.updateInstruction(null);
 				}
 			});
 		}
@@ -1272,6 +1278,11 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			mntmSetLinearBreakpoint = new JMenuItem("set linear breakpoint");
 			mntmSetLinearBreakpoint.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					int row = symbolTable.getSelectedRow();
+					Elf32_Sym symbol = (Elf32_Sym) ((SymbolTableModel) sortableTableModel.model).getValueAt(row, 0);
+					VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger("0x" + Long.toHexString(symbol.st_value)));
+					gkd.updateBreakpoint();
+					gkd.updateInstruction(null);
 				}
 			});
 		}

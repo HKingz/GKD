@@ -2704,7 +2704,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jRefreshBreakpointButton.setEnabled(true);
 	}
 
-	private void updateBreakpoint() {
+	public void updateBreakpoint() {
 		try {
 			statusLabel.setText("Updating breakpoint");
 
