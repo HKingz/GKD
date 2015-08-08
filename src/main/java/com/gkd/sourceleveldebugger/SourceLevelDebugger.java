@@ -42,6 +42,7 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowFilter;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
@@ -77,6 +78,9 @@ import com.peterswing.advancedswing.jtable.SortableTableModel;
 import com.peterswing.advancedswing.jtable.TableSorterColumnListener;
 import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
+import javax.swing.JPopupMenu;
+import java.awt.Component;
+import javax.swing.JMenuItem;
 
 public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
 	private JSplitPane mainSplitPane;
@@ -149,6 +153,9 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	public static Logger logger = Logger.getLogger(SourceLevelDebugger.class);
 	private JLabel lblOutOfOrder;
 	private OnOffButton outOfOrderOnOffButton;
+	private JPopupMenu popupMenu;
+	private JMenuItem mntmSetPhysicalBreakpoint;
+	private JMenuItem mntmSetLinearBreakpoint;
 
 	public SourceLevelDebugger(GKD gkd) {
 		this.gkd = gkd;
@@ -722,7 +729,12 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			symbolTable.setDefaultRenderer(String.class, new SymbolTableCellRenderer());
 			symbolTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
-					symbolTableMouseClicked(evt);
+					if (SwingUtilities.isRightMouseButton(evt)) {
+						getPopupMenu().setLocation(evt.getLocationOnScreen());
+						getPopupMenu().setVisible(true);
+					} else {
+						symbolTableMouseClicked(evt);
+					}
 				}
 			});
 			TableSorterColumnListener tableSorterColumnListener = new TableSorterColumnListener(symbolTable, sortableTableModel);
@@ -1212,5 +1224,48 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			});
 		}
 		return outOfOrderOnOffButton;
+	}
+
+	private JPopupMenu getPopupMenu() {
+		if (popupMenu == null) {
+			popupMenu = new JPopupMenu();
+			popupMenu.add(getMntmSetPhysicalBreakpoint());
+			popupMenu.add(getMntmSetLinearBreakpoint());
+		}
+		return popupMenu;
+	}
+
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
+	}
+
+	private JMenuItem getMntmSetPhysicalBreakpoint() {
+		if (mntmSetPhysicalBreakpoint == null) {
+			mntmSetPhysicalBreakpoint = new JMenuItem("Set physical breakpoint");
+		}
+		return mntmSetPhysicalBreakpoint;
+	}
+
+	private JMenuItem getMntmSetLinearBreakpoint() {
+		if (mntmSetLinearBreakpoint == null) {
+			mntmSetLinearBreakpoint = new JMenuItem("Set linear breakpoint");
+		}
+		return mntmSetLinearBreakpoint;
 	}
 }
