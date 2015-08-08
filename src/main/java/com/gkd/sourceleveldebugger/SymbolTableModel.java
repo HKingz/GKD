@@ -1,5 +1,7 @@
 package com.gkd.sourceleveldebugger;
 
+import java.io.File;
+import java.util.Hashtable;
 import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
@@ -7,19 +9,20 @@ import javax.swing.table.AbstractTableModel;
 import org.apache.log4j.Logger;
 
 import com.gkd.MyLanguage;
+import com.peterdwarf.dwarf.CompileUnit;
+import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {
-	private String[] columnNames = { MyLanguage.getString("Name"), "Value" };
+	private String[] columnNames = { MyLanguage.getString("Name"), "Value", "File" };
 	public Vector<Elf32_Sym> displaySymbols;
 	Vector<Elf32_Sym> symbols;
 	private String searchPattern;
 	public boolean exactMatch;
 	private String filterType = "all";
 	public static Logger logger = Logger.getLogger(SymbolTableModel.class);
-
-	public SymbolTableModel() {
-	}
+	Hashtable<String, String> cache = new Hashtable<String, String>();
+	public SourceLevelDebugger sourceLevelDebugger;
 
 	public Object getValueAt(int row, int column) {
 		try {
@@ -30,8 +33,22 @@ public class SymbolTableModel extends AbstractTableModel {
 			if (column == 0) {
 				// MUST return Elf32_Sym, the double-click and tooltip NEED an Elf32_Sym object
 				return symbol;
-			} else {
+			} else if (column == 1) {
 				return "0x" + Long.toHexString(symbol.st_value);
+			} else {
+				if (cache.get(symbol.name) == null) {
+					for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
+						CompileUnit cu = dwarf.getCompileUnitByFunction(symbol.name);
+						if (cu != null) {
+							String filename = new File(cu.DW_AT_name).getName();
+							cache.put(symbol.name, filename);
+							return filename;
+						}
+					}
+					return null;
+				} else {
+					return cache.get(symbol.name);
+				}
 			}
 		} catch (Exception ex) {
 			return "";

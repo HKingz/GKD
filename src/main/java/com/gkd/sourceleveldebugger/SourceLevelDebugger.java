@@ -159,6 +159,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 
 	public SourceLevelDebugger(GKD gkd) {
 		this.gkd = gkd;
+		symbolTableModel.sourceLevelDebugger = this;
 		try {
 			this.setPreferredSize(new Dimension(1242, 563));
 			{
@@ -731,8 +732,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			symbolTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					if (SwingUtilities.isRightMouseButton(evt)) {
-						getSymbolTablePopupMenu().setLocation(evt.getLocationOnScreen());
-						getSymbolTablePopupMenu().setVisible(true);
+						getSymbolTablePopupMenu().show(evt.getComponent(), evt.getX(), evt.getY());
 					} else {
 						symbolTableMouseClicked(evt);
 					}
