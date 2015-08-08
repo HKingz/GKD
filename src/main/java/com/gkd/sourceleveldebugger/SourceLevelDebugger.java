@@ -153,7 +153,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 	public static Logger logger = Logger.getLogger(SourceLevelDebugger.class);
 	private JLabel lblOutOfOrder;
 	private OnOffButton outOfOrderOnOffButton;
-	private JPopupMenu popupMenu;
+	private JPopupMenu symbolTablePopupMenu;
 	private JMenuItem mntmSetPhysicalBreakpoint;
 	private JMenuItem mntmSetLinearBreakpoint;
 
@@ -364,6 +364,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 									projectTree.setModel(projectFilterTreeModel);
 									projectTree.setShowsRootHandles(true);
 									projectTree.setCellRenderer(new ProjectTreeRenderer());
+									add(getSymbolTablePopupMenu(), "name_438169752467111");
 									projectTree.addMouseListener(new MouseAdapter() {
 										public void mouseClicked(MouseEvent evt) {
 											projectTreeMouseClicked(evt);
@@ -730,8 +731,8 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			symbolTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
 					if (SwingUtilities.isRightMouseButton(evt)) {
-						getPopupMenu().setLocation(evt.getLocationOnScreen());
-						getPopupMenu().setVisible(true);
+						getSymbolTablePopupMenu().setLocation(evt.getLocationOnScreen());
+						getSymbolTablePopupMenu().setVisible(true);
 					} else {
 						symbolTableMouseClicked(evt);
 					}
@@ -1226,15 +1227,6 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		return outOfOrderOnOffButton;
 	}
 
-	private JPopupMenu getPopupMenu() {
-		if (popupMenu == null) {
-			popupMenu = new JPopupMenu();
-			popupMenu.add(getMntmSetPhysicalBreakpoint());
-			popupMenu.add(getMntmSetLinearBreakpoint());
-		}
-		return popupMenu;
-	}
-
 	private static void addPopup(Component component, final JPopupMenu popup) {
 		component.addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
@@ -1255,16 +1247,33 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		});
 	}
 
+	private JPopupMenu getSymbolTablePopupMenu() {
+		if (symbolTablePopupMenu == null) {
+			symbolTablePopupMenu = new JPopupMenu();
+			symbolTablePopupMenu.add(getMntmSetPhysicalBreakpoint());
+			symbolTablePopupMenu.add(getMntmSetLinearBreakpoint());
+		}
+		return symbolTablePopupMenu;
+	}
+
 	private JMenuItem getMntmSetPhysicalBreakpoint() {
 		if (mntmSetPhysicalBreakpoint == null) {
-			mntmSetPhysicalBreakpoint = new JMenuItem("Set physical breakpoint");
+			mntmSetPhysicalBreakpoint = new JMenuItem("set physical breakpoint");
+			mntmSetPhysicalBreakpoint.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
 		}
 		return mntmSetPhysicalBreakpoint;
 	}
 
 	private JMenuItem getMntmSetLinearBreakpoint() {
 		if (mntmSetLinearBreakpoint == null) {
-			mntmSetLinearBreakpoint = new JMenuItem("Set linear breakpoint");
+			mntmSetLinearBreakpoint = new JMenuItem("set linear breakpoint");
+			mntmSetLinearBreakpoint.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
 		}
 		return mntmSetLinearBreakpoint;
 	}
