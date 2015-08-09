@@ -1580,6 +1580,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 								"SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1)
 								.addEntity(JmpData.class);
+						System.out.println("SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
+										+ where1);
 						countQuery = session.createSQLQuery(
 								"SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1);
