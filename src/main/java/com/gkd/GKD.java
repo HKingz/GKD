@@ -3001,7 +3001,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void font14MenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().fontsize = 28;
+		Setting.getInstance().fontsize = 14;
 		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
