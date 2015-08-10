@@ -1134,8 +1134,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 				String chinesesample = "\u4e00";
 				for (int j = 0; j < allfonts.length && j < 40; j++) {
-					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
-						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
+					System.out.println(allfonts[j]);
+//					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
+//						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
 							JMenuItem jMenuItem = new JMenuItem(allfonts[j].getFontName());
 							jMenuItem.addActionListener(new ActionListener() {
 								public void actionPerformed(ActionEvent evt) {
@@ -1144,8 +1145,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								}
 							});
 							fontMenu.add(jMenuItem);
-						}
-					}
+//						}
+//					}
 				}
 			}
 		}.start();
@@ -3035,7 +3036,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public void setAllComponentsFont(Container parent, Font fnt) {
 		for (Component c : parent.getComponents()) {
-			System.out.println(c.toString());
 			c.setFont(fnt);
 
 			if (c instanceof Container) {
