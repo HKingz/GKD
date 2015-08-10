@@ -3,6 +3,8 @@ package com.gkd;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -2999,7 +3001,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void font14MenuItemActionPerformed(ActionEvent evt) {
-		Setting.getInstance().fontsize = 14;
+		Setting.getInstance().fontsize = 28;
 		initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 	}
 
@@ -3019,15 +3021,27 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void initGlobalFontSetting(Font fnt) {
-		FontUIResource fontRes = new FontUIResource(fnt);
-		for (Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
-			Object key = keys.nextElement();
-			Object value = UIManager.get(key);
-			if (value instanceof FontUIResource) {
-				UIManager.put(key, fontRes);
+		//		FontUIResource fontRes = new FontUIResource(fnt);
+		//		for (Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
+		//			Object key = keys.nextElement();
+		//			Object value = UIManager.get(key);
+		//			if (value instanceof FontUIResource) {
+		//				UIManager.put(key, fontRes);
+		//			}
+		//		}
+		setAllComponentsFont(this, fnt);
+		SwingUtilities.updateComponentTreeUI(this);
+	}
+
+	public void setAllComponentsFont(Container parent, Font fnt) {
+		for (Component c : parent.getComponents()) {
+			System.out.println(c.toString());
+			c.setFont(fnt);
+
+			if (c instanceof Container) {
+				setAllComponentsFont((Container) c, fnt);
 			}
 		}
-		SwingUtilities.updateComponentTreeUI(this);
 	}
 
 	private JMenu getSizeMenu() {

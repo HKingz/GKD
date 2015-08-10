@@ -17,9 +17,7 @@ public class Disassemble {
 
 	public static String disassemble(int bytes[], boolean is32Bit, BigInteger address) {
 		try {
-			if (Global.debug) {
-				logger.info("disassemble");
-			}
+			logger.debug("disassemble");
 			FileUtils.writeByteArrayToFile(new File("temp"), CommonLib.intArrayToByteArray(bytes));
 
 			ProcessBuilder pb;
