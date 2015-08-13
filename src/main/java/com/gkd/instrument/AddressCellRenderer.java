@@ -66,6 +66,8 @@ public class AddressCellRenderer extends JLabel implements TableCellRenderer {
 				html += parameter.name + ", ";
 			}
 			setText("<html><body>" + html + "</body></html>");
+		} else {
+			setText(value.toString());
 		}
 		//setBackground(color);
 		return this;

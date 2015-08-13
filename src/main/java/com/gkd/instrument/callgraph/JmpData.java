@@ -186,6 +186,8 @@ public class JmpData {
 			return "SYSENTER";
 		case 20:
 			return "SYSEXIT";
+		case 0xffff:
+			return "EXCEPTION";
 		default:
 			return "unknown";
 		}
