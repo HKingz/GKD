@@ -65,6 +65,7 @@ import javax.swing.JToolBar;
 import javax.swing.LayoutStyle;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.table.DefaultTableModel;
 
@@ -129,6 +130,7 @@ import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.instrument.jfreechart.MyXYBlockRenderer;
 import com.gkd.instrument.jfreechart.MyXYToolTipGenerator;
 import com.gkd.instrument.newcallgraph.CallGraphDialog;
+import com.gkd.stub.VMController;
 import com.mxgraph.canvas.mxICanvas;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.layout.mxCircleLayout;
@@ -157,6 +159,8 @@ import com.peterswing.advancedswing.pager.PagerEventListener;
 import com.peterswing.advancedswing.pager.PagerTextFieldEvent;
 import com.peterswing.advancedswing.pager.PagerTextFieldEventListener;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
+import javax.swing.JPopupMenu;
+import javax.swing.JMenuItem;
 
 public class InstrumentPanel extends JPanel implements ChartChangeListener, ChartMouseListener {
 	private JTabbedPane mainTabbedPane;
@@ -299,6 +303,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JPanel jmpTableParameterPanel;
 	private JScrollPane scrollPane;
 	private JTable jmpParameterTable;
+	private JPopupMenu jmpTablePopupMenu;
+	private JMenuItem mntmSetFromAddressPhysicalBreakpoint;
+	private JMenuItem mntmSetFromAddressLinearBreakpoint;
+	private JMenuItem mntmSetToAddressPhysicalBreakpoint;
+	private JMenuItem mntmSetToAddressLinearBreakpoint;
 
 	public InstrumentPanel(GKD gkd) {
 		this.gkd = gkd;
@@ -1367,10 +1376,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpDataTable.addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
-					List<Parameter> parameters = (List<Parameter>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 5);
-					JmpParameterTableModel model = (JmpParameterTableModel) jmpParameterTable.getModel();
-					model.parameters = parameters;
-					model.fireTableDataChanged();
+					if (SwingUtilities.isRightMouseButton(e)) {
+						getJmpTablePopupMenu().show(e.getComponent(), e.getX(), e.getY());
+					} else {
+						List<Parameter> parameters = (List<Parameter>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 5);
+						JmpParameterTableModel model = (JmpParameterTableModel) jmpParameterTable.getModel();
+						model.parameters = parameters;
+						model.fireTableDataChanged();
+					}
 				}
 			});
 			jmpDataTable.setModel(jmpTableModel);
@@ -1580,7 +1593,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 								"SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1)
 								.addEntity(JmpData.class);
-						System.out.println("SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
+						System.out.println(
+								"SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1);
 						countQuery = session.createSQLQuery(
 								"SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
@@ -3101,7 +3115,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			}
 			row.setHeight((short) (GKDCommonLib.rowHeight * max));
 		}
-
 	}
 
 	public JSplitPane getJmpSplitPane() {
@@ -3144,5 +3157,80 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpParameterTable.setModel(new JmpParameterTableModel());
 		}
 		return jmpParameterTable;
+	}
+
+	private JPopupMenu getJmpTablePopupMenu() {
+		if (jmpTablePopupMenu == null) {
+			jmpTablePopupMenu = new JPopupMenu();
+			jmpTablePopupMenu.add(getMntmSetFromAddressPhysicalBreakpoint());
+			jmpTablePopupMenu.add(getMntmSetFromAddressLinearBreakpoint());
+			jmpTablePopupMenu.add(getMntmSetToAddressPhysicalBreakpoint());
+			jmpTablePopupMenu.add(getMntmSetToAddressLinearBreakpoint());
+		}
+		return jmpTablePopupMenu;
+	}
+
+	private JMenuItem getMntmSetFromAddressPhysicalBreakpoint() {
+		if (mntmSetFromAddressPhysicalBreakpoint == null) {
+			mntmSetFromAddressPhysicalBreakpoint = new JMenuItem("set \"from address\" physical breakpoint");
+			mntmSetFromAddressPhysicalBreakpoint.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 2);
+					long address = (long) ht.get("address");
+					VMController.getVM().addPhysicalBreakpoint(BigInteger.valueOf(address));
+					gkd.updateBreakpoint();
+					gkd.updateInstruction(null);
+				}
+			});
+		}
+		return mntmSetFromAddressPhysicalBreakpoint;
+	}
+
+	private JMenuItem getMntmSetFromAddressLinearBreakpoint() {
+		if (mntmSetFromAddressLinearBreakpoint == null) {
+			mntmSetFromAddressLinearBreakpoint = new JMenuItem("set \"from address\" linear breakpoint");
+			mntmSetFromAddressLinearBreakpoint.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 2);
+					long address = (long) ht.get("address");
+					VMController.getVM().addLinearBreakpoint(BigInteger.valueOf(address));
+					gkd.updateBreakpoint();
+					gkd.updateInstruction(null);
+				}
+			});
+		}
+		return mntmSetFromAddressLinearBreakpoint;
+	}
+
+	private JMenuItem getMntmSetToAddressPhysicalBreakpoint() {
+		if (mntmSetToAddressPhysicalBreakpoint == null) {
+			mntmSetToAddressPhysicalBreakpoint = new JMenuItem("set \"to address\" physical breakpoint");
+			mntmSetToAddressPhysicalBreakpoint.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 3);
+					long address = (long) ht.get("address");
+					VMController.getVM().addPhysicalBreakpoint(BigInteger.valueOf(address));
+					gkd.updateBreakpoint();
+					gkd.updateInstruction(null);
+				}
+			});
+		}
+		return mntmSetToAddressPhysicalBreakpoint;
+	}
+
+	private JMenuItem getMntmSetToAddressLinearBreakpoint() {
+		if (mntmSetToAddressLinearBreakpoint == null) {
+			mntmSetToAddressLinearBreakpoint = new JMenuItem("set \"to address\" linear breakpoint");
+			mntmSetToAddressLinearBreakpoint.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 3);
+					long address = (long) ht.get("address");
+					VMController.getVM().addLinearBreakpoint(BigInteger.valueOf(address));
+					gkd.updateBreakpoint();
+					gkd.updateInstruction(null);
+				}
+			});
+		}
+		return mntmSetToAddressLinearBreakpoint;
 	}
 }

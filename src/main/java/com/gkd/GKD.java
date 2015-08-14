@@ -498,6 +498,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			return false;
 		}
 	};
+	private JMenu fontAJMenu;
+	private JMenu fontKTMenu;
+	private JMenu fontUZMenu;
 
 	public GKD() {
 		super();
@@ -739,8 +742,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		VMController.getVM().startVM();
 
 		progressBarDialog.progressBar.setValue(90);
-		progressBarDialog.progressBar.setString("Init font");
-		initChineseFont();
+		progressBarDialog.progressBar.setString("Init font menu");
+		initFontMenu();
 		new Thread("checkLatestVersion thread") {
 			public void run() {
 				HashMap<String, String> map = GKDCommonLib.checkLatestVersion();
@@ -1124,27 +1127,33 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void initChineseFont() {
+	private void initFontMenu() {
 		new Thread("initChineseFont thread") {
 			public void run() {
-				fontMenu.removeAll();
-
 				Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-				String chinesesample = "\u4e00";
+				//				String chinesesample = "\u4e00";
+
 				for (int j = 0; j < allfonts.length && j < 40; j++) {
 					System.out.println(allfonts[j]);
-//					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
-//						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
-							JMenuItem jMenuItem = new JMenuItem(allfonts[j].getFontName());
-							jMenuItem.addActionListener(new ActionListener() {
-								public void actionPerformed(ActionEvent evt) {
-									Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
-									initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
-								}
-							});
-							fontMenu.add(jMenuItem);
-//						}
-//					}
+					//					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
+					//						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
+					JMenuItem menuItem = new JMenuItem(allfonts[j].getFontName());
+					menuItem.addActionListener(new ActionListener() {
+						public void actionPerformed(ActionEvent evt) {
+							Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
+							initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
+						}
+					});
+					int x = allfonts[j].getFontName().toLowerCase().charAt(0);
+					if (x >= 97 && x <= 106) {
+						fontAJMenu.add(menuItem);
+					} else if (x >= 107 && x <= 116) {
+						fontKTMenu.add(menuItem);
+					} else {
+						fontUZMenu.add(menuItem);
+					}
+					//						}
+					//					}
 				}
 			}
 		}.start();
@@ -3058,8 +3067,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (fontMenu == null) {
 			fontMenu = new JMenu();
 			fontMenu.setText(MyLanguage.getString("Font"));
-			fontMenu.add(getArialMenuItem());
-			fontMenu.add(getDialogMenuItem());
+			fontMenu.add(getFontAJMenu());
+			fontMenu.add(getFontKTMenu());
+			fontMenu.add(getFontUZMenu());
 		}
 		return fontMenu;
 	}
@@ -8125,5 +8135,28 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			instrumentStatusLabel = new JLabel("");
 		}
 		return instrumentStatusLabel;
+	}
+
+	private JMenu getFontAJMenu() {
+		if (fontAJMenu == null) {
+			fontAJMenu = new JMenu("A-J");
+			fontAJMenu.add(getArialMenuItem());
+			fontAJMenu.add(getDialogMenuItem());
+		}
+		return fontAJMenu;
+	}
+
+	private JMenu getFontKTMenu() {
+		if (fontKTMenu == null) {
+			fontKTMenu = new JMenu("K-T");
+		}
+		return fontKTMenu;
+	}
+
+	private JMenu getFontUZMenu() {
+		if (fontUZMenu == null) {
+			fontUZMenu = new JMenu("U-Z");
+		}
+		return fontUZMenu;
 	}
 }
