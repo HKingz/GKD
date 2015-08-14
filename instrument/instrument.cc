@@ -627,6 +627,11 @@ void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code)
 	bx_phy_address paddr;
 	bx_bool paddr_valid = BX_CPU(dbg_cpu)->dbg_xlate_linear2phy(linear_sp, &paddr);
 
+	bx_list_c *dbg_cpu_list = (bx_list_c*) SIM->get_param("cpu0", SIM->get_bochs_root());
+	bx_address cr2 = (bx_address) SIM->get_param_num("CR2", dbg_cpu_list)->get64();
+	fprintf(log, "vector=%d, error code=%d, cr2=%x\n", vector, error_code, cr2);
+	fflush(log);
+
 	saveData(vector, error_code, 0xffff, segmentBegin, segmentEnd, BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
 	BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
 	BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
