@@ -3175,7 +3175,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			mntmSetFromAddressPhysicalBreakpoint = new JMenuItem("set \"from address\" physical breakpoint");
 			mntmSetFromAddressPhysicalBreakpoint.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 2);
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 3);
 					long address = (long) ht.get("address");
 					VMController.getVM().addPhysicalBreakpoint(BigInteger.valueOf(address));
 					gkd.updateBreakpoint();
@@ -3191,7 +3191,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			mntmSetFromAddressLinearBreakpoint = new JMenuItem("set \"from address\" linear breakpoint");
 			mntmSetFromAddressLinearBreakpoint.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 2);
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 3);
 					long address = (long) ht.get("address");
 					VMController.getVM().addLinearBreakpoint(BigInteger.valueOf(address));
 					gkd.updateBreakpoint();
@@ -3207,7 +3207,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			mntmSetToAddressPhysicalBreakpoint = new JMenuItem("set \"to address\" physical breakpoint");
 			mntmSetToAddressPhysicalBreakpoint.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 3);
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 4);
 					long address = (long) ht.get("address");
 					VMController.getVM().addPhysicalBreakpoint(BigInteger.valueOf(address));
 					gkd.updateBreakpoint();
@@ -3223,7 +3223,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			mntmSetToAddressLinearBreakpoint = new JMenuItem("set \"to address\" linear breakpoint");
 			mntmSetToAddressLinearBreakpoint.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 3);
+					Hashtable<String, Object> ht = (Hashtable<String, Object>) jmpDataTable.getValueAt(jmpDataTable.getSelectedRow(), 4);
 					long address = (long) ht.get("address");
 					VMController.getVM().addLinearBreakpoint(BigInteger.valueOf(address));
 					gkd.updateBreakpoint();
