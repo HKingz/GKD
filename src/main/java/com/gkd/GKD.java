@@ -103,11 +103,10 @@ import javax.swing.text.Highlighter;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FileFilterUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -174,7 +173,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel jPanel5;
 	public JMaximizableTabbedPane tabbedPane3;
 	private JMenuItem pauseVMMenuItem;
-	private JPanel jPanel3;
+	private JPanel historyPanel;
 	public JMaximizableTabbedPane bottomTabbedPane;
 	private JButton vmCommandButton;
 	private JTextField vmCommandTextField;
@@ -194,7 +193,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton jRefreshBreakpointButton;
 	private JScrollPane jScrollPane9;
 	private JPanel jPanel4;
-	private JScrollPane jScrollPane6;
+	private JScrollPane historyTableScrollPane6;
 	private JLabel jLabel3;
 	private JScrollPane jScrollPane8;
 	private JScrollPane jScrollPane7;
@@ -548,10 +547,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			e.printStackTrace();
 		}
 
-		CommandLineParser parser = new PosixParser();
+		CommandLineParser parser = new DefaultParser();
 		Options options = new Options();
 		try {
-			options.addOption(OptionBuilder.withDescription("specific config xml").hasArg().withArgName("file").create("f"));
+			options.addOption("f", "file", true, "specific config xml");
 			options.addOption("v", "version", false, "display version info");
 			options.addOption("debug", false, "display debug info to stdout");
 			cmd = parser.parse(options, args);
@@ -2109,7 +2108,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			((HistoryTableModel) this.historyTable.getModel()).fireTableDataChanged();
 			historyTable.scrollRectToVisible(historyTable.getCellRect(historyTable.getRowCount() - 1, 0, true));
-			CommonLib.resizeColumnWidth(historyTable);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -3181,7 +3179,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Setting.getInstance().save();
 	}
 
-	private JTable getJHistoryTable() {
+	private JTable getHistoryTable() {
 		if (historyTable == null) {
 			historyTable = new JTable();
 			HistoryTableModel model = new HistoryTableModel();
@@ -3189,13 +3187,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			final MyTableRowSorter<TableModel> sorter = new MyTableRowSorter<TableModel>(model);
 			historyTable.setRowSorter(sorter);
 			historyTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int x = 1; x <= 15; x++) {
-				historyTable.getColumnModel().getColumn(x).setPreferredWidth(120);
-			}
-			historyTable.getColumnModel().getColumn(5).setPreferredWidth(800);
+			setHistoryTableColumnsWidth();
 		}
 		historyTable.setDefaultRenderer(String.class, new HistoryTableCellRenderer());
-		historyTable.setIntercellSpacing(new Dimension(0, 0));
+		//		historyTable.setIntercellSpacing(new Dimension(0, 0));
 		historyTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				historyTableMouseClicked(evt);
@@ -3271,19 +3266,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void regRadioButtonActionPerformed(ActionEvent evt) {
 		HistoryTableModel model = (HistoryTableModel) this.historyTable.getModel();
 		model.setView("reg");
+		setHistoryTableColumnsWidth();
+	}
+
+	private void setHistoryTableColumnsWidth() {
 		for (int x = 1; x <= 15; x++) {
 			historyTable.getColumnModel().getColumn(x).setPreferredWidth(120);
 		}
-		historyTable.getColumnModel().getColumn(5).setPreferredWidth(800);
+		historyTable.getColumnModel().getColumn(1).setPreferredWidth(200);
+		historyTable.getColumnModel().getColumn(5).setPreferredWidth(300);
+		historyTable.getColumnModel().getColumn(6).setPreferredWidth(300);
 	}
 
 	private void tblRadioButtonActionPerformed(ActionEvent evt) {
 		HistoryTableModel model = (HistoryTableModel) this.historyTable.getModel();
 		model.setView("tbl");
-		for (int x = 1; x < model.getColumnCount(); x++) {
-			historyTable.getColumnModel().getColumn(x).setPreferredWidth(120);
-		}
-		historyTable.getColumnModel().getColumn(6).setPreferredWidth(300);
+		setHistoryTableColumnsWidth();
 	}
 
 	private JSplitPane getJSplitPane3() {
@@ -4271,16 +4269,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		registerPanel = new RegisterPanel(this);
 		registerPanelScrollPane.setViewportView(registerPanel);
 		logger.info(new SimpleDateFormat("mm:ss.SSS").format(new Date()));
-		jPanel3 = new JPanel();
-		bottomTabbedPane.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")), jPanel3,
-				null);
-		BorderLayout jPanel3Layout = new BorderLayout();
-		jPanel3.setLayout(jPanel3Layout);
+		historyPanel = new JPanel();
+		bottomTabbedPane.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")),
+				historyPanel, null);
+		BorderLayout bl_historyPanel = new BorderLayout();
+		historyPanel.setLayout(bl_historyPanel);
 
-		jScrollPane6 = new JScrollPane();
-		jPanel3.add(jScrollPane6, BorderLayout.CENTER);
-		jPanel3.add(getJPanel13(), BorderLayout.NORTH);
-		jScrollPane6.setViewportView(getJHistoryTable());
+		historyTableScrollPane6 = new JScrollPane();
+		historyPanel.add(historyTableScrollPane6, BorderLayout.CENTER);
+		historyPanel.add(getJPanel13(), BorderLayout.NORTH);
+		historyTableScrollPane6.setViewportView(getHistoryTable());
 
 		pagingPanel = new JPanel();
 		bottomTabbedPane.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), pagingPanel,

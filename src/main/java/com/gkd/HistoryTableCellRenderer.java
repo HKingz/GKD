@@ -3,15 +3,13 @@ package com.gkd;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 public class HistoryTableCellRenderer extends JLabel implements TableCellRenderer {
 	public HistoryTableCellRenderer() {
-		this.setOpaque(true);
-		this.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 1, Color.lightGray));
+		setOpaque(true);
 	}
 
 	@Override
@@ -30,11 +28,11 @@ public class HistoryTableCellRenderer extends JLabel implements TableCellRendere
 				this.setBackground(new Color(0xf4f4f4));
 			}
 		}
-		if (column >= 5) {
-			setHorizontalAlignment(JLabel.CENTER);
-		} else {
-			setHorizontalAlignment(JLabel.LEFT);
-		}
+		//		if (column >= 5) {
+		//			setHorizontalAlignment(JLabel.CENTER);
+		//		} else {
+		setHorizontalAlignment(JLabel.LEFT);
+		//		}
 		return this;
 	}
 
