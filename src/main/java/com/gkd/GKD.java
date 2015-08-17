@@ -2419,7 +2419,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void updateGDT() {
 		statusLabel.setText("Updating GDT");
 		int gdtLimit = Integer.parseInt(this.registerPanel.gdtrLimitTextField.getText().substring(2), 16);
-		gdtLimit = (gdtLimit + 1) / 8 - 1;
+		gdtLimit = (gdtLimit + 1);
 		if (gdtLimit > 96) {
 			gdtLimit = 96;
 		}
@@ -2438,7 +2438,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		try {
 			statusLabel.setText("Updating IDT");
 			int idtLimit = Integer.parseInt(this.registerPanel.idtrLimitTextField.getText().substring(2), 16);
-			idtLimit = (idtLimit + 1) / 8 - 1;
+			idtLimit = (idtLimit + 1);
 			if (idtLimit > 96) {
 				idtLimit = 96;
 			}

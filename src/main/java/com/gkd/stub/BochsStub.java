@@ -704,6 +704,9 @@ public class BochsStub implements VMStub {
 		if (result != null) {
 			String lines[] = result.split("\n");
 			for (int x = 0; x < lines.length; x++) {
+				if (!lines[x].contains("[")) {
+					continue;
+				}
 				Vector<String> v = new Vector<String>();
 				v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
 				v.add(lines[x].replaceFirst("^.*]=", ""));
@@ -719,6 +722,9 @@ public class BochsStub implements VMStub {
 		String result = sendBochsCommand("info ldt 0 " + noOfByte / 8);
 		String lines[] = result.split("\n");
 		for (int x = 1; x < lines.length; x++) {
+			if (!lines[x].contains("[")) {
+				continue;
+			}
 			Vector<String> v = new Vector<String>();
 			v.add(lines[x].replaceFirst("^.*\\[", "").replaceFirst("].*$", ""));
 			v.add(lines[x].replaceFirst("^.*]=", ""));
