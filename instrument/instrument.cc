@@ -503,10 +503,10 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 	num_data_accesses = 0;
 	is_branch = 0;
 
-	is32 = BX_CPU(cpu_id)->sregs[BX_SEG_REG_CS].cache.u.segment.d_b;
-	is64 = BX_CPU(cpu_id)->long64_mode();
-	opcode_length = i->ilen();
-	memcpy(opcode, i->get_opcode_bytes(), opcode_length);
+	//is32 = BX_CPU(cpu_id)->sregs[BX_SEG_REG_CS].cache.u.segment.d_b;
+	//is64 = BX_CPU(cpu_id)->long64_mode();
+	//opcode_length = i->ilen();
+	//memcpy(opcode, i->get_opcode_bytes(), opcode_length);
 
 	bx_phy_address phyAddress = BX_CPU(cpu_id)->get_instruction_pointer();
 	segmentEnd = phyAddress;
