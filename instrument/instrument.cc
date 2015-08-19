@@ -72,7 +72,7 @@ bx_bool connectedToJmpServer;
 bx_bool connectedToInterruptServer;
 bx_bool triedToContectToServer;
 
-bx_address startRecordJumpAddress = 0x1600000;
+bx_address startRecordJumpAddress = 0x160606f;
 bx_bool startRecordJump;
 
 bx_address segmentBegin = startRecordJumpAddress;
@@ -624,20 +624,20 @@ void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code)
 	Bit8u buf[STACK_SIZE];
 	bx_dbg_read_linear(0, linear_sp, STACK_SIZE, buf);
 
-	bx_phy_address paddr;
-	bx_bool paddr_valid = BX_CPU(dbg_cpu)->dbg_xlate_linear2phy(linear_sp, &paddr);
+	if (connectedToJmpServer && startRecordJump) {
+		bx_phy_address paddr;
+		bx_bool paddr_valid = BX_CPU(dbg_cpu)->dbg_xlate_linear2phy(linear_sp, &paddr);
 
-	bx_list_c *dbg_cpu_list = (bx_list_c*) SIM->get_param("cpu0", SIM->get_bochs_root());
-	bx_address cr2 = (bx_address) SIM->get_param_num("CR2", dbg_cpu_list)->get64();
-	fprintf(log, "vector=%d, error code=%d, cr2=%x\n", vector, error_code, cr2);
-	fflush(log);
+		bx_list_c *dbg_cpu_list = (bx_list_c*) SIM->get_param("cpu0", SIM->get_bochs_root());
+		bx_address cr2 = (bx_address) SIM->get_param_num("CR2", dbg_cpu_list)->get64();
 
-	saveData(vector, error_code, 0xffff, segmentBegin, segmentEnd, BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
-	BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
-	BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
-	BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value,
-	BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value,
-	BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, buf, paddr_valid ? paddr : -1);
+		saveData(vector, error_code, 0xffff, segmentBegin, segmentEnd, BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
+		BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
+		BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
+		BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value,
+		BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value,
+		BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, buf, paddr_valid ? paddr : -1);
+	}
 }
 
 void bxInstrumentation::bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip) {
