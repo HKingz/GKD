@@ -99,6 +99,8 @@ private:
   void branch_taken(unsigned what, bx_address branch_eip, bx_address new_eip);
 
   void bx_print_instruction(void);
+
+  void bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset);
 };
 
 void bx_instr_init(unsigned cpu);
