@@ -308,6 +308,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JMenuItem mntmSetFromAddressLinearBreakpoint;
 	private JMenuItem mntmSetToAddressPhysicalBreakpoint;
 	private JMenuItem mntmSetToAddressLinearBreakpoint;
+	private JCheckBox callOnlyCheckBox;
 
 	public InstrumentPanel(GKD gkd) {
 		this.gkd = gkd;
@@ -1312,6 +1313,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getNoOfLineComboBox());
 			jmpToolBarPanel.add(getWithSymbolCheckBox());
 			jmpToolBarPanel.add(getRemoveDuplicatedCheckBox());
+			jmpToolBarPanel.add(getCallOnlyCheckBox());
 			jmpToolBarPanel.add(getFullPathCheckbox());
 			jmpToolBarPanel.add(getFilterRawTableTextField());
 			jmpToolBarPanel.add(getFilterButton());
@@ -1326,11 +1328,11 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private JComboBox getNoOfLineComboBox() {
 		if (noOfLineComboBox == null) {
-			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "50", "100", "200", "400", "1000" });
+			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "50", "100", "200", "400", "1000", "2000" });
 			noOfLineComboBox = new JComboBox();
 			noOfLineComboBox.setModel(jNoOfLineComboBoxModel);
 			noOfLineComboBox.setEditable(true);
-			noOfLineComboBox.setPreferredSize(new java.awt.Dimension(153, 22));
+			noOfLineComboBox.setPreferredSize(new java.awt.Dimension(70, 22));
 			noOfLineComboBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					noOfLineComboBoxActionPerformed(evt);
@@ -1587,6 +1589,13 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						where1 += " or toAddressDescription like '%" + filterRawTableTextField.getText() + "%'";
 						where1 += " or fromAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%'";
 						where1 += " or toAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%')";
+					}
+					if (callOnlyCheckBox.isSelected()) {
+						if (where1.equals("")) {
+							where1 += "what!=10 and what!=11";
+						} else {
+							where1 += "and (what!=10 and what!=11)";
+						}
 					}
 					if (withSymbolCheckBox.isSelected()) {
 						query = session.createSQLQuery(
@@ -3232,5 +3241,17 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			});
 		}
 		return mntmSetToAddressLinearBreakpoint;
+	}
+
+	private JCheckBox getCallOnlyCheckBox() {
+		if (callOnlyCheckBox == null) {
+			callOnlyCheckBox = new JCheckBox("Call only");
+			callOnlyCheckBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					updateJmpTable();
+				}
+			});
+		}
+		return callOnlyCheckBox;
 	}
 }
