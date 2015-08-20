@@ -1592,9 +1592,9 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 					if (callOnlyCheckBox.isSelected()) {
 						if (where1.equals("")) {
-							where1 += "what!=10 and what!=11";
+							where1 += "what!=10 and what!=11 and what>=10 and what<=20";
 						} else {
-							where1 += "and (what!=10 and what!=11)";
+							where1 += "and (what!=10 and what!=11 and what>=10 and what<=20)";
 						}
 					}
 					if (withSymbolCheckBox.isSelected()) {
@@ -1642,7 +1642,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					}
 
 					if (callOnlyCheckBox.isSelected()) {
-						criteria.add(Restrictions.not(Restrictions.or(Restrictions.eq("what", 10), Restrictions.eq("what", 11))));
+						criteria.add(Restrictions
+								.not(Restrictions.or(Restrictions.eq("what", 10), Restrictions.eq("what", 11), Restrictions.lt("what", 10), Restrictions.gt("what", 20))));
 					}
 					criteria.setFetchMode("parameters", FetchMode.SELECT);
 					criteria.setMaxResults(pageSize);
