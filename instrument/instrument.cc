@@ -72,7 +72,7 @@ bx_bool connectedToJmpServer;
 bx_bool connectedToInterruptServer;
 bx_bool triedToContectToServer;
 
-bx_address startRecordJumpAddress = 0x160606f;
+bx_address startRecordJumpAddress = 0x1600000;
 bx_bool startRecordJump;
 
 bx_address segmentBegin = startRecordJumpAddress;
@@ -510,9 +510,10 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 
 	bx_phy_address phyAddress = BX_CPU(cpu_id)->get_instruction_pointer();
 	segmentEnd = phyAddress;
-	if (phyAddress == startRecordJumpAddress) {
+
+	/*if (phyAddress == startRecordJumpAddress) {
 		startRecordJump = true;
-	}
+	}*/
 
 	/*
 	 if (!triedToContectToServer) {
@@ -829,6 +830,11 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 }
 
 void bxInstrumentation::bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset){
-	fprintf(log, "bx_instr_prefetch_hint cpu=%d, what=%d, seg=%d, offset=%x\n", cpu, what, seg, offset);
-	fflush(log);
+	//fprintf(log, "bx_instr_prefetch_hint cpu=%d, what=%d, seg=%d, offset=%x\n", cpu, what, seg, offset);
+	//fflush(log);
+	if (what==1){
+		startRecordJump = true;
+	}else if (what==2){
+		startRecordJump = false;
+	}
 }

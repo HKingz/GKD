@@ -95,12 +95,12 @@ public:
 
   void memorySampling(bx_phy_address);
   void jmpSampling(unsigned, bx_address, bx_address);
+  void bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset);
 private:
   void branch_taken(unsigned what, bx_address branch_eip, bx_address new_eip);
 
   void bx_print_instruction(void);
 
-  void bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset);
 };
 
 void bx_instr_init(unsigned cpu);
@@ -142,7 +142,7 @@ extern bxInstrumentation *icpu;
 #define BX_INSTR_CLFLUSH(cpu_id, laddr, paddr)
 #define BX_INSTR_CACHE_CNTRL(cpu_id, what)
 #define BX_INSTR_TLB_CNTRL(cpu_id, what, new_cr3)
-#define BX_INSTR_PREFETCH_HINT(cpu_id, what, seg, offset)
+#define BX_INSTR_PREFETCH_HINT(cpu_id, what, seg, offset) icpu[cpu_id].bx_instr_prefetch_hint(cpu_id, what, seg, offset)
 
 /* execution */
 #define BX_INSTR_BEFORE_EXECUTION(cpu_id, i) icpu[cpu_id].bx_instr_before_execution(i)
