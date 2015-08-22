@@ -23,7 +23,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -50,10 +49,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -159,8 +159,6 @@ import com.peterswing.advancedswing.pager.PagerEventListener;
 import com.peterswing.advancedswing.pager.PagerTextFieldEvent;
 import com.peterswing.advancedswing.pager.PagerTextFieldEventListener;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
-import javax.swing.JPopupMenu;
-import javax.swing.JMenuItem;
 
 public class InstrumentPanel extends JPanel implements ChartChangeListener, ChartMouseListener {
 	private JTabbedPane mainTabbedPane;
@@ -292,8 +290,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JButton clearFilterRawTableButton;
 	private JCheckBox fullPathCheckbox;
 	AddressCellRenderer addressCellRenderer = new AddressCellRenderer();
-	private JFormattedTextField lineTextField;
-	private JButton gotoLineButton;
+	private JTextField searchJumpTextField;
+	private JButton gotoButton;
 	private JCheckBox removeDuplicatedCheckBox;
 	private JButton callGraphButton;
 	GKD gkd;
@@ -1318,8 +1316,8 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			jmpToolBarPanel.add(getFilterRawTableTextField());
 			jmpToolBarPanel.add(getFilterButton());
 			jmpToolBarPanel.add(getClearFilterRawTableButton());
-			jmpToolBarPanel.add(getLineTextField());
-			jmpToolBarPanel.add(getGotoLineButton());
+			jmpToolBarPanel.add(getSearchJumpTextField());
+			jmpToolBarPanel.add(getGotoButton());
 			jmpToolBarPanel.add(getCallGraphButton());
 			jmpToolBarPanel.add(getExportJmpTableToExcelButton());
 		}
@@ -1328,7 +1326,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 	private JComboBox getNoOfLineComboBox() {
 		if (noOfLineComboBox == null) {
-			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "50", "100", "200", "400", "1000", "2000" });
+			ComboBoxModel jNoOfLineComboBoxModel = new DefaultComboBoxModel(new String[] { "50", "100", "200", "400", "1000", "2000", "5000", "10000", "50000", "100000" });
 			noOfLineComboBox = new JComboBox();
 			noOfLineComboBox.setModel(jNoOfLineComboBoxModel);
 			noOfLineComboBox.setEditable(true);
@@ -1602,9 +1600,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 								"SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1)
 								.addEntity(JmpData.class);
-						System.out.println(
-								"SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
-										+ where1);
 						countQuery = session.createSQLQuery(
 								"SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
 										+ where1);
@@ -2816,6 +2811,7 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 	private JTextField getFilterRawTableTextField() {
 		if (filterRawTableTextField == null) {
 			filterRawTableTextField = new JTextField();
+			filterRawTableTextField.setPreferredSize(new Dimension(50, 25));
 			filterRawTableTextField.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyReleased(KeyEvent e) {
@@ -2887,33 +2883,65 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		return fullPathCheckbox;
 	}
 
-	private JFormattedTextField getLineTextField() {
-		if (lineTextField == null) {
-			DecimalFormat formatter = new DecimalFormat();
-			formatter.setGroupingUsed(false);
-			lineTextField = new JFormattedTextField(formatter);
-			lineTextField.setColumns(10);
+	private JTextField getSearchJumpTextField() {
+		if (searchJumpTextField == null) {
+			//			DecimalFormat formatter = new DecimalFormat();
+			//			formatter.setGroupingUsed(false);
+			searchJumpTextField = new JTextField();
+			searchJumpTextField.setPreferredSize(new Dimension(50, 25));
+			searchJumpTextField.setColumns(10);
 		}
-		return lineTextField;
+		return searchJumpTextField;
 	}
 
-	private JButton getGotoLineButton() {
-		if (gotoLineButton == null) {
-			gotoLineButton = new JButton("Goto line");
-			gotoLineButton.addActionListener(new ActionListener() {
+	private JButton getGotoButton() {
+		if (gotoButton == null) {
+			gotoButton = new JButton("Goto");
+			gotoButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					try {
-						int rowNo = Integer.parseInt(lineTextField.getText());
-						int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
-						int tmp = ((rowNo - 1) / pageSize) + 1;
-						jmpPager.setPageNo(tmp);
-						updateJmpTable();
+						if (CommonLib.isNumber(searchJumpTextField.getText())) {
+							int rowNo = Integer.parseInt(searchJumpTextField.getText());
+							int pageSize = Integer.parseInt((String) noOfLineComboBox.getSelectedItem());
+							int tmp = ((rowNo - 1) / pageSize) + 1;
+							jmpPager.setPageNo(tmp);
+							updateJmpTable();
+
+							for (int x = 0; x < jmpDataTable.getRowCount(); x++) {
+								if ((int) jmpDataTable.getValueAt(x, 0) == rowNo) {
+									jmpDataTable.setRowSelectionInterval(x, x);
+									jmpDataTable.scrollRectToVisible(jmpDataTable.getCellRect(x + 10, 1, true));
+									jmpDataTable.scrollRectToVisible(jmpDataTable.getCellRect(x, 1, true));
+									return;
+								}
+							}
+						} else {
+							for (int x = jmpDataTable.getSelectedRow() + 1; x < jmpDataTable.getRowCount(); x++) {
+								String s = searchJumpTextField.getText().toLowerCase();
+								if (jmpDataTable.getValueAt(x, 2) instanceof Hashtable) {
+									Hashtable<String, Object> htFrom = (Hashtable<String, Object>) jmpDataTable.getValueAt(x, 2);
+									Hashtable<String, Object> htTo = (Hashtable<String, Object>) jmpDataTable.getValueAt(x, 3);
+									String DW_AT_nameFrom = (String) htFrom.get("DW_AT_name");
+									String addressDescriptionFrom = (String) htFrom.get("addressDescription");
+									String DW_AT_nameTo = (String) htTo.get("DW_AT_name");
+									String addressDescriptionTo = (String) htTo.get("addressDescription");
+									if (DW_AT_nameFrom.toLowerCase().contains(s) || addressDescriptionFrom.toLowerCase().contains(s) || DW_AT_nameTo.toLowerCase().contains(s)
+											|| addressDescriptionTo.toLowerCase().contains(s)) {
+										jmpDataTable.setRowSelectionInterval(x, x);
+										jmpDataTable.scrollRectToVisible(jmpDataTable.getCellRect(x + 10, 1, true));
+										jmpDataTable.scrollRectToVisible(jmpDataTable.getCellRect(x, 1, true));
+										return;
+									}
+								}
+							}
+						}
 					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 				}
 			});
 		}
-		return gotoLineButton;
+		return gotoButton;
 	}
 
 	private JCheckBox getRemoveDuplicatedCheckBox() {

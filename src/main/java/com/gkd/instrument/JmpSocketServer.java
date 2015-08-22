@@ -226,24 +226,24 @@ public class JmpSocketServer implements Runnable {
 					case 14:
 						deep--;
 						break;
-					case 15:
-						deep--;
-						break;
-					case 16:
-						deep++;
-						break;
-					case 17:
-						deep++;
-						break;
-					case 18:
-						deep--;
-						break;
-					case 19:
-						deep++;
-						break;
-					case 20:
-						deep--;
-						break;
+//					case 15:
+//						deep--;
+//						break;
+//					case 16:
+//						deep++;
+//						break;
+//					case 17:
+//						deep++;
+//						break;
+//					case 18:
+//						deep--;
+//						break;
+//					case 19:
+//						deep++;
+//						break;
+//					case 20:
+//						deep--;
+//						break;
 					}
 
 					if (deep != deeps[x]) {

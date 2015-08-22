@@ -1133,7 +1133,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				//				String chinesesample = "\u4e00";
 
 				for (int j = 0; j < allfonts.length && j < 40; j++) {
-					System.out.println(allfonts[j]);
 					//					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
 					//						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
 					JMenuItem menuItem = new JMenuItem(allfonts[j].getFontName());
@@ -2322,8 +2321,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		sourceLevelDebugger.instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow + 10, 1, true));
 		instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow, 1, true));
 		sourceLevelDebugger.instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow, 1, true));
-
-		logger.debug("jumpToRowInstructionTable end=" + eip.toString(16));
 	}
 
 	private String getASMCode(BigInteger pc) {
