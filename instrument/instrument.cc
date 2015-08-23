@@ -512,8 +512,8 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 	segmentEnd = phyAddress;
 
 	/*if (phyAddress == startRecordJumpAddress) {
-		startRecordJump = true;
-	}*/
+	 startRecordJump = true;
+	 }*/
 
 	/*
 	 if (!triedToContectToServer) {
@@ -559,15 +559,15 @@ void bxInstrumentation::branch_taken(unsigned what, bx_address branch_eip, bx_ad
 	//target_linear = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
 	jmpSampling(what, branch_eip, new_eip);
 	/*
-	// find linear address
-	bx_address laddr = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
+	 // find linear address
+	 bx_address laddr = BX_CPU(cpu_id)->get_laddr(BX_SEG_REG_CS, new_eip);
 
-	is_branch = 1;
-	is_taken = 1;
-	target_linear = laddr;
+	 is_branch = 1;
+	 is_taken = 1;
+	 target_linear = laddr;
 
-	//printf("branch_taken=%x\n", new_eip);
-	*/
+	 //printf("branch_taken=%x\n", new_eip);
+	 */
 }
 
 void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip) {
@@ -576,26 +576,26 @@ void bxInstrumentation::bx_instr_cnear_branch_taken(bx_address branch_eip, bx_ad
 
 void bxInstrumentation::bx_instr_cnear_branch_not_taken(bx_address branch_eip) {
 	/*
-	if (!active || !ready)
-	return;
+	 if (!active || !ready)
+	 return;
 
-	is_branch = 1;
-	is_taken = 0;
+	 is_branch = 1;
+	 is_taken = 0;
 
-	//printf("bxif _instr_cnear_branch_not_taken=%x\n", branch_eip);
-	*/
+	 //printf("bxif _instr_cnear_branch_not_taken=%x\n", branch_eip);
+	 */
 }
 
 void bxInstrumentation::bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip) {
 	branch_taken(what, branch_eip, new_eip);
 	/*
-	branch_taken(new_eip);
-	if (connectedToJmpServer) {
-	jmpSampling(new_eip);
-	}
+	 branch_taken(new_eip);
+	 if (connectedToJmpServer) {
+	 jmpSampling(new_eip);
+	 }
 
-	//printf("bx_instr_ucnear_branch=%x, %x\n", branch_eip, new_eip);
-	*/
+	 //printf("bx_instr_ucnear_branch=%x, %x\n", branch_eip, new_eip);
+	 */
 }
 
 void bxInstrumentation::bx_instr_far_branch(unsigned what, Bit16u prev_cs, bx_address prev_eip, Bit16u new_cs, bx_address new_eip) {
@@ -637,7 +637,8 @@ void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code)
 		BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
 		BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value,
 		BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value,
-		BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, buf, paddr_valid ? paddr : -1);
+		BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, buf,
+				paddr_valid ? paddr : -1);
 	}
 }
 
@@ -829,12 +830,12 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 	}
 }
 
-void bxInstrumentation::bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset){
-	//fprintf(log, "bx_instr_prefetch_hint cpu=%d, what=%d, seg=%d, offset=%x\n", cpu, what, seg, offset);
-	//fflush(log);
-	if (what==1){
+void bxInstrumentation::bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset) {
+	if (what == 1 && offset == 0x12345678) {
+		fprintf(log, "bx_instr_prefetch_hint cpu=%d, what=%d, seg=%d, offset=%x\n", cpu, what, seg, offset);
+		fflush (log);
 		startRecordJump = true;
-	}else if (what==2){
+	} else if (what == 1 && offset == 0x87654321) {
 		startRecordJump = false;
 	}
 }
