@@ -1626,6 +1626,20 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 
 					if (withSymbolCheckBox.isSelected()) {
 						criteria.add(Restrictions.isNotNull("toAddressSymbol"));
+					}
+					if (callOnlyCheckBox.isSelected()) {
+						criteria.add(Restrictions
+								.not(Restrictions.or(Restrictions.eq("what", 10), Restrictions.eq("what", 11), Restrictions.lt("what", 10), Restrictions.gt("what", 20))));
+					}
+					if (filterRawTableTextField.getText().length() > 0) {
+						criteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
+						criteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
+					}
+
+					if (withSymbolCheckBox.isSelected()) {
+						// use .ge(PK) is much faster than sql limit
+						criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
+					} else if (callOnlyCheckBox.isSelected()) {
 						// use .ge(PK) is much faster than sql limit
 						criteria.setFirstResult((jmpPager.getPage() - 1) * pageSize);
 					} else {
@@ -1636,10 +1650,6 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						criteria.add(Restrictions.like("toAddressDescription", filterRawTableTextField.getText()));
 					}
 
-					if (callOnlyCheckBox.isSelected()) {
-						criteria.add(Restrictions
-								.not(Restrictions.or(Restrictions.eq("what", 10), Restrictions.eq("what", 11), Restrictions.lt("what", 10), Restrictions.gt("what", 20))));
-					}
 					criteria.setFetchMode("parameters", FetchMode.SELECT);
 					criteria.setMaxResults(pageSize);
 					criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
@@ -1651,6 +1661,10 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 					Criteria countCriteria = session.createCriteria(JmpData.class);
 					if (withSymbolCheckBox.isSelected()) {
 						countCriteria.add(Restrictions.isNotNull("toAddressSymbol"));
+					}
+					if (callOnlyCheckBox.isSelected()) {
+						countCriteria.add(Restrictions
+								.not(Restrictions.or(Restrictions.eq("what", 10), Restrictions.eq("what", 11), Restrictions.lt("what", 10), Restrictions.gt("what", 20))));
 					}
 					if (filterRawTableTextField.getText().length() > 0) {
 						countCriteria.add(Restrictions.like("fromAddressDescription", filterRawTableTextField.getText()));
