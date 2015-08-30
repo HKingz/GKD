@@ -215,18 +215,9 @@ public class BochsStub implements VMStub {
 
 		String lines[] = result.split("\n");
 		if (lines.length > 0) {
-			//			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-			//			jStatusProgressBar.setMaximum(lines.length - 1);
 			for (int x = 0; x < lines.length; x++) {
-				//				jStatusProgressBar.setValue(x);
 				try {
 					// load cCode
-
-					//						logger.info("pcStr=" + pcStr);
-					//						if (!pcStr.matches("^[0-9a-fA-F].*")) {
-					//							logger.info("fuck ar=" + pcStr);
-					//							System.exit(1);
-					//						}
 					String temp[] = lines[x].split("  +");
 					if (temp.length == 3) {
 						String pcStr = temp[0].substring(0, 8).trim();
