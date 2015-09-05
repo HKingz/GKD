@@ -322,9 +322,7 @@ void initMemorySocket() {
 }
 
 void initJmpSocket() {
-	fprintf(log, "initJmpSocket 1\n");
 	jmpSockfd = socket(AF_INET, SOCK_STREAM, 0);
-	fprintf(log, "initJmpSocket 2\n");
 	if (jmpSockfd < 0) {
 		fprintf(log, "Jmp socket server : ERROR opening socket\n");
 		return;
