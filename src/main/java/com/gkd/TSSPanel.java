@@ -47,7 +47,7 @@ import info.clearthought.layout.TableLayout;
 public class TSSPanel extends JPanel {
 	private JTable table1;
 	private int gdtNo;
-	private JPanel panel1;
+	private JPanel infoPanel;
 	private JTabbedPane tabbedPane1;
 	private JTable pageTableTable;
 	private JTable pageDirectoryTable;
@@ -78,7 +78,7 @@ public class TSSPanel extends JPanel {
 	private JTextField jLinearAddressTextField;
 	private JPanel jPanel3;
 	private JSplitPane jSplitPane2;
-	private JPanel jPanel2;
+	private JPanel pageTablePanel;
 	private JSplitPane jSplitPane1;
 	private JLabel jTypeLabel;
 	private JTable jTable2;
@@ -133,13 +133,13 @@ public class TSSPanel extends JPanel {
 			tssTable.getColumn("").setCellRenderer(new ButtonRenderer());
 			tssTable.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
 
-			panel1 = new JPanel();
-			tabbedPane1.addTab("Info", null, panel1, null);
+			infoPanel = new JPanel();
+			tabbedPane1.addTab("Info", null, infoPanel, null);
 			BorderLayout jPanel1Layout = new BorderLayout();
-			panel1.setLayout(jPanel1Layout);
+			infoPanel.setLayout(jPanel1Layout);
 
 			jScrollPane1 = new JScrollPane();
-			panel1.add(jScrollPane1, BorderLayout.CENTER);
+			infoPanel.add(jScrollPane1, BorderLayout.CENTER);
 			jScrollPane1.setBounds(12, 38, 667, 60);
 			jScrollPane1.setBorder(new LineBorder(new java.awt.Color(0, 0, 0), 1, false));
 
@@ -154,19 +154,19 @@ public class TSSPanel extends JPanel {
 			table1.setBounds(12, 12, 562, 50);
 
 			jTypeLabel = new JLabel();
-			panel1.add(jTypeLabel, BorderLayout.NORTH);
+			infoPanel.add(jTypeLabel, BorderLayout.NORTH);
 			jTypeLabel.setText("Type : ");
 			jTypeLabel.setBounds(12, 12, 576, 14);
 
-			jPanel2 = new JPanel();
-			tabbedPane1.addTab("Page table", null, jPanel2, null);
+			pageTablePanel = new JPanel();
+			tabbedPane1.addTab("Page table", null, pageTablePanel, null);
 			BorderLayout jPanel2Layout = new BorderLayout();
-			jPanel2.setLayout(jPanel2Layout);
+			pageTablePanel.setLayout(jPanel2Layout);
 
 			jPanel3 = new JPanel();
 			FormLayout jPanel3Layout = new FormLayout("max(p;5dlu), max(p;5dlu), 80dlu, max(p;5dlu)", "max(p;5dlu), max(p;5dlu), max(p;5dlu), max(p;5dlu)");
 			jPanel3.setLayout(jPanel3Layout);
-			jPanel2.add(jPanel3, BorderLayout.NORTH);
+			pageTablePanel.add(jPanel3, BorderLayout.NORTH);
 			jPanel3.setPreferredSize(new java.awt.Dimension(915, 27));
 
 			label1 = new JLabel();
@@ -179,7 +179,7 @@ public class TSSPanel extends JPanel {
 			jPanel3.add(getJHideIfAddressIsZeroCheckBox(), new CellConstraints("4, 1, 1, 1, default, default"));
 
 			jSplitPane2 = new JSplitPane();
-			jPanel2.add(jSplitPane2, BorderLayout.CENTER);
+			pageTablePanel.add(jSplitPane2, BorderLayout.CENTER);
 			jSplitPane2.setDividerLocation(400);
 
 			jScrollPane4 = new JScrollPane();
@@ -188,6 +188,7 @@ public class TSSPanel extends JPanel {
 
 			PageDirectoryTableModel jPageDirectoryTableModel = new PageDirectoryTableModel();
 			pageDirectoryTable = new JTable();
+			pageDirectoryTable.getTableHeader().setReorderingAllowed(false); 
 			jScrollPane4.setViewportView(pageDirectoryTable);
 			pageDirectoryTable.setModel(jPageDirectoryTableModel);
 			pageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -203,6 +204,7 @@ public class TSSPanel extends JPanel {
 
 			PageTableTableModel jPageTableTableModel = new PageTableTableModel();
 			pageTableTable = new JTable();
+			pageTableTable.getTableHeader().setReorderingAllowed(false); 
 			jScrollPane5.setViewportView(pageTableTable);
 			pageTableTable.setModel(jPageTableTableModel);
 			pageTableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);

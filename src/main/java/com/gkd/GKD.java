@@ -3290,6 +3290,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				jSplitPane3.add(jScrollPane7, JSplitPane.RIGHT);
 				{
 					pageTableTable = new JTable();
+					pageTableTable.getTableHeader().setReorderingAllowed(false);
 					jScrollPane7.setViewportView(pageTableTable);
 					pageTableTable.setModel(new PageTableTableModel());
 					pageTableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -3309,6 +3310,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				jSplitPane3.add(jScrollPane8, JSplitPane.LEFT);
 				{
 					pageDirectoryTable = new JTable();
+					pageDirectoryTable.getTableHeader().setReorderingAllowed(false);
 					jScrollPane8.setViewportView(pageDirectoryTable);
 					pageDirectoryTable.setModel(new PageDirectoryTableModel());
 					pageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -4508,6 +4510,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable getJTable1() {
 		if (addressTranslateTable2 == null) {
 			addressTranslateTable2 = new JTable();
+			addressTranslateTable2.getTableHeader().setReorderingAllowed(false);
 			AddressTranslateTableModel addressTranslateTableModel = new AddressTranslateTableModel();
 			addressTranslateTable2.setModel(addressTranslateTableModel);
 			addressTranslateTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -5391,7 +5394,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable getELFHeaderTable() {
 		if (elfHeaderTable == null) {
 			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
-			elfHeaderTable = new JTable();
+			elfHeaderTable = new JTable();elfHeaderTable.getTableHeader().setReorderingAllowed(false); 
 			elfHeaderTable.setModel(jELFHeaderTableModel);
 		}
 		return elfHeaderTable;
@@ -5648,7 +5651,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (elfSectionTable == null) {
 			TableModel jSectionTableModel = new DefaultTableModel(null,
 					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize" });
-			elfSectionTable = new JTable();
+			elfSectionTable = new JTable();elfSectionTable.getTableHeader().setReorderingAllowed(false); 
 			elfSectionTable.setModel(jSectionTableModel);
 			elfSectionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
@@ -5667,6 +5670,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (programHeaderTable == null) {
 			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[] { "No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align" });
 			programHeaderTable = new JTable();
+			programHeaderTable.getTableHeader().setReorderingAllowed(false);
 			programHeaderTable.setModel(jProgramHeaderTableModel);
 			programHeaderTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
