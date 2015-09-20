@@ -14,7 +14,7 @@ public class AboutUsDialog extends javax.swing.JDialog {
 	private JScrollPane jScrollPane1;
 
 	public AboutUsDialog(JFrame frame) {
-		super(frame);
+		super(frame, true);
 		try {
 			getContentPane().setLayout(null);
 			this.setTitle("About us");

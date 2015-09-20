@@ -143,6 +143,10 @@ import com.peterswing.advancedswing.jvmdialog.JVMInfoDialog;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 import info.clearthought.layout.TableLayout;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 
 @SuppressWarnings("serial")
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
@@ -228,7 +232,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable ldtTable;
 	private JScrollPane jScrollPane11;
 	private JTable idtTable;
-	private JTable addressTranslateTable;
 	private JTable addressTranslateTable2;
 	private JPanel jPanel22;
 	private JPanel jPanel24;
@@ -290,7 +293,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem stepNMenuItem;
 	private JMenuItem step100MenuItem;
 	private JMenuItem step10MenuItem;
-	private JPanel jPanel30;
 	private JMenuItem helpRequestMenuItem;
 	private EnhancedTextArea osLogPanel;
 	private JToggleButton osLogToggleButton;
@@ -300,7 +302,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public static InstrumentPanel instrumentPanel;
 	private JOSDebugInformationPanel osDebugInformationPanel1;
 	private JLabel osDebugInfoErrorLabel;
-	private JTabbedPane tabbedPane5;
 	private JPanel osDebugStandardPanel;
 	private JButton settingButton;
 	private JMenuItem setELFPhysicalBreakpointMenuItem;
@@ -404,7 +405,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem arialMenuItem;
 	private JMenu fontMenu;
 	private JMenu sizeMenu;
-	private JScrollPane tableTranslateScrollPane;
 	public static CommandLine cmd;
 	private JMenuItem font14MenuItem;
 	private JMenuItem font12MenuItem;
@@ -2920,23 +2920,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		hexTable.getModel().fireTableDataChanged();
 	}
 
-	private JScrollPane getTableTranslateScrollPane() {
-		if (tableTranslateScrollPane == null) {
-			tableTranslateScrollPane = new JScrollPane();
-			tableTranslateScrollPane.setViewportView(getJPanel30());
-		}
-		return tableTranslateScrollPane;
-	}
-
-	private JTable getAddressTranslateTable() {
-		if (addressTranslateTable == null) {
-			TableModel jAddressTranslateTableModel = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("From"), MyLanguage.getString("To") });
-			addressTranslateTable = new JTable();
-			addressTranslateTable.setModel(jAddressTranslateTableModel);
-		}
-		return addressTranslateTable;
-	}
-
 	private JMenu getTopFontMenu() {
 		if (topFontMenu == null) {
 			topFontMenu = new JMenu();
@@ -4282,15 +4265,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		pagingPanel = new JPanel();
 		bottomTabbedPane.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), pagingPanel,
 				null);
-		bottomTabbedPane.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_go.png")),
+		bottomTabbedPane.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")),
 				getJAddressTranslatePanel(), null);
 		bottomTabbedPane.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
 				getPageTableGraphPanel(), null);
 		if (!Global.debug) {
 			bottomTabbedPane.removeTabAt(bottomTabbedPane.getTabCount() - 1);
 		}
-		bottomTabbedPane.addTab(MyLanguage.getString("Table_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")),
-				getTableTranslateScrollPane(), null);
 		bottomTabbedPane.addTab(MyLanguage.getString("ELF_dump"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
 				getELFDumpScrollPane(), null);
 		bottomTabbedPane.addTab("OS debug informations", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/bug.png")), getOSDebugStandardPanel(),
@@ -4439,16 +4420,36 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel getJPanel20() {
 		if (jPanel20 == null) {
 			jPanel20 = new JPanel();
-			TableLayout jPanel20Layout = new TableLayout(new double[][] { { 8.0, 156.0, 13.0 }, { 25.0, 25.0, 25.0, 22.0, 37.0, TableLayout.FILL } });
-			jPanel20Layout.setHGap(5);
-			jPanel20Layout.setVGap(5);
-			jPanel20.setLayout(jPanel20Layout);
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-			jPanel20.add(getSearchVirtualAddressRadioButton(), "1, 0, 2, 0");
-			jPanel20.add(getSearchLinearAddressRadioButton(), "1, 1, 2, 1");
-			jPanel20.add(getSearchPhysicalAddressRadioButton(), "1, 2, 2, 2");
-			jPanel20.add(getJPanel21(), "1, 4");
-			jPanel20.add(getJAddressTextField(), "1, 3");
+			jPanel20.setLayout(new FormLayout(new ColumnSpec[] {
+					FormSpecs.UNRELATED_GAP_COLSPEC,
+					ColumnSpec.decode("174px"),},
+				new RowSpec[] {
+					RowSpec.decode("25px"),
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("25px"),
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("25px"),
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("22px"),
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					RowSpec.decode("37px"),
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,
+					FormSpecs.RELATED_GAP_ROWSPEC,
+					FormSpecs.DEFAULT_ROWSPEC,}));
+			jPanel20.add(getJPanel21(), "2, 9, fill, fill");
+			jPanel20.add(getSearchLinearAddressRadioButton(), "2, 11, fill, fill");
+			jPanel20.add(getSearchVirtualAddressRadioButton(), "2, 13, fill, fill");
+			jPanel20.add(getSearchPhysicalAddressRadioButton(), "2, 15, fill, fill");
+			jPanel20.add(getJAddressTextField(), "2, 17, fill, fill");
+			jPanel20.add(getRefreshAddressTranslateButton(), "2, 19");
 		}
 		return jPanel20;
 	}
@@ -4457,7 +4458,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (searchVirtualAddressRadioButton == null) {
 			searchVirtualAddressRadioButton = new JRadioButton();
 			searchVirtualAddressRadioButton.setText(MyLanguage.getString("Virtual_address"));
-			searchVirtualAddressRadioButton.setSelected(true);
 			getButtonGroup3().add(searchVirtualAddressRadioButton);
 		}
 		return searchVirtualAddressRadioButton;
@@ -4466,6 +4466,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JRadioButton getSearchLinearAddressRadioButton() {
 		if (searchLinearAddressRadioButton == null) {
 			searchLinearAddressRadioButton = new JRadioButton();
+			searchLinearAddressRadioButton.setSelected(true);
 			searchLinearAddressRadioButton.setText(MyLanguage.getString("Linear_address"));
 			getButtonGroup3().add(searchLinearAddressRadioButton);
 		}
@@ -4507,7 +4508,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return jPanel22;
 	}
 
-	private JTable getJTable1() {
+	private JTable getAddressTranslateTable2() {
 		if (addressTranslateTable2 == null) {
 			addressTranslateTable2 = new JTable();
 			addressTranslateTable2.getTableHeader().setReorderingAllowed(false);
@@ -4525,7 +4526,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jScrollPane13 == null) {
 			jScrollPane13 = new JScrollPane();
 			jScrollPane13.setPreferredSize(new java.awt.Dimension(150, 32));
-			jScrollPane13.setViewportView(getJTable1());
+			jScrollPane13.setViewportView(getAddressTranslateTable2());
 		}
 		return jScrollPane13;
 	}
@@ -4577,7 +4578,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel getJPanel21() {
 		if (jPanel21 == null) {
 			jPanel21 = new JPanel();
-			jPanel21.add(getRefreshAddressTranslateButton());
 		}
 		return jPanel21;
 	}
@@ -5394,7 +5394,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable getELFHeaderTable() {
 		if (elfHeaderTable == null) {
 			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
-			elfHeaderTable = new JTable();elfHeaderTable.getTableHeader().setReorderingAllowed(false); 
+			elfHeaderTable = new JTable();
+			elfHeaderTable.getTableHeader().setReorderingAllowed(false);
 			elfHeaderTable.setModel(jELFHeaderTableModel);
 		}
 		return elfHeaderTable;
@@ -5651,7 +5652,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (elfSectionTable == null) {
 			TableModel jSectionTableModel = new DefaultTableModel(null,
 					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize" });
-			elfSectionTable = new JTable();elfSectionTable.getTableHeader().setReorderingAllowed(false); 
+			elfSectionTable = new JTable();
+			elfSectionTable.getTableHeader().setReorderingAllowed(false);
 			elfSectionTable.setModel(jSectionTableModel);
 			elfSectionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		}
@@ -6772,13 +6774,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return osDebugStandardPanel;
 	}
 
-	private JTabbedPane getJTabbedPane5() {
-		if (tabbedPane5 == null) {
-			tabbedPane5 = new JTabbedPane();
-		}
-		return tabbedPane5;
-	}
-
 	private JLabel getOSDebugInfoErrorLabel() {
 		if (osDebugInfoErrorLabel == null) {
 			osDebugInfoErrorLabel = new JLabel();
@@ -6936,17 +6931,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		HelpRequestDialog helpRequestDialog = new HelpRequestDialog(this);
 		CommonLib.centerDialog(helpRequestDialog);
 		helpRequestDialog.setVisible(true);
-	}
-
-	private JPanel getJPanel30() {
-		if (jPanel30 == null) {
-			jPanel30 = new JPanel();
-			BorderLayout jPanel30Layout = new BorderLayout();
-			jPanel30.setLayout(jPanel30Layout);
-			jPanel30.add(getAddressTranslateTable(), BorderLayout.CENTER);
-			jPanel30.add(getJTabbedPane5(), BorderLayout.WEST);
-		}
-		return jPanel30;
 	}
 
 	private JMenuItem getStep10MenuItem() {
