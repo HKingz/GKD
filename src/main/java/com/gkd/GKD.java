@@ -147,6 +147,8 @@ import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 @SuppressWarnings("serial")
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
@@ -232,7 +234,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable ldtTable;
 	private JScrollPane jScrollPane11;
 	private JTable idtTable;
-	private JTable addressTranslateTable2;
+	private JTable addressTranslateTable;
 	private JPanel jPanel22;
 	private JPanel jPanel24;
 	private JToolBar jPanel26;
@@ -366,7 +368,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenuItem gdtMenuItem;
 	private JPopupMenu hexTablePopupMenu;
 	private JTextField addressTextField;
-	private JPanel jPanel21;
 	private ButtonGroup buttonGroup3;
 	private JButton jButton18;
 	private JButton jButton17;
@@ -500,6 +501,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JMenu fontAJMenu;
 	private JMenu fontKTMenu;
 	private JMenu fontUZMenu;
+	private JLabel lblAddressType;
+	private JLabel lblCr;
+	private JRadioButton cr3RadioButton;
+	private JPanel panel;
+	private JRadioButton customCR3RadioButton;
+	private JTextField pageDirectoryBaseAddressTextField;
+	private final ButtonGroup buttonGroup = new ButtonGroup();
 
 	public GKD() {
 		super();
@@ -4421,35 +4429,20 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jPanel20 == null) {
 			jPanel20 = new JPanel();
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-			jPanel20.setLayout(new FormLayout(new ColumnSpec[] {
-					FormSpecs.UNRELATED_GAP_COLSPEC,
-					ColumnSpec.decode("174px"),},
-				new RowSpec[] {
-					RowSpec.decode("25px"),
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					RowSpec.decode("25px"),
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					RowSpec.decode("25px"),
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					RowSpec.decode("22px"),
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					RowSpec.decode("37px"),
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,
-					FormSpecs.RELATED_GAP_ROWSPEC,
-					FormSpecs.DEFAULT_ROWSPEC,}));
-			jPanel20.add(getJPanel21(), "2, 9, fill, fill");
-			jPanel20.add(getSearchLinearAddressRadioButton(), "2, 11, fill, fill");
-			jPanel20.add(getSearchVirtualAddressRadioButton(), "2, 13, fill, fill");
-			jPanel20.add(getSearchPhysicalAddressRadioButton(), "2, 15, fill, fill");
-			jPanel20.add(getJAddressTextField(), "2, 17, fill, fill");
-			jPanel20.add(getRefreshAddressTranslateButton(), "2, 19");
+			jPanel20.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"), },
+					new RowSpec[] { RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+							FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+							FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+			jPanel20.add(getLblCr(), "2, 1");
+			jPanel20.add(getCr3RadioButton(), "2, 3");
+			jPanel20.add(getPanel(), "2, 5, fill, fill");
+			jPanel20.add(getLblAddressType(), "2, 7");
+			jPanel20.add(getSearchLinearAddressRadioButton(), "2, 9, fill, fill");
+			jPanel20.add(getSearchVirtualAddressRadioButton(), "2, 11, fill, fill");
+			jPanel20.add(getSearchPhysicalAddressRadioButton(), "2, 13, fill, fill");
+			jPanel20.add(getJAddressTextField(), "2, 15, fill, fill");
+			jPanel20.add(getRefreshAddressTranslateButton(), "2, 17");
 		}
 		return jPanel20;
 	}
@@ -4503,30 +4496,30 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel22 = new JPanel();
 			BorderLayout jPanel22Layout = new BorderLayout();
 			jPanel22.setLayout(jPanel22Layout);
-			jPanel22.add(getJScrollPane13(), BorderLayout.CENTER);
+			jPanel22.add(getJScrollPane13(), BorderLayout.NORTH);
 		}
 		return jPanel22;
 	}
 
-	private JTable getAddressTranslateTable2() {
-		if (addressTranslateTable2 == null) {
-			addressTranslateTable2 = new JTable();
-			addressTranslateTable2.getTableHeader().setReorderingAllowed(false);
+	private JTable getAddressTranslateTable() {
+		if (addressTranslateTable == null) {
+			addressTranslateTable = new JTable();
+			addressTranslateTable.getTableHeader().setReorderingAllowed(false);
 			AddressTranslateTableModel addressTranslateTableModel = new AddressTranslateTableModel();
-			addressTranslateTable2.setModel(addressTranslateTableModel);
-			addressTranslateTable2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			for (int x = 0; x < addressTranslateTable2.getColumnCount(); x++) {
-				addressTranslateTable2.getColumnModel().getColumn(x).setPreferredWidth(100);
+			addressTranslateTable.setModel(addressTranslateTableModel);
+			addressTranslateTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			for (int x = 0; x < addressTranslateTable.getColumnCount(); x++) {
+				addressTranslateTable.getColumnModel().getColumn(x).setPreferredWidth(100);
 			}
 		}
-		return addressTranslateTable2;
+		return addressTranslateTable;
 	}
 
 	private JScrollPane getJScrollPane13() {
 		if (jScrollPane13 == null) {
 			jScrollPane13 = new JScrollPane();
 			jScrollPane13.setPreferredSize(new java.awt.Dimension(150, 32));
-			jScrollPane13.setViewportView(getAddressTranslateTable2());
+			jScrollPane13.setViewportView(getAddressTranslateTable());
 		}
 		return jScrollPane13;
 	}
@@ -4575,13 +4568,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return buttonGroup3;
 	}
 
-	private JPanel getJPanel21() {
-		if (jPanel21 == null) {
-			jPanel21 = new JPanel();
-		}
-		return jPanel21;
-	}
-
 	private JTextField getJAddressTextField() {
 		if (addressTextField == null) {
 			addressTextField = new JTextField();
@@ -4595,7 +4581,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void refreshAddressTranslateButtonActionPerformed(ActionEvent evt) {
-		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
+		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable.getModel();
 
 		if (searchVirtualAddressRadioButton.isSelected()) {
 			if (!this.addressTextField.getText().contains(":") || this.addressTextField.getText().replaceAll("[^:]", "").length() != 1) {
@@ -4625,11 +4611,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			boolean pae = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1;
 
 			int bytesAtPhysicalAddress[] = null;
+			BigInteger pageDirectoryBaseAddress;
 			if (!pae) {
 				BigInteger pdNo = CommonLib.getBigInteger(linearAddress, 31, 22);
 				model.pdNo.add(pdNo);
 				int pdeBytes[];
-				pdeBytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+
+				if (cr3RadioButton.isSelected()) {
+					pageDirectoryBaseAddress = CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText());
+				} else {
+					pageDirectoryBaseAddress = CommonLib.string2BigInteger(pageDirectoryBaseAddressTextField.getText());
+				}
+				pdeBytes = VMController.getVM().physicalMemory(pageDirectoryBaseAddress.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 
 				BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 				model.pde.add(pde);
@@ -4652,7 +4645,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				} else {
 					model.ptNo.add(BigInteger.valueOf(-1));
 					model.pte.add(BigInteger.valueOf(-1));
-					BigInteger pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
+					pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
 					BigInteger physicalAddress = pageDirectoryBaseAddress.add(CommonLib.getBigInteger(linearAddress, 21, 0));
 					model.physicalAddress.add(physicalAddress);
 
@@ -4683,7 +4676,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				int pdeBytes[];
 				logger.debug("this.registerPanel.cr3TextField.getText()=" + this.registerPanel.cr3TextField.getText());
 				logger.debug("pdNo=" + pdNo);
-				pdeBytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+
+				BigInteger pageDirectoryBaseAddress;
+				if (cr3RadioButton.isSelected()) {
+					pageDirectoryBaseAddress = CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText());
+				} else {
+					pageDirectoryBaseAddress = CommonLib.string2BigInteger(pageDirectoryBaseAddressTextField.getText());
+				}
+				pdeBytes = VMController.getVM().physicalMemory(pageDirectoryBaseAddress.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 				logger.debug("CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4)))="
 						+ CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))));
 
@@ -4712,7 +4712,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					model.ptNo.add(BigInteger.valueOf(-1));
 					model.pte.add(BigInteger.valueOf(-1));
 
-					BigInteger pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
+					pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
 					BigInteger physicalAddress = pageDirectoryBaseAddress.add(CommonLib.getBigInteger(linearAddress, 21, 0));
 					model.physicalAddress.add(physicalAddress);
 
@@ -4760,7 +4760,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jRefreshAddressTranslateTableButtonActionPerformed(ActionEvent evt) {
-		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
+		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable.getModel();
 		for (int x = 0; x < model.getRowCount(); x++) {
 			if (model.searchType.get(x).equals(1)) {
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
@@ -5694,8 +5694,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jButton19ActionPerformed(ActionEvent evt) {
-		int rows[] = addressTranslateTable2.getSelectedRows();
-		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
+		int rows[] = addressTranslateTable.getSelectedRows();
+		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable.getModel();
 		model.removeRow(rows);
 	}
 
@@ -5773,7 +5773,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			if (!GKDCommonLib.saveImage(addressTranslateTable2, file)) {
+			if (!GKDCommonLib.saveImage(addressTranslateTable, file)) {
 				JOptionPane.showMessageDialog(this, "Cannot save image.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -5784,7 +5784,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.addressTranslateTable2.getModel(), memoryAddressComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, this.addressTranslateTable.getModel(), memoryAddressComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -8141,5 +8141,59 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			fontUZMenu = new JMenu("U-Z");
 		}
 		return fontUZMenu;
+	}
+
+	private JLabel getLblAddressType() {
+		if (lblAddressType == null) {
+			lblAddressType = new JLabel("Address type:");
+		}
+		return lblAddressType;
+	}
+
+	private JLabel getLblCr() {
+		if (lblCr == null) {
+			lblCr = new JLabel("Page directory base:");
+		}
+		return lblCr;
+	}
+
+	private JRadioButton getCr3RadioButton() {
+		if (cr3RadioButton == null) {
+			cr3RadioButton = new JRadioButton("CR3");
+			buttonGroup.add(cr3RadioButton);
+			cr3RadioButton.setSelected(true);
+		}
+		return cr3RadioButton;
+	}
+
+	private JPanel getPanel() {
+		if (panel == null) {
+			panel = new JPanel();
+			panel.setLayout(new BorderLayout(0, 0));
+			panel.add(getCustomCR3RadioButton(), BorderLayout.WEST);
+			panel.add(getPageDirectoryBaseAddressTextField(), BorderLayout.CENTER);
+		}
+		return panel;
+	}
+
+	private JRadioButton getCustomCR3RadioButton() {
+		if (customCR3RadioButton == null) {
+			customCR3RadioButton = new JRadioButton("");
+			buttonGroup.add(customCR3RadioButton);
+		}
+		return customCR3RadioButton;
+	}
+
+	private JTextField getPageDirectoryBaseAddressTextField() {
+		if (pageDirectoryBaseAddressTextField == null) {
+			pageDirectoryBaseAddressTextField = new JTextField();
+			pageDirectoryBaseAddressTextField.addFocusListener(new FocusAdapter() {
+				public void focusGained(FocusEvent e) {
+					customCR3RadioButton.setSelected(true);
+				}
+			});
+			pageDirectoryBaseAddressTextField.setColumns(10);
+		}
+		return pageDirectoryBaseAddressTextField;
 	}
 }
