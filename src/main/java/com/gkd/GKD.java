@@ -4496,7 +4496,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jPanel22 = new JPanel();
 			BorderLayout jPanel22Layout = new BorderLayout();
 			jPanel22.setLayout(jPanel22Layout);
-			jPanel22.add(getJScrollPane13(), BorderLayout.NORTH);
+			jPanel22.add(getJScrollPane13(), BorderLayout.CENTER);
 		}
 		return jPanel22;
 	}
