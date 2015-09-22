@@ -7,7 +7,7 @@ tired with command line
 i need a way to profiling part of my kernel, some bugs are really hard to trace without this feature
 source level debug support
 
-##Compile:
+## Compile:
 
 Here are steps to compile GKD. GKD is depends on some my other projects, all are open source and written in Java & maven. So just do “mvn clean install” in every of them.
 
@@ -18,7 +18,7 @@ Check out these projects in order, run “mvn clean install” on every of them:
 3. https://sourceforge.net/projects/peter-ar/
 4. https://sourceforge.net/projects/peter-dwarf/
 
-Finally, get GKD source from svn://svn.petersoft.com/GKD, username : gkd, password : gkd.
+Finally, git clone GKD source from https://github.com/mcheung63/GKD.git
 
 1) execute the command in installJar.txt
 2) run “mvn clean package”, you will have a GKDxxxxx.jar in your target folder, now you are ready to run it.
@@ -27,7 +27,7 @@ Finally, get GKD source from svn://svn.petersoft.com/GKD, username : gkd, passwo
 5) read gkd_bochs.xml, then you know everything.
 
 
-##Gossip:
+## Gossip:
 
 1) "mvn versions:display-dependency-updates" to check outdated dependencies
 2) "mvn graph:reactor" to generate maven dependency graph
@@ -36,6 +36,10 @@ To run GKD with profiling feature, compile bochs with this config:
 
 1) copy folder instrument/ to <bochs source>/instrument/gkd
 2) ./configure --enable-instrumentation=instrument/gkd --prefix=/toolchain/ --enable-debugger --enable-disasm --disable-debugger-gui --with-rfb --disable-readline --with-sdl2 --enable-all-optimizations --enable-fpu --enable-show-ips
+
+## Screens
+
+![alt tag](http://peter.kingofcoders.com/wp-content/uploads/2012/11/Screenshot-Peter-Bochs-Debugger-20111207.png)
 
 Contact:
 
