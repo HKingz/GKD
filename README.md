@@ -7,6 +7,10 @@ tired with command line
 i need a way to profiling part of my kernel, some bugs are really hard to trace without this feature
 source level debug support
 
+# Documents:
+
+https://github.com/mcheung63/GKD/wiki
+
 ## Compile:
 
 Here are steps to compile GKD. GKD is depends on some my other projects, all are open source and written in Java & maven. So just do “mvn clean install” in every of them.
@@ -39,7 +43,9 @@ To run GKD with profiling feature, compile bochs with this config:
 
 ## Screens
 
-![alt tag](http://peter.kingofcoders.com/wp-content/uploads/2012/11/Screenshot-Peter-Bochs-Debugger-20111207.png)
+![Main screen](http://peter.kingofcoders.com/wp-content/uploads/2012/11/Screenshot-Peter-Bochs-Debugger-20111207.png)
+
+![C++ profiling](http://peter.kingofcoders.com/wp-content/uploads/2012/11/螢幕快照-2015-07-31-上午2.29.52.png)
 
 Contact:
 
