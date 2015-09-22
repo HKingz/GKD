@@ -49,15 +49,11 @@ Main screen
 C++ profiling
 ![C++ profiling](http://peter.kingofcoders.com/wp-content/uploads/2012/11/螢幕快照-2015-07-31-上午2.29.52.png)
 
-.. image:: http://peter.kingofcoders.com/wp-content/uploads/2012/11/螢幕快照-2015-07-31-上午2.29.52.png
-   :height: 100px
-   :width: 200 px
-   :scale: 10 %
+C/C++ source level debug
+![C/C++ source level debug](http://peter.kingofcoders.com/wp-content/uploads/2012/11/1350062109_7872.png)
 
-.. image:: http://peter.kingofcoders.com/wp-content/uploads/2012/11/螢幕快照-2015-07-31-上午2.29.52.png
-   :height: 100px
-   :width: 200 px
-   :scale: 10 %
+Memory hit zone
+![Memory hit zone](http://peter.kingofcoders.com/wp-content/uploads/2012/11/profiling_memory_rw_count.png)
 
 
 Contact:
