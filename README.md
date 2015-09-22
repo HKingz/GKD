@@ -24,28 +24,41 @@ Check out these projects in order, run “mvn clean install” on every of them:
 
 Finally, git clone GKD source from https://github.com/mcheung63/GKD.git
 
-1) execute the command in installJar.txt
-2) run “mvn clean package”, you will have a GKDxxxxx.jar in your target folder, now you are ready to run it.
-3) download this
-4) cd to the unzipped folder, run “java -jar GKD-20150124.jar -f gkd_bochs.xml”
-5) read gkd_bochs.xml, then you know everything.
+1. execute the command in installJar.txt
+2. run “mvn clean package”, you will have a GKDxxxxx.jar in your target folder, now you are ready to run it.
+3. download this
+4. cd to the unzipped folder, run “java -jar GKD-20150124.jar -f gkd_bochs.xml”
+5. read gkd_bochs.xml, then you know everything.
 
 
 ## Gossip:
 
-1) "mvn versions:display-dependency-updates" to check outdated dependencies
-2) "mvn graph:reactor" to generate maven dependency graph
+1. "mvn versions:display-dependency-updates" to check outdated dependencies
+2. "mvn graph:reactor" to generate maven dependency graph
 
 To run GKD with profiling feature, compile bochs with this config:
 
-1) copy folder instrument/ to <bochs source>/instrument/gkd
-2) ./configure --enable-instrumentation=instrument/gkd --prefix=/toolchain/ --enable-debugger --enable-disasm --disable-debugger-gui --with-rfb --disable-readline --with-sdl2 --enable-all-optimizations --enable-fpu --enable-show-ips
+1. copy folder instrument/ to <bochs source>/instrument/gkd
+2. ./configure --enable-instrumentation=instrument/gkd --prefix=/toolchain/ --enable-debugger --enable-disasm --disable-debugger-gui --with-rfb --disable-readline --with-sdl2 --enable-all-optimizations --enable-fpu --enable-show-ips
 
 ## Screens
 
+Main screen
 ![Main screen](http://peter.kingofcoders.com/wp-content/uploads/2012/11/Screenshot-Peter-Bochs-Debugger-20111207.png)
 
+C++ profiling
 ![C++ profiling](http://peter.kingofcoders.com/wp-content/uploads/2012/11/螢幕快照-2015-07-31-上午2.29.52.png)
+
+.. image:: http://peter.kingofcoders.com/wp-content/uploads/2012/11/螢幕快照-2015-07-31-上午2.29.52.png
+   :height: 100px
+   :width: 200 px
+   :scale: 10 %
+
+.. image:: http://peter.kingofcoders.com/wp-content/uploads/2012/11/螢幕快照-2015-07-31-上午2.29.52.png
+   :height: 100px
+   :width: 200 px
+   :scale: 10 %
+
 
 Contact:
 
