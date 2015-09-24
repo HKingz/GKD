@@ -15,6 +15,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
@@ -127,6 +129,10 @@ import com.gkd.structurePanel.StructurePanel;
 import com.gkd.stub.VMController;
 import com.gkd.stub.VMType;
 import com.gkd.webservice.WebServiceUtil;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
@@ -143,12 +149,6 @@ import com.peterswing.advancedswing.jvmdialog.JVMInfoDialog;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 import info.clearthought.layout.TableLayout;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.forms.layout.RowSpec;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
 
 @SuppressWarnings("serial")
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
@@ -494,12 +494,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton jumpToInstructionButton;
 	public static JLabel instrumentStatusLabel;
 
-	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][]{},
-			new String[]{MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit")}) {
-				public boolean isCellEditable(int row, int col) {
-					return false;
-				}
-			};
+	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {},
+			new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit") }) {
+		public boolean isCellEditable(int row, int col) {
+			return false;
+		}
+	};
 	private JMenu fontAJMenu;
 	private JMenu fontKTMenu;
 	private JMenu fontUZMenu;
@@ -510,6 +510,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JRadioButton customCR3RadioButton;
 	private JTextField pageDirectoryBaseAddressTextField;
 	private final ButtonGroup buttonGroup = new ButtonGroup();
+	private JTabbedPane tabbedPane;
+	private JPanel panel_1;
+	private JPanel panel_2;
+	private JScrollPane pagingSummaryTableScrollPane;
+	private JTable pagingSummaryTable;
 
 	public GKD() {
 		super();
@@ -707,7 +712,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 		if (VMController.vmType == VMType.Qemu) {
 			//libGDB = new JLibGDB("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
-			VMController.getVM().initStub(new String[]{"localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")});
+			VMController.getVM().initStub(new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
 		}
 
 		//		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
@@ -2184,6 +2189,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.addRow(s);
 		}
 		pageDirectoryTable.setModel(model);
+
+		updatePagingSummaryTable(pageDirectoryBaseAddress);
+	}
+
+	public void updatePagingSummaryTable(BigInteger pageDirectoryBaseAddress) {
+
 	}
 
 	private void updateStack() {
@@ -2301,11 +2312,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							String lineNo[] = getCCode(pc, true);
 							if (s != null && lineNo != null) {
 								for (int index = 0; index < s.length; index++) {
-									model.addRow(new String[]{"", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], ""});
+									model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
 								}
 							}
 							// end load cCode
-							model.addRow(new String[]{"", pc.toString(), instruction, decodedBytes});
+							model.addRow(new String[] { "", pc.toString(), instruction, decodedBytes });
 						} else {
 							model.replace(model.getRowCount() - 1, 3, model.getRow(model.getRowCount() - 1)[3] + temp[1].trim().replaceAll("-", ""));
 						}
@@ -2355,8 +2366,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				DwarfLine startLine = null;
 				DwarfLine endLine = null;
 				DwarfDebugLineHeader startHeader = null;
-				loop1:
-				for (CompileUnit cu : dwarf.compileUnits) {
+				loop1: for (CompileUnit cu : dwarf.compileUnits) {
 					DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
 					boolean toggle = false;
 					for (DwarfLine line : header.lines) {
@@ -2678,7 +2688,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				String p = String.valueOf((value >> 0) & 1);
 				boolean tempB = model.isShowZeroAddress();
 				model.setShowZeroAddress(true);
-				model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p});
+				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
 				model.setShowZeroAddress(tempB);
 			} else if (pse && !pae) {
 				if (ps == 0) {
@@ -2695,7 +2705,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					String p = String.valueOf((value >> 0) & 1);
 					boolean tempB = model.isShowZeroAddress();
 					model.setShowZeroAddress(true);
-					model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p});
+					model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
 					model.setShowZeroAddress(tempB);
 				} else {
 					// no page table
@@ -2749,7 +2759,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void addBreakpointButtonActionPerformed(ActionEvent evt) {
 		addBreakpointButton.setEnabled(false);
 		String type = (String) JOptionPane.showInputDialog(this, null, "Add breakpoint", JOptionPane.QUESTION_MESSAGE, null,
-				new Object[]{MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address")},
+				new Object[] { MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address") },
 				MyLanguage.getString("Physical_address"));
 		if (type != null) {
 			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint", JOptionPane.QUESTION_MESSAGE);
@@ -3727,7 +3737,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getSearchMemoryFromComboBox() {
 		if (searchMemoryFromComboBox == null) {
-			ComboBoxModel<String> searchMemoryFromComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
+			ComboBoxModel<String> searchMemoryFromComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
 			searchMemoryFromComboBox = new JComboBox<String>();
 			searchMemoryFromComboBox.setModel(searchMemoryFromComboBoxModel);
 			searchMemoryFromComboBox.setEditable(true);
@@ -3746,7 +3756,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getSearchMemoryToComboBox() {
 		if (searchMemoryToComboBox == null) {
-			ComboBoxModel<String> jSearchMemoryToComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
+			ComboBoxModel<String> jSearchMemoryToComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
 			searchMemoryToComboBox = new JComboBox<String>();
 			searchMemoryToComboBox.setModel(jSearchMemoryToComboBoxModel);
 			searchMemoryToComboBox.setEditable(true);
@@ -3887,7 +3897,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionPanel.setPreferredSize(new java.awt.Dimension(604, 452));
 		instructionControlPanel = new JToolBar();
 		instructionPanel.add(instructionControlPanel, BorderLayout.NORTH);
-		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
+		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
 		instructionComboBox = new JComboBox<String>();
 		instructionComboBox.setMaximumSize(new Dimension(200, 23));
 		instructionComboBox.setOpaque(false);
@@ -4045,7 +4055,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		vmCommandScrollPane4.setViewportView(vmCommandEditorPane);
 		vmPanel.add(vmCommandScrollPane4, BorderLayout.CENTER);
 		jPanel2 = new JPanel();
-		TableLayout jPanel2Layout = new TableLayout(new double[][]{{TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM}, {TableLayout.FILL}});
+		TableLayout jPanel2Layout = new TableLayout(new double[][] { { TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM }, { TableLayout.FILL } });
 		jPanel2Layout.setHGap(5);
 		jPanel2Layout.setVGap(5);
 		jPanel2.setLayout(jPanel2Layout);
@@ -4290,8 +4300,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		bottomTabbedPane.addTab("Log", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getLogPanel(), null);
 		BorderLayout jPanel11Layout = new BorderLayout();
 		pagingPanel.setLayout(jPanel11Layout);
-		pagingPanel.add(getJSplitPane3(), BorderLayout.CENTER);
-		pagingPanel.add(getJPanel19(), BorderLayout.NORTH);
+		pagingPanel.add(getTabbedPane(), BorderLayout.CENTER);
 
 		logger.info(new SimpleDateFormat("mm:ss.SSS").format(new Date()));
 		return jSplitPane2;
@@ -4432,11 +4441,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jPanel20 == null) {
 			jPanel20 = new JPanel();
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-			jPanel20.setLayout(new FormLayout(new ColumnSpec[]{FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"),},
-					new RowSpec[]{RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
+			jPanel20.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"), },
+					new RowSpec[] { RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+							FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+							FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 			jPanel20.add(getLblCr(), "2, 1");
 			jPanel20.add(getCr3RadioButton(), "2, 3");
 			jPanel20.add(getPanel(), "2, 5, fill, fill");
@@ -5399,7 +5408,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getELFHeaderTable() {
 		if (elfHeaderTable == null) {
-			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[]{MyLanguage.getString("Field"), MyLanguage.getString("Value")});
+			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
 			elfHeaderTable = new JTable();
 			elfHeaderTable.getTableHeader().setReorderingAllowed(false);
 			elfHeaderTable.setModel(jELFHeaderTableModel);
@@ -5545,7 +5554,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// symbol table
 			int symbolTableNo = 0;
 			while (map.get("symbolTable" + symbolTableNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[]{"No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx"});
+				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx" });
 				JTable tempTable = new JTable();
 				HashMap tempMap = (HashMap) map.get("symbolTable" + symbolTableNo);
 				Vector<LinkedHashMap> v = (Vector<LinkedHashMap>) tempMap.get("vector");
@@ -5575,7 +5584,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// note
 			int noteSectionNo = 0;
 			while (map.get("note" + noteSectionNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[]{"No.", "namesz", "descsz", "type", "name", "desc"});
+				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "namesz", "descsz", "type", "name", "desc" });
 				JTable tempTable = new JTable();
 				HashMap<String, Vector<LinkedHashMap<String, Object>>> tempMap = (HashMap) map.get("note" + noteSectionNo);
 				Vector<LinkedHashMap<String, Object>> v = tempMap.get("vector");
@@ -5657,7 +5666,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable getJSectionTable() {
 		if (elfSectionTable == null) {
 			TableModel jSectionTableModel = new DefaultTableModel(null,
-					new String[]{"No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize"});
+					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize" });
 			elfSectionTable = new JTable();
 			elfSectionTable.getTableHeader().setReorderingAllowed(false);
 			elfSectionTable.setModel(jSectionTableModel);
@@ -5676,7 +5685,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getJProgramHeaderTable() {
 		if (programHeaderTable == null) {
-			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[]{"No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align"});
+			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[] { "No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align" });
 			programHeaderTable = new JTable();
 			programHeaderTable.getTableHeader().setReorderingAllowed(false);
 			programHeaderTable.setModel(jProgramHeaderTableModel);
@@ -7029,51 +7038,51 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jRunningPanelLayout
 					.setHorizontalGroup(
 							jRunningPanelLayout.createSequentialGroup().addContainerGap()
-							.addGroup(
-									jRunningPanelLayout.createParallelGroup()
-									.addGroup(GroupLayout.Alignment.LEADING,
-											jRunningPanelLayout.createSequentialGroup()
-											.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-											.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-													GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
-									.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
-											jRunningPanelLayout.createSequentialGroup().addGap(65).addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
-													GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-											.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-															.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
+									.addGroup(
+											jRunningPanelLayout.createParallelGroup()
 													.addGroup(GroupLayout.Alignment.LEADING,
 															jRunningPanelLayout.createSequentialGroup()
-															.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
-																	LayoutStyle.ComponentPlacement.INDENT)
-															.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 25, Short.MAX_VALUE))))));
+																	.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+																	.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+																			GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
+													.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
+															jRunningPanelLayout.createSequentialGroup().addGap(65).addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
+																	GroupLayout.PREFERRED_SIZE)
+													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+													.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING,
+															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
+															.addGroup(GroupLayout.Alignment.LEADING,
+																	jRunningPanelLayout.createSequentialGroup()
+																			.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
+																					LayoutStyle.ComponentPlacement.INDENT)
+																			.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+																			.addGap(0, 25, Short.MAX_VALUE))))));
 			jRunningPanelLayout
 					.setVerticalGroup(jRunningPanelLayout.createSequentialGroup().addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 							.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 									.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 											GroupLayout.PREFERRED_SIZE)
-									.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
-									.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE)
-									.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getJTextArea1(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
+							.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
+							.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+									GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getJTextArea1(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
 		}
 		return runningPanel;
 	}
@@ -7178,7 +7187,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getMaxRowComboBox() {
 		if (maxRowComboBox == null) {
-			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[]{"infinite", "10", "100", "200", "500", "1000", "2000"});
+			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[] { "infinite", "10", "100", "200", "500", "1000", "2000" });
 			maxRowComboBox = new JComboBox<String>();
 			maxRowComboBox.setModel(maxRowComboBoxModel);
 			maxRowComboBox.setSelectedItem("100");
@@ -8200,5 +8209,49 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			pageDirectoryBaseAddressTextField.setColumns(10);
 		}
 		return pageDirectoryBaseAddressTextField;
+	}
+
+	private JTabbedPane getTabbedPane() {
+		if (tabbedPane == null) {
+			tabbedPane = new JTabbedPane(JTabbedPane.LEFT);
+			tabbedPane.addTab("Page table", null, getPanel_1(), null);
+			tabbedPane.addTab("Summary", null, getPanel_2(), null);
+		}
+		return tabbedPane;
+	}
+
+	private JPanel getPanel_1() {
+		if (panel_1 == null) {
+			panel_1 = new JPanel();
+			panel_1.setLayout(new BorderLayout(0, 0));
+			panel_1.add(getJSplitPane3(), BorderLayout.CENTER);
+			panel_1.add(getJPanel19(), BorderLayout.NORTH);
+		}
+		return panel_1;
+	}
+
+	private JPanel getPanel_2() {
+		if (panel_2 == null) {
+			panel_2 = new JPanel();
+			panel_2.setLayout(new BorderLayout(0, 0));
+			panel_2.add(getPagingSummaryTableScrollPane(), BorderLayout.CENTER);
+		}
+		return panel_2;
+	}
+
+	private JScrollPane getPagingSummaryTableScrollPane() {
+		if (pagingSummaryTableScrollPane == null) {
+			pagingSummaryTableScrollPane = new JScrollPane();
+			pagingSummaryTableScrollPane.setViewportView(getPagingSummaryTable());
+		}
+		return pagingSummaryTableScrollPane;
+	}
+
+	private JTable getPagingSummaryTable() {
+		if (pagingSummaryTable == null) {
+			pagingSummaryTable = new JTable();
+			pagingSummaryTable.setModel(new PagingSummaryTableModel());
+		}
+		return pagingSummaryTable;
 	}
 }

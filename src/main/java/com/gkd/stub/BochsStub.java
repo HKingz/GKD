@@ -727,7 +727,7 @@ public class BochsStub implements VMStub {
 	@Override
 	public Vector<String[]> pageTable(BigInteger pageDirectoryBaseAddress, boolean pse, boolean pae) {
 		Vector<String[]> r = new Vector<String[]>();
-		int[] bytes = physicalMemory(pageDirectoryBaseAddress, 8192);
+		int[] bytes = physicalMemory(pageDirectoryBaseAddress, 4096);
 		if (bytes != null) {
 			for (int x = 0; x < bytes.length - 4; x += 4) {
 				// "No.", "PT base", "AVL", "G",
