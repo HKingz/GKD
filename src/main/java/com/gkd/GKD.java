@@ -438,6 +438,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton disassembleButton;
 	public static ResourceBundle language;
 	private JButton refreshAddressTranslateTableButton;
+	public static int memSize;
 
 	private BigInteger currentMemoryWindowsAddress;
 	public static Logger logger = Logger.getLogger(GKD.class);
@@ -725,6 +726,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		VMController.getVM().setGKDInstance(gkd);
 		VMController.getVM().setVMPath(GKDCommonLib.readConfig(cmd, "/gkd/vm/text()"));
 		VMController.getVM().setVMArguments(GKDCommonLib.readConfig(cmd, "/gkd/vmArguments/text()"));
+		memSize = (int) CommonLib.convertFilesize(GKDCommonLib.readConfig(cmd, "/gkd/memSize/text()"));
 	}
 
 	public void init() {
@@ -2127,21 +2129,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	protected void updateAddressTranslate() {
-		try {
-			statusLabel.setText("Updating Address translate");
-
-			Vector<Vector<String>> r = VMController.getVM().addressTranslate();
-			DefaultTableModel model = (DefaultTableModel) addressTranslateTable.getModel();
-			while (model.getRowCount() > 0) {
-				model.removeRow(0);
-			}
-			for (Vector<String> v : r) {
-				model.addRow(v);
-			}
-			((DefaultTableModel) addressTranslateTable.getModel()).fireTableDataChanged();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
+//		try {
+//			statusLabel.setText("Updating Address translate");
+//
+//			Vector<Vector<String>> r = VMController.getVM().addressTranslate();
+//			AddressTranslateTableModel model = (AddressTranslateTableModel) addressTranslateTable.getModel();
+//			while (model.getRowCount() > 0) {
+//				model.removeRow(0);
+//			}
+//			for (Vector<String> v : r) {
+//				model.addRow(v);
+//			}
+//			((DefaultTableModel) addressTranslateTable.getModel()).fireTableDataChanged();
+//		} catch (Exception ex) {
+//			ex.printStackTrace();
+//		}
 	}
 
 	public void enableAllButtons(final boolean b, final boolean exceptRunButton) {
@@ -2195,7 +2197,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void updatePagingSummaryTable(BigInteger pageDirectoryBaseAddress, boolean pse, boolean pae) {
-		logger.info("updatePagingSummaryTable start");
 		PagingSummaryTableModel model = (PagingSummaryTableModel) pagingSummaryTable.getModel();
 		model.linearAddressesStart.clear();
 		model.linearAddressesEnd.clear();
@@ -2211,7 +2212,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Hashtable<BigInteger, int[]> cache = new Hashtable<BigInteger, int[]>();
 
 		if (pageDirectoryBytes != null) {
-			for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
+			outerloop: for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
 				long value = CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4);
 				long pageTableBaseAddress = value & 0xfffff000;
 
@@ -2229,9 +2230,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						if (physicalAddressStart == -1) {
 							physicalAddressStart = physicalAddress;
 						}
-						if (physicalAddress > 0) {
-							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
-						}
+//						if (physicalAddress > 0) {
+//							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
+//						}
 						physicalAddressEnd = physicalAddress;
 
 						if (physicalAddressEnd < lastPhysicalAddressEnd || physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
@@ -2240,14 +2241,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							model.physicalAddressesStart.add(physicalAddressStart);
 							model.physicalAddressesEnd.add(lastPhysicalAddressEnd + 4096 - 1);
 
-							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 4096 - 1) + " > "
-									+ Long.toHexString(physicalAddressStart) + "-" + Long.toHexString(physicalAddressEnd - 4096 - 1));
+							//							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 4096 - 1) + " > "
+							//									+ Long.toHexString(physicalAddressStart) + "-" + Long.toHexString(physicalAddressEnd - 4096 - 1));
 
 							physicalAddressStart = physicalAddress;
 							linearAddressStart = linearAddressEnd;
 						}
 
 						linearAddressEnd += 4096;
+						if (linearAddressEnd > memSize) {
+							break outerloop;
+						}
 						lastPhysicalAddressEnd = physicalAddressEnd;
 						if (lastPhysicalAddressEnd == -1) {
 							lastPhysicalAddressEnd = 0;
@@ -2257,7 +2261,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		}
 		model.fireTableDataChanged();
-		logger.info("updatePagingSummaryTable end");
 	}
 
 	private void updateStack() {

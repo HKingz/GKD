@@ -121,8 +121,9 @@ public class BochsStub implements VMStub {
 			commandOutputStream = new BufferedWriter(new OutputStreamWriter(p.getOutputStream()));
 
 			if (GKDCommonLib.readConfigInt(gkd.cmd, "/gkd/vncPort/text()") != -1) {
-				gkd.tabbedPane3.addTab("VNC", null, gkd.getVncPanel(), null);
+				gkd.tabbedPane3.insertTab("VNC", null, gkd.getVncPanel(), null, 0);
 				TightVNC.initVNCPanel(gkd, gkd.getVncPanel(), "localhost", GKDCommonLib.readConfigInt(gkd.cmd, "/gkd/vncPort/text()"), null, false);
+				gkd.tabbedPane3.setSelectedIndex(0);
 			}
 
 			String versionLines[] = commandReceiver.getCommandResult().split("\n");
