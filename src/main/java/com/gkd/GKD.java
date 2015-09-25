@@ -2222,7 +2222,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					cache.put(pageTableBaseAddressB, pageTableBytes);
 				}
 				if (pageTableBytes != null) {
-
 					for (int pageTableNo = 0; pageTableNo < 1024; pageTableNo++) {
 						value = CommonLib.getInt(pageTableBytes, pageTableNo * 4);
 						long physicalAddress = value & 0xfffff000;
@@ -2230,17 +2229,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						if (physicalAddressStart == -1) {
 							physicalAddressStart = physicalAddress;
 						}
+						if (physicalAddress > 0) {
+							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
+						}
 						physicalAddressEnd = physicalAddress;
-						
 
-						if (physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
+						if (physicalAddressEnd < lastPhysicalAddressEnd || physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
 							model.linearAddressesStart.add(linearAddressStart);
 							model.linearAddressesEnd.add(linearAddressEnd - 1);
 							model.physicalAddressesStart.add(physicalAddressStart);
-							model.physicalAddressesEnd.add(lastPhysicalAddressEnd - 1);
+							model.physicalAddressesEnd.add(lastPhysicalAddressEnd + 4096 - 1);
 
-							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 1) + " > " + Long.toHexString(physicalAddressStart)
-									+ "-" + Long.toHexString(physicalAddressEnd - 1));
+							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 4096 - 1) + " > "
+									+ Long.toHexString(physicalAddressStart) + "-" + Long.toHexString(physicalAddressEnd - 4096 - 1));
 
 							physicalAddressStart = physicalAddress;
 							linearAddressStart = linearAddressEnd;
