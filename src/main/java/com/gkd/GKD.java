@@ -2195,27 +2195,68 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void updatePagingSummaryTable(BigInteger pageDirectoryBaseAddress, boolean pse, boolean pae) {
+		logger.info("updatePagingSummaryTable start");
+		PagingSummaryTableModel model = (PagingSummaryTableModel) pagingSummaryTable.getModel();
+		model.linearAddressesStart.clear();
+		model.linearAddressesEnd.clear();
+		model.physicalAddressesStart.clear();
+		model.physicalAddressesEnd.clear();
+
 		int[] pageDirectoryBytes = VMController.getVM().physicalMemory(pageDirectoryBaseAddress, 4096);
-		int lastPhysicalAddress = -1;
-		
+		long linearAddressStart = 0;
+		long linearAddressEnd = 0;
+		long physicalAddressStart = -1;
+		long physicalAddressEnd = -1;
+		long lastPhysicalAddressEnd = -1;
+		Hashtable<BigInteger, int[]> cache = new Hashtable<BigInteger, int[]>();
+
 		if (pageDirectoryBytes != null) {
 			for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
 				long value = CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4);
 				long pageTableBaseAddress = value & 0xfffff000;
 
-				int[] pageTableBytes = VMController.getVM().physicalMemory(BigInteger.valueOf(pageTableBaseAddress), 4096);
+				BigInteger pageTableBaseAddressB = BigInteger.valueOf(pageTableBaseAddress);
+				int[] pageTableBytes = cache.get(pageTableBaseAddressB);
+				if (pageTableBytes == null) {
+					pageTableBytes = VMController.getVM().physicalMemory(pageTableBaseAddressB, 4096);
+					cache.put(pageTableBaseAddressB, pageTableBytes);
+				}
 				if (pageTableBytes != null) {
 
 					for (int pageTableNo = 0; pageTableNo < 1024; pageTableNo++) {
 						value = CommonLib.getInt(pageTableBytes, pageTableNo * 4);
 						long physicalAddress = value & 0xfffff000;
-						if (physicalAddress - lastPhysicalAddress != 4096) {
 
+						if (physicalAddressStart == -1) {
+							physicalAddressStart = physicalAddress;
+						}
+						physicalAddressEnd = physicalAddress;
+						
+
+						if (physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
+							model.linearAddressesStart.add(linearAddressStart);
+							model.linearAddressesEnd.add(linearAddressEnd - 1);
+							model.physicalAddressesStart.add(physicalAddressStart);
+							model.physicalAddressesEnd.add(lastPhysicalAddressEnd - 1);
+
+							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 1) + " > " + Long.toHexString(physicalAddressStart)
+									+ "-" + Long.toHexString(physicalAddressEnd - 1));
+
+							physicalAddressStart = physicalAddress;
+							linearAddressStart = linearAddressEnd;
+						}
+
+						linearAddressEnd += 4096;
+						lastPhysicalAddressEnd = physicalAddressEnd;
+						if (lastPhysicalAddressEnd == -1) {
+							lastPhysicalAddressEnd = 0;
 						}
 					}
 				}
 			}
 		}
+		model.fireTableDataChanged();
+		logger.info("updatePagingSummaryTable end");
 	}
 
 	private void updateStack() {

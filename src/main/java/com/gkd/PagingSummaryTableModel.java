@@ -7,8 +7,10 @@ import javax.swing.table.DefaultTableModel;
 public class PagingSummaryTableModel extends DefaultTableModel {
 	String columnNames[] = new String[] { "Linear address", "", "Physical address" };
 
-	public Vector<String> linearAddresses = new Vector<String>();
-	public Vector<String> physicalAddresses = new Vector<String>();
+	public Vector<Long> linearAddressesStart = new Vector<Long>();
+	public Vector<Long> linearAddressesEnd = new Vector<Long>();
+	public Vector<Long> physicalAddressesStart = new Vector<Long>();
+	public Vector<Long> physicalAddressesEnd = new Vector<Long>();
 
 	public String getColumnName(int column) {
 		return columnNames[column];
@@ -19,8 +21,8 @@ public class PagingSummaryTableModel extends DefaultTableModel {
 	}
 
 	public int getRowCount() {
-		if (linearAddresses != null) {
-			return linearAddresses.size();
+		if (linearAddressesStart != null) {
+			return linearAddressesStart.size();
 		} else {
 			return 0;
 		}
@@ -29,11 +31,11 @@ public class PagingSummaryTableModel extends DefaultTableModel {
 	public Object getValueAt(int row, int column) {
 		try {
 			if (column == 0) {
-				return linearAddresses.get(row);
+				return Long.toHexString(linearAddressesStart.get(row)) + " - " + Long.toHexString(linearAddressesEnd.get(row));
 			} else if (column == 1) {
 				return ">";
 			} else {
-				return physicalAddresses.get(row);
+				return Long.toHexString(physicalAddressesStart.get(row)) + " - " + Long.toHexString(physicalAddressesEnd.get(row));
 			}
 		} catch (Exception ex) {
 			return "";
