@@ -926,7 +926,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					updateBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
 					updateBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
-							jUpdateBochsButtonActionPerformed(evt);
+							updateBochsButtonActionPerformed(evt);
 						}
 					});
 				}
@@ -2190,11 +2190,32 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 		pageDirectoryTable.setModel(model);
 
-		updatePagingSummaryTable(pageDirectoryBaseAddress);
+		updatePagingSummaryTable(pageDirectoryBaseAddress, CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
+				CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
 	}
 
-	public void updatePagingSummaryTable(BigInteger pageDirectoryBaseAddress) {
+	public void updatePagingSummaryTable(BigInteger pageDirectoryBaseAddress, boolean pse, boolean pae) {
+		int[] pageDirectoryBytes = VMController.getVM().physicalMemory(pageDirectoryBaseAddress, 4096);
+		int lastPhysicalAddress = -1;
+		
+		if (pageDirectoryBytes != null) {
+			for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
+				long value = CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4);
+				long pageTableBaseAddress = value & 0xfffff000;
 
+				int[] pageTableBytes = VMController.getVM().physicalMemory(BigInteger.valueOf(pageTableBaseAddress), 4096);
+				if (pageTableBytes != null) {
+
+					for (int pageTableNo = 0; pageTableNo < 1024; pageTableNo++) {
+						value = CommonLib.getInt(pageTableBytes, pageTableNo * 4);
+						long physicalAddress = value & 0xfffff000;
+						if (physicalAddress - lastPhysicalAddress != 4096) {
+
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void updateStack() {
@@ -2636,7 +2657,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void jLDTTableMouseClicked(MouseEvent evt) {
+	private void ldtTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
 			for (int x = 0; x < bottomTabbedPane.getTabCount(); x++) {
 				if (bottomTabbedPane.getTitleAt(x).equals(("LDT " + ldtTable.getSelectedRow() + 1))) {
@@ -2651,7 +2672,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	private void jUpdateBochsButtonActionPerformed(ActionEvent evt) {
+	private void updateBochsButtonActionPerformed(ActionEvent evt) {
 		updateVMStatus(true);
 	}
 
@@ -2672,26 +2693,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		boolean pse = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1;
 		boolean pae = CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1;
 
-		for (int x = 0; x <= bytes.length - 4; x += 4) {
+		for (int x = 0; x < bytes.length; x += 4) {
 			long value = CommonLib.getInt(bytes, x);
-			if (!pse && !pae) {
-				String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
-				String avl = String.valueOf((value >> 9) & 3);
-				String g = String.valueOf((value >> 8) & 1);
-				String pat = String.valueOf((value >> 7) & 1);
-				String d = String.valueOf((value >> 6) & 1);
-				String a = String.valueOf((value >> 5) & 1);
-				String pcd = String.valueOf((value >> 4) & 1);
-				String pwt = String.valueOf((value >> 3) & 1);
-				String us = String.valueOf((value >> 2) & 1);
-				String wr = String.valueOf((value >> 1) & 1);
-				String p = String.valueOf((value >> 0) & 1);
-				boolean tempB = model.isShowZeroAddress();
-				model.setShowZeroAddress(true);
-				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
-				model.setShowZeroAddress(tempB);
-			} else if (pse && !pae) {
-				if (ps == 0) {
+			if (!pae) {
+				if (!pse) {
 					String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
 					String avl = String.valueOf((value >> 9) & 3);
 					String g = String.valueOf((value >> 8) & 1);
@@ -2707,9 +2712,29 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					model.setShowZeroAddress(true);
 					model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
 					model.setShowZeroAddress(tempB);
-				} else {
-					// no page table
+				} else if (pse) {
+					if (ps == 0) {
+						String base = "0x" + Long.toHexString(CommonLib.getValue(value, 12, 31) << 12);
+						String avl = String.valueOf((value >> 9) & 3);
+						String g = String.valueOf((value >> 8) & 1);
+						String pat = String.valueOf((value >> 7) & 1);
+						String d = String.valueOf((value >> 6) & 1);
+						String a = String.valueOf((value >> 5) & 1);
+						String pcd = String.valueOf((value >> 4) & 1);
+						String pwt = String.valueOf((value >> 3) & 1);
+						String us = String.valueOf((value >> 2) & 1);
+						String wr = String.valueOf((value >> 1) & 1);
+						String p = String.valueOf((value >> 0) & 1);
+						boolean tempB = model.isShowZeroAddress();
+						model.setShowZeroAddress(true);
+						model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+						model.setShowZeroAddress(tempB);
+					} else {
+						// no page table
+					}
 				}
+			} else {
+				logger.error("not support pae");
 			}
 		}
 		pageTableTable.setModel(model);
@@ -4257,7 +4282,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		ldtTable.getTableHeader().setReorderingAllowed(false);
 		ldtTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
-				jLDTTableMouseClicked(evt);
+				ldtTableMouseClicked(evt);
 			}
 		});
 		bottomTabbedPane = new JMaximizableTabbedPane();

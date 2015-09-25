@@ -729,7 +729,7 @@ public class BochsStub implements VMStub {
 		Vector<String[]> r = new Vector<String[]>();
 		int[] bytes = physicalMemory(pageDirectoryBaseAddress, 4096);
 		if (bytes != null) {
-			for (int x = 0; x < bytes.length - 4; x += 4) {
+			for (int x = 0; x < bytes.length; x += 4) {
 				// "No.", "PT base", "AVL", "G",
 				// "D", "A", "PCD", "PWT",
 				// "U/S", "W/R", "P"
@@ -775,7 +775,7 @@ public class BochsStub implements VMStub {
 						r.add(new String[] { String.valueOf(x / 4), base, avl, g, ps, d, a, pcd, pwt, us, wr, p });
 					}
 				} else {
-
+					logger.error("Not support pae");
 				}
 			}
 		}
