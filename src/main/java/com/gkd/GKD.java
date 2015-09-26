@@ -384,7 +384,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JCheckBox autoRefreshPageTableGraphCheckBox;
 	private JToolBar jToolBar2;
 	private JPanel pageTableGraphPanel;
-	private JButton pagingGraphButton;
+	private JButton savePagingTableButton;
 	private JToolBar panel19;
 	private JButton gdtGraphButton;
 	private JLabel jRunningLabel;
@@ -451,7 +451,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public static OSType os;
 
 	public static String version = "";
-	private JButton jButton21;
+	private JButton excelPagingTableButton;
 	public static String bochsrc;
 	static boolean preventSetVisibleHang = true;
 
@@ -516,6 +516,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel panel_2;
 	private JScrollPane pagingSummaryTableScrollPane;
 	private JTable pagingSummaryTable;
+	private JToolBar toolBar;
+	private JButton dumpCR3PagingSummaryButton;
+	private JTextField dumpPagingSummaryPageDirectoryAddressTextField;
+	private JButton dumpPagingSummaryTableAtAddressButton;
 
 	public GKD() {
 		super();
@@ -2129,21 +2133,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	protected void updateAddressTranslate() {
-//		try {
-//			statusLabel.setText("Updating Address translate");
-//
-//			Vector<Vector<String>> r = VMController.getVM().addressTranslate();
-//			AddressTranslateTableModel model = (AddressTranslateTableModel) addressTranslateTable.getModel();
-//			while (model.getRowCount() > 0) {
-//				model.removeRow(0);
-//			}
-//			for (Vector<String> v : r) {
-//				model.addRow(v);
-//			}
-//			((DefaultTableModel) addressTranslateTable.getModel()).fireTableDataChanged();
-//		} catch (Exception ex) {
-//			ex.printStackTrace();
-//		}
+		//		try {
+		//			statusLabel.setText("Updating Address translate");
+		//
+		//			Vector<Vector<String>> r = VMController.getVM().addressTranslate();
+		//			AddressTranslateTableModel model = (AddressTranslateTableModel) addressTranslateTable.getModel();
+		//			while (model.getRowCount() > 0) {
+		//				model.removeRow(0);
+		//			}
+		//			for (Vector<String> v : r) {
+		//				model.addRow(v);
+		//			}
+		//			((DefaultTableModel) addressTranslateTable.getModel()).fireTableDataChanged();
+		//		} catch (Exception ex) {
+		//			ex.printStackTrace();
+		//		}
 	}
 
 	public void enableAllButtons(final boolean b, final boolean exceptRunButton) {
@@ -2230,9 +2234,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						if (physicalAddressStart == -1) {
 							physicalAddressStart = physicalAddress;
 						}
-//						if (physicalAddress > 0) {
-//							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
-//						}
+						//						if (physicalAddress > 0) {
+						//							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
+						//						}
 						physicalAddressEnd = physicalAddress;
 
 						if (physicalAddressEnd < lastPhysicalAddressEnd || physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
@@ -4425,7 +4429,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			panel19 = new JToolBar();
 			FlowLayout jPanel19Layout = new FlowLayout();
 			jPanel19Layout.setAlignment(FlowLayout.LEFT);
-			panel19.add(getPagingGraphButton());
+			panel19.add(getSavePagingTableButton());
 			panel19.add(getJButton21x());
 			panel19.add(getDumpCR3Button());
 			panel19.add(getDumpPageDirectoryAddressTextField());
@@ -4435,17 +4439,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		return panel19;
 	}
 
-	private JButton getPagingGraphButton() {
-		if (pagingGraphButton == null) {
-			pagingGraphButton = new JButton();
-			pagingGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
-			pagingGraphButton.addActionListener(new ActionListener() {
+	private JButton getSavePagingTableButton() {
+		if (savePagingTableButton == null) {
+			savePagingTableButton = new JButton();
+			savePagingTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			savePagingTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jPagingGraphButtonActionPerformed(evt);
 				}
 			});
 		}
-		return pagingGraphButton;
+		return savePagingTableButton;
 	}
 
 	private void jPagingGraphButtonActionPerformed(ActionEvent evt) {
@@ -5832,16 +5836,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private JButton getJButton21x() {
-		if (jButton21 == null) {
-			jButton21 = new JButton();
-			jButton21.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
-			jButton21.addActionListener(new ActionListener() {
+		if (excelPagingTableButton == null) {
+			excelPagingTableButton = new JButton();
+			excelPagingTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelPagingTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton21ActionPerformed(evt);
 				}
 			});
 		}
-		return jButton21;
+		return excelPagingTableButton;
 	}
 
 	private void jButton21ActionPerformed(ActionEvent evt) {
@@ -8305,6 +8309,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			panel_2 = new JPanel();
 			panel_2.setLayout(new BorderLayout(0, 0));
 			panel_2.add(getPagingSummaryTableScrollPane(), BorderLayout.CENTER);
+			panel_2.add(getToolBar(), BorderLayout.NORTH);
 		}
 		return panel_2;
 	}
@@ -8323,5 +8328,52 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			pagingSummaryTable.setModel(new PagingSummaryTableModel());
 		}
 		return pagingSummaryTable;
+	}
+
+	private JToolBar getToolBar() {
+		if (toolBar == null) {
+			toolBar = new JToolBar();
+			toolBar.add(getDumpCR3PagingSummaryButton());
+			toolBar.add(getDumpPagingSummaryPageDirectoryAddressTextField());
+			toolBar.add(getDumpPagingSummaryTableAtAddressButton());
+		}
+		return toolBar;
+	}
+
+	private JButton getDumpCR3PagingSummaryButton() {
+		if (dumpCR3PagingSummaryButton == null) {
+			dumpCR3PagingSummaryButton = new JButton("Dump CR3");
+			dumpCR3PagingSummaryButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					updatePagingSummaryTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()),
+							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
+							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
+				}
+			});
+		}
+		return dumpCR3PagingSummaryButton;
+	}
+
+	private JTextField getDumpPagingSummaryPageDirectoryAddressTextField() {
+		if (dumpPagingSummaryPageDirectoryAddressTextField == null) {
+			dumpPagingSummaryPageDirectoryAddressTextField = new JTextField();
+			dumpPagingSummaryPageDirectoryAddressTextField.setMaximumSize(new java.awt.Dimension(150, 28));
+			dumpPagingSummaryPageDirectoryAddressTextField.setColumns(10);
+		}
+		return dumpPagingSummaryPageDirectoryAddressTextField;
+	}
+
+	private JButton getDumpPagingSummaryTableAtAddressButton() {
+		if (dumpPagingSummaryTableAtAddressButton == null) {
+			dumpPagingSummaryTableAtAddressButton = new JButton("Dump at here");
+			dumpPagingSummaryTableAtAddressButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					updatePagingSummaryTable(CommonLib.string2BigInteger(dumpPagingSummaryPageDirectoryAddressTextField.getText()),
+							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
+							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
+				}
+			});
+		}
+		return dumpPagingSummaryTableAtAddressButton;
 	}
 }

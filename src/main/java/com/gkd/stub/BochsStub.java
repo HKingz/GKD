@@ -628,21 +628,11 @@ public class BochsStub implements VMStub {
 		try {
 			int bytes[] = new int[totalByte];
 			if (totalByte > 0) {
-				//				float totalByte2 = totalByte - 1;
-				//				totalByte2 = totalByte2 / 8;
-				//				int totalByte3 = (int) Math.floor(totalByte2);
-				//				String realEndAddressStr;
-				//				String realStartAddressStr;
-				//				BigInteger realStartAddress = address;
-				//				realStartAddressStr = String.format("%08x", realStartAddress);
-				//				BigInteger realEndAddress = realStartAddress.add(BigInteger.valueOf(totalByte3 * 8));
-				//				realEndAddressStr = String.format("%08x", realEndAddress);
-
 				String result;
 				if (isPhysicalAddress) {
-					result = sendBochsCommand("xp /" + totalByte + "bx " + address);
+					result = sendBochsCommand("xp /" + totalByte + "bx 0x" + address.toString(16));
 				} else {
-					result = sendBochsCommand("x /" + totalByte + "bx " + address);
+					result = sendBochsCommand("x /" + totalByte + "bx 0x" + address.toString(16));
 				}
 
 				if (result != null) {
