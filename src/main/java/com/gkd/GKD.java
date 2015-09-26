@@ -495,12 +495,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton jumpToInstructionButton;
 	public static JLabel instrumentStatusLabel;
 
-	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {},
-			new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit") }) {
-		public boolean isCellEditable(int row, int col) {
-			return false;
-		}
-	};
+	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][]{},
+			new String[]{MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit")}) {
+				public boolean isCellEditable(int row, int col) {
+					return false;
+				}
+			};
 	private JMenu fontAJMenu;
 	private JMenu fontKTMenu;
 	private JMenu fontUZMenu;
@@ -717,7 +717,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 		if (VMController.vmType == VMType.Qemu) {
 			//libGDB = new JLibGDB("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
-			VMController.getVM().initStub(new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
+			VMController.getVM().initStub(new String[]{"localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")});
 		}
 
 		//		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
@@ -2208,60 +2208,97 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		model.physicalAddressesEnd.clear();
 
 		int[] pageDirectoryBytes = VMController.getVM().physicalMemory(pageDirectoryBaseAddress, 4096);
-		long linearAddressStart = 0;
-		long linearAddressEnd = 0;
-		long physicalAddressStart = -1;
-		long physicalAddressEnd = -1;
-		long lastPhysicalAddressEnd = -1;
+
 		Hashtable<BigInteger, int[]> cache = new Hashtable<BigInteger, int[]>();
 
 		if (pageDirectoryBytes != null) {
-			outerloop: for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
+			/* below works, but don't like the programming style
+			 long linearAddressStart = 0;
+			 long linearAddressEnd = 0;
+			 long physicalAddressStart = -1;
+			 long physicalAddressEnd = -1;
+			 long lastPhysicalAddressEnd = -1;
+			 outerloop:
+			 for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
+			 long value = CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4);
+			 long pageTableBaseAddress = value & 0xfffff000;
+
+			 BigInteger pageTableBaseAddressB = BigInteger.valueOf(pageTableBaseAddress);
+			 int[] pageTableBytes = cache.get(pageTableBaseAddressB);
+			 if (pageTableBytes == null) {
+			 pageTableBytes = VMController.getVM().physicalMemory(pageTableBaseAddressB, 4096);
+			 cache.put(pageTableBaseAddressB, pageTableBytes);
+			 }
+			 if (pageTableBytes != null) {
+			 for (int pageTableNo = 0; pageTableNo < 1024; pageTableNo++) {
+			 value = CommonLib.getInt(pageTableBytes, pageTableNo * 4);
+			 long physicalAddress = value & 0xfffff000;
+
+			 if (physicalAddressStart == -1) {
+			 physicalAddressStart = physicalAddress;
+			 }
+			 //						if (physicalAddress > 0) {
+			 //							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
+			 //						}
+			 physicalAddressEnd = physicalAddress;
+
+			 if (physicalAddressEnd < lastPhysicalAddressEnd || physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
+			 model.linearAddressesStart.add(linearAddressStart);
+			 model.linearAddressesEnd.add(linearAddressEnd - 1);
+			 model.physicalAddressesStart.add(physicalAddressStart);
+			 model.physicalAddressesEnd.add(lastPhysicalAddressEnd + 4096 - 1);
+
+			 //							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 4096 - 1) + " > "
+			 //									+ Long.toHexString(physicalAddressStart) + "-" + Long.toHexString(physicalAddressEnd - 4096 - 1));
+			 physicalAddressStart = physicalAddress;
+			 linearAddressStart = linearAddressEnd;
+			 }
+			 linearAddressEnd += 4096;
+			 if (linearAddressEnd > memSize) {
+			 break outerloop;
+			 }
+			 lastPhysicalAddressEnd = physicalAddressEnd;
+			 if (lastPhysicalAddressEnd == -1) {
+			 lastPhysicalAddressEnd = 0;
+			 }
+			 }
+			 }
+			 }
+			 */
+			Vector<Long> linearAddresses = new Vector<Long>();
+			Vector<Long> physicalAddresses = new Vector<Long>();
+			long linearAddress = 0;
+			outerloop:
+			for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
 				long value = CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4);
 				long pageTableBaseAddress = value & 0xfffff000;
 
 				BigInteger pageTableBaseAddressB = BigInteger.valueOf(pageTableBaseAddress);
-				int[] pageTableBytes = cache.get(pageTableBaseAddressB);
-				if (pageTableBytes == null) {
-					pageTableBytes = VMController.getVM().physicalMemory(pageTableBaseAddressB, 4096);
-					cache.put(pageTableBaseAddressB, pageTableBytes);
-				}
-				if (pageTableBytes != null) {
-					for (int pageTableNo = 0; pageTableNo < 1024; pageTableNo++) {
-						value = CommonLib.getInt(pageTableBytes, pageTableNo * 4);
-						long physicalAddress = value & 0xfffff000;
-
-						if (physicalAddressStart == -1) {
-							physicalAddressStart = physicalAddress;
-						}
-						//						if (physicalAddress > 0) {
-						//							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
-						//						}
-						physicalAddressEnd = physicalAddress;
-
-						if (physicalAddressEnd < lastPhysicalAddressEnd || physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
-							model.linearAddressesStart.add(linearAddressStart);
-							model.linearAddressesEnd.add(linearAddressEnd - 1);
-							model.physicalAddressesStart.add(physicalAddressStart);
-							model.physicalAddressesEnd.add(lastPhysicalAddressEnd + 4096 - 1);
-
-							//							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 4096 - 1) + " > "
-							//									+ Long.toHexString(physicalAddressStart) + "-" + Long.toHexString(physicalAddressEnd - 4096 - 1));
-
-							physicalAddressStart = physicalAddress;
-							linearAddressStart = linearAddressEnd;
-						}
-//						System.out.println("linearAddressEnd=" + linearAddressEnd);
-						linearAddressEnd += 4096;
-						if (linearAddressEnd > memSize) {
-							break outerloop;
-						}
-						lastPhysicalAddressEnd = physicalAddressEnd;
-						if (lastPhysicalAddressEnd == -1) {
-							lastPhysicalAddressEnd = 0;
+				int p = (int) (value & 1);
+				if (p == 1) {
+					int[] pageTableBytes = cache.get(pageTableBaseAddressB);
+					if (pageTableBytes == null) {
+						pageTableBytes = VMController.getVM().physicalMemory(pageTableBaseAddressB, 4096);
+						cache.put(pageTableBaseAddressB, pageTableBytes);
+					}
+					if (pageTableBytes != null) {
+						for (int pageTableNo = 0; pageTableNo < 1024; pageTableNo++) {
+							value = CommonLib.getInt(pageTableBytes, pageTableNo * 4);
+							long physicalAddress = value & 0xfffff000;
+							p = (int) (value & 1);
+							if (p == 1) {
+								linearAddresses.add(linearAddress);
+								physicalAddresses.add(physicalAddress);
+							}
+							linearAddress += 4096;
 						}
 					}
+				} else {
+					linearAddress += 4096 * 1024;
 				}
+			}
+			for (int x = 0; x < linearAddresses.size(); x++) {
+				System.out.println(Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
 			}
 		}
 		model.fireTableDataChanged();
@@ -2382,11 +2419,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							String lineNo[] = getCCode(pc, true);
 							if (s != null && lineNo != null) {
 								for (int index = 0; index < s.length; index++) {
-									model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
+									model.addRow(new String[]{"", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], ""});
 								}
 							}
 							// end load cCode
-							model.addRow(new String[] { "", pc.toString(), instruction, decodedBytes });
+							model.addRow(new String[]{"", pc.toString(), instruction, decodedBytes});
 						} else {
 							model.replace(model.getRowCount() - 1, 3, model.getRow(model.getRowCount() - 1)[3] + temp[1].trim().replaceAll("-", ""));
 						}
@@ -2436,7 +2473,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				DwarfLine startLine = null;
 				DwarfLine endLine = null;
 				DwarfDebugLineHeader startHeader = null;
-				loop1: for (CompileUnit cu : dwarf.compileUnits) {
+				loop1:
+				for (CompileUnit cu : dwarf.compileUnits) {
 					DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
 					boolean toggle = false;
 					for (DwarfLine line : header.lines) {
@@ -2759,7 +2797,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					String p = String.valueOf((value >> 0) & 1);
 					boolean tempB = model.isShowZeroAddress();
 					model.setShowZeroAddress(true);
-					model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+					model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p});
 					model.setShowZeroAddress(tempB);
 				} else if (pse) {
 					if (ps == 0) {
@@ -2776,7 +2814,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						String p = String.valueOf((value >> 0) & 1);
 						boolean tempB = model.isShowZeroAddress();
 						model.setShowZeroAddress(true);
-						model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+						model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p});
 						model.setShowZeroAddress(tempB);
 					} else {
 						// no page table
@@ -2833,7 +2871,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void addBreakpointButtonActionPerformed(ActionEvent evt) {
 		addBreakpointButton.setEnabled(false);
 		String type = (String) JOptionPane.showInputDialog(this, null, "Add breakpoint", JOptionPane.QUESTION_MESSAGE, null,
-				new Object[] { MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address") },
+				new Object[]{MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address")},
 				MyLanguage.getString("Physical_address"));
 		if (type != null) {
 			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint", JOptionPane.QUESTION_MESSAGE);
@@ -3811,7 +3849,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getSearchMemoryFromComboBox() {
 		if (searchMemoryFromComboBox == null) {
-			ComboBoxModel<String> searchMemoryFromComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+			ComboBoxModel<String> searchMemoryFromComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
 			searchMemoryFromComboBox = new JComboBox<String>();
 			searchMemoryFromComboBox.setModel(searchMemoryFromComboBoxModel);
 			searchMemoryFromComboBox.setEditable(true);
@@ -3830,7 +3868,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getSearchMemoryToComboBox() {
 		if (searchMemoryToComboBox == null) {
-			ComboBoxModel<String> jSearchMemoryToComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+			ComboBoxModel<String> jSearchMemoryToComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
 			searchMemoryToComboBox = new JComboBox<String>();
 			searchMemoryToComboBox.setModel(jSearchMemoryToComboBoxModel);
 			searchMemoryToComboBox.setEditable(true);
@@ -3971,7 +4009,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionPanel.setPreferredSize(new java.awt.Dimension(604, 452));
 		instructionControlPanel = new JToolBar();
 		instructionPanel.add(instructionControlPanel, BorderLayout.NORTH);
-		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
 		instructionComboBox = new JComboBox<String>();
 		instructionComboBox.setMaximumSize(new Dimension(200, 23));
 		instructionComboBox.setOpaque(false);
@@ -4129,7 +4167,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		vmCommandScrollPane4.setViewportView(vmCommandEditorPane);
 		vmPanel.add(vmCommandScrollPane4, BorderLayout.CENTER);
 		jPanel2 = new JPanel();
-		TableLayout jPanel2Layout = new TableLayout(new double[][] { { TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM }, { TableLayout.FILL } });
+		TableLayout jPanel2Layout = new TableLayout(new double[][]{{TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM}, {TableLayout.FILL}});
 		jPanel2Layout.setHGap(5);
 		jPanel2Layout.setVGap(5);
 		jPanel2.setLayout(jPanel2Layout);
@@ -4515,11 +4553,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jPanel20 == null) {
 			jPanel20 = new JPanel();
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-			jPanel20.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"), },
-					new RowSpec[] { RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-							FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-							FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+			jPanel20.setLayout(new FormLayout(new ColumnSpec[]{FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"),},
+					new RowSpec[]{RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
 			jPanel20.add(getLblCr(), "2, 1");
 			jPanel20.add(getCr3RadioButton(), "2, 3");
 			jPanel20.add(getPanel(), "2, 5, fill, fill");
@@ -5482,7 +5520,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getELFHeaderTable() {
 		if (elfHeaderTable == null) {
-			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
+			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[]{MyLanguage.getString("Field"), MyLanguage.getString("Value")});
 			elfHeaderTable = new JTable();
 			elfHeaderTable.getTableHeader().setReorderingAllowed(false);
 			elfHeaderTable.setModel(jELFHeaderTableModel);
@@ -5628,7 +5666,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// symbol table
 			int symbolTableNo = 0;
 			while (map.get("symbolTable" + symbolTableNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx" });
+				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[]{"No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx"});
 				JTable tempTable = new JTable();
 				HashMap tempMap = (HashMap) map.get("symbolTable" + symbolTableNo);
 				Vector<LinkedHashMap> v = (Vector<LinkedHashMap>) tempMap.get("vector");
@@ -5658,7 +5696,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// note
 			int noteSectionNo = 0;
 			while (map.get("note" + noteSectionNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "namesz", "descsz", "type", "name", "desc" });
+				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[]{"No.", "namesz", "descsz", "type", "name", "desc"});
 				JTable tempTable = new JTable();
 				HashMap<String, Vector<LinkedHashMap<String, Object>>> tempMap = (HashMap) map.get("note" + noteSectionNo);
 				Vector<LinkedHashMap<String, Object>> v = tempMap.get("vector");
@@ -5740,7 +5778,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable getJSectionTable() {
 		if (elfSectionTable == null) {
 			TableModel jSectionTableModel = new DefaultTableModel(null,
-					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize" });
+					new String[]{"No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize"});
 			elfSectionTable = new JTable();
 			elfSectionTable.getTableHeader().setReorderingAllowed(false);
 			elfSectionTable.setModel(jSectionTableModel);
@@ -5759,7 +5797,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getJProgramHeaderTable() {
 		if (programHeaderTable == null) {
-			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[] { "No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align" });
+			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[]{"No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align"});
 			programHeaderTable = new JTable();
 			programHeaderTable.getTableHeader().setReorderingAllowed(false);
 			programHeaderTable.setModel(jProgramHeaderTableModel);
@@ -7112,51 +7150,51 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jRunningPanelLayout
 					.setHorizontalGroup(
 							jRunningPanelLayout.createSequentialGroup().addContainerGap()
-									.addGroup(
-											jRunningPanelLayout.createParallelGroup()
+							.addGroup(
+									jRunningPanelLayout.createParallelGroup()
+									.addGroup(GroupLayout.Alignment.LEADING,
+											jRunningPanelLayout.createSequentialGroup()
+											.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+											.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+													GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
+									.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
+											jRunningPanelLayout.createSequentialGroup().addGap(65).addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
+													GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING,
+															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
+															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+															.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
 													.addGroup(GroupLayout.Alignment.LEADING,
 															jRunningPanelLayout.createSequentialGroup()
-																	.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-																	.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-																			GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
-													.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup().addGap(65).addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
-																	GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-													.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
-															.addGroup(GroupLayout.Alignment.LEADING,
-																	jRunningPanelLayout.createSequentialGroup()
-																			.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
-																					LayoutStyle.ComponentPlacement.INDENT)
-																			.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-																			.addGap(0, 25, Short.MAX_VALUE))))));
+															.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
+																	LayoutStyle.ComponentPlacement.INDENT)
+															.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+															.addGap(0, 25, Short.MAX_VALUE))))));
 			jRunningPanelLayout
 					.setVerticalGroup(jRunningPanelLayout.createSequentialGroup().addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 							.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 									.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
 											GroupLayout.PREFERRED_SIZE)
-							.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-							.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-							.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
-							.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-							.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-									GroupLayout.PREFERRED_SIZE)
-							.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getJTextArea1(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
+									.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+									.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+									.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
+									.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+									.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+									.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+											GroupLayout.PREFERRED_SIZE)
+									.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getJTextArea1(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
 		}
 		return runningPanel;
 	}
@@ -7261,7 +7299,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getMaxRowComboBox() {
 		if (maxRowComboBox == null) {
-			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[] { "infinite", "10", "100", "200", "500", "1000", "2000" });
+			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[]{"infinite", "10", "100", "200", "500", "1000", "2000"});
 			maxRowComboBox = new JComboBox<String>();
 			maxRowComboBox.setModel(maxRowComboBoxModel);
 			maxRowComboBox.setSelectedItem("100");
