@@ -518,7 +518,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable pagingSummaryTable;
 	private JToolBar toolBar;
 	private JButton dumpCR3PagingSummaryButton;
-	private JTextField dumpPagingSummaryPageDirectoryAddressTextField;
+	public JTextField dumpPagingSummaryPageDirectoryAddressTextField;
 	private JButton dumpPagingSummaryTableAtAddressButton;
 
 	public GKD() {
