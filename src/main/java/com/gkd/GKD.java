@@ -2251,7 +2251,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							physicalAddressStart = physicalAddress;
 							linearAddressStart = linearAddressEnd;
 						}
-
+//						System.out.println("linearAddressEnd=" + linearAddressEnd);
 						linearAddressEnd += 4096;
 						if (linearAddressEnd > memSize) {
 							break outerloop;
