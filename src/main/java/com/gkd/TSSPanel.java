@@ -125,11 +125,11 @@ public class TSSPanel extends JPanel {
 			jSplitPane1.add(jScrollPane3, JSplitPane.RIGHT);
 			jScrollPane3.setPreferredSize(new java.awt.Dimension(457, 600));
 
-			TableModel jTSSTableModel = new DefaultTableModel(new String[][] {},
+			TableModel tssTableModel = new DefaultTableModel(new String[][] {},
 					new String[] { MyLanguage.getString("Offset"), MyLanguage.getString("Field"), MyLanguage.getString("Value"), "" });
 			tssTable = new JTable();
 			jScrollPane3.setViewportView(tssTable);
-			tssTable.setModel(jTSSTableModel);
+			tssTable.setModel(tssTableModel);
 			tssTable.getColumn("").setCellRenderer(new ButtonRenderer());
 			tssTable.getColumn("").setCellEditor(new ButtonEditor(new JCheckBox()));
 
@@ -194,7 +194,7 @@ public class TSSPanel extends JPanel {
 			pageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			pageDirectoryTable.addMouseListener(new MouseAdapter() {
 				public void mouseClicked(MouseEvent evt) {
-					jPageDirectoryTableMouseClicked(evt);
+					pageDirectoryTableMouseClicked(evt);
 				}
 			});
 
@@ -468,11 +468,7 @@ public class TSSPanel extends JPanel {
 		}
 	}
 
-	private void jDumpPageDirectoryButtonActionPerformed(ActionEvent evt) {
-		logger.debug("jDumpPageDirectoryButton.actionPerformed, event=" + evt);
-	}
-
-	private void jPageDirectoryTableMouseClicked(MouseEvent evt) {
+	private void pageDirectoryTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
 			String pageTableAddress = pageDirectoryTable.getValueAt(pageDirectoryTable.getSelectedRow(), 1).toString();
 
