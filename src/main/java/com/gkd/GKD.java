@@ -484,7 +484,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private String latestVersionURL;
 	private boolean saveToRunDotTxt;
 	private int skipBreakpointTime;
-	private boolean isupdateVMStatusEnd;
+	private boolean isUpdateVMStatusEnd;
 	Vector<CustomCommand> customCommandQueue = new Vector<CustomCommand>();
 	URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader.gif");
 	private JProgressBarDialog progressBarDialog = new JProgressBarDialog();
@@ -547,6 +547,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (Global.debug) {
 					logger.debug("end setVisible(true)");
 				}
+
+				boolean run = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/run/text()"));
+				if (run) {
+					waitUpdateFinish();
+					runVMButtonActionPerformed(new ActionEvent(this, 0, null));
+				}
+
 			}
 		};
 		progressBarDialog.progressBar.setMinimum(0);
@@ -788,14 +795,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		progressBarDialog.progressBar.setValue(100);
 		progressBarDialog.progressBar.setString("Fnished");
-
 		if (Global.debug) {
 			logger.debug(new Date());
 		}
 	}
 
 	private void waitUpdateFinish() {
-		while (!isupdateVMStatusEnd) {
+		while (!isUpdateVMStatusEnd) {
 			try {
 				Thread.currentThread();
 				Thread.sleep(200);
@@ -1014,7 +1020,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						runBochsMenuItem.setText(MyLanguage.getString("run"));
 						runBochsMenuItem.addActionListener(new ActionListener() {
 							public void actionPerformed(ActionEvent evt) {
-								VMController.getVM().runVM();
+								runVMButtonActionPerformed(evt);
 							}
 						});
 					}
@@ -1730,7 +1736,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public void updateVMStatus(final boolean updateHistoryTable) {
 		logger.debug("updateVMStatus");
-		isupdateVMStatusEnd = false;
+		isUpdateVMStatusEnd = false;
 		WebServiceUtil.log("gkd", "updateVMStatus", null, null, null);
 		final JProgressBarDialog d = new JProgressBarDialog(this, true);
 		Thread updateThread = new Thread("updateVMStatus thread") {
@@ -1869,10 +1875,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				d.setVisible(false);
 
 				enableAllButtons(true, skipBreakpointTime > 0 || customCommandQueue.size() > 0);
-				isupdateVMStatusEnd = true;
-				if (Global.debug) {
-					logger.debug("updateVMStatus thread end");
-				}
+				isUpdateVMStatusEnd = true;
+				logger.debug("updateVMStatus thread end");
 			}
 		};
 
@@ -1883,9 +1887,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		d.cancelButton.setVisible(false);
 		d.setVisible(true);
 
-		if (Global.debug) {
-			logger.debug("updateVMStatus() end");
-		}
+		logger.debug("updateVMStatus() end");
 	}
 
 	protected void updatePTime(boolean updateGUI) {
@@ -2298,7 +2300,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			for (int x = 0; x < linearAddresses.size(); x++) {
-				System.out.println(Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
+				System.out.println(Long.toHexString(linearAddresses.get(x) >> 22) + " , " + Long.toHexString(linearAddresses.get(x) >> 12 & 0x3ff) + " >" + Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
 			}
 		}
 		model.fireTableDataChanged();
