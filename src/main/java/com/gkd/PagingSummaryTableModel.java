@@ -5,7 +5,8 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 public class PagingSummaryTableModel extends DefaultTableModel {
-	String columnNames[] = new String[] { "Linear address", "", "Physical address" };
+
+	String columnNames[] = new String[]{"Linear address", "", "Physical address"};
 
 	public Vector<Long> linearAddressesStart = new Vector<Long>();
 	public Vector<Long> linearAddressesEnd = new Vector<Long>();
@@ -31,11 +32,11 @@ public class PagingSummaryTableModel extends DefaultTableModel {
 	public Object getValueAt(int row, int column) {
 		try {
 			if (column == 0) {
-				return Long.toHexString(linearAddressesStart.get(row)) + " - " + Long.toHexString(linearAddressesEnd.get(row));
+				return String.format("%08x", linearAddressesStart.get(row)) + " - " + String.format("%08x", linearAddressesEnd.get(row));
 			} else if (column == 1) {
 				return ">";
 			} else {
-				return Long.toHexString(physicalAddressesStart.get(row)) + " - " + Long.toHexString(physicalAddressesEnd.get(row));
+				return String.format("%08x", physicalAddressesStart.get(row)) + " - " + String.format("%08x", physicalAddressesEnd.get(row));
 			}
 		} catch (Exception ex) {
 			return "";

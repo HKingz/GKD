@@ -2299,8 +2299,42 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					linearAddress += 4096 * 1024;
 				}
 			}
+
+			model.linearAddressesStart.clear();
+			model.linearAddressesEnd.clear();
+			model.physicalAddressesStart.clear();
+			model.physicalAddressesEnd.clear();
+
+			long linearAddressStart = -1;
+			long physicalAddressStart = -1;
+			long lastPhysicalAddress = -1;
+
 			for (int x = 0; x < linearAddresses.size(); x++) {
-				System.out.println(Long.toHexString(linearAddresses.get(x) >> 22) + " , " + Long.toHexString(linearAddresses.get(x) >> 12 & 0x3ff) + " >" + Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
+				if (linearAddressStart == -1) {
+					linearAddressStart = linearAddresses.get(x);
+					physicalAddressStart = physicalAddresses.get(x);
+					lastPhysicalAddress = physicalAddresses.get(x);
+					continue;
+				}
+				if (x == linearAddresses.size() - 1) {
+					model.linearAddressesStart.add(linearAddressStart);
+					model.linearAddressesEnd.add(linearAddresses.get(x) + 4096 - 1);
+					model.physicalAddressesStart.add(physicalAddressStart);
+					model.physicalAddressesEnd.add(physicalAddresses.get(x) + 4096 - 1);
+				} else if (physicalAddresses.get(x) < lastPhysicalAddress || (physicalAddresses.get(x) - lastPhysicalAddress) > 4096) {
+					model.linearAddressesStart.add(linearAddressStart);
+					model.linearAddressesEnd.add(linearAddresses.get(x - 1) + 4096 - 1);
+					model.physicalAddressesStart.add(physicalAddressStart);
+					model.physicalAddressesEnd.add(physicalAddresses.get(x - 1) + 4096 - 1);
+
+					linearAddressStart = linearAddresses.get(x);
+					physicalAddressStart = physicalAddresses.get(x);
+					lastPhysicalAddress = physicalAddresses.get(x);
+				} else {
+					lastPhysicalAddress = physicalAddresses.get(x);
+				}
+
+				//System.out.println(Long.toHexString(linearAddresses.get(x) >> 22) + " , " + Long.toHexString(linearAddresses.get(x) >> 12 & 0x3ff) + " >" + Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
 			}
 		}
 		model.fireTableDataChanged();

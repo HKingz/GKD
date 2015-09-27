@@ -10,6 +10,8 @@ import javax.swing.table.TableCellRenderer;
 
 public class MemoryTableCellRenderer extends JLabel implements TableCellRenderer {
 	public MemoryTableCellRenderer() {
+		super();
+		System.out.println(this.getFont().getFontName());
 		this.setOpaque(true);
 	}
 
