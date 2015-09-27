@@ -2309,32 +2309,39 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			long physicalAddressStart = -1;
 			long lastPhysicalAddress = -1;
 
-			for (int x = 0; x < linearAddresses.size(); x++) {
-				if (linearAddressStart == -1) {
-					linearAddressStart = linearAddresses.get(x);
-					physicalAddressStart = physicalAddresses.get(x);
-					lastPhysicalAddress = physicalAddresses.get(x);
-					continue;
-				}
-				if (x == linearAddresses.size() - 1) {
-					model.linearAddressesStart.add(linearAddressStart);
-					model.linearAddressesEnd.add(linearAddresses.get(x) + 4096 - 1);
-					model.physicalAddressesStart.add(physicalAddressStart);
-					model.physicalAddressesEnd.add(physicalAddresses.get(x) + 4096 - 1);
-				} else if (physicalAddresses.get(x) < lastPhysicalAddress || (physicalAddresses.get(x) - lastPhysicalAddress) > 4096) {
-					model.linearAddressesStart.add(linearAddressStart);
-					model.linearAddressesEnd.add(linearAddresses.get(x - 1) + 4096 - 1);
-					model.physicalAddressesStart.add(physicalAddressStart);
-					model.physicalAddressesEnd.add(physicalAddresses.get(x - 1) + 4096 - 1);
+			if (linearAddresses.size() == 1) {
+				model.linearAddressesStart.add(linearAddresses.get(0));
+				model.linearAddressesEnd.add(linearAddresses.get(0) + 4096 - 1);
+				model.physicalAddressesStart.add(physicalAddresses.get(0));
+				model.physicalAddressesEnd.add(physicalAddresses.get(0) + 4096 - 1);
+			} else {
+				for (int x = 0; x < linearAddresses.size(); x++) {
+					if (linearAddressStart == -1) {
+						linearAddressStart = linearAddresses.get(x);
+						physicalAddressStart = physicalAddresses.get(x);
+						lastPhysicalAddress = physicalAddresses.get(x);
+						continue;
+					}
+					if (x == linearAddresses.size() - 1) {
+						model.linearAddressesStart.add(linearAddressStart);
+						model.linearAddressesEnd.add(linearAddresses.get(x) + 4096 - 1);
+						model.physicalAddressesStart.add(physicalAddressStart);
+						model.physicalAddressesEnd.add(physicalAddresses.get(x) + 4096 - 1);
+					} else if (physicalAddresses.get(x) < lastPhysicalAddress || (physicalAddresses.get(x) - lastPhysicalAddress) > 4096) {
+						model.linearAddressesStart.add(linearAddressStart);
+						model.linearAddressesEnd.add(linearAddresses.get(x - 1) + 4096 - 1);
+						model.physicalAddressesStart.add(physicalAddressStart);
+						model.physicalAddressesEnd.add(physicalAddresses.get(x - 1) + 4096 - 1);
 
-					linearAddressStart = linearAddresses.get(x);
-					physicalAddressStart = physicalAddresses.get(x);
-					lastPhysicalAddress = physicalAddresses.get(x);
-				} else {
-					lastPhysicalAddress = physicalAddresses.get(x);
-				}
+						linearAddressStart = linearAddresses.get(x);
+						physicalAddressStart = physicalAddresses.get(x);
+						lastPhysicalAddress = physicalAddresses.get(x);
+					} else {
+						lastPhysicalAddress = physicalAddresses.get(x);
+					}
 
-				//System.out.println(Long.toHexString(linearAddresses.get(x) >> 22) + " , " + Long.toHexString(linearAddresses.get(x) >> 12 & 0x3ff) + " >" + Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
+					//System.out.println(Long.toHexString(linearAddresses.get(x) >> 22) + " , " + Long.toHexString(linearAddresses.get(x) >> 12 & 0x3ff) + " >" + Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
+				}
 			}
 		}
 		model.fireTableDataChanged();
