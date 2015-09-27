@@ -32,26 +32,24 @@ import com.mxgraph.util.mxResources;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxGraphView;
 
-public class EditorToolBar extends JToolBar
-{
+public class EditorToolBar extends JToolBar {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -8015443128436394471L;
 
 	/**
-	 * 
+	 *
 	 * @param frame
 	 * @param orientation
 	 */
 	private boolean ignoreZoomChange = false;
 
 	/**
-	 * 
+	 *
 	 */
-	public EditorToolBar(final BasicGraphEditor editor, int orientation)
-	{
+	public EditorToolBar(final BasicGraphEditor editor, int orientation) {
 		super(orientation);
 		setBorder(BorderFactory.createCompoundBorder(BorderFactory
 				.createEmptyBorder(3, 3, 3, 3), getBorder()));
@@ -97,8 +95,8 @@ public class EditorToolBar extends JToolBar
 		GraphicsEnvironment env = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
 		List<String> fonts = new ArrayList<String>();
-		fonts.addAll(Arrays.asList(new String[] { "Helvetica", "Verdana",
-				"Times New Roman", "Garamond", "Courier New", "-" }));
+		fonts.addAll(Arrays.asList(new String[]{"Helvetica", "Verdana",
+			"Times New Roman", "Garamond", "Courier New", "-"}));
 		fonts.addAll(Arrays.asList(env.getAvailableFontFamilyNames()));
 
 		final JComboBox fontCombo = new JComboBox(fonts.toArray());
@@ -108,39 +106,34 @@ public class EditorToolBar extends JToolBar
 		fontCombo.setMaximumSize(new Dimension(120, 100));
 		add(fontCombo);
 
-		fontCombo.addActionListener(new ActionListener()
-		{
+		fontCombo.addActionListener(new ActionListener() {
 			/**
-			 * 
+			 *
 			 */
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				String font = fontCombo.getSelectedItem().toString();
 
-				if (font != null && !font.equals("-"))
-				{
+				if (font != null && !font.equals("-")) {
 					mxGraph graph = editor.getGraphComponent().getGraph();
 					graph.setCellStyles(mxConstants.STYLE_FONTFAMILY, font);
 				}
 			}
 		});
 
-		final JComboBox sizeCombo = new JComboBox(new Object[] { "6pt", "8pt",
-				"9pt", "10pt", "12pt", "14pt", "18pt", "24pt", "30pt", "36pt",
-				"48pt", "60pt" });
+		final JComboBox sizeCombo = new JComboBox(new Object[]{"6pt", "8pt",
+			"9pt", "10pt", "12pt", "14pt", "18pt", "24pt", "30pt", "36pt",
+			"48pt", "60pt"});
 		sizeCombo.setEditable(true);
 		sizeCombo.setMinimumSize(new Dimension(65, 0));
 		sizeCombo.setPreferredSize(new Dimension(65, 0));
 		sizeCombo.setMaximumSize(new Dimension(65, 100));
 		add(sizeCombo);
 
-		sizeCombo.addActionListener(new ActionListener()
-		{
+		sizeCombo.addActionListener(new ActionListener() {
 			/**
-			 * 
+			 *
 			 */
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				mxGraph graph = editor.getGraphComponent().getGraph();
 				graph.setCellStyles(mxConstants.STYLE_FONTSIZE, sizeCombo
 						.getSelectedItem().toString().replace("pt", ""));
@@ -182,9 +175,9 @@ public class EditorToolBar extends JToolBar
 
 		final mxGraphView view = editor.getGraphComponent().getGraph()
 				.getView();
-		final JComboBox zoomCombo = new JComboBox(new Object[] { "400%",
-				"200%", "150%", "100%", "75%", "50%", mxResources.get("page"),
-				mxResources.get("width"), mxResources.get("actualSize") });
+		final JComboBox zoomCombo = new JComboBox(new Object[]{"400%",
+			"200%", "150%", "100%", "75%", "50%", mxResources.get("page"),
+			mxResources.get("width"), mxResources.get("actualSize")});
 		zoomCombo.setEditable(true);
 		zoomCombo.setMinimumSize(new Dimension(75, 0));
 		zoomCombo.setPreferredSize(new Dimension(75, 0));
@@ -193,23 +186,18 @@ public class EditorToolBar extends JToolBar
 		add(zoomCombo);
 
 		// Sets the zoom in the zoom combo the current value
-		mxIEventListener scaleTracker = new mxIEventListener()
-		{
+		mxIEventListener scaleTracker = new mxIEventListener() {
 			/**
-			 * 
+			 *
 			 */
-			public void invoke(Object sender, mxEventObject evt)
-			{
+			public void invoke(Object sender, mxEventObject evt) {
 				ignoreZoomChange = true;
 
-				try
-				{
+				try {
 					zoomCombo.setSelectedItem((int) Math.round(100 * view
 							.getScale())
 							+ "%");
-				}
-				finally
-				{
+				} finally {
 					ignoreZoomChange = false;
 				}
 			}
@@ -224,49 +212,36 @@ public class EditorToolBar extends JToolBar
 		// Invokes once to sync with the actual zoom value
 		scaleTracker.invoke(null, null);
 
-		zoomCombo.addActionListener(new ActionListener()
-		{
+		zoomCombo.addActionListener(new ActionListener() {
 			/**
-			 * 
+			 *
 			 */
-			public void actionPerformed(ActionEvent e)
-			{
+			public void actionPerformed(ActionEvent e) {
 				mxGraphComponent graphComponent = editor.getGraphComponent();
 
 				// Zoomcombo is changed when the scale is changed in the diagram
 				// but the change is ignored here
-				if (!ignoreZoomChange)
-				{
+				if (!ignoreZoomChange) {
 					String zoom = zoomCombo.getSelectedItem().toString();
 
-					if (zoom.equals(mxResources.get("page")))
-					{
+					if (zoom.equals(mxResources.get("page"))) {
 						graphComponent.setPageVisible(true);
 						graphComponent
 								.setZoomPolicy(mxGraphComponent.ZOOM_POLICY_PAGE);
-					}
-					else if (zoom.equals(mxResources.get("width")))
-					{
+					} else if (zoom.equals(mxResources.get("width"))) {
 						graphComponent.setPageVisible(true);
 						graphComponent
 								.setZoomPolicy(mxGraphComponent.ZOOM_POLICY_WIDTH);
-					}
-					else if (zoom.equals(mxResources.get("actualSize")))
-					{
+					} else if (zoom.equals(mxResources.get("actualSize"))) {
 						graphComponent.zoomActual();
-					}
-					else
-					{
-						try
-						{
+					} else {
+						try {
 							zoom = zoom.replace("%", "");
 							double scale = Math.min(16, Math.max(0.01,
 									Double.parseDouble(zoom) / 100));
 							graphComponent.zoomTo(scale, graphComponent
 									.isCenterZoom());
-						}
-						catch (Exception ex)
-						{
+						} catch (Exception ex) {
 							JOptionPane.showMessageDialog(editor, ex
 									.getMessage());
 						}
