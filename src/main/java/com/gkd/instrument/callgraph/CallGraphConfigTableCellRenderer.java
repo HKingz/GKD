@@ -17,6 +17,7 @@ public class CallGraphConfigTableCellRenderer implements TableCellRenderer {
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		checkbox.setFont(table.getFont());
 		if (value instanceof Boolean) {
 			checkbox.setSelected((Boolean) value);
 		}

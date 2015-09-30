@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 public class CustomCommandTableCellRenderer extends JPanel implements TableCellRenderer {
+
 	JLabel jLabel = new JLabel();
 
 	public CustomCommandTableCellRenderer() {
@@ -21,6 +22,7 @@ public class CustomCommandTableCellRenderer extends JPanel implements TableCellR
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		setFont(table.getFont());
 		if (row == table.getRowCount() - 1) {
 			return (JButton) value;
 		} else {

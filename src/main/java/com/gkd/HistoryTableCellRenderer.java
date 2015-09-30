@@ -8,12 +8,14 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 public class HistoryTableCellRenderer extends JLabel implements TableCellRenderer {
+
 	public HistoryTableCellRenderer() {
 		setOpaque(true);
 	}
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		setFont(table.getFont());
 		if (value == null) {
 			this.setText("");
 		} else {

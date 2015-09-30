@@ -9,13 +9,14 @@ import javax.swing.SwingConstants;
 import javax.swing.table.TableCellRenderer;
 
 public class MemoryTableCellRenderer extends JLabel implements TableCellRenderer {
+
 	public MemoryTableCellRenderer() {
 		super();
-		System.out.println(this.getFont().getFontName());
 		this.setOpaque(true);
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		setFont(table.getFont());
 		if (isSelected) {
 			this.setBackground(table.getSelectionBackground());
 		} else {

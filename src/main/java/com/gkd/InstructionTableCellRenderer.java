@@ -16,6 +16,7 @@ import com.gkd.syntaxhighlight.Keywords;
 import com.peterswing.CommonLib;
 
 public class InstructionTableCellRenderer extends JLabel implements TableCellRenderer {
+
 	ImageIcon hereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red.png"));
 	ImageIcon hereWithBreakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red_breakpoint.png"));
 	ImageIcon breakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpoint.png"));
@@ -31,6 +32,7 @@ public class InstructionTableCellRenderer extends JLabel implements TableCellRen
 
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
 		try {
+			setFont(table.getFont());
 			if (isSelected) {
 				this.setBackground(table.getSelectionBackground());
 			} else {

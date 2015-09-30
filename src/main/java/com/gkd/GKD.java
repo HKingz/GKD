@@ -3195,6 +3195,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void setAllComponentsFont(Container parent, Font fnt) {
+		parent.setFont(fnt);
 		for (Component c : parent.getComponents()) {
 			c.setFont(fnt);
 
@@ -3204,6 +3205,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
+	//	public void setAllComponentsFont(Container parent, Font fnt) {
+	//		parent.setFont(fnt);
+	//		for (Component child : parent.getComponents()) {
+	//			child.setFont(fnt);
+	//			setAllComponentsFont(child, fnt);
+	//		}
+	//	}
+	//
+	//	public void setAllComponentsFont(Component parent, Font fnt) {
+	//		parent.setFont(fnt);
+	//		for (Component child : parent.get) {
+	//			child.setFont(fnt);
+	//			setAllComponentsFont(child, fnt);
+	//		}
+	//	}
 	private JMenu getSizeMenu() {
 		if (sizeMenu == null) {
 			sizeMenu = new JMenu();

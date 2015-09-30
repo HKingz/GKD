@@ -45,6 +45,7 @@ import com.peterswing.CommonLib;
 import info.clearthought.layout.TableLayout;
 
 public class TSSPanel extends JPanel {
+
 	private JTable table1;
 	private int gdtNo;
 	private JPanel infoPanel;
@@ -116,7 +117,7 @@ public class TSSPanel extends JPanel {
 			jSplitPane1.add(jScrollPane2, JSplitPane.LEFT);
 			jScrollPane2.setPreferredSize(new java.awt.Dimension(449, 600));
 
-			TableModel jTable2Model = new DefaultTableModel(new String[][] {}, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
+			TableModel jTable2Model = new DefaultTableModel(new String[][]{}, new String[]{MyLanguage.getString("Field"), MyLanguage.getString("Value")});
 			jTable2 = new JTable();
 			jScrollPane2.setViewportView(jTable2);
 			jTable2.setModel(jTable2Model);
@@ -125,8 +126,8 @@ public class TSSPanel extends JPanel {
 			jSplitPane1.add(jScrollPane3, JSplitPane.RIGHT);
 			jScrollPane3.setPreferredSize(new java.awt.Dimension(457, 600));
 
-			TableModel tssTableModel = new DefaultTableModel(new String[][] {},
-					new String[] { MyLanguage.getString("Offset"), MyLanguage.getString("Field"), MyLanguage.getString("Value"), "" });
+			TableModel tssTableModel = new DefaultTableModel(new String[][]{},
+					new String[]{MyLanguage.getString("Offset"), MyLanguage.getString("Field"), MyLanguage.getString("Value"), ""});
 			tssTable = new JTable();
 			jScrollPane3.setViewportView(tssTable);
 			tssTable.setModel(tssTableModel);
@@ -143,7 +144,7 @@ public class TSSPanel extends JPanel {
 			jScrollPane1.setBounds(12, 38, 667, 60);
 			jScrollPane1.setBorder(new LineBorder(new java.awt.Color(0, 0, 0), 1, false));
 
-			DefaultTableModel jTable1Model = new DefaultTableModel(new String[][] { { "" }, { "" } }, new String[] { "31" });
+			DefaultTableModel jTable1Model = new DefaultTableModel(new String[][]{{""}, {""}}, new String[]{"31"});
 			for (int x = 30; x >= 0; x--) {
 				jTable1Model.addColumn(x);
 			}
@@ -188,7 +189,7 @@ public class TSSPanel extends JPanel {
 
 			PageDirectoryTableModel jPageDirectoryTableModel = new PageDirectoryTableModel();
 			pageDirectoryTable = new JTable();
-			pageDirectoryTable.getTableHeader().setReorderingAllowed(false); 
+			pageDirectoryTable.getTableHeader().setReorderingAllowed(false);
 			jScrollPane4.setViewportView(pageDirectoryTable);
 			pageDirectoryTable.setModel(jPageDirectoryTableModel);
 			pageDirectoryTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -204,7 +205,7 @@ public class TSSPanel extends JPanel {
 
 			PageTableTableModel jPageTableTableModel = new PageTableTableModel();
 			pageTableTable = new JTable();
-			pageTableTable.getTableHeader().setReorderingAllowed(false); 
+			pageTableTable.getTableHeader().setReorderingAllowed(false);
 			jScrollPane5.setViewportView(pageTableTable);
 			pageTableTable.setModel(jPageTableTableModel);
 			pageTableTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -215,7 +216,7 @@ public class TSSPanel extends JPanel {
 			addressTranslatePanel.setLayout(jAddressTranslatePanelLayout);
 
 			jPanel20 = new JPanel();
-			TableLayout jPanel20Layout = new TableLayout(new double[][] { { 8.0, 156.0, 13.0 }, { 25.0, 25.0, 25.0, 22.0, 37.0, TableLayout.FILL } });
+			TableLayout jPanel20Layout = new TableLayout(new double[][]{{8.0, 156.0, 13.0}, {25.0, 25.0, 25.0, 22.0, 37.0, TableLayout.FILL}});
 			jPanel20Layout.setHGap(5);
 			jPanel20Layout.setVGap(5);
 			addressTranslatePanel.add(jPanel20, BorderLayout.WEST);
@@ -341,24 +342,24 @@ public class TSSPanel extends JPanel {
 		try {
 			DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
 			long base = CommonLib.getLong(bytes[2], bytes[3], bytes[4], bytes[7], 0, 0, 0, 0);
-			model.addRow(new String[] { "base", "0x" + Long.toHexString(base) });
+			model.addRow(new String[]{"base", "0x" + Long.toHexString(base)});
 
 			long limit = CommonLib.getLong(bytes[0], bytes[1], bytes[6] & 0xf, 0, 0, 0, 0, 0);
 			if (bit[55] == 1) {
 				limit *= 4096;
 			}
 			limit += 1; //Real TSS limit = TSS limit in descriptor + 1
-			model.addRow(new String[] { "limit", "0x" + Long.toHexString(limit) });
+			model.addRow(new String[]{"limit", "0x" + Long.toHexString(limit)});
 
-			model.addRow(new String[] { "G", String.valueOf(bit[55]) });
-			model.addRow(new String[] { "AVL", String.valueOf(bit[52]) });
-			model.addRow(new String[] { "P", String.valueOf(bit[47]) });
-			model.addRow(new String[] { "DPL", String.valueOf(bit[45] + bit[46] << 1) });
-			model.addRow(new String[] { "S", String.valueOf(bit[44]) });
-			model.addRow(new String[] { "D", String.valueOf(bit[43]) });
-			model.addRow(new String[] { "G", String.valueOf(bit[42]) });
-			model.addRow(new String[] { "B", String.valueOf(bit[41]) });
-			model.addRow(new String[] { "V", String.valueOf(bit[40]) });
+			model.addRow(new String[]{"G", String.valueOf(bit[55])});
+			model.addRow(new String[]{"AVL", String.valueOf(bit[52])});
+			model.addRow(new String[]{"P", String.valueOf(bit[47])});
+			model.addRow(new String[]{"DPL", String.valueOf(bit[45] + bit[46] << 1)});
+			model.addRow(new String[]{"S", String.valueOf(bit[44])});
+			model.addRow(new String[]{"D", String.valueOf(bit[43])});
+			model.addRow(new String[]{"G", String.valueOf(bit[42])});
+			model.addRow(new String[]{"B", String.valueOf(bit[41])});
+			model.addRow(new String[]{"V", String.valueOf(bit[40])});
 
 			// TSS
 			//			float totalByte2 = limit - 1;
@@ -370,7 +371,6 @@ public class TSSPanel extends JPanel {
 			//			realStartAddressStr = String.format("%08x", realStartAddress);
 			//			long realEndAddress = realStartAddress + totalByte3 * 8;
 			//			realEndAddressStr = String.format("%08x", realEndAddress);
-
 			int tssByte[] = VMController.getVM().virtualMemory(BigInteger.valueOf(base), (int) limit);
 
 			if (tssByte == null) {
@@ -378,38 +378,37 @@ public class TSSPanel extends JPanel {
 			}
 
 			//long tssValue = CommonLib.getLong(b, 0);
-
 			DefaultTableModel tssModel = (DefaultTableModel) tssTable.getModel();
-			tssModel.addRow(new String[] { "0", "link", "0x" + CommonLib.getBigInteger(tssByte[0], tssByte[1], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "4", "esp0", "0x" + CommonLib.getBigInteger(tssByte[4], tssByte[5], tssByte[6], tssByte[7], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "8", "ss0", "0x" + CommonLib.getBigInteger(tssByte[8], tssByte[9], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0xc", "esp1", "0x" + CommonLib.getBigInteger(tssByte[0xc], tssByte[0xd], tssByte[0xe], tssByte[0xf], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x10", "ss1", "0x" + CommonLib.getBigInteger(tssByte[0x10], tssByte[0x11], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x14", "esp2", "0x" + CommonLib.getBigInteger(tssByte[0x14], tssByte[0x15], tssByte[0x16], tssByte[0x17], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x18", "ss2", "0x" + CommonLib.getBigInteger(tssByte[0x18], tssByte[0x19], 0, 0, 0, 0, 0, 0).toString(16) });
+			tssModel.addRow(new String[]{"0", "link", "0x" + CommonLib.getBigInteger(tssByte[0], tssByte[1], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"4", "esp0", "0x" + CommonLib.getBigInteger(tssByte[4], tssByte[5], tssByte[6], tssByte[7], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"8", "ss0", "0x" + CommonLib.getBigInteger(tssByte[8], tssByte[9], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0xc", "esp1", "0x" + CommonLib.getBigInteger(tssByte[0xc], tssByte[0xd], tssByte[0xe], tssByte[0xf], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x10", "ss1", "0x" + CommonLib.getBigInteger(tssByte[0x10], tssByte[0x11], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x14", "esp2", "0x" + CommonLib.getBigInteger(tssByte[0x14], tssByte[0x15], tssByte[0x16], tssByte[0x17], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x18", "ss2", "0x" + CommonLib.getBigInteger(tssByte[0x18], tssByte[0x19], 0, 0, 0, 0, 0, 0).toString(16)});
 			cr3 = CommonLib.getBigInteger(tssByte[0x1c], tssByte[0x1d], tssByte[0x1e], tssByte[0x1f], 0, 0, 0, 0);
-			tssModel.addRow(new String[] { "0x1c", "cr3", "0x" + cr3.toString(16), "dump" });
-			tssModel.addRow(new String[] { "0x20", "eip", "0x" + CommonLib.getBigInteger(tssByte[0x20], tssByte[0x21], tssByte[0x22], tssByte[0x23], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x24", "eflags", "0x" + CommonLib.getBigInteger(tssByte[0x24], tssByte[0x25], tssByte[0x26], tssByte[0x27], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x28", "eax", "0x" + CommonLib.getBigInteger(tssByte[0x28], tssByte[0x29], tssByte[0x2a], tssByte[0x2b], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x2c", "ecx", "0x" + CommonLib.getBigInteger(tssByte[0x2c], tssByte[0x2d], tssByte[0x2e], tssByte[0x2f], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x30", "edx", "0x" + CommonLib.getBigInteger(tssByte[0x30], tssByte[0x31], tssByte[0x32], tssByte[0x33], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x34", "ebx", "0x" + CommonLib.getBigInteger(tssByte[0x34], tssByte[0x35], tssByte[0x36], tssByte[0x37], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x38", "esp", "0x" + CommonLib.getBigInteger(tssByte[0x38], tssByte[0x39], tssByte[0x3a], tssByte[0x3b], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x3c", "ebp", "0x" + CommonLib.getBigInteger(tssByte[0x3c], tssByte[0x3d], tssByte[0x3e], tssByte[0x3f], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x40", "esi", "0x" + CommonLib.getBigInteger(tssByte[0x40], tssByte[0x41], tssByte[0x42], tssByte[0x43], 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x44", "edi", "0x" + CommonLib.getBigInteger(tssByte[0x44], tssByte[0x45], tssByte[0x45], tssByte[0x47], 0, 0, 0, 0).toString(16) });
+			tssModel.addRow(new String[]{"0x1c", "cr3", "0x" + cr3.toString(16), "dump"});
+			tssModel.addRow(new String[]{"0x20", "eip", "0x" + CommonLib.getBigInteger(tssByte[0x20], tssByte[0x21], tssByte[0x22], tssByte[0x23], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x24", "eflags", "0x" + CommonLib.getBigInteger(tssByte[0x24], tssByte[0x25], tssByte[0x26], tssByte[0x27], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x28", "eax", "0x" + CommonLib.getBigInteger(tssByte[0x28], tssByte[0x29], tssByte[0x2a], tssByte[0x2b], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x2c", "ecx", "0x" + CommonLib.getBigInteger(tssByte[0x2c], tssByte[0x2d], tssByte[0x2e], tssByte[0x2f], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x30", "edx", "0x" + CommonLib.getBigInteger(tssByte[0x30], tssByte[0x31], tssByte[0x32], tssByte[0x33], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x34", "ebx", "0x" + CommonLib.getBigInteger(tssByte[0x34], tssByte[0x35], tssByte[0x36], tssByte[0x37], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x38", "esp", "0x" + CommonLib.getBigInteger(tssByte[0x38], tssByte[0x39], tssByte[0x3a], tssByte[0x3b], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x3c", "ebp", "0x" + CommonLib.getBigInteger(tssByte[0x3c], tssByte[0x3d], tssByte[0x3e], tssByte[0x3f], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x40", "esi", "0x" + CommonLib.getBigInteger(tssByte[0x40], tssByte[0x41], tssByte[0x42], tssByte[0x43], 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x44", "edi", "0x" + CommonLib.getBigInteger(tssByte[0x44], tssByte[0x45], tssByte[0x45], tssByte[0x47], 0, 0, 0, 0).toString(16)});
 
-			tssModel.addRow(new String[] { "0x48", "es", "0x" + CommonLib.getBigInteger(tssByte[0x48], tssByte[0x49], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x4c", "cs", "0x" + CommonLib.getBigInteger(tssByte[0x4c], tssByte[0x4d], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x50", "ss", "0x" + CommonLib.getBigInteger(tssByte[0x50], tssByte[0x51], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x54", "ds", "0x" + CommonLib.getBigInteger(tssByte[0x54], tssByte[0x55], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x58", "fs", "0x" + CommonLib.getBigInteger(tssByte[0x58], tssByte[0x59], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x5c", "gs", "0x" + CommonLib.getBigInteger(tssByte[0x5c], tssByte[0x5d], 0, 0, 0, 0, 0, 0).toString(16) });
-			tssModel.addRow(new String[] { "0x60", "ldtr", "0x" + CommonLib.getBigInteger(tssByte[0x60], tssByte[0x61], 0, 0, 0, 0, 0, 0).toString(16) });
+			tssModel.addRow(new String[]{"0x48", "es", "0x" + CommonLib.getBigInteger(tssByte[0x48], tssByte[0x49], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x4c", "cs", "0x" + CommonLib.getBigInteger(tssByte[0x4c], tssByte[0x4d], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x50", "ss", "0x" + CommonLib.getBigInteger(tssByte[0x50], tssByte[0x51], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x54", "ds", "0x" + CommonLib.getBigInteger(tssByte[0x54], tssByte[0x55], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x58", "fs", "0x" + CommonLib.getBigInteger(tssByte[0x58], tssByte[0x59], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x5c", "gs", "0x" + CommonLib.getBigInteger(tssByte[0x5c], tssByte[0x5d], 0, 0, 0, 0, 0, 0).toString(16)});
+			tssModel.addRow(new String[]{"0x60", "ldtr", "0x" + CommonLib.getBigInteger(tssByte[0x60], tssByte[0x61], 0, 0, 0, 0, 0, 0).toString(16)});
 			ldtr = CommonLib.getBigInteger(tssByte[0x60], tssByte[0x61], 0, 0, 0, 0, 0, 0);
-			tssModel.addRow(new String[] { "0x64", "T", "0x" + Long.toHexString(CommonLib.getBit(tssByte[0x64], 0)) });
-			tssModel.addRow(new String[] { "0x66", "iobp offset", "0x" + CommonLib.getBigInteger(tssByte[0x66], tssByte[0x67], 0, 0, 0, 0, 0, 0).toString(16) });
+			tssModel.addRow(new String[]{"0x64", "T", "0x" + Long.toHexString(CommonLib.getBit(tssByte[0x64], 0))});
+			tssModel.addRow(new String[]{"0x66", "iobp offset", "0x" + CommonLib.getBigInteger(tssByte[0x66], tssByte[0x67], 0, 0, 0, 0, 0, 0).toString(16)});
 
 			updatePageTable(cr3);
 		} catch (Exception ex) {
@@ -459,7 +458,7 @@ public class TSSPanel extends JPanel {
 
 				ia32_pageDirectories.add(new IA32PageDirectory(base, avl, g, d, a, pcd, pwt, us, wr, p));
 
-				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p });
+				model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p});
 			}
 
 			pageDirectoryTable.setModel(model);
@@ -510,7 +509,7 @@ public class TSSPanel extends JPanel {
 				String wr = String.valueOf((value >> 1) & 1);
 				String p = String.valueOf((value >> 0) & 1);
 
-				model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p });
+				model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, d, a, pcd, pwt, us, wr, p});
 			}
 
 			pageTableTable.setModel(model);
@@ -518,11 +517,13 @@ public class TSSPanel extends JPanel {
 	}
 
 	class ButtonRenderer extends JButton implements TableCellRenderer {
+
 		public ButtonRenderer() {
 			setOpaque(true);
 		}
 
 		public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+			setFont(table.getFont());
 			if (table.getValueAt(row, 3) == null || table.getValueAt(row, 3).equals("")) {
 				return null;
 			}
@@ -540,6 +541,7 @@ public class TSSPanel extends JPanel {
 	}
 
 	class ButtonEditor extends DefaultCellEditor {
+
 		protected JButton button;
 		private boolean isPushed;
 		BigInteger cr3;
@@ -613,7 +615,6 @@ public class TSSPanel extends JPanel {
 			// return;
 			// }
 			// }
-
 			model.searchType.add(1);
 			model.searchSegSelector.add(segSelector);
 			model.searchAddress.add(address);

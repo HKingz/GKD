@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 public class SourceCodeCellRenderer extends JLabel implements TableCellRenderer {
+
 	ImageIcon breakpointHereIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_right_red.png"));
 	ImageIcon breakpointIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpoint.png"));
 	ImageIcon breakpointDisableIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/breakpoint/breakpointDisable.png"));
@@ -19,6 +20,7 @@ public class SourceCodeCellRenderer extends JLabel implements TableCellRenderer 
 	}
 
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		setFont(table.getFont());
 		if (isSelected) {
 			this.setBackground(table.getSelectionBackground());
 		} else {

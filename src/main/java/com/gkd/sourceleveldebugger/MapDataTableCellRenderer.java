@@ -17,7 +17,7 @@ public class MapDataTableCellRenderer extends JLabel implements TableCellRendere
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-		if (value == null) {
+		setFont(table.getFont());if (value == null) {
 			this.setText(null);
 		} else {
 			this.setText(value.toString());

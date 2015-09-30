@@ -13,6 +13,7 @@ import javax.swing.table.TableCellRenderer;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableCellRenderer extends JLabel implements TableCellRenderer {
+
 	ImageIcon fileIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/symbolTree/file.png"));
 	ImageIcon functionIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/symbolTree/function.png"));
 	ImageIcon noTypeIcon = new ImageIcon(getClass().getClassLoader().getResource("com/gkd/images/symbolTree/noType.png"));
@@ -26,6 +27,7 @@ public class SymbolTableCellRenderer extends JLabel implements TableCellRenderer
 
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		setFont(table.getFont());
 		if (value instanceof Elf32_Sym) {
 			Elf32_Sym symbol = (Elf32_Sym) value;
 			int st_type = symbol.st_info & 0xf;
