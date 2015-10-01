@@ -1152,22 +1152,28 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void initFontMenu() {
-		new Thread("initChineseFont thread") {
+		new Thread("initFontMenu thread") {
 			public void run() {
 				Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 				//				String chinesesample = "\u4e00";
-
-				for (int j = 0; j < allfonts.length && j < 40; j++) {
+				HashSet<String> preventDuplicateFontName = new HashSet<String>();
+				for (int j = 0; j < allfonts.length && j < 80; j++) {
 					//					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
 					//						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
-					JMenuItem menuItem = new JMenuItem(allfonts[j].getFontName());
+					String fontName = allfonts[j].getFontName();
+					if (preventDuplicateFontName.contains(fontName)) {
+						continue;
+					}
+					preventDuplicateFontName.add(fontName);
+					JMenuItem menuItem = new JMenuItem(fontName);
+					menuItem.setFont(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 					menuItem.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
 							initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 						}
 					});
-					int x = allfonts[j].getFontName().toLowerCase().charAt(0);
+					int x = fontName.toLowerCase().charAt(0);
 					if (x >= 97 && x <= 106) {
 						fontAJMenu.add(menuItem);
 					} else if (x >= 107 && x <= 116) {
