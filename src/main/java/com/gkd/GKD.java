@@ -1325,11 +1325,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				new Thread("GKD wait thread") {
 					public void run() {
 						VMController.getVM().waitVMStop();
-						logger.debug("waitVMStop finished");
 						CommonLib.enableJComponent(upperRightTabbedPane, true);
-						logger.debug("waitVMStop finished 2");
 						CommonLib.enableJComponent(bottomTabbedPane, true);
-						logger.debug("waitVMStop finished 3");
 						runVMButton.setText(MyLanguage.getString("run"));
 						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 						updateVMStatus(true);
@@ -2491,7 +2488,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void jumpToRowInstructionTable(BigInteger eip) {
-		logger.debug("jumpToRowInstructionTable=" + eip.toString(16));
+//		logger.debug("jumpToRowInstructionTable=" + eip.toString(16));
 		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 		int eIPRow = model.findEIPRowNo(eip);
 		instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow + 10, 1, true));
@@ -3206,7 +3203,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		}
 	}
-	
+
 	private JMenu getSizeMenu() {
 		if (sizeMenu == null) {
 			sizeMenu = new JMenu();
