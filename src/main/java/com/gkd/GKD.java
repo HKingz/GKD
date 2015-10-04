@@ -443,6 +443,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private BigInteger currentMemoryWindowsAddress;
 	public static Logger logger = Logger.getLogger(GKD.class);
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("m:s S");
 
 	public enum OSType {
 
@@ -814,7 +815,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void initGUI() {
 		Date startDate = new Date();
-		logger.info("starting GKD " + new SimpleDateFormat("m:s S").format(startDate));
+		logger.info("starting GKD " + simpleDateFormat.format(startDate));
 		try {
 			language = Utf8ResourceBundle.getBundle("language_" + Setting.getInstance().currentLanguage);
 
@@ -1144,7 +1145,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					return discardEvent;
 				}
 			});
-			logger.info("started GKD " + new SimpleDateFormat("m:s S").format(new Date()));
+			logger.info("started GKD " + simpleDateFormat.format(new Date()));
 			logger.info("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3186,11 +3187,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void initGlobalFontSetting(Font fnt) {
-		logger.info(new Date());
+		logger.info(simpleDateFormat.format(new Date()));
 		setAllComponentsFont(this, fnt);
-		logger.info(new Date());
+		logger.info(simpleDateFormat.format(new Date()));
 		SwingUtilities.updateComponentTreeUI(this);
-		logger.info(new Date());
+		logger.info(simpleDateFormat.format(new Date()));
 	}
 
 	public void setAllComponentsFont(Container parent, Font fnt) {
