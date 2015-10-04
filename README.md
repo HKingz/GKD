@@ -11,7 +11,11 @@ source level debug support
 
 https://github.com/mcheung63/GKD/wiki
 
-## Compile:
+## Download
+
+http://peter.kingofcoders.com/?page_id=254
+
+## Compile
 
 Here are steps to compile GKD. GKD is depends on some my other projects, all are open source and written in Java & maven. So just do “mvn clean install” in every of them.
 
@@ -31,7 +35,7 @@ Finally, git clone GKD source from https://github.com/mcheung63/GKD.git
 5. read gkd_bochs.xml, then you know everything.
 
 
-## Gossip:
+## Gossip
 
 1. "mvn versions:display-dependency-updates" to check outdated dependencies
 2. "mvn graph:reactor" to generate maven dependency graph
