@@ -149,6 +149,7 @@ import com.peterswing.advancedswing.jvmdialog.JVMInfoDialog;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 import info.clearthought.layout.TableLayout;
+import org.apache.log4j.Priority;
 
 @SuppressWarnings("serial")
 public class GKD extends JFrame implements WindowListener, ApplicationListener, JProgressBarDialogEventListener {
@@ -3188,16 +3189,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void initGlobalFontSetting(Font fnt) {
-		//		FontUIResource fontRes = new FontUIResource(fnt);
-		//		for (Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();) {
-		//			Object key = keys.nextElement();
-		//			Object value = UIManager.get(key);
-		//			if (value instanceof FontUIResource) {
-		//				UIManager.put(key, fontRes);
-		//			}
-		//		}
+		logger.info(new Date());
 		setAllComponentsFont(this, fnt);
+		logger.info(new Date());
 		SwingUtilities.updateComponentTreeUI(this);
+		logger.info(new Date());
 	}
 
 	public void setAllComponentsFont(Container parent, Font fnt) {
@@ -3210,22 +3206,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		}
 	}
-
-	//	public void setAllComponentsFont(Container parent, Font fnt) {
-	//		parent.setFont(fnt);
-	//		for (Component child : parent.getComponents()) {
-	//			child.setFont(fnt);
-	//			setAllComponentsFont(child, fnt);
-	//		}
-	//	}
-	//
-	//	public void setAllComponentsFont(Component parent, Font fnt) {
-	//		parent.setFont(fnt);
-	//		for (Component child : parent.get) {
-	//			child.setFont(fnt);
-	//			setAllComponentsFont(child, fnt);
-	//		}
-	//	}
+	
 	private JMenu getSizeMenu() {
 		if (sizeMenu == null) {
 			sizeMenu = new JMenu();
