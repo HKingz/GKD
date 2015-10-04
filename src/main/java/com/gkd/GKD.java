@@ -4025,23 +4025,48 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				progressBarDialog.progressBar.setValue(51);
 				progressBarDialog.progressBar.setString("Init GUI - 3.1");
 
-				mainPanel.add(getMaximizableTabbedPane_BasePanel(), "jMaximizableTabbedPane_BasePanel1");
+				Thread loadThread1 = new Thread() {
+					public void run() {
+						mainPanel.add(getMaximizableTabbedPane_BasePanel(), "jMaximizableTabbedPane_BasePanel1");
+					}
+				};
 
 				progressBarDialog.progressBar.setValue(52);
 				progressBarDialog.progressBar.setString("Init GUI - 3.2");
 
-				mainPanel.add(getJInstrumentPanel(), "instrumentPanel");
-
+				Thread loadThread2 = new Thread() {
+					public void run() {
+						mainPanel.add(getJInstrumentPanel(), "instrumentPanel");
+					}
+				};
 				progressBarDialog.progressBar.setValue(53);
 				progressBarDialog.progressBar.setString("Init GUI - 3.3");
 
-				mainPanel.add(getJRunningLabel(), "Running Label");
-				mainPanel.add(getOsLogPanel(), "osLogPanel");
-				mainPanel.add(getRunningPanel(), "Running Panel");
+				Thread loadThread3 = new Thread() {
+					public void run() {
+						mainPanel.add(getJRunningLabel(), "Running Label");
+						mainPanel.add(getOsLogPanel(), "osLogPanel");
+						mainPanel.add(getRunningPanel(), "Running Panel");
 
-				progressBarDialog.progressBar.setValue(56);
-				progressBarDialog.progressBar.setString("Init GUI - 3.4");
-				mainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
+						progressBarDialog.progressBar.setValue(56);
+						progressBarDialog.progressBar.setString("Init GUI - 3.4");
+						mainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
+					}
+				};
+
+				loadThread1.start();
+				loadThread2.start();
+				loadThread3.start();
+
+				try {
+					loadThread1.join();
+					loadThread2.join();
+					loadThread3.join();
+				} catch (Exception ex) {
+					logger.error("Load thread error : " + ex.getMessage());
+					System.exit(1234);
+				}
+				jMainPanelLayout.show(mainPanel, "jMaximizableTabbedPane_BasePanel1");
 			}
 		}
 		return mainPanel;
