@@ -30,7 +30,7 @@ Finally, git clone GKD source from https://github.com/mcheung63/GKD.git
 
 1. execute the command in installJar.txt
 2. run “mvn clean package”, you will have a GKDxxxxx.jar in your target folder, now you are ready to run it.
-3. download this
+3. download this sample project https://www.dropbox.com/s/xjlcz6n1sv5es89/gkd_example_project.zip?dl=0
 4. cd to the unzipped folder, run “java -jar GKD-20150124.jar -f gkd_bochs.xml”
 5. read gkd_bochs.xml, then you know everything.
 
