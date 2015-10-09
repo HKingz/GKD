@@ -14,7 +14,8 @@ import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.elf.Elf32_Sym;
 
 public class SymbolTableModel extends AbstractTableModel {
-	private String[] columnNames = { MyLanguage.getString("Name"), "Value", "File" };
+
+	private String[] columnNames = {MyLanguage.getString("Name"), "Value", "File"};
 	public Vector<Elf32_Sym> displaySymbols;
 	Vector<Elf32_Sym> symbols;
 	private String searchPattern;
@@ -149,7 +150,6 @@ public class SymbolTableModel extends AbstractTableModel {
 	//	int hashCode = -99999;
 	//	Hashtable<Long, Elf32_Sym> ht;
 	//	Vector<Long> nullSymbols;
-
 	public Elf32_Sym searchSymbol(long address) {
 		//		if (hashCode != symbols.hashCode()) {
 		//			ht = new Hashtable<Long, Elf32_Sym>();
@@ -161,10 +161,12 @@ public class SymbolTableModel extends AbstractTableModel {
 		//		} else if (ht.containsKey(address)) {
 		//			return ht.get(address);
 		//		}
-		for (Elf32_Sym symbol : symbols) {
-			if (symbol.st_value == address) {
-				//				ht.put(address, symbol);
-				return symbol;
+		if (symbols != null) {
+			for (Elf32_Sym symbol : symbols) {
+				if (symbol.st_value == address) {
+					//				ht.put(address, symbol);
+					return symbol;
+				}
 			}
 		}
 		//		nullSymbols.add(address);
