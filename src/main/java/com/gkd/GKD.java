@@ -4828,11 +4828,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					model.ptNo.add(ptNo);
 					BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
 					int pteBytes[];
-					pteBytes = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+					BigInteger pteAddress = pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4)));
+					pteBytes = VMController.getVM().physicalMemory(pteAddress, 4);
 
 					BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 					BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
-					model.pte.add(pte);
+					model.pte.add(pteAddress);
 
 					BigInteger physicalAddress = pagePhysicalAddress.add(CommonLib.getBigInteger(linearAddress, 11, 0));
 					model.physicalAddress.add(physicalAddress);

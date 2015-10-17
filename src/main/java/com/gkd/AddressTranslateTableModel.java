@@ -7,9 +7,10 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 
 public class AddressTranslateTableModel extends DefaultTableModel {
-	String columnNames[] = new String[] { MyLanguage.getString("Address_type"), MyLanguage.getString("Search_address"), MyLanguage.getString("Virtual_address"),
-			MyLanguage.getString("Segment_no"), MyLanguage.getString("Base_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("PD_No"),
-			MyLanguage.getString("PDE"), MyLanguage.getString("PT_No"), MyLanguage.getString("PTE"), MyLanguage.getString("Physical_address"), MyLanguage.getString("Bytes") };
+
+	String columnNames[] = new String[]{MyLanguage.getString("Address_type"), MyLanguage.getString("Search_address"), MyLanguage.getString("Virtual_address"),
+		MyLanguage.getString("Segment_no"), MyLanguage.getString("Base_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("PD_No"),
+		MyLanguage.getString("PDE"), MyLanguage.getString("PT_No"), MyLanguage.getString("PTE"), MyLanguage.getString("Physical_address"), MyLanguage.getString("Bytes")};
 
 	public Vector<Integer> searchType = new Vector<Integer>();
 	public Vector<BigInteger> searchSegSelector = new Vector<BigInteger>();
@@ -26,7 +27,7 @@ public class AddressTranslateTableModel extends DefaultTableModel {
 	public Vector<BigInteger> physicalAddress = new Vector<BigInteger>();
 	public Vector<String> bytes = new Vector<String>();
 
-	public Vector data[] = new Vector[] { virtualAddress, segNo, baseAddress, linearAddress, pdNo, pde, ptNo, pte, physicalAddress, bytes };
+	public Vector data[] = new Vector[]{virtualAddress, segNo, baseAddress, linearAddress, pdNo, pde, ptNo, pte, physicalAddress, bytes};
 
 	public String getColumnName(int column) {
 		return columnNames[column];
@@ -62,7 +63,7 @@ public class AddressTranslateTableModel extends DefaultTableModel {
 				} else {
 					return "0x" + searchAddress.get(row).toString(16);
 				}
-			} else if (column == 5 || column == 10) {
+			} else if (column == 5 || column == 7 || column == 9 || column == 10) {
 				return "0x" + ((BigInteger) data[column - 2].get(row)).toString(16);
 			} else if (data[column - 2].get(row).getClass() == Long.class) {
 				return "0x" + Long.toHexString((Long) data[column - 2].get(row));
