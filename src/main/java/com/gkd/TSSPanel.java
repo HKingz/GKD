@@ -222,16 +222,16 @@ public class TSSPanel extends JPanel {
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
 			jPanel20.setLayout(jPanel20Layout);
 
-			searchVirtualAddressRadioButton = new JRadioButton();
-			searchVirtualAddressRadioButton.setText(MyLanguage.getString("Virtual_address"));
-			jPanel20.add(searchVirtualAddressRadioButton, "1, 0, 2, 0");
-			searchVirtualAddressRadioButton.setSelected(true);
-			getButtonGroup1().add(searchVirtualAddressRadioButton);
-
 			searchLinearAddressRadioButton = new JRadioButton();
 			searchLinearAddressRadioButton.setText(MyLanguage.getString("Linear_address"));
 			jPanel20.add(searchLinearAddressRadioButton, "1, 1, 2, 1");
+			searchLinearAddressRadioButton.setSelected(true);
 			getButtonGroup1().add(searchLinearAddressRadioButton);
+
+			searchVirtualAddressRadioButton = new JRadioButton();
+			searchVirtualAddressRadioButton.setText(MyLanguage.getString("Virtual_address"));
+			jPanel20.add(searchVirtualAddressRadioButton, "1, 0, 2, 0");
+			getButtonGroup1().add(searchVirtualAddressRadioButton);
 
 			jPanel21 = new JPanel();
 			jPanel20.add(jPanel21, "1, 4");
