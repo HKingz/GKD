@@ -67,9 +67,8 @@ public class TSSPanel extends JPanel {
 	private JTextField addressTextField;
 	private JButton refreshAddressTranslateButton;
 	private JPanel jPanel21;
-	private JRadioButton searchAddressRadioButton3;
-	private JRadioButton searchAddressRadioButton2;
-	private JRadioButton searchAddressRadioButton1;
+	private JRadioButton searchLinearAddressRadioButton;
+	private JRadioButton searchVirtualAddressRadioButton;
 	private JPanel jPanel20;
 	private JPanel addressTranslatePanel;
 	private JScrollPane jScrollPane5;
@@ -223,20 +222,16 @@ public class TSSPanel extends JPanel {
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
 			jPanel20.setLayout(jPanel20Layout);
 
-			searchAddressRadioButton1 = new JRadioButton();
-			searchAddressRadioButton1.setText(MyLanguage.getString("Virtual_address"));
-			jPanel20.add(searchAddressRadioButton1, "1, 0, 2, 0");
-			searchAddressRadioButton1.setSelected(true);
-			getButtonGroup1().add(searchAddressRadioButton1);
+			searchVirtualAddressRadioButton = new JRadioButton();
+			searchVirtualAddressRadioButton.setText(MyLanguage.getString("Virtual_address"));
+			jPanel20.add(searchVirtualAddressRadioButton, "1, 0, 2, 0");
+			searchVirtualAddressRadioButton.setSelected(true);
+			getButtonGroup1().add(searchVirtualAddressRadioButton);
 
-			searchAddressRadioButton2 = new JRadioButton();
-			searchAddressRadioButton2.setText(MyLanguage.getString("Linear_address"));
-			jPanel20.add(searchAddressRadioButton2, "1, 1, 2, 1");
-			getButtonGroup1().add(searchAddressRadioButton2);
-
-			searchAddressRadioButton3 = new JRadioButton();
-			jPanel20.add(searchAddressRadioButton3, "1, 2, 2, 2");
-			searchAddressRadioButton3.setVisible(false);
+			searchLinearAddressRadioButton = new JRadioButton();
+			searchLinearAddressRadioButton.setText(MyLanguage.getString("Linear_address"));
+			jPanel20.add(searchLinearAddressRadioButton, "1, 1, 2, 1");
+			getButtonGroup1().add(searchLinearAddressRadioButton);
 
 			jPanel21 = new JPanel();
 			jPanel20.add(jPanel21, "1, 4");
@@ -600,7 +595,7 @@ public class TSSPanel extends JPanel {
 	private void refreshAddressTranslateButtonActionPerformed(ActionEvent evt) {
 		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable2.getModel();
 
-		if (searchAddressRadioButton1.isSelected()) {
+		if (searchVirtualAddressRadioButton.isSelected()) {
 			if (!this.addressTextField.getText().contains(":") || this.addressTextField.getText().replaceAll("[^:]", "").length() != 1) {
 				JOptionPane.showMessageDialog(this, "Error, please input <segment selector>:<offset>\n\ne.g. : 0x10:0x12345678", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -650,7 +645,7 @@ public class TSSPanel extends JPanel {
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
 
 			model.fireTableDataChanged();
-		} else if (searchAddressRadioButton2.isSelected()) {
+		} else if (searchLinearAddressRadioButton.isSelected()) {
 			BigInteger address = CommonLib.string2BigInteger(this.addressTextField.getText());
 
 			model.searchType.add(2);
@@ -679,26 +674,6 @@ public class TSSPanel extends JPanel {
 			model.physicalAddress.add(physicalAddress);
 			int bytesAtPhysicalAddress[] = VMController.getVM().physicalMemory(physicalAddress, 8);
 			model.bytes.add(GKDCommonLib.convertToString(bytesAtPhysicalAddress));
-
-			model.fireTableDataChanged();
-		} else if (searchAddressRadioButton3.isSelected()) {
-			for (int x = 0; x < model.getRowCount(); x++) {
-				if (model.searchType.get(x).equals(3) && model.searchAddress.get(x).equals(CommonLib.string2BigInteger(this.addressTextField.getText()))) {
-					return;
-				}
-			}
-			BigInteger addr = CommonLib.string2BigInteger(this.addressTextField.getText());
-			model.searchType.add(3);
-			model.searchSegSelector.add(BigInteger.valueOf(0));
-			model.searchAddress.add(addr);
-
-			model.virtualAddress.add(BigInteger.valueOf(0));
-			model.segNo.add(BigInteger.valueOf(0));
-			model.linearAddress.add(BigInteger.valueOf(0));
-			model.pdNo.add(BigInteger.valueOf(0));
-			model.ptNo.add(BigInteger.valueOf(0));
-			model.physicalAddress.add(BigInteger.valueOf(0));
-			model.bytes.add("");
 
 			model.fireTableDataChanged();
 		}
