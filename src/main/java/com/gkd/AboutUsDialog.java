@@ -23,12 +23,12 @@ public class AboutUsDialog extends javax.swing.JDialog {
 			{
 				jScrollPane1 = new JScrollPane();
 				getContentPane().add(jScrollPane1);
-				jScrollPane1.setBounds(6, 314, 372, 95);
+				jScrollPane1.setBounds(6, 314, 400, 130);
 				{
 					textArea1 = new JTextArea();
 					jScrollPane1.setViewportView(textArea1);
 					String str = "";
-					str += "Website : http://code.google.com/p/peter-bochs\n";
+					str += "Website : https://github.com/mcheung63/GKD\n";
 					str += "Blog : http://peter.kingofcoders.com\n";
 					str += "Contact : Peter (mcheung63@hotmail.com)\n";
 					str += "Version: " + PropertyUtil.getProperty("version");
@@ -44,7 +44,7 @@ public class AboutUsDialog extends javax.swing.JDialog {
 			label1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/gdk-logo.png")));
 			label1.setBounds(0, 12, 384, 356);
 
-			this.setSize(390, 447);
+			this.setSize(420, 470);
 			CommonLib.centerDialog(this);
 		} catch (Exception e) {
 			e.printStackTrace();
