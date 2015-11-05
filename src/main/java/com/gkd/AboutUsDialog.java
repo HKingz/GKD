@@ -7,6 +7,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import com.peterswing.CommonLib;
+import javax.swing.SwingConstants;
 
 public class AboutUsDialog extends javax.swing.JDialog {
 	private JTextArea textArea1;
@@ -39,10 +40,11 @@ public class AboutUsDialog extends javax.swing.JDialog {
 				}
 			}
 			label1 = new JLabel();
+			label1.setHorizontalAlignment(SwingConstants.CENTER);
 			getContentPane().add(label1);
 			textArea1.setBounds(12, 263, 360, 95);
 			label1.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/gdk-logo.png")));
-			label1.setBounds(0, 12, 384, 356);
+			label1.setBounds(6, 6, 400, 302);
 
 			this.setSize(420, 470);
 			CommonLib.centerDialog(this);
