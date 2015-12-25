@@ -1201,14 +1201,14 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 			addZoneButton.setText("Add");
 			addZoneButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
-					jAddZoneButtonActionPerformed(evt);
+					addZoneButtonActionPerformed(evt);
 				}
 			});
 		}
 		return addZoneButton;
 	}
 
-	private void jAddZoneButtonActionPerformed(ActionEvent evt) {
+	private void addZoneButtonActionPerformed(ActionEvent evt) {
 		try {
 			long from = CommonLib.convertFilesize(profilingFromComboBox.getSelectedItem().toString());
 			long to = CommonLib.convertFilesize(profilingToComboBox.getSelectedItem().toString());
@@ -1588,25 +1588,21 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 						where1 += " or toAddress_DW_AT_name like '%" + filterRawTableTextField.getText() + "%')";
 					}
 					if (callOnlyCheckBox.isSelected()) {
-						if (where1.equals("")) {
-							where1 += "what!=10 and what!=11 and what>=10 and what<=20";
-						} else {
-							where1 += "and (what!=10 and what!=11 and what>=10 and what<=20)";
-						}
+						where1 += " and (what!=10 and what!=11 and what>=10 and what<=20)";
 					}
 					if (withSymbolCheckBox.isSelected()) {
 						query = session.createSQLQuery(
-								"SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
+								"SELECT a.*        from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='') "
 								+ where1)
 								.addEntity(JmpData.class);
 						countQuery = session.createSQLQuery(
-								"SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='')"
+								"SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress and (toAddressSymbol!=null or toAddressSymbol!='') "
 								+ where1);
 					} else {
-						query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress" + where1)
+						query = session.createSQLQuery("SELECT a.* from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress " + where1)
 								.addEntity(JmpData.class);
 						countQuery = session
-								.createSQLQuery("SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress" + where1);
+								.createSQLQuery("SELECT count(a.*) from JMPDATA as a where (select TOADDRESS from JMPDATA where JMPDATAID=a.JMPDATAID-1)!=a.toAddress " + where1);
 					}
 					query.setMaxResults(pageSize);
 					query.setFirstResult((jmpPager.getPage() - 1) * pageSize);
