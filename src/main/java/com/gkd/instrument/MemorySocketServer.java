@@ -21,7 +21,7 @@ public class MemorySocketServer implements Runnable {
 	JTextArea jTextArea;
 	boolean shouldStop;
 	ServerSocket serverSocket;
-	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 4;
+	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 20;
 	public static Logger logger = Logger.getLogger(MemorySocketServer.class);
 
 	public void startServer(int port, JTextArea jTextArea) {
@@ -65,11 +65,22 @@ public class MemorySocketServer implements Runnable {
 					// hit count
 					byte bytes[] = new byte[MAX_MEMORY_PROFILING_BUFFER];
 					in.readFully(bytes, 0, bytes.length);
-
-					for (int z = 0; z <= MAX_MEMORY_PROFILING_BUFFER - 4; z += 4) {
+					for (int z = 0; z <= MAX_MEMORY_PROFILING_BUFFER - 20;) {
 						try {
-							long address = CommonLib.getInt(bytes, z);
-							Data.increaseMemoryReadCount(address);
+							long linearAddress = CommonLib.getInt(bytes, z);
+							z += 4;
+							long physicalAddress = CommonLib.getInt(bytes, z);
+							z += 4;
+							long len = CommonLib.getInt(bytes, z);
+							z += 4;
+							long memType = CommonLib.getInt(bytes, z);
+							z += 4;
+							long rw = CommonLib.getInt(bytes, z);
+							z += 4;
+
+							//System.out.println(linearAddress + "," + physicalAddress + "," + len + "," + memType + "," + rw);
+
+							Data.increaseMemoryReadCount(physicalAddress);
 						} catch (Exception ex) {
 							if (Global.debug) {
 								ex.printStackTrace();
