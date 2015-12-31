@@ -846,7 +846,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 
 	private PeterDwarfPanel getPeterDwarfPanel() {
 		if (peterDwarfPanel == null) {
-			peterDwarfPanel = new PeterDwarfPanel();
+			peterDwarfPanel = new PeterDwarfPanel(false, false);
 		}
 		return peterDwarfPanel;
 	}
