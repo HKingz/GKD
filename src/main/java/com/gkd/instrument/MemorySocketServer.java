@@ -111,8 +111,7 @@ public class MemorySocketServer implements Runnable {
 								treeset.add(zoneHitAddress);
 							}
 
-							// logger.debug(Long.toHexString(zoneFrom) +
-							// "-" + Long.toHexString(zoneTo));
+							// logger.debug(Long.toHexString(zoneFrom) + "-" + Long.toHexString(zoneTo));
 							for (int y = 0; y < Data.memoryProfilingZone.getRowCount(); y++) {
 								long from = CommonLib.convertFilesize(Data.memoryProfilingZone.getValueAt(y, 0).toString());
 								long to = CommonLib.convertFilesize(Data.memoryProfilingZone.getValueAt(y, 1).toString());
@@ -121,6 +120,16 @@ public class MemorySocketServer implements Runnable {
 									Data.memoryProfilingZone.setValueAt(treeset, y, 4);
 									break;
 								}
+							}
+
+							long noOfZonesHitDetails = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+							for (int y = 0; y < noOfZonesHitDetails; y++) {
+								long linearAddress = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+								long physicalAddress = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+								long len = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+								long memType = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+								long rw = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+								//System.out.println(">>" + Long.toHexString(linearAddress) + "," + Long.toHexString(physicalAddress) + "," + len + "," + memType + "," + rw);
 							}
 						}
 					} catch (Exception ex) {

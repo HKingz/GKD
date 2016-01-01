@@ -1,6 +1,6 @@
 package com.gkd.instrument;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Data {
 	final static int minimumBlockSize = 4096;
@@ -60,14 +60,15 @@ public class Data {
 		return chartData;
 	}
 
-	public static HashMap<String, Integer> getHotestAddressCount(Long address, long blockSize) {
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
+	public static LinkedHashMap<String, Integer> getHotestAddressCount(Long address, long blockSize) {
+		LinkedHashMap<String, Integer> map = new LinkedHashMap<String, Integer>();
 		long endBlockNumber = address / blockSize;
 		long endAddress = (endBlockNumber + (blockSize / minimumBlockSize)) * blockSize;
 		for (long blockNo = address / minimumBlockSize; blockNo < endAddress / minimumBlockSize; blockNo++) {
 			if (blockNo * minimumBlockSize >= address && blockNo * minimumBlockSize < address + blockSize) {
 				if (memory[(int) blockNo] > 0) {
-					map.put("0x" + Long.toHexString(blockNo * minimumBlockSize) + "-0x" + Long.toHexString((blockNo + 1) * minimumBlockSize - 1), memory[(int) blockNo]);
+					//System.out.println("0x" + Long.toHexString(blockNo * minimumBlockSize) + " - 0x" + Long.toHexString((blockNo + 1) * minimumBlockSize - 1));
+					map.put("0x" + Long.toHexString(blockNo * minimumBlockSize) + " -0x " + Long.toHexString((blockNo + 1) * minimumBlockSize - 1), memory[(int) blockNo]);
 				}
 			}
 		}

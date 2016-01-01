@@ -1860,7 +1860,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					if (Global.debug) {
 						logger.debug("updateHistoryTable");
 					}
-
 					String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 					updateHistoryTable(result);
 				}
@@ -1875,6 +1874,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					sourceLevelDebugger.loadELF(Global.elfPaths);
 					systemMapLoadedOnce = true; // since we only have to load once
 				}
+				d.progressBar.setString("jump to insturction table");
 				jumpToRowInstructionTable(getRealEIP());
 				d.progressBar.setString("updateVMStatus end");
 				d.setVisible(false);
