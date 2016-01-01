@@ -33,197 +33,198 @@ void bx_instr_initialize(unsigned cpu);
 // maximum size of an instruction
 #define MAX_OPCODE_LENGTH 16
 
-// maximum physical addresses an instruction can generate
-#define MAX_DATA_ACCESSES 1024
-
 #ifndef CLASS_bxInstrumentation
-#define CLASS_bxInstrumentation
+    #define CLASS_bxInstrumentation
 
-class bxInstrumentation {
-public:
+    class bxInstrumentation {
+    public:
 
-  bx_bool ready;          // is current instruction ready to be printed
-  bx_bool active;
+      bx_bool ready;          // is current instruction ready to be printed
+      bx_bool active;
 
-  unsigned cpu_id;
+      unsigned cpu_id;
 
-  /* decoding */
-  unsigned opcode_length;
-  Bit8u    opcode[MAX_OPCODE_LENGTH];
-  bx_bool  is32, is64;
+      /* decoding */
+      unsigned opcode_length;
+      Bit8u    opcode[MAX_OPCODE_LENGTH];
+      bx_bool  is32, is64;
 
-  /* memory accesses */
-  unsigned num_data_accesses;
-  struct {
-    bx_address laddr;     // linear address
-    bx_phy_address paddr; // physical address
-    unsigned rw;          // BX_READ, BX_WRITE or BX_RW
-    unsigned size;        // 1 .. 64
-    unsigned memtype;
-  } data_access[MAX_DATA_ACCESSES];
 
-  /* branch resolution and target */
-  bx_bool is_branch;
-  bx_bool is_taken;
-  bx_address target_linear;
+      // maximum physical addresses an instruction can generate
+      //#define MAX_DATA_ACCESSES 1024
 
-public:
-  bxInstrumentation(): ready(0), active(0) {}
+      /* memory accesses */
+      /*
+      unsigned int num_data_accesses;
+      struct {
+        bx_address laddr;     // linear address
+        bx_phy_address paddr; // physical address
+        unsigned rw;          // BX_READ, BX_WRITE or BX_RW
+        unsigned size;        // 1 .. 64
+        unsigned memtype;
+      } data_access[MAX_DATA_ACCESSES];
+      */
 
-  void set_cpu_id(unsigned cpu) { cpu_id = cpu; }
+      /* branch resolution and target */
+      bx_bool is_branch;
+      bx_bool is_taken;
+      bx_address target_linear;
 
-  void activate() { active = 1; }
-  void deactivate() { active = 0; }
-  void toggle_active() { active = !active; }
-  bx_bool is_active() const { return active; }
+    public:
+      bxInstrumentation(): ready(0), active(0) {}
 
-  void bx_instr_reset(unsigned type);
+      void set_cpu_id(unsigned cpu) { cpu_id = cpu; }
 
-  void bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip);
-  void bx_instr_cnear_branch_not_taken(bx_address branch_eip);
-  void bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip);
-  void bx_instr_far_branch(unsigned what, Bit16u prev_cs, bx_address prev_eip, Bit16u new_cs, bx_address new_eip);
+      void activate() { active = 1; }
+      void deactivate() { active = 0; }
+      void toggle_active() { active = !active; }
+      bx_bool is_active() const { return active; }
 
-  void bx_instr_before_execution(bxInstruction_c *i);
-  void bx_instr_after_execution(bxInstruction_c *i);
+      void bx_instr_reset(unsigned type);
 
-  void bx_instr_interrupt(unsigned vector);
-  void bx_instr_exception(unsigned vector, unsigned error_code);
-  void bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip);
+      void bx_instr_cnear_branch_taken(bx_address branch_eip, bx_address new_eip);
+      void bx_instr_cnear_branch_not_taken(bx_address branch_eip);
+      void bx_instr_ucnear_branch(unsigned what, bx_address branch_eip, bx_address new_eip);
+      void bx_instr_far_branch(unsigned what, Bit16u prev_cs, bx_address prev_eip, Bit16u new_cs, bx_address new_eip);
 
-  void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned memtype, unsigned rw);
+      void bx_instr_before_execution(bxInstruction_c *i);
+      void bx_instr_after_execution(bxInstruction_c *i);
 
-  void memorySampling(bx_phy_address);
-  void jmpSampling(unsigned, bx_address, bx_address);
-  void bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset);
-private:
-  void branch_taken(unsigned what, bx_address branch_eip, bx_address new_eip);
+      void bx_instr_interrupt(unsigned vector);
+      void bx_instr_exception(unsigned vector, unsigned error_code);
+      void bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_address eip);
 
-  void bx_print_instruction(void);
+      void bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned memtype, unsigned rw);
 
-};
+      void memorySampling(bx_address lin, bx_phy_address paddr, unsigned len, unsigned memtype, unsigned rw);
+      void jmpSampling(unsigned, bx_address, bx_address);
+      void bx_instr_prefetch_hint(unsigned cpu, unsigned what, unsigned seg, bx_address offset);
+    private:
+      void branch_taken(unsigned what, bx_address branch_eip, bx_address new_eip);
 
-void bx_instr_init(unsigned cpu);
+      void bx_print_instruction(void);
 
-extern bxInstrumentation *icpu;
+    };
 
-/* initialization/deinitialization of instrumentalization*/
-#define BX_INSTR_INIT_ENV() bx_instr_init_env()
-#define BX_INSTR_EXIT_ENV() bx_instr_exit_env()
+    void bx_instr_init(unsigned cpu);
 
-/* simulation init, shutdown, reset */
-#define BX_INSTR_INITIALIZE(cpu_id)	 bx_instr_initialize(cpu_id)
-#define BX_INSTR_EXIT(cpu_id)
-#define BX_INSTR_RESET(cpu_id, type)     icpu[cpu_id].bx_instr_reset(type)
-#define BX_INSTR_HLT(cpu_id)
-#define BX_INSTR_MWAIT(cpu_id, addr, len, flags)
+    extern bxInstrumentation *icpu;
 
-/* called from command line debugger */
-#define BX_INSTR_DEBUG_PROMPT()
-#define BX_INSTR_DEBUG_CMD(cmd)
+    /* initialization/deinitialization of instrumentalization*/
+    #define BX_INSTR_INIT_ENV() bx_instr_init_env()
+    #define BX_INSTR_EXIT_ENV() bx_instr_exit_env()
 
-/* branch resolution */
-#define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, branch_eip, new_eip) icpu[cpu_id].bx_instr_cnear_branch_taken(branch_eip, new_eip)
-#define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id, branch_eip) icpu[cpu_id].bx_instr_cnear_branch_not_taken(branch_eip)
-#define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, branch_eip, new_eip) icpu[cpu_id].bx_instr_ucnear_branch(what, branch_eip, new_eip)
-#define BX_INSTR_FAR_BRANCH(cpu_id, what, prev_cs, prev_eip, new_cs, new_eip) icpu[cpu_id].bx_instr_far_branch(what, prev_cs, prev_eip, new_cs, new_eip)
+    /* simulation init, shutdown, reset */
+    #define BX_INSTR_INITIALIZE(cpu_id)	 bx_instr_initialize(cpu_id)
+    #define BX_INSTR_EXIT(cpu_id)
+    #define BX_INSTR_RESET(cpu_id, type)     icpu[cpu_id].bx_instr_reset(type)
+    #define BX_INSTR_HLT(cpu_id)
+    #define BX_INSTR_MWAIT(cpu_id, addr, len, flags)
 
-/* decoding completed */
-#define BX_INSTR_OPCODE(cpu_id, i, opcode, len, is32, is64)
+    /* called from command line debugger */
+    #define BX_INSTR_DEBUG_PROMPT()
+    #define BX_INSTR_DEBUG_CMD(cmd)
 
-/* exceptional case and interrupt */
-#define BX_INSTR_EXCEPTION(cpu_id, vector, error_code) \
-                       icpu[cpu_id].bx_instr_exception(vector, error_code)
+    /* branch resolution */
+    #define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, branch_eip, new_eip) icpu[cpu_id].bx_instr_cnear_branch_taken(branch_eip, new_eip)
+    #define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id, branch_eip) icpu[cpu_id].bx_instr_cnear_branch_not_taken(branch_eip)
+    #define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, branch_eip, new_eip) icpu[cpu_id].bx_instr_ucnear_branch(what, branch_eip, new_eip)
+    #define BX_INSTR_FAR_BRANCH(cpu_id, what, prev_cs, prev_eip, new_cs, new_eip) icpu[cpu_id].bx_instr_far_branch(what, prev_cs, prev_eip, new_cs, new_eip)
 
-#define BX_INSTR_INTERRUPT(cpu_id, vector) icpu[cpu_id].bx_instr_interrupt(vector)
-#define BX_INSTR_HWINTERRUPT(cpu_id, vector, cs, eip) icpu[cpu_id].bx_instr_hwinterrupt(vector, cs, eip)
+    /* decoding completed */
+    #define BX_INSTR_OPCODE(cpu_id, i, opcode, len, is32, is64)
 
-/* TLB/CACHE control instruction executed */
-#define BX_INSTR_CLFLUSH(cpu_id, laddr, paddr)
-#define BX_INSTR_CACHE_CNTRL(cpu_id, what)
-#define BX_INSTR_TLB_CNTRL(cpu_id, what, new_cr3)
-#define BX_INSTR_PREFETCH_HINT(cpu_id, what, seg, offset) icpu[cpu_id].bx_instr_prefetch_hint(cpu_id, what, seg, offset)
+    /* exceptional case and interrupt */
+    #define BX_INSTR_EXCEPTION(cpu_id, vector, error_code) \
+                           icpu[cpu_id].bx_instr_exception(vector, error_code)
 
-/* execution */
-#define BX_INSTR_BEFORE_EXECUTION(cpu_id, i) icpu[cpu_id].bx_instr_before_execution(i)
-#define BX_INSTR_AFTER_EXECUTION(cpu_id, i) icpu[cpu_id].bx_instr_after_execution(i)
-#define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
+    #define BX_INSTR_INTERRUPT(cpu_id, vector) icpu[cpu_id].bx_instr_interrupt(vector)
+    #define BX_INSTR_HWINTERRUPT(cpu_id, vector, cs, eip) icpu[cpu_id].bx_instr_hwinterrupt(vector, cs, eip)
 
-/* memory access */
-#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, memtype, rw) \
-                    icpu[cpu_id].bx_instr_lin_access(lin, phy, len, memtype, rw)
+    /* TLB/CACHE control instruction executed */
+    #define BX_INSTR_CLFLUSH(cpu_id, laddr, paddr)
+    #define BX_INSTR_CACHE_CNTRL(cpu_id, what)
+    #define BX_INSTR_TLB_CNTRL(cpu_id, what, new_cr3)
+    #define BX_INSTR_PREFETCH_HINT(cpu_id, what, seg, offset) icpu[cpu_id].bx_instr_prefetch_hint(cpu_id, what, seg, offset)
 
-#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, memtype, rw)
+    /* execution */
+    #define BX_INSTR_BEFORE_EXECUTION(cpu_id, i) icpu[cpu_id].bx_instr_before_execution(i)
+    #define BX_INSTR_AFTER_EXECUTION(cpu_id, i) icpu[cpu_id].bx_instr_after_execution(i)
+    #define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
 
-/* feedback from device units */
-#define BX_INSTR_INP(addr, len)
-#define BX_INSTR_INP2(addr, len, val)
-#define BX_INSTR_OUTP(addr, len, val)
+    /* memory access */
+    #define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, memtype, rw) \
+                        icpu[cpu_id].bx_instr_lin_access(lin, phy, len, memtype, rw)
 
-/* wrmsr callback */
-#define BX_INSTR_WRMSR(cpu_id, addr, value)
+    #define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, memtype, rw)
 
-/* vmexit callback */
-#define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
+    /* feedback from device units */
+    #define BX_INSTR_INP(addr, len)
+    #define BX_INSTR_INP2(addr, len, val)
+    #define BX_INSTR_OUTP(addr, len, val)
 
+    /* wrmsr callback */
+    #define BX_INSTR_WRMSR(cpu_id, addr, value)
+
+    /* vmexit callback */
+    #define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
 #else // BX_INSTRUMENTATION
-
-/* initialization/deinitialization of instrumentalization */
-#define BX_INSTR_INIT_ENV()
-#define BX_INSTR_EXIT_ENV()
-
-/* simulation init, shutdown, reset */
-#define BX_INSTR_INITIALIZE(cpu_id)
-#define BX_INSTR_EXIT(cpu_id)
-#define BX_INSTR_RESET(cpu_id, type)
-#define BX_INSTR_HLT(cpu_id)
-#define BX_INSTR_MWAIT(cpu_id, addr, len, flags)
-
-/* called from command line debugger */
-#define BX_INSTR_DEBUG_PROMPT()
-#define BX_INSTR_DEBUG_CMD(cmd)
-
-/* branch resolution */
-#define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, branch_eip, new_eip)
-#define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id, branch_eip)
-#define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, branch_eip, new_eip)
-#define BX_INSTR_FAR_BRANCH(cpu_id, what, prev_cs, prev_eip, new_cs, new_eip)
-
-/* decoding completed */
-#define BX_INSTR_OPCODE(cpu_id, i, opcode, len, is32, is64)
-
-/* exceptional case and interrupt */
-#define BX_INSTR_EXCEPTION(cpu_id, vector, error_code)
-#define BX_INSTR_INTERRUPT(cpu_id, vector)
-#define BX_INSTR_HWINTERRUPT(cpu_id, vector, cs, eip)
-
-/* TLB/CACHE control instruction executed */
-#define BX_INSTR_CLFLUSH(cpu_id, laddr, paddr)
-#define BX_INSTR_CACHE_CNTRL(cpu_id, what)
-#define BX_INSTR_TLB_CNTRL(cpu_id, what, new_cr3)
-#define BX_INSTR_PREFETCH_HINT(cpu_id, what, seg, offset)
-
-/* execution */
-#define BX_INSTR_BEFORE_EXECUTION(cpu_id, i)
-#define BX_INSTR_AFTER_EXECUTION(cpu_id, i)
-#define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
-
-/* linear memory access */
-#define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, memtype, rw)
-
-/* physical memory access */
-#define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, memtype, rw)
-
-/* feedback from device units */
-#define BX_INSTR_INP(addr, len)
-#define BX_INSTR_INP2(addr, len, val)
-#define BX_INSTR_OUTP(addr, len, val)
-
-/* wrmsr callback */
-#define BX_INSTR_WRMSR(cpu_id, addr, value)
-
-/* vmexit callback */
-#define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
+    /* initialization/deinitialization of instrumentalization */
+    // #define BX_INSTR_INIT_ENV()
+    // #define BX_INSTR_EXIT_ENV()
+    //
+    // /* simulation init, shutdown, reset */
+    // #define BX_INSTR_INITIALIZE(cpu_id)
+    // #define BX_INSTR_EXIT(cpu_id)
+    // #define BX_INSTR_RESET(cpu_id, type)
+    // #define BX_INSTR_HLT(cpu_id)
+    // #define BX_INSTR_MWAIT(cpu_id, addr, len, flags)
+    //
+    // /* called from command line debugger */
+    // #define BX_INSTR_DEBUG_PROMPT()
+    // #define BX_INSTR_DEBUG_CMD(cmd)
+    //
+    // /* branch resolution */
+    // #define BX_INSTR_CNEAR_BRANCH_TAKEN(cpu_id, branch_eip, new_eip)
+    // #define BX_INSTR_CNEAR_BRANCH_NOT_TAKEN(cpu_id, branch_eip)
+    // #define BX_INSTR_UCNEAR_BRANCH(cpu_id, what, branch_eip, new_eip)
+    // #define BX_INSTR_FAR_BRANCH(cpu_id, what, prev_cs, prev_eip, new_cs, new_eip)
+    //
+    // /* decoding completed */
+    // #define BX_INSTR_OPCODE(cpu_id, i, opcode, len, is32, is64)
+    //
+    // /* exceptional case and interrupt */
+    // #define BX_INSTR_EXCEPTION(cpu_id, vector, error_code)
+    // #define BX_INSTR_INTERRUPT(cpu_id, vector)
+    // #define BX_INSTR_HWINTERRUPT(cpu_id, vector, cs, eip)
+    //
+    // /* TLB/CACHE control instruction executed */
+    // #define BX_INSTR_CLFLUSH(cpu_id, laddr, paddr)
+    // #define BX_INSTR_CACHE_CNTRL(cpu_id, what)
+    // #define BX_INSTR_TLB_CNTRL(cpu_id, what, new_cr3)
+    // #define BX_INSTR_PREFETCH_HINT(cpu_id, what, seg, offset)
+    //
+    // /* execution */
+    // #define BX_INSTR_BEFORE_EXECUTION(cpu_id, i)
+    // #define BX_INSTR_AFTER_EXECUTION(cpu_id, i)
+    // #define BX_INSTR_REPEAT_ITERATION(cpu_id, i)
+    //
+    // /* linear memory access */
+    // #define BX_INSTR_LIN_ACCESS(cpu_id, lin, phy, len, memtype, rw)
+    //
+    // /* physical memory access */
+    // #define BX_INSTR_PHY_ACCESS(cpu_id, phy, len, memtype, rw)
+    //
+    // /* feedback from device units */
+    // #define BX_INSTR_INP(addr, len)
+    // #define BX_INSTR_INP2(addr, len, val)
+    // #define BX_INSTR_OUTP(addr, len, val)
+    //
+    // /* wrmsr callback */
+    // #define BX_INSTR_WRMSR(cpu_id, addr, value)
+    //
+    // /* vmexit callback */
+    // #define BX_INSTR_VMEXIT(cpu_id, reason, qualification)
 
 #endif // BX_INSTRUMENTATION
 

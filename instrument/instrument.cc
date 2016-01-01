@@ -41,15 +41,25 @@
 #include <cstdlib>
 #include <map>
 #include <set>
+#include <vector>
 #include <utility>
+
+struct memoryRecord{
+	bx_address lin;
+	bx_address phy;
+	unsigned len;
+	unsigned memType;
+	unsigned rw;
+} __attribute__ ((packed));
 
 using namespace std;
 using std::set;
+using std::vector;
 
 #define GKD_INSTRUMENT_VERSION "20150709"
 bxInstrumentation *icpu = NULL;
 
-#define MAX_SEND_BYTE 500
+#define MAX_NO_OF_MEMORY_RECORD 500
 int memorySockfd;
 int jmpSockfd;
 int interruptSockfd;
@@ -61,11 +71,12 @@ int interruptPortNo = 1982;
 static disassembler bx_disassembler;
 
 static FILE *log;
-unsigned int zonesFrom[MAX_SEND_BYTE];
-unsigned int zonesTo[MAX_SEND_BYTE];
-unsigned int zonesHit[MAX_SEND_BYTE];
+unsigned int zonesFrom[MAX_NO_OF_MEMORY_RECORD];
+unsigned int zonesTo[MAX_NO_OF_MEMORY_RECORD];
+unsigned int zonesHit[MAX_NO_OF_MEMORY_RECORD];
 unsigned int zonesTail = 0;
-set<unsigned int> zonesHitAddress[MAX_SEND_BYTE];
+set<unsigned int> zonesHitAddress[MAX_NO_OF_MEMORY_RECORD];
+vector<struct memoryRecord> zonesHitDetails[MAX_NO_OF_MEMORY_RECORD];
 
 bx_bool connectedToMemoryServer;
 bx_bool connectedToJmpServer;
@@ -78,7 +89,8 @@ bx_bool startRecordJump;
 bx_address segmentBegin = startRecordJumpAddress;
 bx_address segmentEnd;
 
-unsigned int buffer[MAX_SEND_BYTE];
+struct memoryRecord memoryRecords[MAX_NO_OF_MEMORY_RECORD];
+
 int pointer = 0;
 
 int physicalAddressSize = sizeof(bx_phy_address);
@@ -118,6 +130,7 @@ Bit8u stack[JMP_CACHE_SIZE][STACK_SIZE];
 bx_phy_address stackBase[JMP_CACHE_SIZE];
 
 unsigned int jumpIndex = 0;
+
 
 //int writeToSocket(int sock, const void *data, int size) {
 //	return writeToSocket(sock, (char *) data, size);
@@ -406,6 +419,7 @@ void initInterruptSocket() {
 
 void bx_instr_init_env(void) {
 }
+
 void bx_instr_exit_env(void) {
 }
 
@@ -422,7 +436,10 @@ void bx_instr_initialize(unsigned cpu) {
 	// GKD
 	log = fopen("gkd.log", "a+");
 
-	fprintf(stderr, "GKD instrument %s - Initialize cpu %d\n", GKD_INSTRUMENT_VERSION, cpu);
+	fprintf(stderr, "GKD instrument %s\n", GKD_INSTRUMENT_VERSION);
+
+
+	fprintf(log, "sizeof(unsigned)=%d\n", sizeof(unsigned));
 
 	/*
 	 logGKD("registerSize=");
@@ -435,7 +452,7 @@ void bx_instr_initialize(unsigned cpu) {
 	initJmpSocket();
 	initInterruptSocket();
 	if (connectedToMemoryServer) {
-		for (int x = 0; x < MAX_SEND_BYTE; x++) {
+		for (int x = 0; x < MAX_NO_OF_MEMORY_RECORD; x++) {
 			zonesFrom[x] = -1;
 			zonesTo[x] = -1;
 			zonesHit[x] = 0;
@@ -446,7 +463,7 @@ void bx_instr_initialize(unsigned cpu) {
 
 void bxInstrumentation::bx_instr_reset(unsigned type) {
 	ready = is_branch = 0;
-	num_data_accesses = 0;
+	//num_data_accesses = 0;
 	active = 1;
 }
 
@@ -456,36 +473,24 @@ void bxInstrumentation::bx_print_instruction(void) {
 	bx_disassembler.disasm(is32, is64, 0, 0, opcode, disasm_tbuf);
 
 	if (opcode_length != 0) {
+		fprintf(stderr, "----------------------------------------------------------\n");
+		printf("CPU: %d: %s\n", cpu_id, disasm_tbuf);
+		fprintf(stderr, "LEN: %d\tBYTES: ", opcode_length);
+
 		unsigned n;
+		for (n = 0; n < opcode_length; n++){
+			fprintf(stderr, "%02x", opcode[n]);
+		}
+		if (is_branch) {
+			fprintf(stderr, "\tBRANCH ");
 
-		/*
-		 //fprintf(stderr, "----------------------------------------------------------\n");
-		 printf("CPU: %d: %s\n", cpu_id, disasm_tbuf);
-		 //fprintf(stderr, "LEN: %d\tBYTES: ", opcode_length);
-		 for (n = 0; n < opcode_length; n++){
-		 fprintf(stderr, "%02x", opcode[n]);
-		 }
-		 if (is_branch) {
-		 //fprintf(stderr, "\tBRANCH ");
-
-		 if (is_taken) {
-		 //fprintf(stderr, "TARGET " FMT_ADDRX " (TAKEN)", target_linear);
-		 } else {
-		 //fprintf(stderr, "(NOT TAKEN)");
-		 }
-		 }
-		 //fprintf(stderr, "\n");
-		 */
-		if (connectedToMemoryServer) {
-			for (n = 0; n < num_data_accesses; n++) {
-				//fprintf(stderr, "MEM ACCESS[%u]: 0x" FMT_ADDRX " (linear) 0x" FMT_PHY_ADDRX " (physical) %s SIZE: %d\n", n, data_access[n].laddr, data_access[n].paddr,
-				//		data_access[n].op == BX_READ ? "RD" : "WR", data_access[n].size);
-
-				memorySampling(data_access[n].paddr);
+			if (is_taken) {
+				fprintf(stderr, "TARGET " FMT_ADDRX " (TAKEN)", target_linear);
+			} else {
+				fprintf(stderr, "(NOT TAKEN)");
 			}
 		}
-
-//fprintf(stderr, "\n");
+		fprintf(stderr, "\n");
 	}
 }
 
@@ -498,7 +503,7 @@ void bxInstrumentation::bx_instr_before_execution(bxInstruction_c *i) {
 
 	// prepare instruction_t structure for new instruction
 	ready = 1;
-	num_data_accesses = 0;
+	//num_data_accesses = 0;
 	is_branch = 0;
 
 	//is32 = BX_CPU(cpu_id)->sregs[BX_SEG_REG_CS].cache.u.segment.d_b;
@@ -630,7 +635,7 @@ void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code)
 		bx_list_c *dbg_cpu_list = (bx_list_c*) SIM->get_param("cpu0", SIM->get_bochs_root());
 		bx_address cr2 = (bx_address) SIM->get_param_num("CR2", dbg_cpu_list)->get64();
 
-		saveData(vector, error_code, 0xffff, segmentBegin, segmentEnd, BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
+		saveData(vector, error_code, 0xffff, BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx, cr2, BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
 		BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
 		BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
 		BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value,
@@ -649,57 +654,73 @@ void bxInstrumentation::bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_addr
 }
 
 void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned memtype, unsigned rw) {
+	 if (!active || !ready){
+	 	return;
+	}
+
+	/*if (num_data_accesses >= MAX_DATA_ACCESSES) {
+		return;
+	}*/
+
+	//bx_address lin = BX_CPU(cpu)->get_laddr(seg, offset);
 	/*
-	 if (!active || !ready)
-	 return;
+	bx_bool page_valid = BX_CPU(cpu)->dbg_xlate_linear2phy(lin, &phy);
+	phy = A20ADDR(phy);
 
-	 if (num_data_accesses >= MAX_DATA_ACCESSES) {
-	 return;
-	 }
+	// If linear translation doesn't exist, a paging exception will occur.
+	// Invalidate physical address data for now.
+	if (!page_valid){
+		phy = (bx_phy_address) (-1);
+	}
 
-	 //bx_address lin = BX_CPU(cpu)->get_laddr(seg, offset);
-	 bx_bool page_valid = BX_CPU(cpu)->dbg_xlate_linear2phy(lin, &phy);
-	 phy = A20ADDR(phy);
+	data_access[num_data_accesses].laddr = lin;
+	data_access[num_data_accesses].paddr = phy;
+	data_access[num_data_accesses].rw = rw;
+	data_access[num_data_accesses].size = len;
 
-	 // If linear translation doesn't exist, a paging exception will occur.
-	 // Invalidate physical address data for now.
-	 if (!page_valid)
-	 phy = (bx_phy_address) (-1);
+	num_data_accesses++;
+	*/
 
-	 data_access[num_data_accesses].laddr = lin;
-	 data_access[num_data_accesses].paddr = phy;
-	 data_access[num_data_accesses].rw = rw;
-	 data_access[num_data_accesses].size = len;
-
-	 num_data_accesses++;
-
-	 if (connectedToMemoryServer) {
-	 memorySampling(phy);
-	 }
-	 */
+	if (connectedToMemoryServer) {
+		memorySampling(lin, phy, len, memtype, rw);
+	}
 }
 
-void bxInstrumentation::memorySampling(bx_phy_address paddr) {
+void bxInstrumentation::memorySampling(bx_address lin, bx_phy_address paddr, unsigned len, unsigned memtype, unsigned rw) {
 	if (!connectedToMemoryServer) {
 		return;
 	}
-	buffer[pointer] = paddr;
+
+	memoryRecords[pointer].lin=lin;
+	memoryRecords[pointer].phy=paddr;
+	memoryRecords[pointer].len=len;
+	memoryRecords[pointer].memType=memtype;
+	memoryRecords[pointer].rw=rw;
 	pointer++;
 
-// check zone
+	// check zone hit count
 	for (int x = 0; x < zonesTail; x++) {
 		if (zonesFrom[x] <= paddr && paddr <= zonesTo[x]) {
 			zonesHit[x]++;
 			zonesHitAddress[x].insert(paddr);
+			struct memoryRecord memRecord;
+			memRecord.lin=lin;
+			memRecord.phy=paddr;
+			memRecord.len=len;
+			memRecord.memType=memtype;
+			memRecord.rw=rw;
+			zonesHitDetails[x].push_back(memRecord);
 		}
 	}
-// end check zone
-	if (pointer == MAX_SEND_BYTE) {
-		send(memorySockfd, (char *) buffer,
-		MAX_SEND_BYTE * sizeof(unsigned int), 0);
+	// end check zone hit count
 
-		send(memorySockfd, &zonesTail, sizeof(unsigned int), 0);
+	if (pointer == MAX_NO_OF_MEMORY_RECORD) {
+		// send hit count
+		write(memorySockfd, (char *) memoryRecords, sizeof(memoryRecords));
+		// end send hit count
 
+		// send zones
+		write(memorySockfd, &zonesTail, sizeof(unsigned int));
 		for (int x = 0; x < zonesTail; x++) {
 			write(memorySockfd, &zonesFrom[x], sizeof(unsigned int));
 			write(memorySockfd, &zonesTo[x], sizeof(unsigned int));
@@ -716,20 +737,30 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 			write(memorySockfd, &size, sizeof(unsigned int));
 
 			set<unsigned int>::iterator theIterator;
-			int yy = 0;
-			for (theIterator = zonesHitAddress[x].begin(); theIterator != zonesHitAddress[x].end() && yy < size; theIterator++) {
+			int yy;
+			for (yy = 0, theIterator = zonesHitAddress[x].begin(); theIterator != zonesHitAddress[x].end() && yy < size; theIterator++) {
 				write(memorySockfd, &*theIterator, sizeof(unsigned int));
 				yy++;
 			}
-		}
-		// end send zones back to GKD
 
+			// write zonesHitDetails
+			size=zonesHitDetails[x].size();
+			write(memorySockfd, &size, sizeof(unsigned int));
+			for (int y=0;y<zonesHitDetails[x].size();y++){
+				struct memoryRecord memRecord=zonesHitDetails[x][y];
+				write(memorySockfd, &memRecord, sizeof(struct memoryRecord));
+				fprintf(log, "+++ %x,%x,%d,%d,%d\n", zonesHitDetails[x][y].lin, zonesHitDetails[x][y].phy, zonesHitDetails[x][y].len, zonesHitDetails[x][y].memType, zonesHitDetails[x][y].rw);
+			}
+			zonesHitDetails[x].clear();
+			// end write zonesHitDetails
+		}
+		// end send zones
+
+		// update zones from GKD
 		unsigned char inBuffer[10000];
 		safeRead(memorySockfd, inBuffer, 1);
-
 		if (inBuffer[0] == 2) {
 			safeRead(memorySockfd, inBuffer, 4);
-
 			unsigned int noOfData = convert(inBuffer);
 			int readSize = noOfData * sizeof(unsigned int) * 2;
 
@@ -747,6 +778,9 @@ void bxInstrumentation::memorySampling(bx_phy_address paddr) {
 			}
 			zonesTail = noOfData;
 		}
+
+		// end update zones from GKD
+
 		pointer = 0;
 	}
 }
@@ -759,8 +793,8 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		BX_CPU(cpu)->dbg_xlate_linear2phy(new_eip, &toPhysicalAddress, false);
 
 		while (jumpIndex >= JMP_CACHE_SIZE) {
-//			fprintf(log, "buffer overflow, jumpIndex=%d\n", jumpIndex);
-//			fflush(log);
+			fprintf(log, "jmpSampling buffer overflow, jumpIndex=%d\n", jumpIndex);
+			fflush(log);
 			sleep(1);
 		}
 
