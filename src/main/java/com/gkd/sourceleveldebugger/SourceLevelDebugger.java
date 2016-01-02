@@ -554,7 +554,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		}
 
 		gkd.enableAllButtons(false, false);
-		peterDwarfPanel.init(elfFile, memoryOffset, true, frame);
+		peterDwarfPanel.init(elfFile, memoryOffset, true, frame,  true, true);
 		gkd.disasmHereMenuItem.setEnabled(true);
 		gkd.clearInstructionTableMenuItem.setEnabled(true);
 		//gkd.sourceLevelDebuggerToggleButtonActionPerformed(null);
@@ -846,7 +846,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 
 	private PeterDwarfPanel getPeterDwarfPanel() {
 		if (peterDwarfPanel == null) {
-			peterDwarfPanel = new PeterDwarfPanel(false, false);
+			peterDwarfPanel = new PeterDwarfPanel();
 		}
 		return peterDwarfPanel;
 	}
