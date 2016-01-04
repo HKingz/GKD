@@ -21,7 +21,7 @@ public class MemorySocketServer implements Runnable {
 	JTextArea jTextArea;
 	boolean shouldStop;
 	ServerSocket serverSocket;
-	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 20;
+	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 24;
 	public static Logger logger = Logger.getLogger(MemorySocketServer.class);
 
 	public void startServer(int port, JTextArea jTextArea) {
@@ -65,7 +65,7 @@ public class MemorySocketServer implements Runnable {
 					// hit count
 					byte bytes[] = new byte[MAX_MEMORY_PROFILING_BUFFER];
 					in.readFully(bytes, 0, bytes.length);
-					for (int z = 0; z <= MAX_MEMORY_PROFILING_BUFFER - 20;) {
+					for (int z = 0; z <= MAX_MEMORY_PROFILING_BUFFER - 24;) {
 						try {
 							long linearAddress = CommonLib.getInt(bytes, z);
 							z += 4;
@@ -76,6 +76,8 @@ public class MemorySocketServer implements Runnable {
 							long memType = CommonLib.getInt(bytes, z);
 							z += 4;
 							long rw = CommonLib.getInt(bytes, z);
+							z += 4;
+							long eip = CommonLib.getInt(bytes, z);
 							z += 4;
 
 							//System.out.println(linearAddress + "," + physicalAddress + "," + len + "," + memType + "," + rw);
@@ -129,7 +131,9 @@ public class MemorySocketServer implements Runnable {
 								long len = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
 								long memType = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
 								long rw = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
-								System.out.println(">>" + Long.toHexString(linearAddress) + "," + Long.toHexString(physicalAddress) + "," + len + "," + memType + "," + rw);
+								long eip = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+								System.out.println(">>" + Long.toHexString(eip) + "," + Long.toHexString(linearAddress) + "," + Long.toHexString(physicalAddress) + "," + len + ","
+										+ memType + "," + rw);
 							}
 						}
 					} catch (Exception ex) {
