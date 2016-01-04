@@ -132,8 +132,7 @@ public class MemorySocketServer implements Runnable {
 								long memType = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
 								long rw = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
 								long eip = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
-								System.out.println(">>" + Long.toHexString(eip) + "," + Long.toHexString(linearAddress) + "," + Long.toHexString(physicalAddress) + "," + len + ","
-										+ memType + "," + rw);
+								//System.out.println(">>" + Long.toHexString(eip) + "," + Long.toHexString(linearAddress) + "," + Long.toHexString(physicalAddress) + "," + len + "," + memType + "," + rw);
 							}
 						}
 					} catch (Exception ex) {
