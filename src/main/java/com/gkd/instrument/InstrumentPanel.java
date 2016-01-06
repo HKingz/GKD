@@ -1039,56 +1039,61 @@ public class InstrumentPanel extends JPanel implements ChartChangeListener, Char
 		if (memoryProfilingPanel == null) {
 			memoryProfilingPanel = new JPanel();
 			GroupLayout memoryProfilingPanelLayout = new GroupLayout((JComponent) memoryProfilingPanel);
-			memoryProfilingPanelLayout.setHorizontalGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.LEADING)
-					.addGroup(memoryProfilingPanelLayout.createSequentialGroup().addContainerGap()
-							.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.LEADING).addGroup(memoryProfilingPanelLayout.createSequentialGroup()
-									.addComponent(getJLabel7(), GroupLayout.PREFERRED_SIZE, 608, GroupLayout.PREFERRED_SIZE).addGap(0, 816, Short.MAX_VALUE)).addGroup(
-											memoryProfilingPanelLayout.createSequentialGroup()
-													.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.LEADING)
-															.addGroup(memoryProfilingPanelLayout.createSequentialGroup()
-																	.addComponent(getJLabel17(), GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(
-																			ComponentPlacement.RELATED)
-																	.addComponent(getJSortCheckBox(), GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE))
-															.addGroup(memoryProfilingPanelLayout.createSequentialGroup()
-																	.addComponent(getJLabel8(), GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(ComponentPlacement.RELATED)
-																	.addComponent(getProfilingFromComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-																			GroupLayout.PREFERRED_SIZE)
-																	.addGap(103).addComponent(getJLabel9(), GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(ComponentPlacement.RELATED)
-																	.addComponent(getProfilingToComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-																			GroupLayout.PREFERRED_SIZE)
-															.addComponent(getJAddZoneButton(), GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
-															.addPreferredGap(ComponentPlacement.RELATED).addComponent(getJDeleteZoneButton())))
-									.addPreferredGap(ComponentPlacement.RELATED, 849, Short.MAX_VALUE)).addComponent(getJScrollPane2(), 0, 1424, Short.MAX_VALUE)
-							.addComponent(getJScrollPane6(), 0, 1424, Short.MAX_VALUE)).addContainerGap()));
-			memoryProfilingPanelLayout
-					.setVerticalGroup(
-							memoryProfilingPanelLayout
-									.createParallelGroup(
-											Alignment.LEADING)
-									.addGroup(
-											memoryProfilingPanelLayout.createSequentialGroup().addContainerGap()
-													.addComponent(getJLabel7(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-													.addPreferredGap(ComponentPlacement.RELATED)
-													.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.BASELINE)
-															.addComponent(getProfilingFromComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-																	GroupLayout.PREFERRED_SIZE)
-													.addComponent(getJLabel8(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-													.addComponent(getJLabel9(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-													.addComponent(getProfilingToComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-													.addComponent(getJAddZoneButton(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-													.addComponent(getJDeleteZoneButton(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED).addComponent(getJScrollPane2(), GroupLayout.PREFERRED_SIZE, 254, GroupLayout.PREFERRED_SIZE)
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.BASELINE)
+			memoryProfilingPanelLayout.setHorizontalGroup(
+				memoryProfilingPanelLayout.createParallelGroup(Alignment.LEADING)
+					.addGroup(Alignment.TRAILING, memoryProfilingPanelLayout.createSequentialGroup()
+						.addContainerGap()
+						.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.TRAILING)
+							.addComponent(getJScrollPane6(), Alignment.LEADING, 0, 1430, Short.MAX_VALUE)
+							.addGroup(Alignment.LEADING, memoryProfilingPanelLayout.createSequentialGroup()
+								.addComponent(getJLabel7(), GroupLayout.PREFERRED_SIZE, 608, GroupLayout.PREFERRED_SIZE)
+								.addGap(0, 822, Short.MAX_VALUE))
+							.addGroup(Alignment.LEADING, memoryProfilingPanelLayout.createSequentialGroup()
+								.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.LEADING)
+									.addGroup(memoryProfilingPanelLayout.createSequentialGroup()
+										.addComponent(getJLabel17(), GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(getJSortCheckBox(), GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE))
+									.addGroup(memoryProfilingPanelLayout.createSequentialGroup()
+										.addComponent(getJLabel8(), GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(getProfilingFromComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addGap(103)
+										.addComponent(getJLabel9(), GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(getProfilingToComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+										.addComponent(getJAddZoneButton(), GroupLayout.PREFERRED_SIZE, 62, GroupLayout.PREFERRED_SIZE)
+										.addPreferredGap(ComponentPlacement.RELATED)
+										.addComponent(getJDeleteZoneButton())))
+								.addPreferredGap(ComponentPlacement.RELATED, 849, Short.MAX_VALUE))
+							.addComponent(getJScrollPane2(), Alignment.LEADING, 0, 1430, Short.MAX_VALUE))
+						.addContainerGap())
+			);
+			memoryProfilingPanelLayout.setVerticalGroup(
+				memoryProfilingPanelLayout.createParallelGroup(Alignment.LEADING)
+					.addGroup(memoryProfilingPanelLayout.createSequentialGroup()
+						.addContainerGap()
+						.addComponent(getJLabel7(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.BASELINE)
+							.addComponent(getProfilingFromComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJLabel8(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJLabel9(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getProfilingToComboBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJAddZoneButton(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJDeleteZoneButton(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addComponent(getJScrollPane2(), GroupLayout.PREFERRED_SIZE, 254, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addGroup(memoryProfilingPanelLayout.createParallelGroup(Alignment.BASELINE)
 							.addComponent(getJSortCheckBox(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(getJLabel17(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.RELATED).addComponent(getJScrollPane6(), GroupLayout.PREFERRED_SIZE, 214, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(362, Short.MAX_VALUE)));
-			memoryProfilingPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] { getProfilingFromComboBox(), getProfilingToComboBox() });
-			memoryProfilingPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] { getProfilingFromComboBox(), getProfilingToComboBox() });
+						.addPreferredGap(ComponentPlacement.RELATED)
+						.addComponent(getJScrollPane6(), GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
+						.addContainerGap())
+			);
+			memoryProfilingPanelLayout.linkSize(SwingConstants.VERTICAL, new Component[] {getProfilingFromComboBox(), getProfilingToComboBox()});
+			memoryProfilingPanelLayout.linkSize(SwingConstants.HORIZONTAL, new Component[] {getProfilingFromComboBox(), getProfilingToComboBox()});
 			memoryProfilingPanel.setLayout(memoryProfilingPanelLayout);
 		}
 		return memoryProfilingPanel;
