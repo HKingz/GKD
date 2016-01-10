@@ -220,7 +220,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-dwarf</artifactId>
-			<version>20160101</version>
+			<version>20160110</version>
 		</dependency>
 	</dependencies>
 	<scm>
