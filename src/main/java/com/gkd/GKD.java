@@ -8452,6 +8452,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			dumpCR3PagingSummaryButton = new JButton("Dump CR3");
 			dumpCR3PagingSummaryButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					dumpPagingSummaryPageDirectoryAddressTextField.setText(registerPanel.cr3TextField.getText());
 					updatePagingSummaryTable(CommonLib.string2BigInteger(registerPanel.cr3TextField.getText()),
 							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
 							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
