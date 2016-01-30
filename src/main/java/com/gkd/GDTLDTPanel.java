@@ -221,7 +221,6 @@ public class GDTLDTPanel extends JPanel {
 			model.addRow(new String[] { "g", "0x" + Long.toHexString(bit[55]) });
 
 			// parse each descriptor
-
 			JScrollPane pane = new JScrollPane();
 			tabbedPane1.addTab(MyLanguage.getString("Descriptor"), null, pane, null);
 			JTable table = new JTable();
@@ -231,7 +230,7 @@ public class GDTLDTPanel extends JPanel {
 			if (limit > 1000) {
 				limit = 1000;
 			}
-			int bytes[] = VMController.getVM().virtualMemory(base, (int) limit + 1);//GKD.getLinearMemory(base, (int) (limit + 1));
+			int bytes[] = VMController.getVM().virtualMemory(base, (int) limit + 1);
 
 			for (int x = 0; x < limit; x += 8) {
 				long value = CommonLib.getLong(bytes, x);

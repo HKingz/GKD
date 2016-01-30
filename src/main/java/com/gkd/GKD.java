@@ -498,10 +498,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][]{},
 			new String[]{MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit")}) {
-				public boolean isCellEditable(int row, int col) {
-					return false;
-				}
-			};
+		public boolean isCellEditable(int row, int col) {
+			return false;
+		}
+	};
 	private JMenu fontAJMenu;
 	private JMenu fontKTMenu;
 	private JMenu fontUZMenu;
@@ -733,6 +733,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (elf != null && !elf.equals("")) {
 			Global.elfPaths = elf.split(",");
 		}
+
+		Global.showDebugLoc = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/showDebugLoc/text()"));
+		Global.showDebugInfoEntriesInCompileUnit = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/showDebugInfoEntriesInCompileUnit/text()"));
 
 		GKD gkd = new GKD();
 		VMController.getVM().setGKDInstance(gkd);
@@ -2051,10 +2054,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				int hit = CommonLib.string2int(breakpointTable.getValueAt(x, 3).toString());
 				breakpointTable.setValueAt("-" + value, x, 0);
 				breakpointTable.setValueAt(hit + 1, x, 3);
-			} else {
-				if (value.startsWith("-")) {
-					breakpointTable.setValueAt(value.substring(1), x, 0);
-				}
+			} else if (value.startsWith("-")) {
+				breakpointTable.setValueAt(value.substring(1), x, 0);
 			}
 		}
 	}
@@ -2512,9 +2513,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public String[] getCCode(BigInteger pc, boolean getFile) {
-		if (pc.equals(CommonLib.string2BigInteger("0x1600000"))) {
-			System.out.println("16");
-		}
 		for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
 			try {
 				DwarfLine startLine = null;
@@ -2746,7 +2744,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		changeText(this.registerPanel.mmx5TextField, CommonLib.string2BigInteger(ht.get("mm5")));
 		changeText(this.registerPanel.mmx6TextField, CommonLib.string2BigInteger(ht.get("mm6")));
 		changeText(this.registerPanel.mmx7TextField, CommonLib.string2BigInteger(ht.get("mm7")));
-
 	}
 
 	private void updateMemory(boolean isPhysicalAddress) {
@@ -2758,7 +2755,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				currentMemoryWindowsAddress = CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString());
 				statusLabel.setText("Updating memory");
-				bytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()), totalByte);
+				if (isPhysicalAddress) {
+					bytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()), totalByte);
+				} else {
+					bytes = VMController.getVM().virtualMemory(CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()), totalByte);
+				}
 
 				statusLabel.setText("");
 				hexTable.getModel().setCurrentAddress(CommonLib.string2long(this.memoryAddressComboBox.getSelectedItem().toString()));
@@ -7234,19 +7235,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 											.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
 									.addComponent(getJTextArea1(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
-											jRunningPanelLayout.createSequentialGroup().addGap(65).addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
-													GroupLayout.PREFERRED_SIZE)
+									jRunningPanelLayout.createSequentialGroup().addGap(65).addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
+									GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING,
+											jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
 											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-											.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-															.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
-													.addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup()
-															.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
-																	LayoutStyle.ComponentPlacement.INDENT)
-															.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-															.addGap(0, 25, Short.MAX_VALUE))))));
+											.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
+											.addGroup(GroupLayout.Alignment.LEADING,
+													jRunningPanelLayout.createSequentialGroup()
+													.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
+															LayoutStyle.ComponentPlacement.INDENT)
+													.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+													.addGap(0, 25, Short.MAX_VALUE))))));
 			jRunningPanelLayout
 					.setVerticalGroup(jRunningPanelLayout.createSequentialGroup().addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)

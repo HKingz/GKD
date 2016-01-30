@@ -19,4 +19,6 @@ public class Global {
 	public static int MAX_NEXTI_INSTRUCTION_COUNT = 10;
 	public static String stopCommand;
 	public static String ndisasmPath;
+	public static boolean showDebugLoc;
+	public static boolean showDebugInfoEntriesInCompileUnit;
 }

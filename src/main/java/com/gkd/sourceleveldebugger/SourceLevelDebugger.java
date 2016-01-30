@@ -554,7 +554,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		}
 
 		gkd.enableAllButtons(false, false);
-		peterDwarfPanel.init(elfFile, memoryOffset, true, frame,  true, true);
+		peterDwarfPanel.init(elfFile, memoryOffset, true, frame,  Global.showDebugLoc, Global.showDebugInfoEntriesInCompileUnit);
 		gkd.disasmHereMenuItem.setEnabled(true);
 		gkd.clearInstructionTableMenuItem.setEnabled(true);
 		//gkd.sourceLevelDebuggerToggleButtonActionPerformed(null);
