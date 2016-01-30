@@ -794,7 +794,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}.start();
 
 		if (VMController.vmType == VMType.Bochs) {
-			bochsoutTextArea.addTrailListener(new File("."), new File("bochsout.txt"), 0, true);
+			bochsoutTextArea.addTrailListener(new File("."), new File("bochsout.txt"), true);
 		}
 
 		progressBarDialog.progressBar.setValue(100);
