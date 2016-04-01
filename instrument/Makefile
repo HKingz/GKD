@@ -18,17 +18,17 @@
 
 .SUFFIXES: .cc
 
-srcdir = .
+srcdir = ../../../../bochs/../GKD/instrument
+VPATH = ../../../../bochs/../GKD/instrument
 
-
-SHELL = /bin/sh
+SHELL = /bin/bash
 
 
 
 CC = gcc
-CFLAGS = -O3 -fpascal-strings -fno-common -Wno-four-char-constants -Wno-unknown-pragmas -Dmacintosh -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES 
+CFLAGS = -O3 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -pthread
 CXX = g++
-CXXFLAGS = -O3 -fpascal-strings -fno-common -Wno-four-char-constants -Wno-unknown-pragmas -Dmacintosh -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES 
+CXXFLAGS = -O3 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -pthread
 
 LDFLAGS = 
 LIBS = 
