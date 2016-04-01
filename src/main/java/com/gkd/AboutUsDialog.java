@@ -10,6 +10,7 @@ import com.peterswing.CommonLib;
 import javax.swing.SwingConstants;
 
 public class AboutUsDialog extends javax.swing.JDialog {
+
 	private JTextArea textArea1;
 	private JLabel label1;
 	private JScrollPane jScrollPane1;
