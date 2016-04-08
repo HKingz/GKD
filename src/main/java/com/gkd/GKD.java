@@ -133,6 +133,7 @@ import com.jgoodies.forms.layout.ColumnSpec;
 import com.jgoodies.forms.layout.FormLayout;
 import com.jgoodies.forms.layout.FormSpecs;
 import com.jgoodies.forms.layout.RowSpec;
+import com.peter.javaautoupdater.JavaAutoUpdater;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.Dwarf;
 import com.peterdwarf.dwarf.DwarfDebugLineHeader;
@@ -573,6 +574,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		JavaAutoUpdater.run();
 
 		CommandLineParser parser = new DefaultParser();
 		Options options = new Options();

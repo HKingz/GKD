@@ -69,6 +69,14 @@
                 <goal>package</goal>
                 
             </goals>
+            <properties>
+                <fuck>you</fuck>
+                <pussy>me</pussy>
+            </properties>
+            <activatedProfiles>
+                <activatedProfile>dev</activatedProfile>
+                <activatedProfile>fuck</activatedProfile>
+            </activatedProfiles>
         </action>
         <action>
             <actionName>clean</actionName>
