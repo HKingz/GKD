@@ -223,7 +223,7 @@
 			<version>20160110</version>
 		</dependency>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
+			<groupId>com.peter</groupId>
 			<artifactId>JavaAutoUpdater</artifactId>
 			<version>0.0.1</version>
 		</dependency>
