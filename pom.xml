@@ -223,10 +223,12 @@
 			<version>20160110</version>
 		</dependency>
 		<dependency>
-			<groupId>com.peter</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>JavaAutoUpdater</artifactId>
 			<version>0.0.1</version>
 		</dependency>
+
+
 	</dependencies>
 	<scm>
 		<url>scm:svn:svn://210.5.164.14/GKD</url>

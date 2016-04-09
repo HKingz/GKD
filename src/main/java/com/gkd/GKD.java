@@ -574,7 +574,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		JavaAutoUpdater.run();
+		
+		JavaAutoUpdater.run("software", "GKD", args);
 
 		CommandLineParser parser = new DefaultParser();
 		Options options = new Options();
