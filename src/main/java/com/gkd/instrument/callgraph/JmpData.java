@@ -17,6 +17,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "jmpData")
 public class JmpData {
+
 	@Id
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "jmpDataId", unique = true, nullable = false)
@@ -25,8 +26,10 @@ public class JmpData {
 	public int lineNo;
 	public Date date;
 	public long fromAddress;
+	@Column(length = 2048)
 	public String fromAddressDescription;
 	public long toAddress;
+	@Column(length = 2048)
 	public String toAddressDescription;
 
 	public int what;
@@ -63,6 +66,7 @@ public class JmpData {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "jmpData")
 	public List<Parameter> parameters = new ArrayList<Parameter>();
 
+	@Column(length = 2048)
 	public String toAddressSymbol;
 
 	public JmpData() {
@@ -135,61 +139,61 @@ public class JmpData {
 
 	public JmpType getWhatEnum() {
 		switch (what) {
-		case 10:
-			return JmpType.JMP;
-		case 11:
-			return JmpType.JMP_INDIRECT;
-		case 12:
-			return JmpType.CALL;
-		case 13:
-			return JmpType.CALL_INDIRECT;
-		case 14:
-			return JmpType.RET;
-		case 15:
-			return JmpType.IRET;
-		case 16:
-			return JmpType.INT;
-		case 17:
-			return JmpType.SYSCALL;
-		case 18:
-			return JmpType.SYSRET;
-		case 19:
-			return JmpType.SYSENTER;
-		case 20:
-			return JmpType.SYSEXIT;
-		default:
-			return JmpType.unknown;
+			case 10:
+				return JmpType.JMP;
+			case 11:
+				return JmpType.JMP_INDIRECT;
+			case 12:
+				return JmpType.CALL;
+			case 13:
+				return JmpType.CALL_INDIRECT;
+			case 14:
+				return JmpType.RET;
+			case 15:
+				return JmpType.IRET;
+			case 16:
+				return JmpType.INT;
+			case 17:
+				return JmpType.SYSCALL;
+			case 18:
+				return JmpType.SYSRET;
+			case 19:
+				return JmpType.SYSENTER;
+			case 20:
+				return JmpType.SYSEXIT;
+			default:
+				return JmpType.unknown;
 		}
 	}
 
 	public String getWhatStr() {
 		switch (what) {
-		case 10:
-			return "JMP";
-		case 11:
-			return "JMP_INDIRECT";
-		case 12:
-			return "CALL";
-		case 13:
-			return "CALL_INDIRECT";
-		case 14:
-			return "RET";
-		case 15:
-			return "IRET";
-		case 16:
-			return "INT";
-		case 17:
-			return "SYSCALL";
-		case 18:
-			return "SYSRET";
-		case 19:
-			return "SYSENTER";
-		case 20:
-			return "SYSEXIT";
-		case 0xffff:
-			return "EXCEPTION";
-		default:
-			return "unknown";
+			case 10:
+				return "JMP";
+			case 11:
+				return "JMP_INDIRECT";
+			case 12:
+				return "CALL";
+			case 13:
+				return "CALL_INDIRECT";
+			case 14:
+				return "RET";
+			case 15:
+				return "IRET";
+			case 16:
+				return "INT";
+			case 17:
+				return "SYSCALL";
+			case 18:
+				return "SYSRET";
+			case 19:
+				return "SYSENTER";
+			case 20:
+				return "SYSEXIT";
+			case 0xffff:
+				return "EXCEPTION";
+			default:
+				return "unknown";
 		}
 	}
 
