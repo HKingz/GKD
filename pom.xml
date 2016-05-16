@@ -215,7 +215,7 @@
 		<dependency>
 			<groupId>com.github.mcheung63</groupId>
 			<artifactId>peter-swing</artifactId>
-			<version>20160321</version>
+			<version>20160515</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
