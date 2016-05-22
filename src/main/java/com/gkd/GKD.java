@@ -443,10 +443,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private BigInteger currentMemoryWindowsAddress;
 	public static Logger logger = Logger.getLogger(GKD.class);
-	private SimpleDateFormat simpleDateFormat = simpleDateFormat;
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("mm:ss.SSS");
 
 	public enum OSType {
-
 		mac, win, linux
 	};
 
