@@ -296,12 +296,13 @@ public class JmpSocketServer implements Runnable {
 						String toAddressDescription = null;
 
 						if (!fromNullSymbols.contains(fromAddress[x])) {
-							if (fromAddress[x]==0x1601f44){
+							if (fromAddress[x] == 0x1601f44) {
 								System.out.println("d");
 							}
 							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress[x]);
 							if (symbol == null) {
 								fromNullSymbols.add(fromAddress[x]);
+								fromAddressDescription = DwarfLib.getFunctionName(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, fromAddress[x]);
 							} else {
 								fromAddressDescription = symbol.name;
 							}
@@ -322,6 +323,7 @@ public class JmpSocketServer implements Runnable {
 							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(toAddress[x]);
 							if (symbol == null) {
 								toNullSymbols.add(toAddress[x]);
+								toAddressDescription = DwarfLib.getFunctionName(GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs, toAddress[x]);
 							} else {
 								toAddressDescription = symbol.name;
 								toAddressSymbol = symbol.name;
@@ -345,7 +347,6 @@ public class JmpSocketServer implements Runnable {
 //						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], null, toAddress[x], null, null,
 //								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
 //								gs[x], deeps[x], null, null, showForDifferentDeeps[x], stack[x], stackBase[x]);
-
 						Hashtable<String, DwarfParameter> parameters;
 						if (parametersCache.containsKey(toAddress[x])) {
 							parameters = parametersCache.get(toAddress[x]);
