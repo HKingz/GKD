@@ -125,7 +125,7 @@ Bit16u dsVector[JMP_CACHE_SIZE];
 Bit16u fsVector[JMP_CACHE_SIZE];
 Bit16u gsVector[JMP_CACHE_SIZE];
 
-#define STACK_SIZE 256
+#define STACK_SIZE 2048
 Bit8u stack[JMP_CACHE_SIZE][STACK_SIZE];
 bx_phy_address stackBase[JMP_CACHE_SIZE];
 
@@ -140,6 +140,7 @@ void saveData(bx_phy_address fromPhysicalAddress, bx_phy_address toPhysicalAddre
 		Bit32u edx, Bit32u ebx, Bit32u esp, Bit32u ebp, Bit32u esi, Bit32u edi, Bit16u es, Bit16u cs, Bit16u ss, Bit16u ds, Bit16u fs, Bit16u gs, Bit8u *stackValue,
 		bx_phy_address stackBaseValue) {
 	pthread_mutex_lock(&jmpMutex);
+	
 	fromAddressVector[jumpIndex] = fromPhysicalAddress;
 	toAddressVector[jumpIndex] = toPhysicalAddress;
 
@@ -163,11 +164,13 @@ void saveData(bx_phy_address fromPhysicalAddress, bx_phy_address toPhysicalAddre
 	dsVector[jumpIndex] = ds;
 	fsVector[jumpIndex] = fs;
 	gsVector[jumpIndex] = gs;
-
+	
 	memcpy(stack[jumpIndex], stackValue, STACK_SIZE);
 	stackBase[jumpIndex] = stackBaseValue;
 
 	jumpIndex++;
+	
+	
 	pthread_mutex_unlock(&jmpMutex);
 }
 
@@ -190,9 +193,13 @@ int writeToSocket(int sock, const void *data, int size) {
 void * jmpTimer(void *arg) {
 	while (1) {
 		sleep(1);
+		
 		pthread_mutex_lock(&jmpMutex);
-
+		
 		if (jumpIndex > 0) {
+			fprintf(log, "jmpTimer, sending back %d records\n", jumpIndex);
+			fflush(log);
+			
 			writeToSocket(jmpSockfd, "start", 5);
 			writeToSocket(jmpSockfd, &jumpIndex, 4);
 
@@ -247,6 +254,7 @@ void * jmpTimer(void *arg) {
 //				read(jmpSockfd, &temp, 1);
 //			}
 
+		
 			char readBytes[4];
 			read(jmpSockfd, readBytes, 4);
 			if (strncmp(readBytes, "done", 4) != 0) {
@@ -254,6 +262,7 @@ void * jmpTimer(void *arg) {
 				fflush(log);
 				exit(-1);
 			}
+			
 
 			// handle read parameter values
 //			char noOfParameterStr[1];
@@ -282,6 +291,8 @@ void * jmpTimer(void *arg) {
 			jumpIndex = 0;
 		}
 		pthread_mutex_unlock(&jmpMutex);
+		
+		
 		//logGKD("b4\n");
 	}
 	return 0;
@@ -813,51 +824,6 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value,
 		BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, buf,
 				paddr_valid ? paddr : -1);
-
-		/*
-		 pthread_mutex_lock(&jmpMutex);
-		 fromAddressVector[jumpIndex] = fromPhysicalAddress;
-		 toAddressVector[jumpIndex] = toPhysicalAddress;
-
-		 whatVector[jumpIndex] = what;
-
-		 segmentBeginVector[jumpIndex] = segmentBegin;
-		 segmentEndVector[jumpIndex] = segmentEnd;
-
-		 eaxVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx;
-		 ecxVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx;
-		 edxVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx;
-		 ebxVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx;
-		 espVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx;
-		 ebpVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx;
-		 esiVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx;
-		 ediVector[jumpIndex] = BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx;
-
-		 esVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value;
-		 csVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value;
-		 ssVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value;
-		 dsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value;
-		 fsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value;
-		 gsVector[jumpIndex] = BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value;
-
-		 bx_address linear_sp = BX_CPU(0)->get_reg32(BX_32BIT_REG_ESP);
-		 linear_sp = BX_CPU(0)->get_laddr(BX_SEG_REG_SS, linear_sp);
-		 Bit8u buf[STACK_SIZE];
-		 bx_dbg_read_linear(0, linear_sp, STACK_SIZE, buf);
-
-		 memcpy(stack[jumpIndex], buf, STACK_SIZE);
-
-		 bx_phy_address paddr;
-		 bx_bool paddr_valid = BX_CPU(dbg_cpu)->dbg_xlate_linear2phy(linear_sp, &paddr);
-		 if (paddr_valid) {
-		 stackBase[jumpIndex] = paddr;
-		 } else {
-		 stackBase[jumpIndex] = -1;
-		 }
-
-		 jumpIndex++;
-		 pthread_mutex_unlock(&jmpMutex);
-		 */
 		segmentBegin = new_eip;
 	}
 }

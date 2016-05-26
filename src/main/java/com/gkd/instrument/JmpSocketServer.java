@@ -45,6 +45,7 @@ import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
 
 public class JmpSocketServer implements Runnable {
+
 	private int port;
 	private boolean shouldStop;
 	private ServerSocket serverSocket;
@@ -59,10 +60,10 @@ public class JmpSocketServer implements Runnable {
 
 	HashMap<Long, Hashtable<String, DwarfParameter>> parametersCache = new HashMap<Long, Hashtable<String, DwarfParameter>>();
 	HashMap<Long, DebugInfoEntry> fromAddressCache = new HashMap<Long, DebugInfoEntry>();
+	HashMap<Long, CompileUnit> cuCache = new HashMap<Long, CompileUnit>();
 
 	//	HashMap<Long, Long> cfaBaseOffsetCache = new HashMap<Long, Long>();
-
-	final int STACK_SIZE = 256;
+	final int STACK_SIZE = 2048;
 
 	public static void main(String args[]) {
 		JmpSocketServer jmpSocketServer = new JmpSocketServer();
@@ -102,6 +103,9 @@ public class JmpSocketServer implements Runnable {
 
 		try {
 			serverSocket = new ServerSocket(port);
+
+			Vector<CodeBaseData> data = new Vector<CodeBaseData>();
+			initCodeDaseData(data);
 
 			Socket clientSocket = serverSocket.accept();
 			DataInputStream in = new DataInputStream(clientSocket.getInputStream());
@@ -165,6 +169,7 @@ public class JmpSocketServer implements Runnable {
 				int deeps[] = new int[noOfJmpRecordToFlush];
 				boolean showForDifferentDeeps[] = new boolean[noOfJmpRecordToFlush];
 
+				logger.info("read socket");
 				int byteRead = 0;
 				while (byteRead < bytes.length) {
 					int b = in.read(bytes, byteRead, bytes.length - byteRead);
@@ -174,6 +179,7 @@ public class JmpSocketServer implements Runnable {
 					}
 					byteRead += b;
 				}
+				logger.info("read socket end");
 
 				int offset = 0;
 				offset += getValuesFromByteArray(fromAddress, bytes, offset, physicalAddressSize);
@@ -203,8 +209,10 @@ public class JmpSocketServer implements Runnable {
 				offset += getValuesFromByteArray(stack, bytes, STACK_SIZE, offset, 1);
 				offset += getValuesFromByteArray(stackBase, bytes, offset, physicalAddressSize);
 
+				logger.info("read beacon");
 				byte endBytes[] = new byte[3];
 				in.readFully(endBytes);
+				logger.info("read beacon end");
 
 				beacon = new String(endBytes);
 				if (!beacon.equals("end")) {
@@ -217,15 +225,15 @@ public class JmpSocketServer implements Runnable {
 				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					deeps[x] = deep;
 					switch ((int) what[x]) {
-					case 12:
-						deep++;
-						break;
-					case 13:
-						deep++;
-						break;
-					case 14:
-						deep--;
-						break;
+						case 12:
+							deep++;
+							break;
+						case 13:
+							deep++;
+							break;
+						case 14:
+							deep--;
+							break;
 //					case 15:
 //						deep--;
 //						break;
@@ -255,13 +263,24 @@ public class JmpSocketServer implements Runnable {
 				Vector<Long> fromNullSymbols = new Vector<Long>();
 				Vector<Long> toNullSymbols = new Vector<Long>();
 
-				Vector<CodeBaseData> data = new Vector<CodeBaseData>();
-				initCodeDaseData(data);
-
+				logger.info("main loop");
 				for (int x = 0; x < noOfJmpRecordToFlush; x++) {
 					try {
-						CompileUnit fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(fromAddress[x]);
-						CompileUnit toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(toAddress[x]);
+						CompileUnit fromCU;
+						if (cuCache.containsKey(fromAddress[x])) {
+							fromCU = cuCache.get(fromAddress[x]);
+						} else {
+							fromCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(fromAddress[x]);
+							cuCache.put(fromAddress[x], fromCU);
+						}
+
+						CompileUnit toCU;
+						if (cuCache.containsKey(toAddress[x])) {
+							toCU = cuCache.get(toAddress[x]);
+						} else {
+							toCU = GKD.sourceLevelDebugger.peterDwarfPanel.getCompileUnit(toAddress[x]);
+							cuCache.put(fromAddress[x], toCU);
+						}
 
 						String fromAddress_DW_AT_name = null;
 						String toAddress_DW_AT_name = null;
@@ -277,6 +296,9 @@ public class JmpSocketServer implements Runnable {
 						String toAddressDescription = null;
 
 						if (!fromNullSymbols.contains(fromAddress[x])) {
+							if (fromAddress[x]==0x1601f44){
+								System.out.println("d");
+							}
 							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress[x]);
 							if (symbol == null) {
 								fromNullSymbols.add(fromAddress[x]);
@@ -320,8 +342,11 @@ public class JmpSocketServer implements Runnable {
 								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
 								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x], stack[x], stackBase[x]);
 
-						Hashtable<String, DwarfParameter> parameters;
+//						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], null, toAddress[x], null, null,
+//								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
+//								gs[x], deeps[x], null, null, showForDifferentDeeps[x], stack[x], stackBase[x]);
 
+						Hashtable<String, DwarfParameter> parameters;
 						if (parametersCache.containsKey(toAddress[x])) {
 							parameters = parametersCache.get(toAddress[x]);
 						} else {
@@ -332,7 +357,16 @@ public class JmpSocketServer implements Runnable {
 						if (parameters != null) {
 							for (String parameterName : parameters.keySet()) {
 								DwarfParameter parameter = parameters.get(parameterName);
-								long value = CommonLib.getInt(stack[x], (int) parameter.parameterOffset);
+
+								long value = 0;
+								if (parameter.parameterOffset < stack.length - 4) {
+//									try {
+									value = CommonLib.getInt(stack[x], (int) parameter.parameterOffset);
+//									} catch (Exception ex) {
+//										ex.printStackTrace();
+//										System.out.println("noOfJmpRecordToFlush=" + noOfJmpRecordToFlush);
+//									}
+								}
 								jmpData.parameters.add(new Parameter(jmpData, parameter.name, parameter.type, parameter.size, stackBase[x] + parameter.parameterOffset,
 										String.valueOf(parameter.parameterOffset), value));
 							}
@@ -351,6 +385,7 @@ public class JmpSocketServer implements Runnable {
 						e.printStackTrace();
 					}
 				}
+				logger.info("main loop end");
 				//statistic.noOfCachedRecord += jmpDataVector.size();
 				GKD.instrumentStatusLabel.setText("Jump instrumentation : " + JmpSocketServer.statistic);
 
@@ -380,7 +415,8 @@ public class JmpSocketServer implements Runnable {
 		for (Dwarf dwarf : GKD.sourceLevelDebugger.peterDwarfPanel.dwarfs) {
 			for (CompileUnit cu : dwarf.compileUnits) {
 				DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
-				loop1: for (int xx = 0; xx < header.lines.size(); xx++) {
+				loop1:
+				for (int xx = 0; xx < header.lines.size(); xx++) {
 					try {
 						DwarfLine line = header.lines.get(xx);
 						File file = cu.dwarfDebugLineHeader.filenames.get((int) line.file_num).file;

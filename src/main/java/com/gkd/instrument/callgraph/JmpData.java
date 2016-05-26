@@ -58,7 +58,7 @@ public class JmpData {
 	public String toAddress_DW_AT_name;
 	public boolean showForDifferentDeep;
 
-	@Column(columnDefinition = "binary(256)")
+	@Column(columnDefinition = "binary(2048)")
 	public byte[] stack;
 
 	public long stackBase;
