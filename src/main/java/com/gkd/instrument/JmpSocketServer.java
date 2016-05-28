@@ -34,6 +34,7 @@ import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.sourceleveldebugger.CodeBaseData;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
+import com.gkd.sourceleveldebugger.SymbolTableModel;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.DebugInfoEntry;
 import com.peterdwarf.dwarf.Dwarf;
@@ -296,9 +297,6 @@ public class JmpSocketServer implements Runnable {
 						String toAddressDescription = null;
 
 						if (!fromNullSymbols.contains(fromAddress[x])) {
-							if (fromAddress[x] == 0x1601f44) {
-								System.out.println("d");
-							}
 							Elf32_Sym symbol = SourceLevelDebugger.symbolTableModel.searchSymbol(fromAddress[x]);
 							if (symbol == null) {
 								fromNullSymbols.add(fromAddress[x]);
@@ -338,6 +336,9 @@ public class JmpSocketServer implements Runnable {
 								toAddressDescription += " : " + d.lineNo;
 								break;
 							}
+						}
+						if (toAddress[x] == 0x1790e06) {
+							System.out.println("toAddressDescription=" + toAddressDescription);
 						}
 
 						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, toAddressSymbol,

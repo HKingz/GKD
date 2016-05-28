@@ -36,20 +36,18 @@ public class SymbolTableModel extends AbstractTableModel {
 				return symbol;
 			} else if (column == 1) {
 				return "0x" + Long.toHexString(symbol.st_value);
-			} else {
-				if (cache.get(symbol.name) == null) {
-					for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
-						CompileUnit cu = dwarf.getCompileUnitByFunction(symbol.name);
-						if (cu != null) {
-							String filename = new File(cu.DW_AT_name).getName();
-							cache.put(symbol.name, filename);
-							return filename;
-						}
+			} else if (cache.get(symbol.name) == null) {
+				for (Dwarf dwarf : sourceLevelDebugger.peterDwarfPanel.dwarfs) {
+					CompileUnit cu = dwarf.getCompileUnitByFunction(symbol.name);
+					if (cu != null) {
+						String filename = new File(cu.DW_AT_name).getName();
+						cache.put(symbol.name, filename);
+						return filename;
 					}
-					return null;
-				} else {
-					return cache.get(symbol.name);
 				}
+				return null;
+			} else {
+				return cache.get(symbol.name);
 			}
 		} catch (Exception ex) {
 			return "";
@@ -147,29 +145,14 @@ public class SymbolTableModel extends AbstractTableModel {
 		setSearchPattern(searchPattern);
 	}
 
-	//	int hashCode = -99999;
-	//	Hashtable<Long, Elf32_Sym> ht;
-	//	Vector<Long> nullSymbols;
 	public Elf32_Sym searchSymbol(long address) {
-		//		if (hashCode != symbols.hashCode()) {
-		//			ht = new Hashtable<Long, Elf32_Sym>();
-		//			nullSymbols = new Vector<Long>();
-		//			hashCode = symbols.hashCode();
-		//		}
-		//		if (nullSymbols.contains(address)) {
-		//			return null;
-		//		} else if (ht.containsKey(address)) {
-		//			return ht.get(address);
-		//		}
 		if (symbols != null) {
 			for (Elf32_Sym symbol : symbols) {
 				if (symbol.st_value == address) {
-					//				ht.put(address, symbol);
 					return symbol;
 				}
 			}
 		}
-		//		nullSymbols.add(address);
 		return null;
 	}
 
