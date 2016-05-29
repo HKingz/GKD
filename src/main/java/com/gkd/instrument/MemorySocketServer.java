@@ -21,7 +21,7 @@ public class MemorySocketServer implements Runnable {
 	JTextArea jTextArea;
 	boolean shouldStop;
 	ServerSocket serverSocket;
-	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 24;
+	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 20;
 	public static Logger logger = Logger.getLogger(MemorySocketServer.class);
 
 	public void startServer(int port, JTextArea jTextArea) {
@@ -131,7 +131,7 @@ public class MemorySocketServer implements Runnable {
 								long len = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
 								long memType = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
 								long rw = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
-								long eip = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
+								//long eip = in.readUnsignedByte() + (in.readUnsignedByte() << 8) + (in.readUnsignedByte() << 16) + (in.readUnsignedByte() << 24);
 								//System.out.println(">>" + Long.toHexString(eip) + "," + Long.toHexString(linearAddress) + "," + Long.toHexString(physicalAddress) + "," + len + "," + memType + "," + rw);
 							}
 						}
