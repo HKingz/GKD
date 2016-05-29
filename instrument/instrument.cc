@@ -59,7 +59,9 @@ using std::vector;
 #define GKD_INSTRUMENT_VERSION "20150709"
 bxInstrumentation *icpu = NULL;
 
-#define MAX_NO_OF_MEMORY_RECORD 500
+#define MAX_NO_OF_MEMORY_RECORD 100000
+#define JMP_CACHE_SIZE 100000
+
 int memorySockfd;
 int jmpSockfd;
 int interruptSockfd;
@@ -89,20 +91,22 @@ bx_bool startRecordJump;
 bx_address segmentBegin = startRecordJumpAddress;
 bx_address segmentEnd;
 
-struct memoryRecord memoryRecords[MAX_NO_OF_MEMORY_RECORD];
+//struct memoryRecord memoryRecords[MAX_NO_OF_MEMORY_RECORD];
 
 int pointer = 0;
 
 int physicalAddressSize = sizeof(bx_phy_address);
 int whatSize = sizeof(unsigned);
 int segmentSize = sizeof(bx_address);
-int registerSize = sizeof(BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx);
-int segmentRegisterSize = sizeof(BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value);
+int registerSize = sizeof(BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ECX].dword.erx);
+int segmentRegisterSize = sizeof(BX_CPU(cpu)->sregs[BX_SEG_REG_ES].selector.value);
 
 pthread_t jmpThread;
 pthread_mutex_t jmpMutex;
 
-#define JMP_CACHE_SIZE 100000
+pthread_t memoryThread;
+pthread_mutex_t memoryMutex;
+
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
 unsigned whatVector[JMP_CACHE_SIZE];
@@ -130,11 +134,6 @@ Bit8u stack[JMP_CACHE_SIZE][STACK_SIZE];
 bx_phy_address stackBase[JMP_CACHE_SIZE];
 
 unsigned int jumpIndex = 0;
-
-
-//int writeToSocket(int sock, const void *data, int size) {
-//	return writeToSocket(sock, (char *) data, size);
-//}
 
 void saveData(bx_phy_address fromPhysicalAddress, bx_phy_address toPhysicalAddress, unsigned what, bx_address segmentBegin, bx_address segmentEnd, Bit32u eax, Bit32u ecx,
 		Bit32u edx, Bit32u ebx, Bit32u esp, Bit32u ebp, Bit32u esi, Bit32u edi, Bit16u es, Bit16u cs, Bit16u ss, Bit16u ds, Bit16u fs, Bit16u gs, Bit8u *stackValue,
@@ -174,14 +173,19 @@ void saveData(bx_phy_address fromPhysicalAddress, bx_phy_address toPhysicalAddre
 	pthread_mutex_unlock(&jmpMutex);
 }
 
+unsigned int convert(unsigned char *inBuffer) {
+	return inBuffer[3] + (inBuffer[2] << 8) + (inBuffer[1] << 16) + (inBuffer[0] << 24);
+}
+
+void safeRead(int socketFD, unsigned char *inBuffer, unsigned int size) {
+	int noOfBytes = 0;
+	while (noOfBytes != size) {
+		noOfBytes += read(socketFD, inBuffer + noOfBytes, size - noOfBytes);
+	}
+}
+
 int writeToSocket(int sock, const void *data, int size) {
 	int byteSent = 0;
-//	for (int x=0;x<10;x++){
-//		fprintf(log, "%d ", x);
-//	}
-//	fprintf(log, "\n");
-//	fflush(log);
-
 	while (byteSent < size) {
 		int b = write(jmpSockfd, (char *) data + byteSent, size - byteSent);
 
@@ -231,30 +235,7 @@ void * jmpTimer(void *arg) {
 			writeToSocket(jmpSockfd, stackBase, physicalAddressSize * jumpIndex);
 
 			writeToSocket(jmpSockfd, "end", 3);
-
-//			char temp[1];
-//			read(jmpSockfd, &temp, 1);
-//
-//			while (temp[0] == 0) {
-//				Bit64u offset;
-//				int noOfByte = read(jmpSockfd, &offset, 8);
-//
-//				//Bit64u value = address+1;
-//				bx_address linear_sp;
-//				linear_sp = BX_CPU(dbg_cpu)->get_reg32(BX_32BIT_REG_ESP);
-//				fprintf(log, "read stack 1 = %lx\n", linear_sp);
-//				linear_sp = BX_CPU(dbg_cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
-//				Bit8u buf[8];
-//
-//				fprintf(log, "read stack 2 = %lx\n", linear_sp);
-//				bx_dbg_read_linear(dbg_cpu, linear_sp + offset, 8, buf);
-//
-//				writeToSocket(jmpSockfd, &buf, 8);
-//
-//				read(jmpSockfd, &temp, 1);
-//			}
-
-		
+			
 			char readBytes[4];
 			read(jmpSockfd, readBytes, 4);
 			if (strncmp(readBytes, "done", 4) != 0) {
@@ -262,32 +243,6 @@ void * jmpTimer(void *arg) {
 				fflush(log);
 				exit(-1);
 			}
-			
-
-			// handle read parameter values
-//			char noOfParameterStr[1];
-//			read(jmpSockfd, noOfParameterStr, 1);
-//			int noOfParameter = noOfParameterStr[0];
-//
-//			Bit32u values[noOfParameter];
-//			for (int x = 0; x < noOfParameter; x++) {
-//				char address[4];
-//				read(jmpSockfd, address, 4);
-//				values[x * 4] = 0x12345678;
-//			}
-//
-//			// end handle read parameter values
-//			writeToSocket(jmpSockfd, esVector, noOfParameter * 4);
-//			writeToSocket(jmpSockfd, "end", 3);
-//
-//			char readBytes[4];
-//			read(jmpSockfd, readBytes, 4);
-//			if (strncmp(readBytes, "done", 4) != 0) {
-//				fprintf(log, "jmp socket read/write error = %s\n", readBytes);
-//				fflush(log);
-//				exit(-1);
-//			}
-
 			jumpIndex = 0;
 		}
 		pthread_mutex_unlock(&jmpMutex);
@@ -298,15 +253,86 @@ void * jmpTimer(void *arg) {
 	return 0;
 }
 
-unsigned int convert(unsigned char *inBuffer) {
-	return inBuffer[3] + (inBuffer[2] << 8) + (inBuffer[1] << 16) + (inBuffer[0] << 24);
-}
+void * memoryTimer(void *arg) {
+	while (1) {
+		sleep(1);
+		
+		pthread_mutex_lock(&memoryMutex);
+		
+		//if (pointer>0) {		
+			//fprintf(log, "send back memory %d records\n", pointer);
+			//fflush(log);
 
-void safeRead(int socketFD, unsigned char *inBuffer, unsigned int size) {
-	int noOfBytes = 0;
-	while (noOfBytes != size) {
-		noOfBytes += read(socketFD, inBuffer + noOfBytes, size - noOfBytes);
+			// send hit count
+			//write(memorySockfd, (char *) memoryRecords, sizeof(memoryRecords));
+			// end send hit count
+
+			// send zones
+			write(memorySockfd, &zonesTail, sizeof(unsigned int));
+			for (int x = 0; x < zonesTail; x++) {
+				write(memorySockfd, &zonesFrom[x], sizeof(unsigned int));
+				write(memorySockfd, &zonesTo[x], sizeof(unsigned int));
+				write(memorySockfd, &zonesHit[x], sizeof(unsigned int));
+
+				unsigned int size;
+				if (zonesHitAddress[x].size() < 10) {
+					size = zonesHitAddress[x].size();
+				} else {
+					size = 10;
+				}
+
+				//noOfZoneHitAddress
+				write(memorySockfd, &size, sizeof(unsigned int));
+				set<unsigned int>::iterator theIterator;
+				int yy;
+				for (yy = 0, theIterator = zonesHitAddress[x].begin(); theIterator != zonesHitAddress[x].end() && yy < size; theIterator++) {
+					write(memorySockfd, &*theIterator, sizeof(unsigned int));
+					yy++;
+				}
+
+				// write zonesHitDetails
+				size=zonesHitDetails[x].size();
+				write(memorySockfd, &size, sizeof(unsigned int));
+				for (int y=0;y<zonesHitDetails[x].size();y++){
+					struct memoryRecord memRecord=zonesHitDetails[x][y];
+					write(memorySockfd, &memRecord, sizeof(struct memoryRecord));
+					//fprintf(log, "+++ %x,%x,%d,%d,%d\n", zonesHitDetails[x][y].lin, zonesHitDetails[x][y].phy, zonesHitDetails[x][y].len, zonesHitDetails[x][y].memType, zonesHitDetails[x][y].rw);
+				}
+				zonesHitDetails[x].clear();
+				// end write zonesHitDetails
+			}
+			// end send zones
+
+			// update zones from GKD
+			unsigned char inBuffer[10000];
+			safeRead(memorySockfd, inBuffer, 1);
+			if (inBuffer[0] == 2) {
+				safeRead(memorySockfd, inBuffer, 4);
+				unsigned int noOfData = convert(inBuffer);
+				int readSize = noOfData * sizeof(unsigned int) * 2;
+
+				safeRead(memorySockfd, inBuffer, readSize);
+
+				int offset = 0;
+				for (int x = 0; x < noOfData; x++) {
+					unsigned int from = convert(&inBuffer[offset]);
+					zonesFrom[x] = from;
+					offset += 4;
+
+					unsigned int to = convert(&inBuffer[offset]);
+					zonesTo[x] = to;
+					offset += 4;
+				}
+				zonesTail = noOfData;
+			}
+			// end update zones from GKD
+
+			pointer = 0;
+		//}
+		pthread_mutex_unlock(&memoryMutex);	
+		//logGKD("b4\n");
 	}
+	return 0;
 }
 
 void initMemorySocket() {
@@ -314,6 +340,7 @@ void initMemorySocket() {
 	memorySockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (memorySockfd < 0) {
 		fprintf(log, "Memory socket server : ERROR opening socket\n");
+		connectedToMemoryServer = false;
 		return;
 	}
 	struct sockaddr_in serv_addr;
@@ -341,6 +368,13 @@ void initMemorySocket() {
 	if (ret == -1) {
 		fprintf(log, "memorySockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
+	
+	pthread_mutex_init(&memoryMutex, NULL);
+	int err = pthread_create(&memoryThread, NULL, memoryTimer, NULL);
+	if (err != 0) {
+		fprintf(log, "pthread_create error\n");
+	}
+	
 	fprintf(log, "initMemorySocket end\n");
 	fflush(log);
 }
@@ -349,6 +383,7 @@ void initJmpSocket() {
 	jmpSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (jmpSockfd < 0) {
 		fprintf(log, "Jmp socket server : ERROR opening socket\n");
+		connectedToJmpServer = false;
 		return;
 	}
 	struct hostent *server;
@@ -365,6 +400,7 @@ void initJmpSocket() {
 	if (connect(jmpSockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		fprintf(log, "Jmp socket server : ERROR connecting\n");
 		connectedToJmpServer = false;
+		return;
 	} else {
 		fprintf(log, "Jmp socket server : connected to server\n");
 		connectedToJmpServer = true;
@@ -399,6 +435,7 @@ void initInterruptSocket() {
 	interruptSockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if (interruptSockfd < 0) {
 		fprintf(log, "Interrupt socket server : ERROR opening socket\n");
+		connectedToInterruptServer = false;
 		return;
 	}
 
@@ -416,6 +453,7 @@ void initInterruptSocket() {
 	if (connect(interruptSockfd, (const sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
 		fprintf(log, "Interrupt socket server : ERROR connecting\n");
 		connectedToInterruptServer = false;
+		return;
 	} else {
 		fprintf(log, "Interrupt socket server : connected to server\n");
 		connectedToInterruptServer = true;
@@ -634,8 +672,8 @@ void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code)
 	 }
 	 */
 
-	bx_address linear_sp = BX_CPU(0)->get_reg32(BX_32BIT_REG_ESP);
-	linear_sp = BX_CPU(0)->get_laddr(BX_SEG_REG_SS, linear_sp);
+	bx_address linear_sp = BX_CPU(cpu)->get_reg32(BX_32BIT_REG_ESP);
+	linear_sp = BX_CPU(cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
 	Bit8u buf[STACK_SIZE];
 	bx_dbg_read_linear(0, linear_sp, STACK_SIZE, buf);
 
@@ -646,12 +684,12 @@ void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code)
 		bx_list_c *dbg_cpu_list = (bx_list_c*) SIM->get_param("cpu0", SIM->get_bochs_root());
 		bx_address cr2 = (bx_address) SIM->get_param_num("CR2", dbg_cpu_list)->get64();
 
-		saveData(vector, error_code, 0xffff, BX_CPU(0)->gen_reg[BX_32BIT_REG_EIP].dword.erx, cr2, BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
-		BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
-		BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
-		BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value,
-		BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value,
-		BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, buf,
+		saveData(vector, error_code, 0xffff, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EIP].dword.erx, cr2, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
+		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
+		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
+		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(cpu)->sregs[BX_SEG_REG_ES].selector.value,
+		BX_CPU(cpu)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(cpu)->sregs[BX_SEG_REG_SS].selector.value,
+		BX_CPU(cpu)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(cpu)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(cpu)->sregs[BX_SEG_REG_GS].selector.value, buf,
 				paddr_valid ? paddr : -1);
 	}
 }
@@ -665,33 +703,9 @@ void bxInstrumentation::bx_instr_hwinterrupt(unsigned vector, Bit16u cs, bx_addr
 }
 
 void bxInstrumentation::bx_instr_lin_access(bx_address lin, bx_phy_address phy, unsigned len, unsigned memtype, unsigned rw) {
-	 if (!active || !ready){
+	if (!active || !ready){
 	 	return;
 	}
-
-	/*if (num_data_accesses >= MAX_DATA_ACCESSES) {
-		return;
-	}*/
-
-	//bx_address lin = BX_CPU(cpu)->get_laddr(seg, offset);
-	/*
-	bx_bool page_valid = BX_CPU(cpu)->dbg_xlate_linear2phy(lin, &phy);
-	phy = A20ADDR(phy);
-
-	// If linear translation doesn't exist, a paging exception will occur.
-	// Invalidate physical address data for now.
-	if (!page_valid){
-		phy = (bx_phy_address) (-1);
-	}
-
-	data_access[num_data_accesses].laddr = lin;
-	data_access[num_data_accesses].paddr = phy;
-	data_access[num_data_accesses].rw = rw;
-	data_access[num_data_accesses].size = len;
-
-	num_data_accesses++;
-	*/
-
 	if (connectedToMemoryServer) {
 		memorySampling(lin, phy, len, memtype, rw);
 	}
@@ -701,19 +715,25 @@ void bxInstrumentation::memorySampling(bx_address lin, bx_phy_address paddr, uns
 	if (!connectedToMemoryServer) {
 		return;
 	}
-
-	memoryRecords[pointer].lin=lin;
+	pthread_mutex_lock(&memoryMutex);
+	
+	/*memoryRecords[pointer].lin=lin;
 	memoryRecords[pointer].phy=paddr;
 	memoryRecords[pointer].len=len;
 	memoryRecords[pointer].memType=memtype;
 	memoryRecords[pointer].rw=rw;
-	pointer++;
+	pointer++;*/
+	
+	//fprintf(log, "pointer = %d", pointer);
+	//fflush(log);
 
 	// check zone hit count
 	for (int x = 0; x < zonesTail; x++) {
 		if (zonesFrom[x] <= paddr && paddr <= zonesTo[x]) {
 			zonesHit[x]++;
-			zonesHitAddress[x].insert(paddr);
+			//fprintf(log, "BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EIP].dword.erx=%x\n", BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EIP].dword.erx);
+			//fflush(log);
+			zonesHitAddress[x].insert(BX_CPU(cpu)->get_eip());
 			struct memoryRecord memRecord;
 			memRecord.lin=lin;
 			memRecord.phy=paddr;
@@ -724,75 +744,13 @@ void bxInstrumentation::memorySampling(bx_address lin, bx_phy_address paddr, uns
 		}
 	}
 	// end check zone hit count
-
-	if (pointer == MAX_NO_OF_MEMORY_RECORD) {
-		// send hit count
-		write(memorySockfd, (char *) memoryRecords, sizeof(memoryRecords));
-		// end send hit count
-
-		// send zones
-		write(memorySockfd, &zonesTail, sizeof(unsigned int));
-		for (int x = 0; x < zonesTail; x++) {
-			write(memorySockfd, &zonesFrom[x], sizeof(unsigned int));
-			write(memorySockfd, &zonesTo[x], sizeof(unsigned int));
-			write(memorySockfd, &zonesHit[x], sizeof(unsigned int));
-
-			unsigned int size;
-			if (zonesHitAddress[x].size() < 10) {
-				size = zonesHitAddress[x].size();
-			} else {
-				size = 10;
-			}
-
-			//noOfZoneHitAddress
-			write(memorySockfd, &size, sizeof(unsigned int));
-
-			set<unsigned int>::iterator theIterator;
-			int yy;
-			for (yy = 0, theIterator = zonesHitAddress[x].begin(); theIterator != zonesHitAddress[x].end() && yy < size; theIterator++) {
-				write(memorySockfd, &*theIterator, sizeof(unsigned int));
-				yy++;
-			}
-
-			// write zonesHitDetails
-			size=zonesHitDetails[x].size();
-			write(memorySockfd, &size, sizeof(unsigned int));
-			for (int y=0;y<zonesHitDetails[x].size();y++){
-				struct memoryRecord memRecord=zonesHitDetails[x][y];
-				write(memorySockfd, &memRecord, sizeof(struct memoryRecord));
-				fprintf(log, "+++ %x,%x,%d,%d,%d\n", zonesHitDetails[x][y].lin, zonesHitDetails[x][y].phy, zonesHitDetails[x][y].len, zonesHitDetails[x][y].memType, zonesHitDetails[x][y].rw);
-			}
-			zonesHitDetails[x].clear();
-			// end write zonesHitDetails
-		}
-		// end send zones
-
-		// update zones from GKD
-		unsigned char inBuffer[10000];
-		safeRead(memorySockfd, inBuffer, 1);
-		if (inBuffer[0] == 2) {
-			safeRead(memorySockfd, inBuffer, 4);
-			unsigned int noOfData = convert(inBuffer);
-			int readSize = noOfData * sizeof(unsigned int) * 2;
-
-			safeRead(memorySockfd, inBuffer, readSize);
-
-			int offset = 0;
-			for (int x = 0; x < noOfData; x++) {
-				unsigned int from = convert(&inBuffer[offset]);
-				zonesFrom[x] = from;
-				offset += 4;
-
-				unsigned int to = convert(&inBuffer[offset]);
-				zonesTo[x] = to;
-				offset += 4;
-			}
-			zonesTail = noOfData;
-		}
-
-		// end update zones from GKD
-
-		pointer = 0;
+	
+	pthread_mutex_unlock(&memoryMutex);
+	
+	while (pointer >= MAX_NO_OF_MEMORY_RECORD) {
+		fprintf(log, "memory buffer overflow, pointer=%d\n", pointer);
+		fflush(log);
+		sleep(1);
 	}
 }
 
@@ -809,20 +767,20 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 			sleep(1);
 		}
 
-		bx_address linear_sp = BX_CPU(0)->get_reg32(BX_32BIT_REG_ESP);
-		linear_sp = BX_CPU(0)->get_laddr(BX_SEG_REG_SS, linear_sp);
+		bx_address linear_sp = BX_CPU(cpu)->get_reg32(BX_32BIT_REG_ESP);
+		linear_sp = BX_CPU(cpu)->get_laddr(BX_SEG_REG_SS, linear_sp);
 		Bit8u buf[STACK_SIZE];
 		bx_dbg_read_linear(0, linear_sp, STACK_SIZE, buf);
 
 		bx_phy_address paddr;
 		bx_bool paddr_valid = BX_CPU(dbg_cpu)->dbg_xlate_linear2phy(linear_sp, &paddr);
 
-		saveData(fromPhysicalAddress, toPhysicalAddress, what, segmentBegin, segmentEnd, BX_CPU(0)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
-		BX_CPU(0)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
-		BX_CPU(0)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
-		BX_CPU(0)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(0)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(0)->sregs[BX_SEG_REG_ES].selector.value,
-		BX_CPU(0)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_SS].selector.value,
-		BX_CPU(0)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(0)->sregs[BX_SEG_REG_GS].selector.value, buf,
+		saveData(fromPhysicalAddress, toPhysicalAddress, what, segmentBegin, segmentEnd, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
+		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
+		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
+		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(cpu)->sregs[BX_SEG_REG_ES].selector.value,
+		BX_CPU(cpu)->sregs[BX_SEG_REG_CS].selector.value, BX_CPU(cpu)->sregs[BX_SEG_REG_SS].selector.value,
+		BX_CPU(cpu)->sregs[BX_SEG_REG_DS].selector.value, BX_CPU(cpu)->sregs[BX_SEG_REG_FS].selector.value, BX_CPU(cpu)->sregs[BX_SEG_REG_GS].selector.value, buf,
 				paddr_valid ? paddr : -1);
 		segmentBegin = new_eip;
 	}
