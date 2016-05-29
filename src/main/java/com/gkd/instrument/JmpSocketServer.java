@@ -337,9 +337,6 @@ public class JmpSocketServer implements Runnable {
 								break;
 							}
 						}
-						if (toAddress[x] == 0x1790e06) {
-							System.out.println("toAddressDescription=" + toAddressDescription);
-						}
 
 						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, toAddressSymbol,
 								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
