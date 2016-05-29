@@ -17,11 +17,12 @@ import com.gkd.Global;
 import com.peterswing.CommonLib;
 
 public class MemorySocketServer implements Runnable {
+
 	int port;
 	JTextArea jTextArea;
 	boolean shouldStop;
 	ServerSocket serverSocket;
-	final int MAX_MEMORY_PROFILING_BUFFER = 500 * 20;
+	final int MAX_MEMORY_PROFILING_BUFFER = 100000 * 20;
 	public static Logger logger = Logger.getLogger(MemorySocketServer.class);
 
 	public void startServer(int port, JTextArea jTextArea) {
@@ -63,32 +64,31 @@ public class MemorySocketServer implements Runnable {
 
 				while (!shouldStop) {
 					// hit count
-					byte bytes[] = new byte[MAX_MEMORY_PROFILING_BUFFER];
-					in.readFully(bytes, 0, bytes.length);
-					for (int z = 0; z <= MAX_MEMORY_PROFILING_BUFFER - 24;) {
-						try {
-							long linearAddress = CommonLib.getInt(bytes, z);
-							z += 4;
-							long physicalAddress = CommonLib.getInt(bytes, z);
-							z += 4;
-							long len = CommonLib.getInt(bytes, z);
-							z += 4;
-							long memType = CommonLib.getInt(bytes, z);
-							z += 4;
-							long rw = CommonLib.getInt(bytes, z);
-							z += 4;
-							long eip = CommonLib.getInt(bytes, z);
-							z += 4;
-
-							//System.out.println(linearAddress + "," + physicalAddress + "," + len + "," + memType + "," + rw);
-
-							Data.increaseMemoryReadCount(physicalAddress);
-						} catch (Exception ex) {
-							if (Global.debug) {
-								ex.printStackTrace();
-							}
-						}
-					}
+//					byte bytes[] = new byte[MAX_MEMORY_PROFILING_BUFFER];
+//					in.readFully(bytes, 0, bytes.length);
+//					for (int z = 0; z <= MAX_MEMORY_PROFILING_BUFFER - 24;) {
+//						try {
+//							long linearAddress = CommonLib.getInt(bytes, z);
+//							z += 4;
+//							long physicalAddress = CommonLib.getInt(bytes, z);
+//							z += 4;
+//							long len = CommonLib.getInt(bytes, z);
+//							z += 4;
+//							long memType = CommonLib.getInt(bytes, z);
+//							z += 4;
+//							long rw = CommonLib.getInt(bytes, z);
+//							z += 4;
+//							long eip = CommonLib.getInt(bytes, z);
+//							z += 4;
+//
+//							//System.out.println(linearAddress + "," + physicalAddress + "," + len + "," + memType + "," + rw);
+//							Data.increaseMemoryReadCount(physicalAddress);
+//						} catch (Exception ex) {
+//							if (Global.debug) {
+//								ex.printStackTrace();
+//							}
+//						}
+//					}
 					// end hit count
 
 					// zones
@@ -118,6 +118,7 @@ public class MemorySocketServer implements Runnable {
 								long from = CommonLib.convertFilesize(Data.memoryProfilingZone.getValueAt(y, 0).toString());
 								long to = CommonLib.convertFilesize(Data.memoryProfilingZone.getValueAt(y, 1).toString());
 								if (zoneFrom == from && zoneTo == to) {
+									//System.out.println(Long.toHexString(zoneFrom) + " > " + Long.toHexString(zoneTo) + " ,, " + treeset.size());
 									Data.memoryProfilingZone.setValueAt(zoneHitCount, y, 2);
 									Data.memoryProfilingZone.setValueAt(treeset, y, 4);
 									break;

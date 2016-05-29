@@ -554,7 +554,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					waitUpdateFinish();
 					runVMButtonActionPerformed(new ActionEvent(this, 0, null));
 				}
-
 			}
 		};
 		progressBarDialog.progressBar.setMinimum(0);
