@@ -24,7 +24,7 @@
 #include <config.h>
 #include <cpu/cpu.h>
 #include <cpu/descriptor.h>
-#include <cpu/instr.h>
+//#include <cpu/instr.h>
 #include <disasm/disasm.h>
 //#include <gui/siminterface.h>
 #include <instrument/gkd/instrument.h>
