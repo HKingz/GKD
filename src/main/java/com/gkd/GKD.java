@@ -568,7 +568,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public static void main(String[] args) {
 		WebServiceUtil.log("gkd", "start", null, null, null);
 		try {
-			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingWhiteLookAndFeel");
+			UIManager.setLookAndFeel("com.peterswing.white.PeterSwingBlackLookAndFeel");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
