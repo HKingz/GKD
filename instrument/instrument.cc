@@ -56,7 +56,7 @@ using namespace std;
 using std::set;
 using std::vector;
 
-#define GKD_INSTRUMENT_VERSION "20150709"
+#define GKD_INSTRUMENT_VERSION "20160620"
 bxInstrumentation *icpu = NULL;
 
 #define MAX_NO_OF_MEMORY_RECORD 100000
