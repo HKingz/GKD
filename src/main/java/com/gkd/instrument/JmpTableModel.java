@@ -59,6 +59,9 @@ public class JmpTableModel extends DefaultTableModel {
 			ht.put("deep", jmpData.deep);
 			return ht;
 		} else if (column == 4) {
+			if (jmpData.exceptionNo == -1) {
+				return null;
+			}
 			switch ((int) jmpData.exceptionNo) {
 				case 0x00:
 					return "#0 Division by zero";
@@ -101,9 +104,12 @@ public class JmpTableModel extends DefaultTableModel {
 				case 0x13:
 					return "#13SIMD Floating-Point Exception";
 				default:
-					return "UNKNOWN : " + jmpData.fromAddress;
+					return "UNKNOWN : " + jmpData.exceptionNo;
 			}
 		} else if (column == 5) {
+			if (jmpData.errorCode == -1) {
+				return null;
+			}
 			return jmpData.errorCode;
 		} else if (column == 6) {
 			return jmpData.getWhatStr();

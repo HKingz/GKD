@@ -72,7 +72,18 @@ public class JmpSocketServer implements Runnable {
 	}
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
-		DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
+//		if (new File(new File(".").getAbsolutePath() + File.separator + "jmpDB.mv.db").exists()) {
+//			int result = JOptionPane.showConfirmDialog(null,
+//					"Clear instrumentation database?",
+//					"Confirm",
+//					JOptionPane.YES_NO_OPTION,
+//					JOptionPane.QUESTION_MESSAGE);
+//			if (result == JOptionPane.YES_OPTION) {
+//				DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
+//			}
+//		}
+//		DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
+
 		HibernateUtil.getSessionFactory();
 
 		this.port = port;
