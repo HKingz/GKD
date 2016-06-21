@@ -45,59 +45,12 @@ public class JmpTableModel extends DefaultTableModel {
 		} else if (column == 1) {
 			return jmpData.date == null ? null : dateFormat.format(jmpData.date);
 		} else if (column == 2) {
-			if (jmpData.what != 0xffff) {
-				Hashtable<String, Object> ht = new Hashtable<String, Object>();
-				ht.put("address", jmpData.fromAddress);
-				ht.put("DW_AT_name", StringUtils.defaultString(jmpData.fromAddress_DW_AT_name));
-				ht.put("addressDescription", StringUtils.defaultString(jmpData.fromAddressDescription));
-				ht.put("deep", jmpData.deep);
-				return ht;
-			} else {
-				switch ((int) jmpData.fromAddress) {
-					case 0x00:
-						return "Division by zero";
-					case 0x01:
-						return "Debugger";
-					case 0x02:
-						return "NMI";
-					case 0x03:
-						return "Breakpoint";
-					case 0x04:
-						return "Overflow";
-					case 0x05:
-						return "Bounds";
-					case 0x06:
-						return "Invalid Opcode";
-					case 0x07:
-						return "Coprocessor not available";
-					case 0x08:
-						return "Double fault";
-					case 0x09:
-						return "Coprocessor Segment Overrun (386 or earlier only)";
-					case 0x0A:
-						return "Invalid Task State Segment";
-					case 0x0B:
-						return "Segment not present";
-					case 0x0C:
-						return "Stack Fault";
-					case 0x0D:
-						return "General protection fault";
-					case 0x0E:
-						return "Page fault";
-					case 0x0F:
-						return "reserved";
-					case 0x10:
-						return "Math Fault";
-					case 0x11:
-						return "Alignment Check";
-					case 0x12:
-						return "Machine Check";
-					case 0x13:
-						return "SIMD Floating-Point Exception";
-					default:
-						return "UNKNOWN : " + jmpData.fromAddress;
-				}
-			}
+			Hashtable<String, Object> ht = new Hashtable<String, Object>();
+			ht.put("address", jmpData.fromAddress);
+			ht.put("DW_AT_name", StringUtils.defaultString(jmpData.fromAddress_DW_AT_name));
+			ht.put("addressDescription", StringUtils.defaultString(jmpData.fromAddressDescription));
+			ht.put("deep", jmpData.deep);
+			return ht;
 		} else if (column == 3) {
 			Hashtable<String, Object> ht = new Hashtable<String, Object>();
 			ht.put("address", jmpData.toAddress);
@@ -106,10 +59,52 @@ public class JmpTableModel extends DefaultTableModel {
 			ht.put("deep", jmpData.deep);
 			return ht;
 		} else if (column == 4) {
-			return jmpData.exceptionNo;
+			switch ((int) jmpData.exceptionNo) {
+				case 0x00:
+					return "#0 Division by zero";
+				case 0x01:
+					return "#1 Debugger";
+				case 0x02:
+					return "#2 NMI";
+				case 0x03:
+					return "#3 Breakpoint";
+				case 0x04:
+					return "#4 Overflow";
+				case 0x05:
+					return "#5 Bounds";
+				case 0x06:
+					return "#6 Invalid Opcode";
+				case 0x07:
+					return "#7 Coprocessor not available";
+				case 0x08:
+					return "#8 Double fault";
+				case 0x09:
+					return "#9 Coprocessor Segment Overrun (386 or earlier only)";
+				case 0x0A:
+					return "#A Invalid Task State Segment";
+				case 0x0B:
+					return "#B Segment not present";
+				case 0x0C:
+					return "#C Stack Fault";
+				case 0x0D:
+					return "#D General protection fault";
+				case 0x0E:
+					return "#E Page fault";
+				case 0x0F:
+					return "#F reserved";
+				case 0x10:
+					return "#10 Math Fault";
+				case 0x11:
+					return "#11 Alignment Check";
+				case 0x12:
+					return "#12 Machine Check";
+				case 0x13:
+					return "#13SIMD Floating-Point Exception";
+				default:
+					return "UNKNOWN : " + jmpData.fromAddress;
+			}
 		} else if (column == 5) {
 			return jmpData.errorCode;
-
 		} else if (column == 6) {
 			return jmpData.getWhatStr();
 		} else if (column == 7) {
