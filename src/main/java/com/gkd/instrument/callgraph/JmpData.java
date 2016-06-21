@@ -25,6 +25,10 @@ public class JmpData {
 
 	public int lineNo;
 	public Date date;
+
+	public int exceptionNo;
+	public int errorCode;
+
 	public long fromAddress;
 	@Column(length = 2048)
 	public String fromAddressDescription;
@@ -72,11 +76,13 @@ public class JmpData {
 	public JmpData() {
 	}
 
-	public JmpData(int lineNo, Date date, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, String toAddressSymbol, int what,
+	public JmpData(int lineNo, Date date, int exceptionNo, int errorCode, long fromAddress, String fromAddressDescription, long toAddress, String toAddressDescription, String toAddressSymbol, int what,
 			long segmentStart, long segmentEnd, long eax, long ecx, long edx, long ebx, long esp, long ebp, long esi, long edi, long es, long cs, long ss, long ds, long fs,
 			long gs, int deep, String fromAddress_DW_AT_name, String toAddress_DW_AT_name, boolean showForDifferentDeep, byte[] stack, long stackBase) {
 		this.lineNo = lineNo;
 		this.date = date;
+		this.exceptionNo = exceptionNo;
+		this.errorCode = errorCode;
 		this.fromAddress = fromAddress;
 		this.fromAddressDescription = fromAddressDescription;
 		this.toAddressSymbol = toAddressSymbol;

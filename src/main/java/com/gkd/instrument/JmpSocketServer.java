@@ -34,7 +34,6 @@ import com.gkd.instrument.callgraph.JmpData;
 import com.gkd.instrument.callgraph.Parameter;
 import com.gkd.sourceleveldebugger.CodeBaseData;
 import com.gkd.sourceleveldebugger.SourceLevelDebugger;
-import com.gkd.sourceleveldebugger.SymbolTableModel;
 import com.peterdwarf.dwarf.CompileUnit;
 import com.peterdwarf.dwarf.DebugInfoEntry;
 import com.peterdwarf.dwarf.Dwarf;
@@ -119,7 +118,7 @@ public class JmpSocketServer implements Runnable {
 			int segmentRegisterSize = in.read();
 
 			int lineNo = 1;
-			int rowSize = physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6 + STACK_SIZE + physicalAddressSize;
+			int rowSize = 8 + physicalAddressSize * 2 + whatSize + segmentAddressSize * 2 + registerSize * 8 + segmentRegisterSize * 6 + STACK_SIZE + physicalAddressSize;
 
 			int deep = 0;
 			logger.debug("client connected, port=" + clientSocket.getPort());
@@ -139,6 +138,9 @@ public class JmpSocketServer implements Runnable {
 				in.readFully(tempBytes);
 				noOfJmpRecordToFlush = ByteBuffer.wrap(tempBytes).order(ByteOrder.LITTLE_ENDIAN).getInt();
 				//logger.debug("jmp server incoming record = " + noOfJmpRecordToFlush);
+
+				int exceptionNo[] = new int[noOfJmpRecordToFlush];
+				int errorCode[] = new int[noOfJmpRecordToFlush];
 
 				long fromAddress[] = new long[noOfJmpRecordToFlush];
 				long toAddress[] = new long[noOfJmpRecordToFlush];
@@ -183,6 +185,10 @@ public class JmpSocketServer implements Runnable {
 				logger.info("read socket end");
 
 				int offset = 0;
+
+				offset += getValuesFromByteArray(exceptionNo, bytes, offset, 4);
+				offset += getValuesFromByteArray(errorCode, bytes, offset, 4);
+
 				offset += getValuesFromByteArray(fromAddress, bytes, offset, physicalAddressSize);
 				offset += getValuesFromByteArray(toAddress, bytes, offset, physicalAddressSize);
 
@@ -338,7 +344,7 @@ public class JmpSocketServer implements Runnable {
 							}
 						}
 
-						JmpData jmpData = new JmpData(lineNo, new Date(), fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, toAddressSymbol,
+						JmpData jmpData = new JmpData(lineNo, new Date(), exceptionNo[x], errorCode[x], fromAddress[x], fromAddressDescription, toAddress[x], toAddressDescription, toAddressSymbol,
 								(int) what[x], segmentStart[x], segmentEnd[x], eax[x], ecx[x], edx[x], ebx[x], esp[x], ebp[x], esi[x], edi[x], es[x], cs[x], ss[x], ds[x], fs[x],
 								gs[x], deeps[x], fromAddress_DW_AT_name, toAddress_DW_AT_name, showForDifferentDeeps[x], stack[x], stackBase[x]);
 
@@ -457,6 +463,25 @@ public class JmpSocketServer implements Runnable {
 				return o1.PC.compareTo(o2.PC);
 			}
 		});
+	}
+
+	int getValuesFromByteArray(byte dest[], byte src[], int offset) throws IOException {
+		int totalByteRead = 0;
+		for (int x = 0; x < dest.length; x++) {
+			totalByteRead += 1;
+			dest[x] = dest[x];
+		}
+		return totalByteRead;
+	}
+
+	int getValuesFromByteArray(int dest[], byte src[], int offset, int size) throws IOException {
+		int totalByteRead = 0;
+		for (int x = 0; x < dest.length; x++) {
+			int value = (int) read(src, offset + (x * size), size);
+			totalByteRead += size;
+			dest[x] = value;
+		}
+		return totalByteRead;
 	}
 
 	int getValuesFromByteArray(long dest[], byte src[], int offset, int size) throws IOException {

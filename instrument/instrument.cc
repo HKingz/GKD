@@ -107,6 +107,10 @@ pthread_mutex_t jmpMutex;
 pthread_t memoryThread;
 pthread_mutex_t memoryMutex;
 
+
+int exceptionNoVector[JMP_CACHE_SIZE];
+int errorCodeVector[JMP_CACHE_SIZE];
+
 bx_phy_address fromAddressVector[JMP_CACHE_SIZE];
 bx_phy_address toAddressVector[JMP_CACHE_SIZE];
 unsigned whatVector[JMP_CACHE_SIZE];
@@ -135,10 +139,14 @@ bx_phy_address stackBase[JMP_CACHE_SIZE];
 
 unsigned int jumpIndex = 0;
 
-void saveData(bx_phy_address fromPhysicalAddress, bx_phy_address toPhysicalAddress, unsigned what, bx_address segmentBegin, bx_address segmentEnd, Bit32u eax, Bit32u ecx,
+void saveData(int exceptionNo, int error_code, bx_phy_address fromPhysicalAddress, bx_phy_address toPhysicalAddress, unsigned what, bx_address segmentBegin, bx_address segmentEnd, Bit32u eax, Bit32u ecx,
 		Bit32u edx, Bit32u ebx, Bit32u esp, Bit32u ebp, Bit32u esi, Bit32u edi, Bit16u es, Bit16u cs, Bit16u ss, Bit16u ds, Bit16u fs, Bit16u gs, Bit8u *stackValue,
 		bx_phy_address stackBaseValue) {
 	pthread_mutex_lock(&jmpMutex);
+	
+	
+	exceptionNoVector[jumpIndex] = exceptionNo;
+	errorCodeVector[jumpIndex] = error_code;
 	
 	fromAddressVector[jumpIndex] = fromPhysicalAddress;
 	toAddressVector[jumpIndex] = toPhysicalAddress;
@@ -206,6 +214,9 @@ void * jmpTimer(void *arg) {
 			
 			writeToSocket(jmpSockfd, "start", 5);
 			writeToSocket(jmpSockfd, &jumpIndex, 4);
+			
+			writeToSocket(jmpSockfd, exceptionNoVector, 4 * jumpIndex);
+			writeToSocket(jmpSockfd, errorCodeVector, 4 * jumpIndex);
 
 			writeToSocket(jmpSockfd, fromAddressVector, physicalAddressSize * jumpIndex);
 			writeToSocket(jmpSockfd, toAddressVector, physicalAddressSize * jumpIndex);
@@ -684,7 +695,7 @@ void bxInstrumentation::bx_instr_exception(unsigned vector, unsigned error_code)
 		bx_list_c *dbg_cpu_list = (bx_list_c*) SIM->get_param("cpu0", SIM->get_bochs_root());
 		bx_address cr2 = (bx_address) SIM->get_param_num("CR2", dbg_cpu_list)->get64();
 
-		saveData(vector, error_code, 0xffff, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EIP].dword.erx, cr2, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
+		saveData(vector, error_code, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EIP].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EIP].dword.erx, -1, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EIP].dword.erx, cr2, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
 		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
 		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
 		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(cpu)->sregs[BX_SEG_REG_ES].selector.value,
@@ -775,7 +786,7 @@ void bxInstrumentation::jmpSampling(unsigned what, bx_address branch_eip, bx_add
 		bx_phy_address paddr;
 		bx_bool paddr_valid = BX_CPU(dbg_cpu)->dbg_xlate_linear2phy(linear_sp, &paddr);
 
-		saveData(fromPhysicalAddress, toPhysicalAddress, what, segmentBegin, segmentEnd, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
+		saveData(-1,-1, fromPhysicalAddress, toPhysicalAddress, what, segmentBegin, segmentEnd, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EAX].dword.erx,
 		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ECX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDX].dword.erx,
 		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBX].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESP].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EBP].dword.erx,
 		BX_CPU(cpu)->gen_reg[BX_32BIT_REG_ESI].dword.erx, BX_CPU(cpu)->gen_reg[BX_32BIT_REG_EDI].dword.erx, BX_CPU(cpu)->sregs[BX_SEG_REG_ES].selector.value,

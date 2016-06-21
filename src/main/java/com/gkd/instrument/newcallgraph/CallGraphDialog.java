@@ -17,6 +17,7 @@ import com.gkd.Setting;
 import com.gkd.instrument.callgraph.JmpData;
 
 public class CallGraphDialog extends JDialog {
+
 	private final JPanel contentPanel = new JPanel();
 	int noOfInstruction;
 	Vector<JmpData> jmpData;
@@ -28,8 +29,8 @@ public class CallGraphDialog extends JDialog {
 			e.printStackTrace();
 		}
 		Vector<JmpData> jmpData = new Vector<JmpData>();
-		jmpData.add(new JmpData(0, new Date(), 1, "1", 5, null, "4", 10, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true, null, 1));
-		jmpData.add(new JmpData(1, new Date(), 4, "4", 15, null, "15", 12, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true, null, 2));
+		jmpData.add(new JmpData(0, new Date(), (byte) -1, (byte) -1, 1, "1", 5, null, "4", 10, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true, null, 1));
+		jmpData.add(new JmpData(1, new Date(), (byte) -1, (byte) -1, 4, "4", 15, null, "15", 12, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 0, null, null, true, null, 2));
 
 		CallGraphDialog dialog = new CallGraphDialog(null, jmpData, 0);
 		dialog.setVisible(true);
