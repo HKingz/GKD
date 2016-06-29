@@ -495,7 +495,6 @@ void bx_instr_initialize(unsigned cpu) {
 
 	// GKD
 	log = fopen("gkd.log", "a+");
-
 	fprintf(stderr, "GKD instrument %s\n", GKD_INSTRUMENT_VERSION);
 
 
