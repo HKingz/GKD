@@ -7337,7 +7337,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JCheckBox getAutoUpdateEvery20LinesCheckBox() {
 		if (autoUpdateEvery20LinesCheckBox == null) {
 			autoUpdateEvery20LinesCheckBox = new JCheckBox();
-			autoUpdateEvery20LinesCheckBox.setSelected(true);
 			autoUpdateEvery20LinesCheckBox.setText("Update the following instruction box every 20 lines, this make bochs runs faster");
 		}
 		return autoUpdateEvery20LinesCheckBox;
