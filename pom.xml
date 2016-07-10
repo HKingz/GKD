@@ -138,11 +138,6 @@
 			<version>1.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.peter</groupId>
-			<artifactId>peter-ar</artifactId>
-			<version>20150709</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>
@@ -220,7 +215,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-dwarf</artifactId>
-			<version>20160529</version>
+			<version>20160709</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
