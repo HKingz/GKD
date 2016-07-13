@@ -7,7 +7,11 @@ tired with command line
 i need a way to profiling part of my kernel, some bugs are really hard to trace without this feature
 source level debug support
 
-# Documents:
+# Blog
+
+http://peter.kingofcoders.com/?page_id=120
+
+# Documents
 
 https://github.com/mcheung63/GKD/wiki
 
