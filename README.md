@@ -1,10 +1,10 @@
 # GKD
 
-I created Peter-bochs debugger for os dev. I renamed it to GKD because peter-bochs only supports bochs but GKD support qemu too. The reasons I created it are:
+It is a kernel debugger for os dev. It was called peter-bochs and I renamed it to GKD because peter-bochs only supports bochs but GKD support qemu too. The reasons I created it are:
 
-bochs internal debugger is hard to dump out some x86 data structure, i need a faster way to do it.
+1. bochs internal debugger is hard to dump out some x86 data structure, i need a faster way to do it.
 tired with command line
-i need a way to profiling part of my kernel, some bugs are really hard to trace without this feature
+2. i need a way to profiling part of my kernel, some bugs are really hard to trace without this feature
 source level debug support
 
 # Blog
