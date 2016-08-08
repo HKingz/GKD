@@ -84,6 +84,7 @@ import com.peterswing.advancedswing.onoffbutton.OnOffButton;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implements JProgressBarDialogEventListener {
+
 	private JSplitPane mainSplitPane;
 	private JPanel panel1;
 	private JPanel panel6;
@@ -443,7 +444,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 			}
 		} catch (Exception e) {
 		}
-		*/
+		 */
 	}
 
 	private void instructionComboBoxActionPerformed(ActionEvent evt) {
@@ -554,7 +555,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		}
 
 		gkd.enableAllButtons(false, false);
-		peterDwarfPanel.init(elfFile, memoryOffset, true, frame,  Global.showDebugLoc, Global.showDebugInfoEntriesInCompileUnit);
+		peterDwarfPanel.init(elfFile, memoryOffset, true, frame, Global.showDebugLoc, Global.showDebugInfoEntriesInCompileUnit);
 		gkd.disasmHereMenuItem.setEnabled(true);
 		gkd.clearInstructionTableMenuItem.setEnabled(true);
 		//gkd.sourceLevelDebuggerToggleButtonActionPerformed(null);
@@ -582,7 +583,7 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 		for (Dwarf dwarf : peterDwarfPanel.dwarfs) {
 			for (CompileUnit cu : dwarf.compileUnits) {
 				for (DwarfHeaderFilename filename : cu.dwarfDebugLineHeader.filenames) {
-					if (!filterDuplicate.contains(filename.file.getName())) {
+					if (filename != null && !filterDuplicate.contains(filename.file.getName())) {
 						allSourceFiles.add(filename.file);
 						filterDuplicate.add(filename.file.getName());
 					}
@@ -1035,7 +1036,6 @@ public class SourceLevelDebugger extends JMaximizableTabbedPane_BasePanel implem
 
 			// Ports are not used as terminals for edges, they are
 			// only used to compute the graphical connection point
-
 			public boolean isPort(Object cell) {
 				mxGeometry geo = getCellGeometry(cell);
 
