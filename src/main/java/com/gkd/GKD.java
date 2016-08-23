@@ -588,7 +588,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		if (cmd.hasOption("version") || cmd.hasOption("v")) {
-			logger.debug("version : " + PropertyUtil.getProperty("version"));
+			System.out.println("version : " + com.peterswing.PropertyUtil.getProperty("version"));
+			System.out.println("");
 			HelpFormatter formatter = new HelpFormatter();
 			formatter.printHelp("java -jar GDK.jar [OPTION]", options);
 			System.exit(1);
