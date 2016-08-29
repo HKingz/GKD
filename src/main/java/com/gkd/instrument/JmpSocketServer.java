@@ -43,6 +43,7 @@ import com.peterdwarf.dwarf.DwarfLine;
 import com.peterdwarf.dwarf.DwarfParameter;
 import com.peterdwarf.elf.Elf32_Sym;
 import com.peterswing.CommonLib;
+import java.util.logging.Level;
 
 public class JmpSocketServer implements Runnable {
 
@@ -73,6 +74,18 @@ public class JmpSocketServer implements Runnable {
 
 	public void startServer(int port, JmpTableModel jmpTableModel) {
 		if (new File(new File(".").getAbsolutePath() + File.separator + "jmpDB.mv.db").exists()) {
+			Thread t = new Thread() {
+				public void run() {
+					try {
+						Thread.sleep(2000);
+						JOptionPane.getRootFrame().dispose();
+						DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
+					} catch (InterruptedException ex) {
+						java.util.logging.Logger.getLogger(JmpSocketServer.class.getName()).log(Level.SEVERE, null, ex);
+					}
+				}
+			};
+			t.start();
 			int result = JOptionPane.showConfirmDialog(null,
 					"Clear instrumentation database?",
 					"Confirm",
