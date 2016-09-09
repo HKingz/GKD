@@ -18,15 +18,21 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
+import javax.swing.table.DefaultTableModel;
 
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 import info.clearthought.layout.TableLayout;
+import net.miginfocom.swing.MigLayout;
+import javax.swing.ListSelectionModel;
 
 public class SettingDialog extends JDialog {
 	private JCheckBox checkBox1;
@@ -73,6 +79,20 @@ public class SettingDialog extends JDialog {
 	private JCheckBox gkdMemoryCheckBox;
 	private JCheckBox gkdRegisterCheckBox;
 	private JPanel jPanel1;
+	private JPanel customPanel;
+	private JScrollPane scrollPane;
+	private JTable customPanelTable;
+	private JPanel panel_1;
+	private JButton btnNewButton;
+	private JButton btnNewButton_1;
+	private JPanel panel_2;
+	private JLabel label;
+	private JLabel lblBlockSizecomma;
+	private JTextField blockSizeTextField;
+	private JCheckBox updateAfterPauseCheckBox;
+	private JCheckBox independentPanelCheckBox;
+	private JTextField nameTextField;
+	DefaultTableModel customPanelTableModel = new DefaultTableModel(new String[] { "Name", "Block definition", "Update after pause", "Independent panel" }, 0);
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -388,29 +408,27 @@ public class SettingDialog extends JDialog {
 							.addGroup(GroupLayout.Alignment.LEADING,
 									jProfilingPanelLayout.createSequentialGroup().addComponent(jUpdateGraphCheckBox, GroupLayout.PREFERRED_SIZE, 143, GroupLayout.PREFERRED_SIZE)
 											.addGap(0, 268, Short.MAX_VALUE))
-					.addGroup(GroupLayout.Alignment.LEADING,
-							jProfilingPanelLayout.createSequentialGroup().addComponent(jJmpProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE).addGap(0,
-									251, Short.MAX_VALUE))
-					.addGroup(GroupLayout.Alignment.LEADING,
-							jProfilingPanelLayout.createSequentialGroup().addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 212, GroupLayout.PREFERRED_SIZE)
-									.addGap(0, 199, Short.MAX_VALUE))
+							.addGroup(GroupLayout.Alignment.LEADING,
+									jProfilingPanelLayout.createSequentialGroup().addComponent(jJmpProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 160, GroupLayout.PREFERRED_SIZE)
+											.addGap(0, 251, Short.MAX_VALUE))
+							.addGroup(GroupLayout.Alignment.LEADING,
+									jProfilingPanelLayout.createSequentialGroup()
+											.addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, 212, GroupLayout.PREFERRED_SIZE).addGap(0, 199, Short.MAX_VALUE))
 							.addComponent(jLabel1, GroupLayout.Alignment.LEADING, 0, 411, Short.MAX_VALUE)
 							.addComponent(jProfileInfoLabel, GroupLayout.Alignment.LEADING, 0, 411, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
 									jProfilingPanelLayout.createSequentialGroup().addGap(19)
-											.addComponent(jHitZoneCheckBox, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(jHitZoneCheckBox, GroupLayout.PREFERRED_SIZE, 92, GroupLayout.PREFERRED_SIZE).addPreferredGap(
+													LayoutStyle.ComponentPlacement.RELATED)
 											.addComponent(jCustomZoneCheckBox, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE).addGap(0, 167, Short.MAX_VALUE)))
 					.addContainerGap());
-			jProfilingPanelLayout
-					.setVerticalGroup(jProfilingPanelLayout.createSequentialGroup().addContainerGap()
-							.addComponent(jProfileInfoLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(24)
-							.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-							.addGroup(jProfilingPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(jHitZoneCheckBox, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE)
+			jProfilingPanelLayout.setVerticalGroup(jProfilingPanelLayout.createSequentialGroup().addContainerGap()
+					.addComponent(jProfileInfoLabel, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE).addGap(24)
+					.addComponent(jLabel1, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addComponent(jMemoryProfilingCheckBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+					.addGroup(jProfilingPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(jHitZoneCheckBox, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
 							.addComponent(jCustomZoneCheckBox, GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 					.addComponent(jJmpProfilingCheckBox, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
@@ -484,7 +502,57 @@ public class SettingDialog extends JDialog {
 			jProfileInfoLabel.setText("Memory profile port : " + Global.profilingMemoryPort + " , jmp profile port : " + Global.profilingJmpPort + " , interrupt profile port : "
 					+ Global.profilingInterruptPort);
 
-			setSize(450, 350);
+			customPanel = new JPanel();
+			jTabbedPane1.addTab("Custom panel", null, customPanel, null);
+			customPanel.setLayout(new BorderLayout(0, 0));
+
+			scrollPane = new JScrollPane();
+			customPanel.add(scrollPane, BorderLayout.CENTER);
+
+			customPanelTable = new JTable(customPanelTableModel);
+			customPanelTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			scrollPane.setViewportView(customPanelTable);
+
+			panel_1 = new JPanel();
+			customPanel.add(panel_1, BorderLayout.SOUTH);
+			panel_1.setLayout(new BorderLayout(0, 0));
+
+			panel_2 = new JPanel();
+			panel_1.add(panel_2, BorderLayout.CENTER);
+			panel_2.setLayout(new MigLayout("", "[][grow][grow]", "[][][][][]"));
+
+			label = new JLabel("Name");
+			panel_2.add(label, "cell 0 0");
+
+			nameTextField = new JTextField();
+			panel_2.add(nameTextField, "cell 1 0 2 1,growx");
+
+			lblBlockSizecomma = new JLabel("Block definition");
+			panel_2.add(lblBlockSizecomma, "cell 0 1");
+
+			blockSizeTextField = new JTextField();
+			panel_2.add(blockSizeTextField, "cell 1 1 2 1,growx");
+
+			updateAfterPauseCheckBox = new JCheckBox("Update after pause");
+			updateAfterPauseCheckBox.setSelected(true);
+			panel_2.add(updateAfterPauseCheckBox, "cell 0 2 2 1");
+
+			independentPanelCheckBox = new JCheckBox("Independent panel");
+			panel_2.add(independentPanelCheckBox, "cell 0 3 2 1");
+
+			btnNewButton = new JButton("Add");
+			btnNewButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					customPanelTableModel.addRow(
+							new Object[] { nameTextField.getText(), blockSizeTextField.getText(), updateAfterPauseCheckBox.isSelected(), independentPanelCheckBox.isSelected() });
+				}
+			});
+			panel_2.add(btnNewButton, "flowx,cell 0 4,growx");
+
+			btnNewButton_1 = new JButton("Delete");
+			panel_2.add(btnNewButton_1, "cell 0 4,growx");
+
+			setSize(595, 467);
 			initValue();
 		} catch (Exception e) {
 			e.printStackTrace();
