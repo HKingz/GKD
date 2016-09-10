@@ -35,6 +35,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1149,6 +1150,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					return discardEvent;
 				}
 			});
+
+			// load customPanel
+			for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
+				//				customPanelTableModel.addRow(new Object[] { customPanelData.name, customPanelData.physicalAddress, String.join(",", customPanelData.columnNames),
+				//						String.join(",", Arrays.toString(customPanelData.definitions)).replaceAll("\\[|\\]|,|\\s", ""), customPanelData.updateAfterPause,
+				//						customPanelData.independentPane });
+				bottomTabbedPane.addTab(customPanelData.name, new JButton(customPanelData.name));
+			}
+			// end load customPanel
 			logger.info("started GKD " + simpleDateFormat.format(new Date()));
 			logger.info("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");
 		} catch (Exception e) {
@@ -7218,55 +7228,43 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			GroupLayout jRunningPanelLayout = new GroupLayout((JComponent) runningPanel);
 			runningPanel.setLayout(jRunningPanelLayout);
 			runningPanel.setPreferredSize(new java.awt.Dimension(1073, 758));
-			jRunningPanelLayout
-					.setHorizontalGroup(
-							jRunningPanelLayout.createSequentialGroup().addContainerGap()
-									.addGroup(
-											jRunningPanelLayout.createParallelGroup()
+			jRunningPanelLayout.setHorizontalGroup(jRunningPanelLayout.createSequentialGroup().addContainerGap()
+					.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING, jRunningPanelLayout.createSequentialGroup()
+							.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+							.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
+							.addComponent(getRunningTextArea(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
+									jRunningPanelLayout.createSequentialGroup().addGap(65)
+											.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE).addPreferredGap(
+													LayoutStyle.ComponentPlacement.RELATED)
+											.addGroup(jRunningPanelLayout.createParallelGroup()
+													.addGroup(GroupLayout.Alignment.LEADING,
+															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
+																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+																	.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
 													.addGroup(GroupLayout.Alignment.LEADING,
 															jRunningPanelLayout.createSequentialGroup()
-																	.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-																	.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-																			GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
-													.addComponent(getRunningTextArea(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE)
-													.addGroup(GroupLayout.Alignment.LEADING, jRunningPanelLayout.createSequentialGroup().addGap(65)
-															.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE).addPreferredGap(
-																	LayoutStyle.ComponentPlacement.RELATED)
-															.addGroup(jRunningPanelLayout.createParallelGroup()
-																	.addGroup(GroupLayout.Alignment.LEADING, jRunningPanelLayout.createSequentialGroup()
-																			.addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-																			.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getSaveToRunDotTxtCheckBox(),
-																					GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
-																	.addGroup(GroupLayout.Alignment.LEADING,
-																			jRunningPanelLayout.createSequentialGroup()
-																					.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(),
-																							LayoutStyle.ComponentPlacement.INDENT)
-																					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-																					.addGap(0, 25, Short.MAX_VALUE))))));
-			jRunningPanelLayout
-					.setVerticalGroup(jRunningPanelLayout.createSequentialGroup().addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE)
-									.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
-									.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-									.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-									.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-											GroupLayout.PREFERRED_SIZE)
-									.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getRunningTextArea(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
+																	.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(), LayoutStyle.ComponentPlacement.INDENT)
+																	.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+																	.addGap(0, 25, Short.MAX_VALUE))))));
+			jRunningPanelLayout.setVerticalGroup(jRunningPanelLayout.createSequentialGroup()
+					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
+							.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
+									GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getRunningTextArea(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
 		}
 		return runningPanel;
 	}

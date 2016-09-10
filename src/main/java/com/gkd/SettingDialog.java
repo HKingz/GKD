@@ -8,6 +8,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Vector;
 
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -23,16 +25,17 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
+import com.peterswing.CommonLib;
 import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 import info.clearthought.layout.TableLayout;
 import net.miginfocom.swing.MigLayout;
-import javax.swing.ListSelectionModel;
 
 public class SettingDialog extends JDialog {
 	private JCheckBox checkBox1;
@@ -92,9 +95,12 @@ public class SettingDialog extends JDialog {
 	private JCheckBox updateAfterPauseCheckBox;
 	private JCheckBox independentPanelCheckBox;
 	private JTextField nameTextField;
-	DefaultTableModel customPanelTableModel = new DefaultTableModel(new String[] { "Name", "Column names", "Block definition", "Update after pause", "Independent panel" }, 0);
+	DefaultTableModel customPanelTableModel = new DefaultTableModel(
+			new String[] { "Name", "Physical address", "Column names", "Block definition", "Update after pause", "Independent panel" }, 0);
 	private JLabel lblColumnNames;
 	private JTextField columnNamesTextField;
+	private JLabel lblPhysicalAddress;
+	private JTextField physicalAddressTextField;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -515,13 +521,19 @@ public class SettingDialog extends JDialog {
 			customPanelTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			scrollPane.setViewportView(customPanelTable);
 
+			for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
+				customPanelTableModel.addRow(new Object[] { customPanelData.name, "0x" + customPanelData.physicalAddress.toString(16),
+						String.join(",", customPanelData.columnNames), String.join(",", Arrays.toString(customPanelData.definitions)).replaceAll("\\[|\\]|,|\\s", ""),
+						customPanelData.updateAfterPause, customPanelData.independentPane });
+			}
+
 			panel_1 = new JPanel();
 			customPanel.add(panel_1, BorderLayout.SOUTH);
 			panel_1.setLayout(new BorderLayout(0, 0));
 
 			panel_2 = new JPanel();
 			panel_1.add(panel_2, BorderLayout.CENTER);
-			panel_2.setLayout(new MigLayout("", "[][grow]", "[][][][][][]"));
+			panel_2.setLayout(new MigLayout("", "[][grow]", "[][][][][][][]"));
 
 			label = new JLabel("Name");
 			panel_2.add(label, "cell 0 0,alignx right");
@@ -529,33 +541,39 @@ public class SettingDialog extends JDialog {
 			nameTextField = new JTextField();
 			panel_2.add(nameTextField, "cell 1 0,growx");
 
+			lblPhysicalAddress = new JLabel("Physical address");
+			panel_2.add(lblPhysicalAddress, "cell 0 1,alignx trailing");
+
+			physicalAddressTextField = new JTextField();
+			panel_2.add(physicalAddressTextField, "cell 1 1,growx");
+
 			lblColumnNames = new JLabel("Column names");
-			panel_2.add(lblColumnNames, "cell 0 1,alignx trailing");
+			panel_2.add(lblColumnNames, "cell 0 2,alignx trailing");
 
 			columnNamesTextField = new JTextField();
-			panel_2.add(columnNamesTextField, "cell 1 1,growx");
+			panel_2.add(columnNamesTextField, "cell 1 2,growx");
 
 			lblBlockSizecomma = new JLabel("Block definitions");
-			panel_2.add(lblBlockSizecomma, "cell 0 2,alignx right");
+			panel_2.add(lblBlockSizecomma, "cell 0 3,alignx right");
 
 			blockDefinitionsTextField = new JTextField();
-			panel_2.add(blockDefinitionsTextField, "cell 1 2,growx");
+			panel_2.add(blockDefinitionsTextField, "cell 1 3,growx");
 
 			updateAfterPauseCheckBox = new JCheckBox("Update after pause");
 			updateAfterPauseCheckBox.setSelected(true);
-			panel_2.add(updateAfterPauseCheckBox, "cell 1 3");
+			panel_2.add(updateAfterPauseCheckBox, "cell 1 4");
 
 			independentPanelCheckBox = new JCheckBox("Independent panel");
-			panel_2.add(independentPanelCheckBox, "cell 1 4");
+			panel_2.add(independentPanelCheckBox, "cell 1 5");
 
 			btnNewButton = new JButton("Add");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					customPanelTableModel.addRow(new Object[] { nameTextField.getText(), columnNamesTextField.getText(), blockDefinitionsTextField.getText(),
-							updateAfterPauseCheckBox.isSelected(), independentPanelCheckBox.isSelected() });
+					customPanelTableModel.addRow(new Object[] { nameTextField.getText(), physicalAddressTextField.getText(), columnNamesTextField.getText(),
+							blockDefinitionsTextField.getText(), updateAfterPauseCheckBox.isSelected(), independentPanelCheckBox.isSelected() });
 				}
 			});
-			panel_2.add(btnNewButton, "flowx,cell 1 5");
+			panel_2.add(btnNewButton, "flowx,cell 1 6");
 
 			btnNewButton_1 = new JButton("Delete");
 			btnNewButton_1.addActionListener(new ActionListener() {
@@ -563,7 +581,7 @@ public class SettingDialog extends JDialog {
 					customPanelTableModel.removeRow(customPanelTable.getSelectedRow());
 				}
 			});
-			panel_2.add(btnNewButton_1, "cell 1 5");
+			panel_2.add(btnNewButton_1, "cell 1 6");
 
 			setSize(595, 467);
 			initValue();
@@ -619,12 +637,24 @@ public class SettingDialog extends JDialog {
 	}
 
 	private void thisWindowClosing(WindowEvent evt) {
+		if (Setting.getInstance().customPanelData == null) {
+			Setting.getInstance().customPanelData = new Vector<CustomPanelData>();
+		} else {
+			Setting.getInstance().customPanelData.clear();
+		}
 		for (int x = 0; x < customPanelTable.getRowCount(); x++) {
-			CustomPanelData customPanelData = new CustomPanelData();
-			customPanelData.name = nameTextField.getText();
-			customPanelData.columnNames = columnNamesTextField.getText().split(",");
-			fuck
-			Setting.getInstance().customPanelData.add(customPanelData);
+			try {
+				CustomPanelData customPanelData = new CustomPanelData();
+				customPanelData.name = (String) customPanelTable.getValueAt(x, 0);
+				customPanelData.physicalAddress = CommonLib.string2BigInteger((String) customPanelTable.getValueAt(x, 1));
+				customPanelData.columnNames = ((String) customPanelTable.getValueAt(x, 2)).split(",");
+				customPanelData.definitions = Arrays.asList(((String) customPanelTable.getValueAt(x, 3)).split(",")).stream().mapToInt(Integer::parseInt).toArray();
+				customPanelData.updateAfterPause = (Boolean) customPanelTable.getValueAt(x, 4);
+				customPanelData.independentPane = (Boolean) customPanelTable.getValueAt(x, 5);
+				Setting.getInstance().customPanelData.add(customPanelData);
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 		}
 		Setting.getInstance().save();
 	}

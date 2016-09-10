@@ -90,7 +90,7 @@ public class Setting {
 	private String lastMapOpenDir = new File(".").getAbsolutePath();
 	private String lastLoadElfOpenDir = new File(".").getAbsolutePath();
 
-	public Vector<CustomPanelData> customPanelData;
+	public Vector<CustomPanelData> customPanelData = new Vector<CustomPanelData>();
 
 	class DialogPosition {
 		public int x;
