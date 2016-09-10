@@ -88,11 +88,13 @@ public class SettingDialog extends JDialog {
 	private JPanel panel_2;
 	private JLabel label;
 	private JLabel lblBlockSizecomma;
-	private JTextField blockSizeTextField;
+	private JTextField blockDefinitionsTextField;
 	private JCheckBox updateAfterPauseCheckBox;
 	private JCheckBox independentPanelCheckBox;
 	private JTextField nameTextField;
-	DefaultTableModel customPanelTableModel = new DefaultTableModel(new String[] { "Name", "Block definition", "Update after pause", "Independent panel" }, 0);
+	DefaultTableModel customPanelTableModel = new DefaultTableModel(new String[] { "Name", "Column names", "Block definition", "Update after pause", "Independent panel" }, 0);
+	private JLabel lblColumnNames;
+	private JTextField columnNamesTextField;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -519,38 +521,49 @@ public class SettingDialog extends JDialog {
 
 			panel_2 = new JPanel();
 			panel_1.add(panel_2, BorderLayout.CENTER);
-			panel_2.setLayout(new MigLayout("", "[][grow][grow]", "[][][][][]"));
+			panel_2.setLayout(new MigLayout("", "[][grow]", "[][][][][][]"));
 
 			label = new JLabel("Name");
-			panel_2.add(label, "cell 0 0");
+			panel_2.add(label, "cell 0 0,alignx right");
 
 			nameTextField = new JTextField();
-			panel_2.add(nameTextField, "cell 1 0 2 1,growx");
+			panel_2.add(nameTextField, "cell 1 0,growx");
 
-			lblBlockSizecomma = new JLabel("Block definition");
-			panel_2.add(lblBlockSizecomma, "cell 0 1");
+			lblColumnNames = new JLabel("Column names");
+			panel_2.add(lblColumnNames, "cell 0 1,alignx trailing");
 
-			blockSizeTextField = new JTextField();
-			panel_2.add(blockSizeTextField, "cell 1 1 2 1,growx");
+			columnNamesTextField = new JTextField();
+			panel_2.add(columnNamesTextField, "cell 1 1,growx");
+
+			lblBlockSizecomma = new JLabel("Block definitions");
+			panel_2.add(lblBlockSizecomma, "cell 0 2,alignx right");
+
+			blockDefinitionsTextField = new JTextField();
+			panel_2.add(blockDefinitionsTextField, "cell 1 2,growx");
 
 			updateAfterPauseCheckBox = new JCheckBox("Update after pause");
 			updateAfterPauseCheckBox.setSelected(true);
-			panel_2.add(updateAfterPauseCheckBox, "cell 0 2 2 1");
+			panel_2.add(updateAfterPauseCheckBox, "cell 1 3");
 
 			independentPanelCheckBox = new JCheckBox("Independent panel");
-			panel_2.add(independentPanelCheckBox, "cell 0 3 2 1");
+			panel_2.add(independentPanelCheckBox, "cell 1 4");
 
 			btnNewButton = new JButton("Add");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					customPanelTableModel.addRow(
-							new Object[] { nameTextField.getText(), blockSizeTextField.getText(), updateAfterPauseCheckBox.isSelected(), independentPanelCheckBox.isSelected() });
+					customPanelTableModel.addRow(new Object[] { nameTextField.getText(), columnNamesTextField.getText(), blockDefinitionsTextField.getText(),
+							updateAfterPauseCheckBox.isSelected(), independentPanelCheckBox.isSelected() });
 				}
 			});
-			panel_2.add(btnNewButton, "flowx,cell 0 4,growx");
+			panel_2.add(btnNewButton, "flowx,cell 1 5");
 
 			btnNewButton_1 = new JButton("Delete");
-			panel_2.add(btnNewButton_1, "cell 0 4,growx");
+			btnNewButton_1.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					customPanelTableModel.removeRow(customPanelTable.getSelectedRow());
+				}
+			});
+			panel_2.add(btnNewButton_1, "cell 1 5");
 
 			setSize(595, 467);
 			initValue();
@@ -606,6 +619,13 @@ public class SettingDialog extends JDialog {
 	}
 
 	private void thisWindowClosing(WindowEvent evt) {
+		for (int x = 0; x < customPanelTable.getRowCount(); x++) {
+			CustomPanelData customPanelData = new CustomPanelData();
+			customPanelData.name = nameTextField.getText();
+			customPanelData.columnNames = columnNamesTextField.getText().split(",");
+			fuck
+			Setting.getInstance().customPanelData.add(customPanelData);
+		}
 		Setting.getInstance().save();
 	}
 
