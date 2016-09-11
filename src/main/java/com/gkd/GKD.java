@@ -35,7 +35,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,6 +56,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -119,6 +120,7 @@ import org.apache.log4j.Logger;
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.ApplicationListener;
 import com.gkd.components.segmentregister.SegmentRegister;
+import com.gkd.custompanel.CustomPanel;
 import com.gkd.elf.ElfUtil;
 import com.gkd.helprequest.HelpRequestDialog;
 import com.gkd.instrument.InstrumentPanel;
@@ -522,6 +524,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton dumpCR3PagingSummaryButton;
 	public JTextField dumpPagingSummaryPageDirectoryAddressTextField;
 	private JButton dumpPagingSummaryTableAtAddressButton;
+	private ArrayList<CustomPanel> customPanels = new ArrayList<CustomPanel>();
 
 	public GKD() {
 		super();
@@ -1152,12 +1155,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			});
 
 			// load customPanel
+			Box box = Box.createVerticalBox();
 			for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
-				//				customPanelTableModel.addRow(new Object[] { customPanelData.name, customPanelData.physicalAddress, String.join(",", customPanelData.columnNames),
-				//						String.join(",", Arrays.toString(customPanelData.definitions)).replaceAll("\\[|\\]|,|\\s", ""), customPanelData.updateAfterPause,
-				//						customPanelData.independentPane });
-				bottomTabbedPane.addTab(customPanelData.name, new JButton(customPanelData.name));
+				if (!customPanelData.independentPane) {
+					CustomPanel customPanel = new CustomPanel(customPanelData);
+					customPanels.add(customPanel);
+					box.add(customPanel);
+				}
 			}
+			bottomTabbedPane.addTab("Custom panel", box);
 			// end load customPanel
 			logger.info("started GKD " + simpleDateFormat.format(new Date()));
 			logger.info("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");
@@ -1876,6 +1882,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 					String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 					updateHistoryTable(result);
+				}
+
+				for (CustomPanel customPanel : customPanels) {
+					if (customPanel.customPanelData.updateAfterPause) {
+						int totalByte = 200;
+						int bytes[] = new int[0];
+						bytes = VMController.getVM().physicalMemory(customPanel.customPanelData.physicalAddress, totalByte);
+						customPanel.initData(bytes);
+					}
 				}
 
 				statusLabel.setText("");
