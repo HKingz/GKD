@@ -1,5 +1,7 @@
 package com.gkd.custompanel;
 
+import java.util.ArrayList;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,12 +31,48 @@ public class CustomPanel extends JPanel {
 		table = new JTable(model);
 		scrollPane.setViewportView(table);
 
-		model=
 	}
 
 	public void initData(int[] bytes) {
-		// TODO Auto-generated method stub
-		
+		model.columnNames = new String[customPanelData.columnNames.length * 4];
+		for (int x = 0; x < model.columnNames.length; x++) {
+			model.columnNames[x] = customPanelData.columnNames[x % customPanelData.columnNames.length];
+		}
+		int offset = 0;
+		int x = 0;
+		int definitions[] = customPanelData.definitions;
+		ArrayList<String> data = new ArrayList<String>();
+		while (offset < bytes.length) {
+			int d = definitions[x % definitions.length];
+			long value = 0;
+			int o = 0;
+			for (int z = 0; z < d; z++) {
+				if (offset + z < bytes.length) {
+					value += bytes[offset + z] << o;
+					o += 8;
+				}
+			}
+			data.add("0x" + Long.toHexString(value));
+			offset += d;
+			x++;
+		}
+
+		int row = 0;
+		int col = 0;
+		System.out.println(data.size());
+		System.out.println(model.getColumnCount());
+		System.out.println((float) data.size() / model.getColumnCount());
+		model.data = new String[(int) Math.ceil((float) data.size() / model.getColumnCount())][model.getColumnCount()];
+		System.out.println(model.getRowCount() + " , " + model.getColumnCount());
+		for (String d : data) {
+			model.data[row][col] = d;
+			col++;
+			if (col == model.getColumnCount()) {
+				col = 0;
+				row++;
+			}
+		}
+		model.fireTableStructureChanged();
 	}
 
 }

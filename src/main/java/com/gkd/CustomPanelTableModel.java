@@ -3,19 +3,27 @@ package com.gkd;
 import javax.swing.table.AbstractTableModel;
 
 public class CustomPanelTableModel extends AbstractTableModel {
-	private String columnNames[];
-	private String data[][];
+	public String columnNames[];
+	public String data[][];
 
 	public Object getValueAt(int row, int column) {
 		return data[row][column];
 	}
 
 	public int getColumnCount() {
-		return columnNames.length;
+		if (columnNames == null) {
+			return 0;
+		} else {
+			return columnNames.length;
+		}
 	}
 
 	public int getRowCount() {
-		return data.length;
+		if (data == null) {
+			return 0;
+		} else {
+			return data.length;
+		}
 	}
 
 	public String getColumnName(int col) {
