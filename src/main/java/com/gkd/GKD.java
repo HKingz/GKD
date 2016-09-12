@@ -1155,15 +1155,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			});
 
 			// load customPanel
-			Box box = Box.createVerticalBox();
-			for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
-				if (!customPanelData.independentPane) {
-					CustomPanel customPanel = new CustomPanel(customPanelData);
-					customPanels.add(customPanel);
-					box.add(customPanel);
+			if (Setting.getInstance().customPanelData != null) {
+				Box box = Box.createVerticalBox();
+				for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
+					if (!customPanelData.independentPane) {
+						CustomPanel customPanel = new CustomPanel(customPanelData);
+						customPanels.add(customPanel);
+						box.add(customPanel);
+					}
 				}
+				bottomTabbedPane.addTab("Custom panel", box);
 			}
-			bottomTabbedPane.addTab("Custom panel", box);
 			// end load customPanel
 			logger.info("started GKD " + simpleDateFormat.format(new Date()));
 			logger.info("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");

@@ -521,10 +521,12 @@ public class SettingDialog extends JDialog {
 			customPanelTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			scrollPane.setViewportView(customPanelTable);
 
-			for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
-				customPanelTableModel.addRow(new Object[] { customPanelData.name, "0x" + customPanelData.physicalAddress.toString(16),
-						String.join(",", customPanelData.columnNames), String.join(",", Arrays.toString(customPanelData.definitions)).replaceAll("\\[|\\]|,|\\s", ""),
-						customPanelData.updateAfterPause, customPanelData.independentPane });
+			if (Setting.getInstance().customPanelData != null) {
+				for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
+					customPanelTableModel.addRow(new Object[] { customPanelData.name, "0x" + customPanelData.physicalAddress.toString(16),
+							String.join(",", customPanelData.columnNames), String.join(",", Arrays.toString(customPanelData.definitions)).replaceAll("\\[|\\]|,|\\s", ""),
+							customPanelData.updateAfterPause, customPanelData.independentPane });
+				}
 			}
 
 			panel_1 = new JPanel();
@@ -583,7 +585,7 @@ public class SettingDialog extends JDialog {
 			});
 			panel_2.add(btnNewButton_1, "cell 1 6");
 
-			setSize(595, 467);
+			setSize(800, 480);
 			initValue();
 		} catch (Exception e) {
 			e.printStackTrace();
