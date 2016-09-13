@@ -56,7 +56,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
@@ -120,6 +119,7 @@ import org.apache.log4j.Logger;
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.ApplicationListener;
 import com.gkd.components.segmentregister.SegmentRegister;
+import com.gkd.custompanel.CustomMotherPanel;
 import com.gkd.custompanel.CustomPanel;
 import com.gkd.elf.ElfUtil;
 import com.gkd.helprequest.HelpRequestDialog;
@@ -218,7 +218,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel jPanel9;
 	private JMenu jMenu3;
 	private JMenuBar jMenuBar1;
-	//	private static BufferedWriter commandOutputStream;
+	// private static BufferedWriter commandOutputStream;
 	private JSplitPane jSplitPane2;
 	private JProgressBar statusProgressBar;
 	private JPanel statusPanel;
@@ -500,7 +500,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public static JLabel instrumentStatusLabel;
 
 	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {},
-			new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit") }) {
+			new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address",
+					MyLanguage.getString("Hit") }) {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
@@ -532,7 +533,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		if (os == OSType.mac) {
 			com.apple.eawt.Application macApp = com.apple.eawt.Application.getApplication();
-			macApp.setDockIconImage(new ImageIcon(GKD.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
+			macApp.setDockIconImage(
+					new ImageIcon(GKD.class.getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
 			macApp.addApplicationListener(this);
 		}
 		// $hide>>$
@@ -540,12 +542,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			public void run() {
 				// $hide<<$
 				init();
-				//$hide>>$
+				// $hide>>$
 				if (Global.debug) {
 					logger.debug("setVisible(true)");
 				}
 
-				//new Thread(new BochsoutTimer()).start();
+				// new Thread(new BochsoutTimer()).start();
 				setVisible(true);
 
 				preventSetVisibleHang = false;
@@ -566,7 +568,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		progressBarDialog.thread = loadThread;
 		progressBarDialog.addCancelEventListener(this);
 		progressBarDialog.setVisible(true);
-		//$hide<<$
+		// $hide<<$
 	}
 
 	public static void main(String[] args) {
@@ -630,18 +632,34 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						if (Global.debug) {
 							logger.debug("Loading linux 64 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libgluegen-rt.so")), new File("libgluegen-rt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl_awt.so")), new File("libjogl_awt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl_cg.so")), new File("libjogl_cg.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl.so")), new File("libjogl.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libgluegen-rt.so")),
+								new File("libgluegen-rt.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl_awt.so")),
+								new File("libjogl_awt.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl_cg.so")),
+								new File("libjogl_cg.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_amd64/libjogl.so")),
+								new File("libjogl.so"));
 					} else {
 						if (Global.debug) {
 							logger.debug("Loading linux 32 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libgluegen-rt.so")), new File("libgluegen-rt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl_awt.so")), new File("libjogl_awt.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl_cg.so")), new File("libjogl_cg.so"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl.so")), new File("libjogl.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libgluegen-rt.so")),
+								new File("libgluegen-rt.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl_awt.so")),
+								new File("libjogl_awt.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl_cg.so")),
+								new File("libjogl_cg.so"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/linux_i586/libjogl.so")),
+								new File("libjogl.so"));
 					}
 					try {
 						File f = new File(".");
@@ -653,35 +671,55 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} catch (UnsatisfiedLinkError e) {
 						e.printStackTrace();
 						System.err.println("Native code library failed to load.\n" + e);
-						System.err.println("Solution : Please add \"-Djava.library.path=.\" to start peter-bochs\n" + e);
+						System.err
+								.println("Solution : Please add \"-Djava.library.path=.\" to start peter-bochs\n" + e);
 					}
 				} else if (System.getProperty("os.name").toLowerCase().contains("windows")) {
 					if (!new File("PauseBochs.exe").exists()) {
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/PauseBochs.exe")), new File("PauseBochs.exe"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/PauseBochs.exe")),
+								new File("PauseBochs.exe"));
 					}
 					if (!new File("StopBochs.exe").exists()) {
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/StopBochs.exe")), new File("StopBochs.exe"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/StopBochs.exe")),
+								new File("StopBochs.exe"));
 					}
 					if (!new File("ndisasm.exe").exists()) {
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/ndisasm.exe")), new File("ndisasm.exe"));
+						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/exe/ndisasm.exe")),
+								new File("ndisasm.exe"));
 					}
 
 					if (System.getProperty("os.arch").contains("64")) {
 						if (Global.debug) {
 							logger.debug("Loading windows 64 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl.dll")), new File("jogl.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl_awt.dll")), new File("jogl_awt.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl_cg.dll")), new File("jogl_cg.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/gluegen-rt.dll")), new File("gluegen-rt.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl.dll")),
+								new File("jogl.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl_awt.dll")),
+								new File("jogl_awt.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/jogl_cg.dll")),
+								new File("jogl_cg.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_amd64/gluegen-rt.dll")),
+								new File("gluegen-rt.dll"));
 					} else {
 						if (Global.debug) {
 							logger.debug("Loading windows 32 bits jogl");
 						}
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl.dll")), new File("jogl.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl_awt.dll")), new File("jogl_awt.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl_cg.dll")), new File("jogl_cg.dll"));
-						CommonLib.writeFile(jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/gluegen-rt.dll")), new File("gluegen-rt.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl.dll")),
+								new File("jogl.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl_awt.dll")),
+								new File("jogl_awt.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/jogl_cg.dll")),
+								new File("jogl_cg.dll"));
+						CommonLib.writeFile(
+								jarFile.getInputStream(new JarEntry("com/gkd/jogl_dll/windows_i586/gluegen-rt.dll")),
+								new File("gluegen-rt.dll"));
 					}
 					try {
 						File f = new File(".");
@@ -692,7 +730,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} catch (UnsatisfiedLinkError e) {
 						e.printStackTrace();
 						System.err.println("Native code library failed to load.\n" + e);
-						System.err.println("Solution : Please add \"-Djava.library.path=.\" to start peter-bochs\n" + e);
+						System.err
+								.println("Solution : Please add \"-Djava.library.path=.\" to start peter-bochs\n" + e);
 					}
 				}
 				jarFile.close();
@@ -730,18 +769,24 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			System.err.println("<vmType> only supports qemu and bochs");
 		}
 		if (VMController.vmType == VMType.Qemu) {
-			//libGDB = new JLibGDB("localhost", Integer.parseInt(GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")));
-			VMController.getVM().initStub(new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
+			// libGDB = new JLibGDB("localhost",
+			// Integer.parseInt(GKDCommonLib.readConfig(cmd,
+			// "/gkd/gkd_server_port/text()")));
+			VMController.getVM().initStub(
+					new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
 		}
 
-		//		Setting.getInstance().loadBreakpointAtStartup = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/loadBreakpoint/text()"));
+		// Setting.getInstance().loadBreakpointAtStartup =
+		// Boolean.parseBoolean(GKDCommonLib.readConfig(cmd,
+		// "/gkd/loadBreakpoint/text()"));
 		String elf = GKDCommonLib.readConfig(cmd, "/gkd/elf/text()");
 		if (elf != null && !elf.equals("")) {
 			Global.elfPaths = elf.split(",");
 		}
 
 		Global.showDebugLoc = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/showDebugLoc/text()"));
-		Global.showDebugInfoEntriesInCompileUnit = Boolean.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/showDebugInfoEntriesInCompileUnit/text()"));
+		Global.showDebugInfoEntriesInCompileUnit = Boolean
+				.parseBoolean(GKDCommonLib.readConfig(cmd, "/gkd/showDebugInfoEntriesInCompileUnit/text()"));
 
 		GKD gkd = new GKD();
 		VMController.getVM().setGKDInstance(gkd);
@@ -787,8 +832,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					logger.debug("checkLatestVersion()=" + map.get("latestVersion"));
 				}
 				if (map != null) {
-					if (map.get("latestVersion") != null && map.get("latestVersion").compareTo(PropertyUtil.getProperty("version")) > 0) {
-						latestVersionLabel.setText(MyLanguage.getString("Latest_version_available") + " : " + map.get("latestVersion"));
+					if (map.get("latestVersion") != null
+							&& map.get("latestVersion").compareTo(PropertyUtil.getProperty("version")) > 0) {
+						latestVersionLabel.setText(
+								MyLanguage.getString("Latest_version_available") + " : " + map.get("latestVersion"));
 						latestVersionURL = map.get("downloadURL");
 					} else {
 						latestVersionLabel.setText("");
@@ -830,11 +877,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// $hide>>$
 			if (os == OSType.win) {
 				if (!new File("PauseBochs.exe").exists() || !new File("StopBochs.exe").exists()) {
-					JOptionPane.showMessageDialog(null, MyLanguage.getString("PauseBochsExe"), MyLanguage.getString("Error"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, MyLanguage.getString("PauseBochsExe"),
+							MyLanguage.getString("Error"), JOptionPane.ERROR_MESSAGE);
 					System.exit(1);
 				}
 				if (!new File("ndisasm.exe").exists()) {
-					JOptionPane.showMessageDialog(null, MyLanguage.getString("NdisasmExe"), MyLanguage.getString("Error"), JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, MyLanguage.getString("NdisasmExe"),
+							MyLanguage.getString("Error"), JOptionPane.ERROR_MESSAGE);
 					System.exit(1);
 				}
 			}
@@ -855,7 +904,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					this.setTitle(MyLanguage.getString("Title") + " " + PropertyUtil.getProperty("version"));
 				}
 
-				this.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
+				this.setIconImage(
+						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/peter.png")).getImage());
 				this.addWindowListener(this);
 			}
 			progressBarDialog.progressBar.setValue(40);
@@ -867,7 +917,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					startVMButton = new JButton();
 					jToolBar1.add(startVMButton);
 					startVMButton.setText(MyLanguage.getString("Start"));
-					startVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/accept.png")));
+					startVMButton.setIcon(new ImageIcon(
+							getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/accept.png")));
 					startVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							startVMButtonActionPerformed(evt);
@@ -878,7 +929,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					stopVMButton = new JButton();
 					jToolBar1.add(stopVMButton);
 					stopVMButton.setText(MyLanguage.getString("Stop"));
-					stopVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/stop.png")));
+					stopVMButton.setIcon(new ImageIcon(
+							getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/stop.png")));
 					stopVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							stopVMButtonActionPerformed(evt);
@@ -893,7 +945,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					runVMButton.setMaximumSize(new java.awt.Dimension(85, 26));
 					runVMButton.add(getRunBochsAndSkipBreakpointMenuItem());
 					runVMButton.add(getRunCustomCommandMenuItem());
-					runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+					runVMButton.setIcon(new ImageIcon(
+							getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 					runVMButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							runVMButtonActionPerformed(evt);
@@ -905,7 +958,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jToolBar1.add(stepVMButton);
 					jToolBar1.add(getStepOverDropDownButton());
 					jToolBar1.add(getFastStepBochsButton());
-					stepVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
+					stepVMButton.setIcon(new ImageIcon(
+							getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 					stepVMButton.setText(MyLanguage.getString("Step"));
 					stepVMButton.setMaximumSize(new java.awt.Dimension(85, 26));
 					stepVMButton.add(getStep10MenuItem());
@@ -924,7 +978,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 				{
 					nextButton = new JButton();
-					nextButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
+					nextButton.setIcon(new ImageIcon(
+							getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 					nextButton.setText(MyLanguage.getString("Nexti"));
 					nextButton.setToolTipText("c/c++ level step-in");
 					jToolBar1.add(nextButton);
@@ -945,7 +1000,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jToolBar1.add(getJOSLogToggleButton());
 					updateBochsButton.setEnabled(true);
 					updateBochsButton.setText(MyLanguage.getString("Update"));
-					updateBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
+					updateBochsButton.setIcon(new ImageIcon(
+							getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
 					updateBochsButton.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							updateBochsButtonActionPerformed(evt);
@@ -1098,8 +1154,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			jSplitPane1.setDividerLocation(Setting.getInstance().divX);
 			jSplitPane2.setDividerLocation(Setting.getInstance().divY);
 
-			osDebugInformationPanel1.getMainSplitPane().setDividerLocation(Setting.getInstance().osDebugSplitPane_DividerLocation);
-			initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
+			osDebugInformationPanel1.getMainSplitPane()
+					.setDividerLocation(Setting.getInstance().osDebugSplitPane_DividerLocation);
+			initGlobalFontSetting(
+					new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 			instrumentPanel.setThing(statusProgressBar, statusLabel);
 
 			progressBarDialog.progressBar.setValue(72);
@@ -1156,15 +1214,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			// load customPanel
 			if (Setting.getInstance().customPanelData != null) {
-				Box box = Box.createVerticalBox();
+				CustomMotherPanel customMotherPanel = new CustomMotherPanel();
 				for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
 					if (!customPanelData.independentPane) {
 						CustomPanel customPanel = new CustomPanel(customPanelData);
 						customPanels.add(customPanel);
-						box.add(customPanel);
+						customMotherPanel.mainPanel.add(customPanel);
 					}
 				}
-				bottomTabbedPane.addTab("Custom panel", box);
+				bottomTabbedPane.addTab("Custom panel", customMotherPanel);
 			}
 			// end load customPanel
 			logger.info("started GKD " + simpleDateFormat.format(new Date()));
@@ -1179,22 +1237,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		new Thread("initFontMenu thread") {
 			public void run() {
 				Font[] allfonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
-				//				String chinesesample = "\u4e00";
+				// String chinesesample = "\u4e00";
 				HashSet<String> preventDuplicateFontName = new HashSet<String>();
 				for (int j = 0; j < allfonts.length && j < 80; j++) {
-					//					if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
-					//						if (!allfonts[j].getFontName().toLowerCase().contains("-")) {
+					// if (allfonts[j].canDisplayUpTo(chinesesample) == -1) {
+					// if
+					// (!allfonts[j].getFontName().toLowerCase().contains("-"))
+					// {
 					String fontName = allfonts[j].getFontName();
 					if (preventDuplicateFontName.contains(fontName)) {
 						continue;
 					}
 					preventDuplicateFontName.add(fontName);
 					JMenuItem menuItem = new JMenuItem(fontName);
-					menuItem.setFont(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
+					menuItem.setFont(
+							new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
 					menuItem.addActionListener(new ActionListener() {
 						public void actionPerformed(ActionEvent evt) {
 							Setting.getInstance().fontFamily = ((JMenuItem) evt.getSource()).getText();
-							initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN, Setting.getInstance().fontsize));
+							initGlobalFontSetting(new Font(Setting.getInstance().fontFamily, Font.PLAIN,
+									Setting.getInstance().fontsize));
 						}
 					});
 					int x = fontName.toLowerCase().charAt(0);
@@ -1205,8 +1267,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					} else {
 						fontUZMenu.add(menuItem);
 					}
-					//						}
-					//					}
+					// }
+					// }
 				}
 			}
 		}.start();
@@ -1286,7 +1348,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				VMController.getVM().runVM();
 
 				runVMButton.setText(MyLanguage.getString("pause"));
-				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+				runVMButton.setIcon(new ImageIcon(
+						getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 			} else if (runVMButton.getEventSource() == runCustomCommandMenuItem) {
 				CustomCommandDialog customCommandDialog = new CustomCommandDialog(this);
 				customCommandDialog.setVisible(true);
@@ -1295,32 +1358,38 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					for (int z = 0; z < (Integer) customCommandDialog.repeatSpinner.getValue(); z++) {
 						if (!customCommandDialog.comboBox1.getSelectedItem().toString().equals("")) {
 							for (int x = 0; x < (Integer) customCommandDialog.spinner1.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox1.getSelectedItem().toString()));
+								customCommandQueue.add(
+										new CustomCommand(customCommandDialog.comboBox1.getSelectedItem().toString()));
 							}
 						}
 						if (!customCommandDialog.comboBox2.getSelectedItem().toString().equals("")) {
 							for (int x = 0; x < (Integer) customCommandDialog.spinner2.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox2.getSelectedItem().toString()));
+								customCommandQueue.add(
+										new CustomCommand(customCommandDialog.comboBox2.getSelectedItem().toString()));
 							}
 						}
 						if (!customCommandDialog.comboBox3.getSelectedItem().toString().equals("")) {
 							for (int x = 0; x < (Integer) customCommandDialog.spinner3.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox3.getSelectedItem().toString()));
+								customCommandQueue.add(
+										new CustomCommand(customCommandDialog.comboBox3.getSelectedItem().toString()));
 							}
 						}
 						if (!customCommandDialog.comboBox4.getSelectedItem().toString().equals("")) {
 							for (int x = 0; x < (Integer) customCommandDialog.spinner4.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox4.getSelectedItem().toString()));
+								customCommandQueue.add(
+										new CustomCommand(customCommandDialog.comboBox4.getSelectedItem().toString()));
 							}
 						}
 						if (!customCommandDialog.comboBox5.getSelectedItem().toString().equals("")) {
 							for (int x = 0; x < (Integer) customCommandDialog.spinner5.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox5.getSelectedItem().toString()));
+								customCommandQueue.add(
+										new CustomCommand(customCommandDialog.comboBox5.getSelectedItem().toString()));
 							}
 						}
 						if (!customCommandDialog.comboBox6.getSelectedItem().toString().equals("")) {
 							for (int x = 0; x < (Integer) customCommandDialog.spinner6.getValue(); x++) {
-								customCommandQueue.add(new CustomCommand(customCommandDialog.comboBox6.getSelectedItem().toString()));
+								customCommandQueue.add(
+										new CustomCommand(customCommandDialog.comboBox6.getSelectedItem().toString()));
 							}
 						}
 					}
@@ -1332,7 +1401,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					VMController.getVM().runVM();
 
 					runVMButton.setText(MyLanguage.getString("pause"));
-					runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+					runVMButton.setIcon(new ImageIcon(
+							getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 				}
 			}
 		} else {
@@ -1344,14 +1414,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				VMController.getVM().runVM();
 
 				runVMButton.setText(MyLanguage.getString("pause"));
-				runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
+				runVMButton.setIcon(
+						new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/pause.png")));
 				new Thread("GKD wait thread") {
 					public void run() {
 						VMController.getVM().waitVMStop();
 						CommonLib.enableJComponent(upperRightTabbedPane, true);
 						CommonLib.enableJComponent(bottomTabbedPane, true);
 						runVMButton.setText(MyLanguage.getString("run"));
-						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
+						runVMButton.setIcon(new ImageIcon(getClass().getClassLoader()
+								.getResource("com/gkd/icons/famfam_icons/resultset_next.png")));
 						updateVMStatus(true);
 					}
 				}.start();
@@ -1407,16 +1479,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 
 		private String update(String result, DataOutputStream out) {
-			//			BigInteger physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+			// BigInteger physicalAddress =
+			// CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 
 			BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 
-			//			if (registerPanel.csTextField.getBase() != null && !registerPanel.csTextField.getBase().equals("")) {
-			//				physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-			//			}
-			//			BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
-			//			BigInteger cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
+			// if (registerPanel.csTextField.getBase() != null &&
+			// !registerPanel.csTextField.getBase().equals("")) {
+			// physicalAddress =
+			// CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+			// }
+			// BigInteger eip =
+			// CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+			// BigInteger cs =
+			// CommonLib.string2BigInteger(registerPanel.csTextField.getText());
 			String instruction = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
 			if (saveToRunDotTxt || !disableAutoUpdateCheckBox.isSelected()) {
 				if (instruction.endsWith("\n")) {
@@ -1472,13 +1549,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				out = new DataOutputStream(new FileOutputStream("run.txt", true));
 
 				if (eventSource != null) {
-					//					BigInteger cs;
-					//					if (registerPanel.csTextField.getBase() == null || registerPanel.csTextField.getBase().equals("")) {
-					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
-					//					} else {
-					//						cs = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
-					//					}
-					//					BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+					// BigInteger cs;
+					// if (registerPanel.csTextField.getBase() == null ||
+					// registerPanel.csTextField.getBase().equals("")) {
+					// cs =
+					// CommonLib.string2BigInteger(registerPanel.csTextField.getText());
+					// } else {
+					// cs =
+					// CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
+					// }
+					// BigInteger eip =
+					// CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 
 					if (eventSource == step10MenuItem) {
 						String result = "";
@@ -1520,7 +1601,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						int speed = 0;
 						for (int x = 1; x <= instructionCount && !shouldStop; x++) {
 							statusLabel.setText("Step " + x + " / " + instructionCount);
-							stepCountLabel.setText("Step " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
+							stepCountLabel.setText(
+									"Step " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
 
 							VMController.getVM().singleStep();
 
@@ -1542,7 +1624,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						int speed = 0;
 						for (int x = 1; x <= instructionCount && !shouldStop; x++) {
 							statusLabel.setText("Step over " + x + " / " + instructionCount);
-							stepCountLabel.setText("Step over " + x + " / " + instructionCount + ", speed : " + speed + " steps/second");
+							stepCountLabel.setText("Step over " + x + " / " + instructionCount + ", speed : " + speed
+									+ " steps/second");
 
 							VMController.getVM().stepOver();
 
@@ -1564,9 +1647,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							BigInteger csBase = CommonLib.string2BigInteger(registerPanel.csTextField.getBase());
 							BigInteger eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
 							String result = VMController.getVM().instruction(csBase.add(eip), is32Bits()).get(0)[2];
-							if (result.contains("jmp") || result.contains("je") || result.contains("jne") || result.contains("jg") || result.contains("jge")
-									|| result.contains("ja") || result.contains("jae") || result.contains("jl") || result.contains("jle") || result.contains("jb")
-									|| result.contains("jbe") || result.contains("jo") || result.contains("jno") || result.contains("jz") || result.contains("jnz")
+							if (result.contains("jmp") || result.contains("je") || result.contains("jne")
+									|| result.contains("jg") || result.contains("jge") || result.contains("ja")
+									|| result.contains("jae") || result.contains("jl") || result.contains("jle")
+									|| result.contains("jb") || result.contains("jbe") || result.contains("jo")
+									|| result.contains("jno") || result.contains("jz") || result.contains("jnz")
 									|| result.contains("loop") || result.contains("call")) {
 								notMatch = false;
 							}
@@ -1652,7 +1737,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 								if (maxRowComboBox.getSelectedItem().equals("infinite")) {
 									runningTextArea.setMaxRow(-1);
 								} else {
-									runningTextArea.setMaxRow(Integer.parseInt(maxRowComboBox.getSelectedItem().toString()));
+									runningTextArea
+											.setMaxRow(Integer.parseInt(maxRowComboBox.getSelectedItem().toString()));
 								}
 								if (autoUpdateEvery20LinesCheckBox.isSelected()) {
 									if (noOfLine >= 20) {
@@ -1661,7 +1747,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 										result = "";
 										noOfLine = 1;
 
-										secondDiff = (Double.parseDouble(String.valueOf(new Date().getTime())) - lastTime.getTime()) / 1000;
+										secondDiff = (Double.parseDouble(String.valueOf(new Date().getTime()))
+												- lastTime.getTime()) / 1000;
 										lastTime = new Date();
 									} else {
 										noOfLine++;
@@ -1671,11 +1758,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 									runningTextArea.newLogFileLine(result);
 									result = "";
 
-									secondDiff = (Double.parseDouble(String.valueOf(new Date().getTime())) - lastTime.getTime()) / 1000;
+									secondDiff = (Double.parseDouble(String.valueOf(new Date().getTime()))
+											- lastTime.getTime()) / 1000;
 									lastTime = new Date();
 								}
 							} else {
-								secondDiff = (Double.parseDouble(String.valueOf(new Date().getTime())) - lastTime.getTime()) / 1000;
+								secondDiff = (Double.parseDouble(String.valueOf(new Date().getTime()))
+										- lastTime.getTime()) / 1000;
 								lastTime = new Date();
 							}
 
@@ -1687,15 +1776,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							if (secondDiff > 0) {
 								if (!disableAutoUpdateCheckBox.isSelected()) {
 									if (autoUpdateEvery20LinesCheckBox.isSelected()) {
-										stepCountLabel.setText(String.valueOf(count) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
+										stepCountLabel.setText(String.valueOf(count)
+												+ " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
 												+ Math.round(20 / secondDiff) + " instructions executed per second");
 										count += 20;
 									} else {
-										stepCountLabel.setText(String.valueOf(count++) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
+										stepCountLabel.setText(String.valueOf(count++)
+												+ " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
 												+ Math.round(1 / secondDiff) + " instructions executed per second");
 									}
 								} else {
-									stepCountLabel.setText(String.valueOf(count++) + " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
+									stepCountLabel.setText(String.valueOf(count++)
+											+ " instructions executed, current EIP=0x" + Long.toHexString(ip) + ", "
 											+ Math.round(1 / secondDiff) + " instructions executed per second");
 								}
 							}
@@ -1707,7 +1799,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			} finally {
-				if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1") || currentPanel.equals("sourceLevelDebugger")) {
+				if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")
+						|| currentPanel.equals("sourceLevelDebugger")) {
 					CardLayout cl = (CardLayout) (mainPanel.getLayout());
 					cl.show(mainPanel, currentPanel);
 				}
@@ -1890,7 +1983,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					if (customPanel.customPanelData.updateAfterPause) {
 						int totalByte = 200;
 						int bytes[] = new int[0];
-						bytes = VMController.getVM().physicalMemory(customPanel.customPanelData.physicalAddress, totalByte);
+						bytes = VMController.getVM().physicalMemory(customPanel.customPanelData.physicalAddress,
+								totalByte);
 						customPanel.initData(bytes);
 					}
 				}
@@ -1899,11 +1993,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 				if (breakpointLoadedOnce == false && Setting.getInstance().loadBreakpointAtStartup) {
 					loadBreakpointButtonActionPerformed(null);
-					breakpointLoadedOnce = true; // since we only have to load once
+					breakpointLoadedOnce = true; // since we only have to load
+													// once
 				}
 				if (systemMapLoadedOnce == false && Global.elfPaths != null) {
 					sourceLevelDebugger.loadELF(Global.elfPaths);
-					systemMapLoadedOnce = true; // since we only have to load once
+					systemMapLoadedOnce = true; // since we only have to load
+												// once
 				}
 				d.progressBar.setString("jump to insturction table");
 				jumpToRowInstructionTable(getRealEIP());
@@ -1927,21 +2023,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	protected void updatePTime(boolean updateGUI) {
-		//		if (GKDVMStubController.vmType == VMType.Bochs) {
-		//			try {
-		//				if (updateGUI) {
-		//					jStatusLabel.setText("Updating ptime");
-		//				}
-		//				commandReceiver.shouldShow = false;
-		//				sendBochsCommand("ptime");
-		//				String result = commandReceiver.getCommandResultUntilEnd();
-		//				if (result.contains(":") && result.contains("ptime")) {
-		//					registerPanel.jPTimeTextField.setText(result.replaceAll("<.*>", "").split(":")[1].trim());
-		//				}
-		//			} catch (Exception ex) {
-		//				ex.printStackTrace();
-		//			}
-		//		}
+		// if (GKDVMStubController.vmType == VMType.Bochs) {
+		// try {
+		// if (updateGUI) {
+		// jStatusLabel.setText("Updating ptime");
+		// }
+		// commandReceiver.shouldShow = false;
+		// sendBochsCommand("ptime");
+		// String result = commandReceiver.getCommandResultUntilEnd();
+		// if (result.contains(":") && result.contains("ptime")) {
+		// registerPanel.jPTimeTextField.setText(result.replaceAll("<.*>",
+		// "").split(":")[1].trim());
+		// }
+		// } catch (Exception ex) {
+		// ex.printStackTrace();
+		// }
+		// }
 	}
 
 	protected void updateOSDebugInfo() {
@@ -1950,7 +2047,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			String magicByte = getMemoryStr(Global.osDebug, 8, true);
 			CardLayout cl = (CardLayout) (osDebugStandardPanel.getLayout());
 			if (magicByte.equals("PETER---")) {
-				size = CommonLib.getInt(VMController.getVM().physicalMemory(Global.osDebug.add(BigInteger.valueOf(8)), 4), 0);
+				size = CommonLib
+						.getInt(VMController.getVM().physicalMemory(Global.osDebug.add(BigInteger.valueOf(8)), 4), 0);
 				String xml = getMemoryStr(Global.osDebug.add(BigInteger.valueOf(12)), (int) size, true).trim();
 				OSDebugInfoHelper.jOSDebugInformationPanel = osDebugInformationPanel1;
 
@@ -2169,21 +2267,23 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	protected void updateAddressTranslate() {
-		//		try {
-		//			statusLabel.setText("Updating Address translate");
+		// try {
+		// statusLabel.setText("Updating Address translate");
 		//
-		//			Vector<Vector<String>> r = VMController.getVM().addressTranslate();
-		//			AddressTranslateTableModel model = (AddressTranslateTableModel) addressTranslateTable.getModel();
-		//			while (model.getRowCount() > 0) {
-		//				model.removeRow(0);
-		//			}
-		//			for (Vector<String> v : r) {
-		//				model.addRow(v);
-		//			}
-		//			((DefaultTableModel) addressTranslateTable.getModel()).fireTableDataChanged();
-		//		} catch (Exception ex) {
-		//			ex.printStackTrace();
-		//		}
+		// Vector<Vector<String>> r = VMController.getVM().addressTranslate();
+		// AddressTranslateTableModel model = (AddressTranslateTableModel)
+		// addressTranslateTable.getModel();
+		// while (model.getRowCount() > 0) {
+		// model.removeRow(0);
+		// }
+		// for (Vector<String> v : r) {
+		// model.addRow(v);
+		// }
+		// ((DefaultTableModel)
+		// addressTranslateTable.getModel()).fireTableDataChanged();
+		// } catch (Exception ex) {
+		// ex.printStackTrace();
+		// }
 	}
 
 	public void enableAllButtons(final boolean b, final boolean exceptRunButton) {
@@ -2225,14 +2325,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.removeRow(0);
 		}
 
-		Vector<String[]> r = VMController.getVM().pageTable(pageDirectoryBaseAddress, CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
+		Vector<String[]> r = VMController.getVM().pageTable(pageDirectoryBaseAddress,
+				CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
 				CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
 		for (String s[] : r) {
 			model.addRow(s);
 		}
 		pageDirectoryTable.setModel(model);
 
-		updatePagingSummaryTable(pageDirectoryBaseAddress, CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
+		updatePagingSummaryTable(pageDirectoryBaseAddress,
+				CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
 				CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
 	}
 
@@ -2248,58 +2350,49 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Hashtable<BigInteger, int[]> cache = new Hashtable<BigInteger, int[]>();
 
 		if (pageDirectoryBytes != null) {
-			/* below works, but don't like the programming style
-			 long linearAddressStart = 0;
-			 long linearAddressEnd = 0;
-			 long physicalAddressStart = -1;
-			 long physicalAddressEnd = -1;
-			 long lastPhysicalAddressEnd = -1;
-			 outerloop:
-			 for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
-			 long value = CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4);
-			 long pageTableBaseAddress = value & 0xfffff000;
-			
-			 BigInteger pageTableBaseAddressB = BigInteger.valueOf(pageTableBaseAddress);
-			 int[] pageTableBytes = cache.get(pageTableBaseAddressB);
-			 if (pageTableBytes == null) {
-			 pageTableBytes = VMController.getVM().physicalMemory(pageTableBaseAddressB, 4096);
-			 cache.put(pageTableBaseAddressB, pageTableBytes);
-			 }
-			 if (pageTableBytes != null) {
-			 for (int pageTableNo = 0; pageTableNo < 1024; pageTableNo++) {
-			 value = CommonLib.getInt(pageTableBytes, pageTableNo * 4);
-			 long physicalAddress = value & 0xfffff000;
-			
-			 if (physicalAddressStart == -1) {
-			 physicalAddressStart = physicalAddress;
-			 }
-			 //						if (physicalAddress > 0) {
-			 //							System.out.println(">>" + Long.toHexString(linearAddressEnd) + " = " + Long.toHexString(physicalAddress));
-			 //						}
-			 physicalAddressEnd = physicalAddress;
-			
-			 if (physicalAddressEnd < lastPhysicalAddressEnd || physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
-			 model.linearAddressesStart.add(linearAddressStart);
-			 model.linearAddressesEnd.add(linearAddressEnd - 1);
-			 model.physicalAddressesStart.add(physicalAddressStart);
-			 model.physicalAddressesEnd.add(lastPhysicalAddressEnd + 4096 - 1);
-			
-			 //							System.out.println(Long.toHexString(linearAddressStart) + "-" + Long.toHexString(linearAddressEnd - 4096 - 1) + " > "
-			 //									+ Long.toHexString(physicalAddressStart) + "-" + Long.toHexString(physicalAddressEnd - 4096 - 1));
-			 physicalAddressStart = physicalAddress;
-			 linearAddressStart = linearAddressEnd;
-			 }
-			 linearAddressEnd += 4096;
-			 if (linearAddressEnd > memSize) {
-			 break outerloop;
-			 }
-			 lastPhysicalAddressEnd = physicalAddressEnd;
-			 if (lastPhysicalAddressEnd == -1) {
-			 lastPhysicalAddressEnd = 0;
-			 }
-			 }
-			 }
-			 }
+			/*
+			 * below works, but don't like the programming style long
+			 * linearAddressStart = 0; long linearAddressEnd = 0; long
+			 * physicalAddressStart = -1; long physicalAddressEnd = -1; long
+			 * lastPhysicalAddressEnd = -1; outerloop: for (int pageDirectoryNo
+			 * = 0; pageDirectoryNo < 1024; pageDirectoryNo++) { long value =
+			 * CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4); long
+			 * pageTableBaseAddress = value & 0xfffff000;
+			 * 
+			 * BigInteger pageTableBaseAddressB =
+			 * BigInteger.valueOf(pageTableBaseAddress); int[] pageTableBytes =
+			 * cache.get(pageTableBaseAddressB); if (pageTableBytes == null) {
+			 * pageTableBytes =
+			 * VMController.getVM().physicalMemory(pageTableBaseAddressB, 4096);
+			 * cache.put(pageTableBaseAddressB, pageTableBytes); } if
+			 * (pageTableBytes != null) { for (int pageTableNo = 0; pageTableNo
+			 * < 1024; pageTableNo++) { value = CommonLib.getInt(pageTableBytes,
+			 * pageTableNo * 4); long physicalAddress = value & 0xfffff000;
+			 * 
+			 * if (physicalAddressStart == -1) { physicalAddressStart =
+			 * physicalAddress; } // if (physicalAddress > 0) { //
+			 * System.out.println(">>" + Long.toHexString(linearAddressEnd) +
+			 * " = " + Long.toHexString(physicalAddress)); // }
+			 * physicalAddressEnd = physicalAddress;
+			 * 
+			 * if (physicalAddressEnd < lastPhysicalAddressEnd ||
+			 * physicalAddressEnd - lastPhysicalAddressEnd > 4096) {
+			 * model.linearAddressesStart.add(linearAddressStart);
+			 * model.linearAddressesEnd.add(linearAddressEnd - 1);
+			 * model.physicalAddressesStart.add(physicalAddressStart);
+			 * model.physicalAddressesEnd.add(lastPhysicalAddressEnd + 4096 -
+			 * 1);
+			 * 
+			 * // System.out.println(Long.toHexString(linearAddressStart) + "-"
+			 * + Long.toHexString(linearAddressEnd - 4096 - 1) + " > " // +
+			 * Long.toHexString(physicalAddressStart) + "-" +
+			 * Long.toHexString(physicalAddressEnd - 4096 - 1));
+			 * physicalAddressStart = physicalAddress; linearAddressStart =
+			 * linearAddressEnd; } linearAddressEnd += 4096; if
+			 * (linearAddressEnd > memSize) { break outerloop; }
+			 * lastPhysicalAddressEnd = physicalAddressEnd; if
+			 * (lastPhysicalAddressEnd == -1) { lastPhysicalAddressEnd = 0; } }
+			 * } }
 			 */
 			Vector<Long> linearAddresses = new Vector<Long>();
 			Vector<Long> physicalAddresses = new Vector<Long>();
@@ -2360,7 +2453,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						model.linearAddressesEnd.add(linearAddresses.get(x) + 4096 - 1);
 						model.physicalAddressesStart.add(physicalAddressStart);
 						model.physicalAddressesEnd.add(physicalAddresses.get(x) + 4096 - 1);
-					} else if (physicalAddresses.get(x) < lastPhysicalAddress || (physicalAddresses.get(x) - lastPhysicalAddress) > 4096) {
+					} else if (physicalAddresses.get(x) < lastPhysicalAddress
+							|| (physicalAddresses.get(x) - lastPhysicalAddress) > 4096) {
 						model.linearAddressesStart.add(linearAddressStart);
 						model.linearAddressesEnd.add(linearAddresses.get(x - 1) + 4096 - 1);
 						model.physicalAddressesStart.add(physicalAddressStart);
@@ -2373,7 +2467,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						lastPhysicalAddress = physicalAddresses.get(x);
 					}
 
-					//System.out.println(Long.toHexString(linearAddresses.get(x) >> 22) + " , " + Long.toHexString(linearAddresses.get(x) >> 12 & 0x3ff) + " >" + Long.toHexString(linearAddresses.get(x)) + " - " + Long.toHexString(physicalAddresses.get(x)));
+					// System.out.println(Long.toHexString(linearAddresses.get(x)
+					// >> 22) + " , " + Long.toHexString(linearAddresses.get(x)
+					// >> 12 & 0x3ff) + " >" +
+					// Long.toHexString(linearAddresses.get(x)) + " - " +
+					// Long.toHexString(physicalAddresses.get(x)));
 				}
 			}
 		}
@@ -2409,7 +2507,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 
 		if (physicalAddress == null) {
-			physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase()).add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
+			physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase())
+					.add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
 		}
 
 		Vector<String[]> r = VMController.getVM().instruction(physicalAddress, is32Bits);
@@ -2465,7 +2564,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void updateInstructionUsingNasm(BigInteger address, boolean is32Bit) {
 		try {
 			if (address == null) {
-				//BigInteger cs = CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
+				// BigInteger cs =
+				// CommonLib.string2BigInteger(this.registerPanel.csTextField.getText());
 				BigInteger eip = CommonLib.string2BigInteger(this.registerPanel.eipTextField.getText());
 				eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 				address = eip;
@@ -2495,13 +2595,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							String lineNo[] = getCCode(pc, true);
 							if (s != null && lineNo != null) {
 								for (int index = 0; index < s.length; index++) {
-									model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
+									model.addRow(new String[] { "",
+											"cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
 								}
 							}
 							// end load cCode
 							model.addRow(new String[] { "", pc.toString(), instruction, decodedBytes });
 						} else {
-							model.replace(model.getRowCount() - 1, 3, model.getRow(model.getRowCount() - 1)[3] + temp[1].trim().replaceAll("-", ""));
+							model.replace(model.getRowCount() - 1, 3,
+									model.getRow(model.getRowCount() - 1)[3] + temp[1].trim().replaceAll("-", ""));
 						}
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -2517,7 +2619,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void jumpToRowInstructionTable(BigInteger eip) {
-		//		logger.debug("jumpToRowInstructionTable=" + eip.toString(16));
+		// logger.debug("jumpToRowInstructionTable=" + eip.toString(16));
 		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 		int eIPRow = model.findEIPRowNo(eip);
 		instructionTable.scrollRectToVisible(instructionTable.getCellRect(eIPRow + 10, 1, true));
@@ -2583,9 +2685,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 				if (sourceLines != null) {
 					String s[] = new String[endLineNo - startLine.line_num + 1];
-					for (int z = startLine.line_num - 1, index = 0; z < endLineNo && z < sourceLines.size(); z++, index++) {
+					for (int z = startLine.line_num - 1, index = 0; z < endLineNo
+							&& z < sourceLines.size(); z++, index++) {
 						if (getFile) {
-							s[index] = startHeader.filenames.get((int) startLine.file_num).file.getName() + " : " + (z + 1);
+							s[index] = startHeader.filenames.get((int) startLine.file_num).file.getName() + " : "
+									+ (z + 1);
 						} else {
 							String cCode = sourceLines.get(z);
 							s[index] = cCode;
@@ -2684,10 +2788,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void changeText(SegmentRegister segmentRegister, String value, String base, String limit, String flags) {
-		changeText(segmentRegister, CommonLib.string2BigInteger(value), CommonLib.string2BigInteger(base), CommonLib.string2BigInteger(limit), CommonLib.string2BigInteger(flags));
+		changeText(segmentRegister, CommonLib.string2BigInteger(value), CommonLib.string2BigInteger(base),
+				CommonLib.string2BigInteger(limit), CommonLib.string2BigInteger(flags));
 	}
 
-	private void changeText(SegmentRegister segmentRegister, BigInteger value, BigInteger base, BigInteger limit, BigInteger flags) {
+	private void changeText(SegmentRegister segmentRegister, BigInteger value, BigInteger base, BigInteger limit,
+			BigInteger flags) {
 		String newValue = "0x" + value.toString(16);
 		if (segmentRegister.getText().equals(newValue)) {
 			segmentRegister.setForeground(Color.black);
@@ -2719,12 +2825,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		changeText(this.registerPanel.espTextField, CommonLib.string2BigInteger(ht.get("sp")));
 		changeText(this.registerPanel.eipTextField, CommonLib.string2BigInteger(ht.get("ip")));
 		changeText(this.registerPanel.eflagsTextField, CommonLib.string2BigInteger(ht.get("eflags")));
-		changeText(this.registerPanel.csTextField, ht.get("cs"), ht.get("cs_base"), ht.get("cs_limit"), ht.get("cs_flags"));
-		changeText(this.registerPanel.dsTextField, ht.get("ds"), ht.get("ds_base"), ht.get("ds_limit"), ht.get("ds_flags"));
-		changeText(this.registerPanel.esTextField, ht.get("es"), ht.get("es_base"), ht.get("es_limit"), ht.get("es_flags"));
-		changeText(this.registerPanel.fsTextField, ht.get("fs"), ht.get("fs_base"), ht.get("fs_limit"), ht.get("fs_flags"));
-		changeText(this.registerPanel.gsTextField, ht.get("gs"), ht.get("gs_base"), ht.get("gs_limit"), ht.get("gs_flags"));
-		changeText(this.registerPanel.ssTextField, ht.get("ss"), ht.get("ss_base"), ht.get("ss_limit"), ht.get("ss_flags"));
+		changeText(this.registerPanel.csTextField, ht.get("cs"), ht.get("cs_base"), ht.get("cs_limit"),
+				ht.get("cs_flags"));
+		changeText(this.registerPanel.dsTextField, ht.get("ds"), ht.get("ds_base"), ht.get("ds_limit"),
+				ht.get("ds_flags"));
+		changeText(this.registerPanel.esTextField, ht.get("es"), ht.get("es_base"), ht.get("es_limit"),
+				ht.get("es_flags"));
+		changeText(this.registerPanel.fsTextField, ht.get("fs"), ht.get("fs_base"), ht.get("fs_limit"),
+				ht.get("fs_flags"));
+		changeText(this.registerPanel.gsTextField, ht.get("gs"), ht.get("gs_base"), ht.get("gs_limit"),
+				ht.get("gs_flags"));
+		changeText(this.registerPanel.ssTextField, ht.get("ss"), ht.get("ss_base"), ht.get("ss_limit"),
+				ht.get("ss_flags"));
 		changeText(this.registerPanel.gdtrTextField, CommonLib.string2BigInteger(ht.get("gdtr")));
 		changeText(this.registerPanel.gdtrLimitTextField, CommonLib.string2BigInteger(ht.get("gdtr_limit")));
 		changeText(this.registerPanel.ldtrTextField, CommonLib.string2BigInteger(ht.get("ldtr")));
@@ -2778,18 +2890,24 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			if (this.memoryAddressComboBox.getSelectedItem() != null) {
 				int totalByte = 200;
 				int bytes[] = new int[0];
-				//					commandReceiver.shouldShow = false;
+				// commandReceiver.shouldShow = false;
 
-				currentMemoryWindowsAddress = CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString());
+				currentMemoryWindowsAddress = CommonLib
+						.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString());
 				statusLabel.setText("Updating memory");
 				if (isPhysicalAddress) {
-					bytes = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()), totalByte);
+					bytes = VMController.getVM().physicalMemory(
+							CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()),
+							totalByte);
 				} else {
-					bytes = VMController.getVM().virtualMemory(CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()), totalByte);
+					bytes = VMController.getVM().virtualMemory(
+							CommonLib.string2BigInteger(this.memoryAddressComboBox.getSelectedItem().toString()),
+							totalByte);
 				}
 
 				statusLabel.setText("");
-				hexTable.getModel().setCurrentAddress(CommonLib.string2long(this.memoryAddressComboBox.getSelectedItem().toString()));
+				hexTable.getModel().setCurrentAddress(
+						CommonLib.string2long(this.memoryAddressComboBox.getSelectedItem().toString()));
 				hexTable.getModel().set(bytes);
 				hexTable.getModel().fireTableDataChanged();
 			}
@@ -2814,7 +2932,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 
-			bottomTabbedPane.addTabWithCloseButton(tabTitle, null, new GDTLDTPanel(this, 0, CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()), gdtNo), null);
+			bottomTabbedPane
+					.addTabWithCloseButton(tabTitle, null,
+							new GDTLDTPanel(this, 0,
+									CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()), gdtNo),
+							null);
 			bottomTabbedPane.setSelectedIndex(bottomTabbedPane.getTabCount() - 1);
 		}
 	}
@@ -2828,7 +2950,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 			}
 			JScrollPane temp = new JScrollPane();
-			temp.setViewportView(new GDTLDTPanel(this, 1, CommonLib.string2BigInteger(this.registerPanel.ldtrTextField.getText()), ldtTable.getSelectedRow() + 1));
+			temp.setViewportView(
+					new GDTLDTPanel(this, 1, CommonLib.string2BigInteger(this.registerPanel.ldtrTextField.getText()),
+							ldtTable.getSelectedRow() + 1));
 			bottomTabbedPane.addTabWithCloseButton("LDT " + ldtTable.getSelectedRow(), null, temp, null);
 			bottomTabbedPane.setSelectedIndex(bottomTabbedPane.getTabCount() - 1);
 		}
@@ -2889,7 +3013,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						String p = String.valueOf((value >> 0) & 1);
 						boolean tempB = model.isShowZeroAddress();
 						model.setShowZeroAddress(true);
-						model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+						model.addRow(
+								new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
 						model.setShowZeroAddress(tempB);
 					} else {
 						// no page table
@@ -2945,11 +3070,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void addBreakpointButtonActionPerformed(ActionEvent evt) {
 		addBreakpointButton.setEnabled(false);
-		String type = (String) JOptionPane.showInputDialog(this, null, "Add breakpoint", JOptionPane.QUESTION_MESSAGE, null,
-				new Object[] { MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address") },
+		String type = (String) JOptionPane.showInputDialog(this, null, "Add breakpoint",
+				JOptionPane.QUESTION_MESSAGE, null, new Object[] { MyLanguage.getString("Physical_address"),
+						MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address") },
 				MyLanguage.getString("Physical_address"));
 		if (type != null) {
-			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint", JOptionPane.QUESTION_MESSAGE);
+			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint",
+					JOptionPane.QUESTION_MESSAGE);
 			if (address != null) {
 				if (type.equals(MyLanguage.getString("Physical_address"))) {
 					VMController.getVM().addPhysicalBreakpoint(CommonLib.string2BigInteger(address));
@@ -2957,9 +3084,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger(address));
 				} else {
 					try {
-						VMController.getVM().addVirtualBreakpoint(CommonLib.string2BigInteger(address.split(":")[0]), CommonLib.string2BigInteger(address.split(":")[1]));
+						VMController.getVM().addVirtualBreakpoint(CommonLib.string2BigInteger(address.split(":")[0]),
+								CommonLib.string2BigInteger(address.split(":")[1]));
 					} catch (Exception ex) {
-						JOptionPane.showMessageDialog(this, "Virtual address should be in form 0x12:0xabcdef", "Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this, "Virtual address should be in form 0x12:0xabcdef", "Error",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				updateBreakpoint();
@@ -3012,18 +3141,21 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				for (int x = 0; x < vector.size(); x++) {
 					boolean match = false;
 					for (int y = 0; y < this.breakpointTable.getRowCount(); y++) {
-						if (vector.get(x).getAddress().equals(CommonLib.string2BigInteger(breakpointTable.getValueAt(y, 2).toString().trim()))) {
+						if (vector.get(x).getAddress().equals(
+								CommonLib.string2BigInteger(breakpointTable.getValueAt(y, 2).toString().trim()))) {
 							match = true;
 							break;
 						}
 					}
 					if (!match) {
 						if (vector.get(x).getType().contains("pbreakpoint")) {
-							//sendCommand("pb " + vector.get(x).getAddress());
-							//addPhysicalBreakpoint(vector.get(x).getAddress(), MyLanguage.getString("Physical_address"));
+							// sendCommand("pb " + vector.get(x).getAddress());
+							// addPhysicalBreakpoint(vector.get(x).getAddress(),
+							// MyLanguage.getString("Physical_address"));
 							VMController.getVM().addPhysicalBreakpoint(vector.get(x).getAddress());
 						} else if (vector.get(x).getType().contains("lbreakpoint")) {
-							//							sendBochsCommand("lb " + vector.get(x).getAddress());
+							// sendBochsCommand("lb " +
+							// vector.get(x).getAddress());
 							VMController.getVM().addLinearBreakpoint(vector.get(x).getAddress());
 						} else {
 							VMController.getVM().addLinearBreakpoint(vector.get(x).getAddress());
@@ -3048,8 +3180,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		deleteBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			VMController.getVM()
-					.deletePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
+			VMController.getVM().deletePhysicalBreakpoint(CommonLib.string2BigInteger(
+					breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
@@ -3060,8 +3192,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		disableBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			VMController.getVM()
-					.disablePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
+			VMController.getVM().disablePhysicalBreakpoint(CommonLib.string2BigInteger(
+					breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
@@ -3073,8 +3205,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		enableBreakpointButton.setEnabled(false);
 		int rows[] = breakpointTable.getSelectedRows();
 		for (int x = 0; x < rows.length; x++) {
-			VMController.getVM()
-					.enablePhysicalBreakpoint(CommonLib.string2BigInteger(breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
+			VMController.getVM().enablePhysicalBreakpoint(CommonLib.string2BigInteger(
+					breakpointTable.getValueAt(rows[x], 0).toString().replaceAll("^-*", "").trim().split(" ")[0]));
 		}
 		updateBreakpoint();
 		updateBreakpointTableColor();
@@ -3373,7 +3505,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			setHistoryTableColumnsWidth();
 		}
 		historyTable.setDefaultRenderer(String.class, new HistoryTableCellRenderer());
-		//		historyTable.setIntercellSpacing(new Dimension(0, 0));
+		// historyTable.setIntercellSpacing(new Dimension(0, 0));
 		historyTable.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent evt) {
 				historyTableMouseClicked(evt);
@@ -3518,7 +3650,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getSaveHistoryTableButton() {
 		if (saveHistoryTableImageButton == null) {
 			saveHistoryTableImageButton = new JButton();
-			saveHistoryTableImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveHistoryTableImageButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			saveHistoryTableImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					saveHistoryTableButtonActionPerformed(evt);
@@ -3542,7 +3675,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getSaveHexTableImageButton() {
 		if (saveHexTableImageButton == null) {
 			saveHexTableImageButton = new JButton();
-			saveHexTableImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveHexTableImageButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			saveHexTableImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					saveHexTableImageButtonActionPerformed(evt);
@@ -3569,7 +3703,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getJButton3() {
 		if (saveInstructionTableImageButton == null) {
 			saveInstructionTableImageButton = new JButton();
-			saveInstructionTableImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveInstructionTableImageButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			saveInstructionTableImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					saveInstructionTableImageButtonActionPerformed(evt);
@@ -3593,7 +3728,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getExportHistoryToExcelButton() {
 		if (exportHistoryToExcelButton == null) {
 			exportHistoryToExcelButton = new JButton();
-			exportHistoryToExcelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			exportHistoryToExcelButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			exportHistoryToExcelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					exportHistoryToExcelButtonActionPerformed(evt);
@@ -3612,7 +3748,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				file = new File(file.getParent() + File.separator + file.getName() + ".xlsx");
 			}
 			if (file.exists()) {
-				int r = JOptionPane.showConfirmDialog(this, "Overwrite " + file.getName() + "?", "Warning", JOptionPane.YES_NO_OPTION);
+				int r = JOptionPane.showConfirmDialog(this, "Overwrite " + file.getName() + "?", "Warning",
+						JOptionPane.YES_NO_OPTION);
 				if (r == 1) {
 					return;
 				}
@@ -3641,7 +3778,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getExcelMemoryButton() {
 		if (excelMemoryButton == null) {
 			excelMemoryButton = new JButton();
-			excelMemoryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelMemoryButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			excelMemoryButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					excelMemoryButtonActionPerformed(evt);
@@ -3665,7 +3803,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				if (!file.getName().toLowerCase().endsWith(".xls")) {
 					file = new File(file.getAbsolutePath() + ".xls");
 				}
-				GKDCommonLib.exportTableModelToExcel(file, hexTable.getModel(), memoryAddressComboBox.getSelectedItem().toString());
+				GKDCommonLib.exportTableModelToExcel(file, hexTable.getModel(),
+						memoryAddressComboBox.getSelectedItem().toString());
 			}
 		}
 	}
@@ -3683,7 +3822,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getSaveGDTImageButton() {
 		if (saveGDTImageButton == null) {
 			saveGDTImageButton = new JButton();
-			saveGDTImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveGDTImageButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			saveGDTImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					saveGDTImageButtonActionPerformed(evt);
@@ -3707,7 +3847,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getExcelGDTButton() {
 		if (excelGDTButton == null) {
 			excelGDTButton = new JButton();
-			excelGDTButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelGDTButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			excelGDTButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					excelGDTButtonActionPerformed(evt);
@@ -3747,7 +3888,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getExcelIDTButton() {
 		if (excelIDTButton == null) {
 			excelIDTButton = new JButton();
-			excelIDTButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelIDTButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			excelIDTButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					excelIDTButtonActionPerformed(evt);
@@ -3769,7 +3911,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getSaveImageButton() {
 		if (saveImageButton == null) {
 			saveImageButton = new JButton();
-			saveImageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			saveImageButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			saveImageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					saveImageButtonActionPerformed(evt);
@@ -3793,7 +3936,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getExcelButton2() {
 		if (excelButton2 == null) {
 			excelButton2 = new JButton();
-			excelButton2.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelButton2.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			excelButton2.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					excelButton2ActionPerformed(evt);
@@ -3810,7 +3954,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getDiskButton() {
 		if (diskButton == null) {
 			diskButton = new JButton();
-			diskButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			diskButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			diskButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					diskButtonActionPerformed(evt);
@@ -3827,7 +3972,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getExcelButton() {
 		if (excelButton == null) {
 			excelButton = new JButton();
-			excelButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			excelButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					excelButtonActionPerformed(evt);
@@ -3842,7 +3988,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(), "instruction 0x" + this.instructionComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, GKD.instructionTable.getModel(),
+					"instruction 0x" + this.instructionComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -3964,8 +4111,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void searchMemoryButtonActionPerformed(ActionEvent evt) {
 		try {
 			if (this.searchMemoryToComboBox.getSelectedItem().toString().trim().startsWith("+")) {
-				this.searchMemoryToComboBox.setSelectedItem("0x" + Long.toHexString(CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem().toString())
-						+ CommonLib.string2long(this.searchMemoryToComboBox.getSelectedItem().toString().substring(1))));
+				this.searchMemoryToComboBox.setSelectedItem("0x" + Long.toHexString(
+						CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem().toString()) + CommonLib
+								.string2long(this.searchMemoryToComboBox.getSelectedItem().toString().substring(1))));
 			}
 			new SearchMemoryDialog(this, this.searchMemoryTable, this.searchMemoryTextField.getText(),
 					CommonLib.string2long(this.searchMemoryFromComboBox.getSelectedItem().toString()),
@@ -4047,7 +4195,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				};
 				progressBarDialog.progressBar.setValue(53);
 				progressBarDialog.progressBar.setString("Init GUI - 3.3");
-				// don't remove this line, because i uncomment this line to make runningPanel appears in windowbuilder mainPanel.add(getRunningPanel(), "Running Panel");
+				// don't remove this line, because i uncomment this line to make
+				// runningPanel appears in windowbuilder
+				// mainPanel.add(getRunningPanel(), "Running Panel");
 
 				Thread loadThread3 = new Thread() {
 					public void run() {
@@ -4081,7 +4231,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JSplitPane getSplitPane2() {
 		logger.info(simpleDateFormat.format(new Date()));
-		//longest task
+		// longest task
 		jSplitPane2 = new JSplitPane();
 
 		jSplitPane2.setPreferredSize(new java.awt.Dimension(1009, 781));
@@ -4101,7 +4251,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionPanel = new JPanel();
 		BorderLayout jPanel10Layout = new BorderLayout();
 		instructionPanel.setLayout(jPanel10Layout);
-		upperRightTabbedPane.addTab(MyLanguage.getString("Instruction"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")),
+		upperRightTabbedPane.addTab(MyLanguage.getString("Instruction"),
+				new ImageIcon(
+						getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_padding_top.png")),
 				instructionPanel, null);
 		instructionPanel.setPreferredSize(new java.awt.Dimension(604, 452));
 		instructionControlPanel = new JToolBar();
@@ -4152,8 +4304,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 		jPanel4 = new JPanel();
-		upperRightTabbedPane.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")), jPanel4,
-				null);
+		upperRightTabbedPane.addTab(MyLanguage.getString("Breakpoint"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")),
+				jPanel4, null);
 		BorderLayout jPanel4Layout = new BorderLayout();
 		jPanel4.setLayout(jPanel4Layout);
 
@@ -4236,26 +4389,35 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			}
 		});
 		vmPanel = new JPanel();
-		//$hide>>$
+		// $hide>>$
 		if (VMController.vmType == VMType.Bochs) {
-			//$hide><<$
-			upperRightTabbedPane.addTab(MyLanguage.getString("Bochs"),
-					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
-			//$hide>>$
+			// $hide><<$
+			upperRightTabbedPane
+					.addTab(MyLanguage.getString("Bochs"),
+							new ImageIcon(getClass().getClassLoader()
+									.getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
+							vmPanel, null);
+			// $hide>>$
 		} else if (VMController.vmType == VMType.Qemu) {
-			//$hide<<$
-			upperRightTabbedPane.addTab(MyLanguage.getString("Qemu"),
-					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")), vmPanel, null);
-			//$hide>>$
+			// $hide<<$
+			upperRightTabbedPane
+					.addTab(MyLanguage.getString("Qemu"),
+							new ImageIcon(getClass().getClassLoader()
+									.getResource("com/gkd/icons/famfam_icons/application_xp_terminal.png")),
+							vmPanel, null);
+			// $hide>>$
 		}
-		//$hide<<$
+		// $hide<<$
 
 		logger.info(simpleDateFormat.format(new Date()));
-		upperRightTabbedPane.addTab("ELF", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")), getJELFBreakpointPanel(), null);
+		upperRightTabbedPane.addTab("ELF",
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
+				getJELFBreakpointPanel(), null);
 		DiskPanel diskPanel = getDiskPanel();
 		if (diskPanel.getFile() != null) {
-			upperRightTabbedPane.addTab(diskPanel.getFile().getName(), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")), diskPanel,
-					null);
+			upperRightTabbedPane.addTab(diskPanel.getFile().getName(),
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/package.png")),
+					diskPanel, null);
 		}
 		BorderLayout jPanel1Layout = new BorderLayout();
 		vmPanel.setLayout(jPanel1Layout);
@@ -4264,7 +4426,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		vmCommandScrollPane4.setViewportView(vmCommandEditorPane);
 		vmPanel.add(vmCommandScrollPane4, BorderLayout.CENTER);
 		jPanel2 = new JPanel();
-		TableLayout jPanel2Layout = new TableLayout(new double[][] { { TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM }, { TableLayout.FILL } });
+		TableLayout jPanel2Layout = new TableLayout(new double[][] {
+				{ TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM }, { TableLayout.FILL } });
 		jPanel2Layout.setHGap(5);
 		jPanel2Layout.setVGap(5);
 		jPanel2.setLayout(jPanel2Layout);
@@ -4295,11 +4458,14 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		memoryPanel = new JPanel();
 		BorderLayout jPanel8Layout = new BorderLayout();
 		memoryPanel.setLayout(jPanel8Layout);
-		//		if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
-		//			tabbedPane3.addTab("VNC", null, getVncPanel(), null);
-		//			TightVNC.initVNCPanel(this, getVncPanel(), "localhost", GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
-		//		}
-		tabbedPane3.addTab(MyLanguage.getString("Memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")), memoryPanel, null);
+		// if (GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()") != -1) {
+		// tabbedPane3.addTab("VNC", null, getVncPanel(), null);
+		// TightVNC.initVNCPanel(this, getVncPanel(), "localhost",
+		// GKDCommonLib.readConfigInt(cmd, "/gkd/vncPort/text()"), null);
+		// }
+		tabbedPane3.addTab(MyLanguage.getString("Memory"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
+				memoryPanel, null);
 
 		jScrollPane2 = new JScrollPane();
 		memoryPanel.add(jScrollPane2, BorderLayout.CENTER);
@@ -4400,7 +4566,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		logger.info(simpleDateFormat.format(new Date()));
 		jPanel5 = new JPanel();
-		tabbedPane3.addTab(MyLanguage.getString("GDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5, null);
+		tabbedPane3.addTab(MyLanguage.getString("GDT"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/gdt.png")), jPanel5,
+				null);
 		BorderLayout jPanel5Layout = new BorderLayout();
 		jPanel5.setLayout(jPanel5Layout);
 
@@ -4424,7 +4592,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jPanel6 = new JPanel();
 		BorderLayout jPanel6Layout = new BorderLayout();
 		jPanel6.setLayout(jPanel6Layout);
-		tabbedPane3.addTab(MyLanguage.getString("IDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/idt.png")), jPanel6, null);
+		tabbedPane3.addTab(MyLanguage.getString("IDT"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/idt.png")), jPanel6,
+				null);
 
 		scrollPane10 = new JScrollPane();
 		jPanel6.add(scrollPane10, BorderLayout.CENTER);
@@ -4447,11 +4617,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jPanel7 = new JPanel();
 		BorderLayout jPanel7Layout = new BorderLayout();
 		jPanel7.setLayout(jPanel7Layout);
-		tabbedPane3.addTab(MyLanguage.getString("LDT"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7, null);
-		tabbedPane3.addTab(MyLanguage.getString("Search_memory"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
+		tabbedPane3.addTab(MyLanguage.getString("LDT"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/ldt.png")), jPanel7,
+				null);
+		tabbedPane3.addTab(MyLanguage.getString("Search_memory"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/memory.png")),
 				getSearchMemoryPanel(), null);
 		tabbedPane3.addTab(VMController.vmType == VMType.Bochs ? "bochsout.txt" : "qemu log",
-				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getJPanel31(), null);
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")),
+				getJPanel31(), null);
 
 		jScrollPane11 = new JScrollPane();
 		jPanel7.add(jScrollPane11, BorderLayout.CENTER);
@@ -4475,14 +4649,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		registerPanelScrollPane = new JScrollPane();
 		registerPanelScrollPane.getVerticalScrollBar().setUnitIncrement(20);
 		registerPanelScrollPane.getHorizontalScrollBar().setUnitIncrement(20);
-		bottomTabbedPane.addTab(MyLanguage.getString("Register"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_kerning.png")),
+		bottomTabbedPane.addTab(MyLanguage.getString("Register"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/text_kerning.png")),
 				registerPanelScrollPane, null);
 
 		registerPanel = new RegisterPanel(this);
 		registerPanelScrollPane.setViewportView(registerPanel);
 		logger.info(simpleDateFormat.format(new Date()));
 		historyPanel = new JPanel();
-		bottomTabbedPane.addTab(MyLanguage.getString("History"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")),
+		bottomTabbedPane.addTab(MyLanguage.getString("History"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/book_addresses.png")),
 				historyPanel, null);
 		BorderLayout bl_historyPanel = new BorderLayout();
 		historyPanel.setLayout(bl_historyPanel);
@@ -4493,20 +4669,27 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		historyTableScrollPane6.setViewportView(getHistoryTable());
 
 		pagingPanel = new JPanel();
-		bottomTabbedPane.addTab(MyLanguage.getString("Paging"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")), pagingPanel,
-				null);
-		bottomTabbedPane.addTab(MyLanguage.getString("Address_translate"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")),
+		bottomTabbedPane.addTab(MyLanguage.getString("Paging"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_copy.png")),
+				pagingPanel, null);
+		bottomTabbedPane.addTab(MyLanguage.getString("Address_translate"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_refresh.png")),
 				getJAddressTranslatePanel(), null);
-		bottomTabbedPane.addTab("Page table graph (experimental)", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
+		bottomTabbedPane.addTab("Page table graph (experimental)",
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_lightning.png")),
 				getPageTableGraphPanel(), null);
 		if (!Global.debug) {
 			bottomTabbedPane.removeTabAt(bottomTabbedPane.getTabCount() - 1);
 		}
-		bottomTabbedPane.addTab(MyLanguage.getString("ELF_dump"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
+		bottomTabbedPane.addTab(MyLanguage.getString("ELF_dump"),
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/linux.png")),
 				getELFDumpScrollPane(), null);
-		bottomTabbedPane.addTab("OS debug informations", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/bug.png")), getOSDebugStandardPanel(),
-				null);
-		bottomTabbedPane.addTab("Log", new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")), getLogPanel(), null);
+		bottomTabbedPane.addTab("OS debug informations",
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/bug.png")),
+				getOSDebugStandardPanel(), null);
+		bottomTabbedPane.addTab("Log",
+				new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/script.png")),
+				getLogPanel(), null);
 		BorderLayout jPanel11Layout = new BorderLayout();
 		pagingPanel.setLayout(jPanel11Layout);
 		pagingPanel.add(getTabbedPane(), BorderLayout.CENTER);
@@ -4522,13 +4705,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			new Thread("JRunningLabel thread") {
 				public void run() {
 					if (Setting.getInstance().currentLanguage.equals("zh_TW")) {
-						jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
-								+ "\" /><br><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????www.kingofcoders.com</a></center></html>");
+						jRunningLabel.setText(
+								"<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
+										+ url
+										+ "\" /><br><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????www.kingofcoders.com</a></center></html>");
 					} else if (Setting.getInstance().currentLanguage.equals("zh_CN")) {
-						jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
-								+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">??????????????????????????????????????????www.kingofcoders.com</a></center></html>");
+						jRunningLabel.setText(
+								"<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
+										+ url
+										+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #ffffff;  text-decoration:none\" href=\"http://www.kingofcoders.com\">??????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 					} else {
-						jRunningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /></center></html>");
+						jRunningLabel.setText(
+								"<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
+										+ url + "\" /></center></html>");
 					}
 				}
 			}.start();
@@ -4545,7 +4734,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getGDTGraphButton() {
 		if (gdtGraphButton == null) {
 			gdtGraphButton = new JButton();
-			gdtGraphButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/map.png")));
+			gdtGraphButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/map.png")));
 			gdtGraphButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					gdtGraphButtonActionPerformed(evt);
@@ -4577,7 +4767,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getSavePagingTableButton() {
 		if (savePagingTableButton == null) {
 			savePagingTableButton = new JButton();
-			savePagingTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			savePagingTableButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			savePagingTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jPagingGraphButtonActionPerformed(evt);
@@ -4650,10 +4841,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jPanel20 == null) {
 			jPanel20 = new JPanel();
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-			jPanel20.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"), },
-					new RowSpec[] { RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-							FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+			jPanel20.setLayout(new FormLayout(
+					new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"), },
+					new RowSpec[] { RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"),
+							FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+							RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+							FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
 							FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
 			jPanel20.add(getLblCr(), "2, 1");
 			jPanel20.add(getCr3RadioButton(), "2, 3");
@@ -4759,7 +4953,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getJButton17() {
 		if (jButton17 == null) {
 			jButton17 = new JButton();
-			jButton17.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
+			jButton17.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/disk.png")));
 			jButton17.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton17ActionPerformed(evt);
@@ -4772,7 +4967,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getJButton18() {
 		if (jButton18 == null) {
 			jButton18 = new JButton();
-			jButton18.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			jButton18.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			jButton18.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton18ActionPerformed(evt);
@@ -4808,8 +5004,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		AddressTranslateTableModel model = (AddressTranslateTableModel) this.addressTranslateTable.getModel();
 
 		if (searchVirtualAddressRadioButton.isSelected()) {
-			if (!this.addressTextField.getText().contains(":") || this.addressTextField.getText().replaceAll("[^:]", "").length() != 1) {
-				JOptionPane.showMessageDialog(this, "Error, please input <segment selector>:<offset>\n\ne.g. : 0x10:0x12345678", "Error", JOptionPane.ERROR_MESSAGE);
+			if (!this.addressTextField.getText().contains(":")
+					|| this.addressTextField.getText().replaceAll("[^:]", "").length() != 1) {
+				JOptionPane.showMessageDialog(this,
+						"Error, please input <segment selector>:<offset>\n\ne.g. : 0x10:0x12345678", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			BigInteger segSelector = CommonLib.string2BigInteger(this.addressTextField.getText().split(":")[0]);
@@ -4825,8 +5024,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 			// read GDT descriptor
 			int descriptor[];
-			descriptor = VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText()).add(segNo.multiply(BigInteger.valueOf(8))), 8);
-			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7], 0, 0, 0, 0);
+			descriptor = VMController.getVM()
+					.physicalMemory(CommonLib.string2BigInteger(this.registerPanel.gdtrTextField.getText())
+							.add(segNo.multiply(BigInteger.valueOf(8))), 8);
+			BigInteger baseAddress = CommonLib.getBigInteger(descriptor[2], descriptor[3], descriptor[4], descriptor[7],
+					0, 0, 0, 0);
 			BigInteger linearAddress = baseAddress.add(address);
 			model.baseAddress.add(baseAddress);
 			model.linearAddress.add(linearAddress);
@@ -4846,7 +5048,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				} else {
 					pageDirectoryBaseAddress = CommonLib.string2BigInteger(pageDirectoryBaseAddressTextField.getText());
 				}
-				pdeBytes = VMController.getVM().physicalMemory(pageDirectoryBaseAddress.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+				pdeBytes = VMController.getVM()
+						.physicalMemory(pageDirectoryBaseAddress.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
 
 				BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 				model.pde.add(pde);
@@ -4871,7 +5074,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					model.ptNo.add(BigInteger.valueOf(-1));
 					model.pte.add(BigInteger.valueOf(-1));
 					pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
-					BigInteger physicalAddress = pageDirectoryBaseAddress.add(CommonLib.getBigInteger(linearAddress, 21, 0));
+					BigInteger physicalAddress = pageDirectoryBaseAddress
+							.add(CommonLib.getBigInteger(linearAddress, 21, 0));
 					model.physicalAddress.add(physicalAddress);
 
 					bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
@@ -4908,9 +5112,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				} else {
 					pageDirectoryBaseAddress = CommonLib.string2BigInteger(pageDirectoryBaseAddressTextField.getText());
 				}
-				pdeBytes = VMController.getVM().physicalMemory(pageDirectoryBaseAddress.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
-				logger.debug("CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4)))="
-						+ CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4))));
+				pdeBytes = VMController.getVM()
+						.physicalMemory(pageDirectoryBaseAddress.add(pdNo.multiply(BigInteger.valueOf(4))), 4);
+				logger.debug(
+						"CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()).add(pdNo.multiply(BigInteger.valueOf(4)))="
+								+ CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText())
+										.add(pdNo.multiply(BigInteger.valueOf(4))));
 
 				BigInteger pde = CommonLib.getBigInteger(pdeBytes, 0);
 				model.pde.add(pde);
@@ -4923,7 +5130,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					BigInteger pageTableBaseAddress = pde.and(CommonLib.string2BigInteger("0xfffff000"));
 					logger.debug("pageTableBaseAddress=" + pageTableBaseAddress.toString(16));
 					int pteBytes[];
-					pteBytes = VMController.getVM().physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
+					pteBytes = VMController.getVM()
+							.physicalMemory(pageTableBaseAddress.add(ptNo.multiply(BigInteger.valueOf(4))), 4);
 
 					BigInteger pte = CommonLib.getBigInteger(pteBytes, 0);
 					BigInteger pagePhysicalAddress = pte.and(CommonLib.string2BigInteger("0xfffff000"));
@@ -4938,7 +5146,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					model.pte.add(BigInteger.valueOf(-1));
 
 					pageDirectoryBaseAddress = pde.and(CommonLib.string2BigInteger("0xffc00000"));
-					BigInteger physicalAddress = pageDirectoryBaseAddress.add(CommonLib.getBigInteger(linearAddress, 21, 0));
+					BigInteger physicalAddress = pageDirectoryBaseAddress
+							.add(CommonLib.getBigInteger(linearAddress, 21, 0));
 					model.physicalAddress.add(physicalAddress);
 
 					bytesAtPhysicalAddress = VMController.getVM().physicalMemory(physicalAddress, 8);
@@ -4949,7 +5158,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			model.fireTableDataChanged();
 		} else if (searchPhysicalAddressRadioButton.isSelected()) {
 			for (int x = 0; x < model.getRowCount(); x++) {
-				if (model.searchType.get(x).equals(3) && model.searchAddress.get(x).equals(CommonLib.string2long(this.addressTextField.getText()))) {
+				if (model.searchType.get(x).equals(3)
+						&& model.searchAddress.get(x).equals(CommonLib.string2long(this.addressTextField.getText()))) {
 					return;
 				}
 			}
@@ -4973,7 +5183,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (refreshAddressTranslateTableButton == null) {
 			refreshAddressTranslateTableButton = new JButton();
 			refreshAddressTranslateTableButton.setText(MyLanguage.getString("Refresh"));
-			refreshAddressTranslateTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
+			refreshAddressTranslateTableButton.setIcon(new ImageIcon(
+					getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_refresh.png")));
 			refreshAddressTranslateTableButton.setText("Refresh");
 			refreshAddressTranslateTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -4991,7 +5202,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				model.segNo.set(x, model.searchSegSelector.get(x).shiftRight(3));
 				model.virtualAddress.set(x, model.searchAddress.get(x));
 
-				BigInteger gdtBase = CommonLib.getBigInteger(VMController.getVM().physicalMemory(CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()),
+				BigInteger gdtBase = CommonLib.getBigInteger(VMController.getVM().physicalMemory(
+						CommonLib.string2BigInteger(this.registerPanel.cr3TextField.getText()),
 						CommonLib.string2int(this.registerPanel.gdtrTextField.getText())), 0);
 				gdtBase = gdtBase.add(model.segNo.get(x).multiply(BigInteger.valueOf(8)));
 				int bytes[] = new int[8];
@@ -5117,29 +5329,45 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jGDTMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "GDT").setVisible(true);
+		new HelperDialog(this,
+				currentMemoryWindowsAddress.add(
+						BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)),
+				"GDT").setVisible(true);
 	}
 
 	private void jGDTDescriptorMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "GDT Descriptor")
-				.setVisible(true);
+		new HelperDialog(this,
+				currentMemoryWindowsAddress
+						.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)),
+				"GDT Descriptor").setVisible(true);
 	}
 
 	private void jIDTMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "IDT").setVisible(true);
+		new HelperDialog(this,
+				currentMemoryWindowsAddress.add(
+						BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)),
+				"IDT").setVisible(true);
 	}
 
 	private void jIDTDescriptorMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "IDT Descriptor")
-				.setVisible(true);
+		new HelperDialog(this,
+				currentMemoryWindowsAddress
+						.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)),
+				"IDT Descriptor").setVisible(true);
 	}
 
 	private void jPDEMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "PDE").setVisible(true);
+		new HelperDialog(this,
+				currentMemoryWindowsAddress.add(
+						BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)),
+				"PDE").setVisible(true);
 	}
 
 	private void jPTEMenuItemActionPerformed(ActionEvent evt) {
-		new HelperDialog(this, currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)), "PTE").setVisible(true);
+		new HelperDialog(this,
+				currentMemoryWindowsAddress.add(
+						BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)),
+				"PTE").setVisible(true);
 	}
 
 	private void memoryAddressComboBoxActionPerformed(ActionEvent evt) {
@@ -5162,7 +5390,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void jDisassemble32MenuItemActionPerformed(ActionEvent evt) {
-		this.instructionComboBox.setSelectedItem(currentMemoryWindowsAddress.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)));
+		this.instructionComboBox.setSelectedItem(currentMemoryWindowsAddress
+				.add(BigInteger.valueOf(hexTable.getSelectedRow() * 8 + hexTable.getSelectedColumn() - 1)));
 		disassembleButtonActionPerformed(null);
 		upperRightTabbedPane.setSelectedIndex(0);
 	}
@@ -5268,7 +5497,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 		for (int x = 0; x < filenames.length; x++) {
 			// find source file
-			Collection<File> found = FileUtils.listFiles(file.getParentFile(), FileFilterUtils.nameFileFilter(filenames[x]), TrueFileFilter.INSTANCE);
+			Collection<File> found = FileUtils.listFiles(file.getParentFile(),
+					FileFilterUtils.nameFileFilter(filenames[x]), TrueFileFilter.INSTANCE);
 			if (found.size() == 0) {
 				this.elfFileComboBox.addItem(file.getName() + " - " + filenames[x] + " (missing)");
 			} else {
@@ -5282,7 +5512,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					e.printStackTrace();
 				}
 
-				this.elfFileComboBox.addItem(file.getName() + " - " + foundFile.getAbsolutePath().substring(file.getParent().length()));
+				this.elfFileComboBox.addItem(
+						file.getName() + " - " + foundFile.getAbsolutePath().substring(file.getParent().length()));
 				// end read source code
 			}
 			// end find source file
@@ -5389,13 +5620,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	public BigInteger getRealEIP() {
 		try {
-			//			BigInteger eip;
-			//			if (CommonLib.getBit(CommonLib.string2long(registerPanel.cr0TextField.getText()), 0) == 1) {
-			//				eip = CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
-			//			} else {
-			//				eip = CommonLib.string2BigInteger(registerPanel.csTextField.getText()).multiply(BigInteger.valueOf(16))
-			//						.add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
-			//			}
+			// BigInteger eip;
+			// if
+			// (CommonLib.getBit(CommonLib.string2long(registerPanel.cr0TextField.getText()),
+			// 0) == 1) {
+			// eip =
+			// CommonLib.string2BigInteger(registerPanel.eipTextField.getText());
+			// } else {
+			// eip =
+			// CommonLib.string2BigInteger(registerPanel.csTextField.getText()).multiply(BigInteger.valueOf(16))
+			// .add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
+			// }
 			BigInteger cs;
 			if (registerPanel.csTextField.getBase().equals("")) {
 				cs = CommonLib.string2BigInteger(registerPanel.csTextField.getText());
@@ -5618,7 +5853,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getELFHeaderTable() {
 		if (elfHeaderTable == null) {
-			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
+			TableModel jELFHeaderTableModel = new DefaultTableModel(null,
+					new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
 			elfHeaderTable = new JTable();
 			elfHeaderTable.getTableHeader().setReorderingAllowed(false);
 			elfHeaderTable.setModel(jELFHeaderTableModel);
@@ -5764,7 +6000,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// symbol table
 			int symbolTableNo = 0;
 			while (map.get("symbolTable" + symbolTableNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx" });
+				DefaultTableModel tempTableModel = new DefaultTableModel(null,
+						new String[] { "No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx" });
 				JTable tempTable = new JTable();
 				HashMap tempMap = (HashMap) map.get("symbolTable" + symbolTableNo);
 				Vector<LinkedHashMap> v = (Vector<LinkedHashMap>) tempMap.get("vector");
@@ -5794,9 +6031,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// note
 			int noteSectionNo = 0;
 			while (map.get("note" + noteSectionNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "namesz", "descsz", "type", "name", "desc" });
+				DefaultTableModel tempTableModel = new DefaultTableModel(null,
+						new String[] { "No.", "namesz", "descsz", "type", "name", "desc" });
 				JTable tempTable = new JTable();
-				HashMap<String, Vector<LinkedHashMap<String, Object>>> tempMap = (HashMap) map.get("note" + noteSectionNo);
+				HashMap<String, Vector<LinkedHashMap<String, Object>>> tempMap = (HashMap) map
+						.get("note" + noteSectionNo);
 				Vector<LinkedHashMap<String, Object>> v = tempMap.get("vector");
 				for (int x = 0; x < v.size(); x++) {
 					Vector<String> tempV = new Vector<String>();
@@ -5876,7 +6115,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable getJSectionTable() {
 		if (elfSectionTable == null) {
 			TableModel jSectionTableModel = new DefaultTableModel(null,
-					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize" });
+					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size",
+							"sh_link", "sh_info", "sh_addralign", "sh_entsize" });
 			elfSectionTable = new JTable();
 			elfSectionTable.getTableHeader().setReorderingAllowed(false);
 			elfSectionTable.setModel(jSectionTableModel);
@@ -5895,7 +6135,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getJProgramHeaderTable() {
 		if (programHeaderTable == null) {
-			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[] { "No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align" });
+			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[] { "No.", "p_type",
+					"p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align" });
 			programHeaderTable = new JTable();
 			programHeaderTable.getTableHeader().setReorderingAllowed(false);
 			programHeaderTable.setModel(jProgramHeaderTableModel);
@@ -5908,7 +6149,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jButton19 == null) {
 			jButton19 = new JButton();
 			jButton19.setText("Delete");
-			jButton19.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cross.png")));
+			jButton19.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cross.png")));
 			jButton19.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton19ActionPerformed(evt);
@@ -5974,7 +6216,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getJButton21x() {
 		if (excelPagingTableButton == null) {
 			excelPagingTableButton = new JButton();
-			excelPagingTableButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
+			excelPagingTableButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/excel.gif")));
 			excelPagingTableButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jButton21ActionPerformed(evt);
@@ -5989,7 +6232,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.pageDirectoryTable.getModel(), this.pageTableTable.getModel(), memoryAddressComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, this.pageDirectoryTable.getModel(),
+					this.pageTableTable.getModel(), memoryAddressComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -6009,7 +6253,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		int returnVal = fc.showSaveDialog(this);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
-			GKDCommonLib.exportTableModelToExcel(file, this.addressTranslateTable.getModel(), memoryAddressComboBox.getSelectedItem().toString());
+			GKDCommonLib.exportTableModelToExcel(file, this.addressTranslateTable.getModel(),
+					memoryAddressComboBox.getSelectedItem().toString());
 		}
 	}
 
@@ -6131,7 +6376,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void hideIfAddressIsZeroCheckBoxActionPerformed(ActionEvent evt) {
-		((PageDirectoryTableModel) pageDirectoryTable.getModel()).setShowZeroAddress(!hideIfAddressIsZeroCheckBox.isSelected());
+		((PageDirectoryTableModel) pageDirectoryTable.getModel())
+				.setShowZeroAddress(!hideIfAddressIsZeroCheckBox.isSelected());
 		((PageTableTableModel) pageTableTable.getModel()).setShowZeroAddress(!hideIfAddressIsZeroCheckBox.isSelected());
 	}
 
@@ -6201,10 +6447,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void setPhysicalBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (registerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
-			VMController.getVM().addPhysicalBreakpoint(CommonLib.string2BigInteger(model.getMemoryAddress(instructionTable.getSelectedRow())));
+			VMController.getVM().addPhysicalBreakpoint(
+					CommonLib.string2BigInteger(model.getMemoryAddress(instructionTable.getSelectedRow())));
 		} else if (this.sourceLevelDebuggerToggleButton.isSelected()) {
 			InstructionTableModel model = (InstructionTableModel) sourceLevelDebugger.instructionTable.getModel();
-			VMController.getVM().addPhysicalBreakpoint(CommonLib.string2BigInteger(model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow())));
+			VMController.getVM().addPhysicalBreakpoint(CommonLib
+					.string2BigInteger(model.getMemoryAddress(sourceLevelDebugger.instructionTable.getSelectedRow())));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
@@ -6212,10 +6460,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void setLinearBreakpointMenuItemActionPerformed(ActionEvent evt) {
 		if (registerToggleButton.isSelected()) {
-			VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger((String) GKD.instructionTable.getValueAt(GKD.instructionTable.getSelectedRow(), 1)));
+			VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger(
+					(String) GKD.instructionTable.getValueAt(GKD.instructionTable.getSelectedRow(), 1)));
 		} else if (this.sourceLevelDebuggerToggleButton.isSelected()) {
-			VMController.getVM().addLinearBreakpoint(
-					CommonLib.string2BigInteger((String) this.sourceLevelDebugger.instructionTable.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1)));
+			VMController.getVM()
+					.addLinearBreakpoint(CommonLib.string2BigInteger((String) this.sourceLevelDebugger.instructionTable
+							.getValueAt(this.sourceLevelDebugger.instructionTable.getSelectedRow(), 1)));
 		}
 		updateBreakpoint();
 		updateInstruction(null);
@@ -6272,7 +6522,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void dumpHereMenuItemActionPerformed(ActionEvent evt) {
-		this.memoryAddressComboBox.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
+		this.memoryAddressComboBox
+				.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
 		if (this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 0).toString().contains("lb")) {
 			goLinearButtonActionPerformed(null);
 		} else {
@@ -6282,7 +6533,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void disassembleMenuItemActionPerformed(ActionEvent evt) {
-		this.instructionComboBox.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
+		this.instructionComboBox
+				.setSelectedItem(this.breakpointTable.getValueAt(this.breakpointTable.getSelectedRow(), 2));
 		disassembleButtonActionPerformed(null);
 		upperRightTabbedPane.setSelectedIndex(0);
 	}
@@ -6339,19 +6591,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void setPhysicalBreakpointHereMenuItemActionPerformed(ActionEvent evt) {
 		logger.debug(this.searchMemoryTable.getValueAt(searchMemoryTable.getSelectedRow(), 0));
-		VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger((String) searchMemoryTable.getValueAt(this.searchMemoryTable.getSelectedRow(), 0)));
+		VMController.getVM().addLinearBreakpoint(CommonLib
+				.string2BigInteger((String) searchMemoryTable.getValueAt(this.searchMemoryTable.getSelectedRow(), 0)));
 		this.updateBreakpoint();
 	}
 
 	private void setLinerBreakpointHereMenuItemActionPerformed(ActionEvent evt) {
-		VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger((String) searchMemoryTable.getValueAt(this.searchMemoryTable.getSelectedRow(), 0)));
+		VMController.getVM().addLinearBreakpoint(CommonLib
+				.string2BigInteger((String) searchMemoryTable.getValueAt(this.searchMemoryTable.getSelectedRow(), 0)));
 		this.updateBreakpoint();
 	}
 
 	private JButton getInstructionUpButton() {
 		if (instructionUpButton == null) {
 			instructionUpButton = new JButton();
-			instructionUpButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up1.png")));
+			instructionUpButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up1.png")));
 			instructionUpButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					instructionUpButtonActionPerformed(evt);
@@ -6364,7 +6619,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getInstructionDownButton() {
 		if (instructionDownButton == null) {
 			instructionDownButton = new JButton();
-			instructionDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_down.png")));
+			instructionDownButton.setIcon(new ImageIcon(
+					getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_down.png")));
 			instructionDownButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					instructionDownButtonActionPerformed(evt);
@@ -6445,7 +6701,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getInstructionUpTenButton() {
 		if (instructionUpTenButton == null) {
 			instructionUpTenButton = new JButton();
-			instructionUpTenButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up10.png")));
+			instructionUpTenButton.setIcon(new ImageIcon(
+					getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/arrow_up10.png")));
 			instructionUpTenButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					instructionUpTenButtonActionPerformed(evt);
@@ -6456,13 +6713,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	public void instructionUpTenButtonActionPerformed(ActionEvent evt) {
-		//		String firstAddress = "";
-		//		int x = 0;
-		//		do {
-		//			firstAddress = GKD.instructionTable.getValueAt(x, 1).toString().replaceAll("^-*", "").split(":")[0];
-		//			x++;
-		//		} while (!CommonLib.isNumber(firstAddress));
-		//		firstAddress = CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);
+		// String firstAddress = "";
+		// int x = 0;
+		// do {
+		// firstAddress = GKD.instructionTable.getValueAt(x,
+		// 1).toString().replaceAll("^-*", "").split(":")[0];
+		// x++;
+		// } while (!CommonLib.isNumber(firstAddress));
+		// firstAddress =
+		// CommonLib.string2BigInteger(firstAddress).subtract(BigInteger.valueOf(16)).toString(16);
 
 		String address;
 		int selectedIndex = -1;
@@ -6530,13 +6789,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void idtTableMouseClicked(MouseEvent evt) {
 		if (evt.getClickCount() == 2) {
 			for (int x = 0; x < bottomTabbedPane.getTabCount(); x++) {
-				if (bottomTabbedPane.getTitleAt(x).equals(("IDT " + String.format("0x%02x", idtTable.getSelectedRow())))) {
+				if (bottomTabbedPane.getTitleAt(x)
+						.equals(("IDT " + String.format("0x%02x", idtTable.getSelectedRow())))) {
 					bottomTabbedPane.setSelectedIndex(x);
 					return;
 				}
 			}
 			bottomTabbedPane.addTabWithCloseButton("IDT " + String.format("0x%02x", idtTable.getSelectedRow()), null,
-					new IDTDescriptorPanel(this, CommonLib.string2BigInteger(this.registerPanel.idtrTextField.getText()), idtTable.getSelectedRow()), null);
+					new IDTDescriptorPanel(this,
+							CommonLib.string2BigInteger(this.registerPanel.idtrTextField.getText()),
+							idtTable.getSelectedRow()),
+					null);
 			bottomTabbedPane.setSelectedIndex(bottomTabbedPane.getTabCount() - 1);
 		}
 	}
@@ -6544,7 +6807,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getFastStepBochsButton() {
 		if (fastStepBochsButton == null) {
 			fastStepBochsButton = new JButton();
-			fastStepBochsButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
+			fastStepBochsButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 			fastStepBochsButton.setText(MyLanguage.getString("Fast_Step"));
 			fastStepBochsButton.setToolTipText(
 					"<html><body>A faster step<br><br>It will only update:<br>1) Memory panel<br>2) Instruction panel<br>3) Register panel<br>4) EFlags</body></html>");
@@ -6603,7 +6867,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						if (Global.debug) {
 							logger.debug("updateHistory");
 						}
-						//						updateHistoryTable(result);
+						// updateHistoryTable(result);
 					}
 
 					statusLabel.setText("");
@@ -6678,7 +6942,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (settingButton == null) {
 			settingButton = new JButton();
 			settingButton.setText(MyLanguage.getString("Setting"));
-			settingButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/wrench.png")));
+			settingButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/wrench.png")));
 			settingButton.setToolTipText("System setting");
 			settingButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -6758,13 +7023,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			int nextPosition = -1;
 
 			for (int j = 0; j < text.length() - searchObjdumpTextField.getText().length() + 1; j += 1) {
-				if (text.substring(j, j + searchObjdumpTextField.getText().length()).equals(searchObjdumpTextField.getText().toLowerCase())) {
+				if (text.substring(j, j + searchObjdumpTextField.getText().length())
+						.equals(searchObjdumpTextField.getText().toLowerCase())) {
 					try {
 						if (j >= jEditorPane1.getCaretPosition() && nextPosition == -1) {
-							h.addHighlight(j, j + searchObjdumpTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+							h.addHighlight(j, j + searchObjdumpTextField.getText().length(),
+									new DefaultHighlighter.DefaultHighlightPainter(Color.red));
 							nextPosition = j + searchObjdumpTextField.getText().length();
 						} else {
-							h.addHighlight(j, j + searchObjdumpTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
+							h.addHighlight(j, j + searchObjdumpTextField.getText().length(),
+									new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
 						}
 					} catch (BadLocationException ble) {
 					}
@@ -6865,13 +7133,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			int nextPosition = -1;
 
 			for (int j = 0; j < text.length() - searchRelPltTextField.getText().length() + 1; j += 1) {
-				if (text.substring(j, j + searchRelPltTextField.getText().length()).equals(searchRelPltTextField.getText().toLowerCase())) {
+				if (text.substring(j, j + searchRelPltTextField.getText().length())
+						.equals(searchRelPltTextField.getText().toLowerCase())) {
 					try {
 						if (j >= jSearchRelPltEditorPane.getCaretPosition() && nextPosition == -1) {
-							h.addHighlight(j, j + searchRelPltTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+							h.addHighlight(j, j + searchRelPltTextField.getText().length(),
+									new DefaultHighlighter.DefaultHighlightPainter(Color.red));
 							nextPosition = j + searchRelPltTextField.getText().length();
 						} else {
-							h.addHighlight(j, j + searchRelPltTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
+							h.addHighlight(j, j + searchRelPltTextField.getText().length(),
+									new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
 						}
 					} catch (BadLocationException ble) {
 					}
@@ -6940,13 +7211,16 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			int nextPosition = -1;
 
 			for (int j = 0; j < text.length() - searchDynamicTextField.getText().length() + 1; j += 1) {
-				if (text.substring(j, j + searchDynamicTextField.getText().length()).equals(searchDynamicTextField.getText().toLowerCase())) {
+				if (text.substring(j, j + searchDynamicTextField.getText().length())
+						.equals(searchDynamicTextField.getText().toLowerCase())) {
 					try {
 						if (j >= searchDynamicEditorPane.getCaretPosition() && nextPosition == -1) {
-							h.addHighlight(j, j + searchDynamicTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.red));
+							h.addHighlight(j, j + searchDynamicTextField.getText().length(),
+									new DefaultHighlighter.DefaultHighlightPainter(Color.red));
 							nextPosition = j + searchDynamicTextField.getText().length();
 						} else {
-							h.addHighlight(j, j + searchDynamicTextField.getText().length(), new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
+							h.addHighlight(j, j + searchDynamicTextField.getText().length(),
+									new DefaultHighlighter.DefaultHighlightPainter(Color.yellow));
 						}
 					} catch (BadLocationException ble) {
 					}
@@ -7034,7 +7308,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JToggleButton getProfilerToggleButton() {
 		if (profilerToggleButton == null) {
 			profilerToggleButton = new JToggleButton();
-			profilerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_organisation.png")));
+			profilerToggleButton.setIcon(new ImageIcon(
+					getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_organisation.png")));
 			profilerToggleButton.setText(MyLanguage.getString("Profile_and_Sampling"));
 			getButtonGroup4().add(profilerToggleButton);
 			profilerToggleButton.setToolTipText("Profile & Sampling");
@@ -7068,7 +7343,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JToggleButton getRegisterToggleButton() {
 		if (registerToggleButton == null) {
 			registerToggleButton = new JToggleButton();
-			registerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_bar.png")));
+			registerToggleButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/chart_bar.png")));
 			getButtonGroup4().add(registerToggleButton);
 			registerToggleButton.setSelected(true);
 			registerToggleButton.setText(MyLanguage.getString("General"));
@@ -7108,7 +7384,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (osLogToggleButton == null) {
 			osLogToggleButton = new JToggleButton();
 			osLogToggleButton.setText("os.log");
-			osLogToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_red.png")));
+			osLogToggleButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_red.png")));
 			osLogToggleButton.setToolTipText("os.log");
 			getButtonGroup4().add(osLogToggleButton);
 			osLogToggleButton.addActionListener(new ActionListener() {
@@ -7246,42 +7523,69 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			runningPanel.setLayout(jRunningPanelLayout);
 			runningPanel.setPreferredSize(new java.awt.Dimension(1073, 758));
 			jRunningPanelLayout.setHorizontalGroup(jRunningPanelLayout.createSequentialGroup().addContainerGap()
-					.addGroup(jRunningPanelLayout.createParallelGroup().addGroup(GroupLayout.Alignment.LEADING, jRunningPanelLayout.createSequentialGroup()
-							.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-							.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
-							.addComponent(getRunningTextArea(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
-									jRunningPanelLayout.createSequentialGroup().addGap(65)
-											.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE).addPreferredGap(
-													LayoutStyle.ComponentPlacement.RELATED)
-											.addGroup(jRunningPanelLayout.createParallelGroup()
-													.addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
-													.addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup()
-																	.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(), LayoutStyle.ComponentPlacement.INDENT)
-																	.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-																	.addGap(0, 25, Short.MAX_VALUE))))));
+					.addGroup(jRunningPanelLayout.createParallelGroup()
+							.addGroup(GroupLayout.Alignment.LEADING,
+									jRunningPanelLayout.createSequentialGroup()
+											.addComponent(getPauseButton(), GroupLayout.PREFERRED_SIZE, 66,
+													GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+											.addComponent(getMaximumRowLabel(), GroupLayout.PREFERRED_SIZE,
+													GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(getMaxRowComboBox(), GroupLayout.PREFERRED_SIZE, 95,
+													GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE,
+													45, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
+							.addComponent(getRunningTextArea(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE)
+							.addGroup(GroupLayout.Alignment.LEADING, jRunningPanelLayout.createSequentialGroup()
+									.addGap(65)
+									.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335,
+											GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(jRunningPanelLayout.createParallelGroup()
+											.addGroup(GroupLayout.Alignment.LEADING,
+													jRunningPanelLayout.createSequentialGroup()
+															.addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546,
+																	Short.MAX_VALUE)
+															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+															.addComponent(
+																	getSaveToRunDotTxtCheckBox(),
+																	GroupLayout.PREFERRED_SIZE, 158,
+																	GroupLayout.PREFERRED_SIZE))
+											.addGroup(GroupLayout.Alignment.LEADING, jRunningPanelLayout
+													.createSequentialGroup()
+													.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(),
+															getRunningLabel(), LayoutStyle.ComponentPlacement.INDENT)
+													.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679,
+															GroupLayout.PREFERRED_SIZE)
+													.addGap(0, 25, Short.MAX_VALUE))))));
 			jRunningPanelLayout.setVerticalGroup(jRunningPanelLayout.createSequentialGroup()
-					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-							.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
-							.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23, Short.MAX_VALUE)
-							.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-							.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-							.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE,
-									GroupLayout.PREFERRED_SIZE)
-							.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getRunningTextArea(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
+							.addComponent(getPauseButton(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE,
+									GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getMaximumRowLabel(), GroupLayout.Alignment.BASELINE,
+									GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getMaxRowComboBox(), GroupLayout.Alignment.BASELINE,
+									GroupLayout.PREFERRED_SIZE, 23, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getClearRunningTextAreaButton(), GroupLayout.Alignment.BASELINE, 0, 23,
+									Short.MAX_VALUE)
+							.addComponent(getStepCountLabel(), GroupLayout.Alignment.BASELINE,
+									GroupLayout.PREFERRED_SIZE, 29, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+							.addComponent(getAutoUpdateEvery20LinesCheckBox(), GroupLayout.Alignment.BASELINE,
+									GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.Alignment.BASELINE,
+									GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addComponent(getJCheckBox1(), GroupLayout.Alignment.BASELINE, GroupLayout.PREFERRED_SIZE,
+									21, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addComponent(getRunningTextArea(), 0, 610, Short.MAX_VALUE).addContainerGap(17, 17));
 		}
 		return runningPanel;
 	}
@@ -7291,13 +7595,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			runningLabel = new JLabel();
 			URL url = getClass().getClassLoader().getResource("com/gkd/images/ajax-loader_red.gif");
 			if (Setting.getInstance().currentLanguage.equals("zh_TW")) {
-				runningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
-						+ "\" /><br><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">?????????????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
+				runningLabel.setText(
+						"<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
+								+ url
+								+ "\" /><br><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">?????????????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 			} else if (Setting.getInstance().currentLanguage.equals("zh_CN")) {
-				runningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url
-						+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
+				runningLabel.setText(
+						"<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
+								+ url
+								+ "\" /><br><br><img src=\"http://www.kingofcoders.com/images/KOC_logo2.jpg\" /><br><a style=\"color: #000000;  text-decoration:none\" href=\"http://www.kingofcoders.com\">????????????????????????????????????????????????????????????????????????????????????www.kingofcoders.com</a></center></html>");
 			} else {
-				runningLabel.setText("<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\"" + url + "\" /></center></html>");
+				runningLabel.setText(
+						"<html><center>Bochs is running, click the pause button to pause it !!!<br><br><img src=\""
+								+ url + "\" /></center></html>");
 			}
 			runningLabel.setHorizontalAlignment(SwingConstants.CENTER);
 			runningLabel.setHorizontalTextPosition(SwingConstants.CENTER);
@@ -7353,7 +7663,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JCheckBox getAutoUpdateEvery20LinesCheckBox() {
 		if (autoUpdateEvery20LinesCheckBox == null) {
 			autoUpdateEvery20LinesCheckBox = new JCheckBox();
-			autoUpdateEvery20LinesCheckBox.setText("Update the following instruction box every 20 lines, this make bochs runs faster");
+			autoUpdateEvery20LinesCheckBox
+					.setText("Update the following instruction box every 20 lines, this make bochs runs faster");
 		}
 		return autoUpdateEvery20LinesCheckBox;
 	}
@@ -7385,7 +7696,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getMaxRowComboBox() {
 		if (maxRowComboBox == null) {
-			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[] { "infinite", "10", "100", "200", "500", "1000", "2000" });
+			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(
+					new String[] { "infinite", "10", "100", "200", "500", "1000", "2000" });
 			maxRowComboBox = new JComboBox<String>();
 			maxRowComboBox.setModel(maxRowComboBoxModel);
 			maxRowComboBox.setSelectedItem("100");
@@ -7400,7 +7712,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getNextMemoryPageButton() {
 		if (nextMemoryPageButton == null) {
 			nextMemoryPageButton = new JButton();
-			nextMemoryPageButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next_grey.png")));
+			nextMemoryPageButton.setIcon(new ImageIcon(
+					getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_next_grey.png")));
 			nextMemoryPageButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					nextMemoryPageButtonActionPerformed(evt);
@@ -7413,7 +7726,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getPreviousMemoryButton() {
 		if (previousMemoryButton == null) {
 			previousMemoryButton = new JButton();
-			previousMemoryButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_previous_grey.png")));
+			previousMemoryButton.setIcon(new ImageIcon(
+					getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/resultset_previous_grey.png")));
 			previousMemoryButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					previousMemoryButtonActionPerformed(evt);
@@ -7531,7 +7845,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (Global.clickedWhichInstructionPanel == 0) {
 			str = (String) instructionTable.getValueAt(instructionTable.getSelectedRow(), 1);
 		} else {
-			str = (String) sourceLevelDebugger.instructionTable.getValueAt(sourceLevelDebugger.instructionTable.getSelectedRow(), 1);
+			str = (String) sourceLevelDebugger.instructionTable
+					.getValueAt(sourceLevelDebugger.instructionTable.getSelectedRow(), 1);
 		}
 
 		BigInteger address;
@@ -7558,7 +7873,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			sourceLevelDebuggerToggleButton = new JToggleButton();
 			getButtonGroup4().add(sourceLevelDebuggerToggleButton);
 			sourceLevelDebuggerToggleButton.setText("C/C++");
-			sourceLevelDebuggerToggleButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_white_text.png")));
+			sourceLevelDebuggerToggleButton.setIcon(new ImageIcon(
+					getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/page_white_text.png")));
 			sourceLevelDebuggerToggleButton.setEnabled(false);
 			sourceLevelDebuggerToggleButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -7846,60 +8162,66 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void sbButtonActionPerformed(ActionEvent evt) {
-		//		if (jSBButton.getEventSource() != null) {
-		//			long l = Long.parseLong(((JMenuItem) jSBButton.getEventSource()).getText());
-		//			sendBochsCommand("sb " + l);
-		//			Setting.getInstance().sbAddress.add(l);
-		//		} else {
-		//			String s = JOptionPane.showInputDialog(this, "Please input cycle interval for next stop?");
-		//			if (s == null) {
-		//				return;
-		//			}
-		//			try {
-		//				long l = Long.parseLong(s);
-		//				sendBochsCommand("sb " + l);
-		//				Setting.getInstance().sbAddress.add(l);
-		//			} catch (Exception ex) {
-		//				if (Global.debug) {
-		//					ex.printStackTrace();
-		//				}
-		//			}
-		//		}
+		// if (jSBButton.getEventSource() != null) {
+		// long l = Long.parseLong(((JMenuItem)
+		// jSBButton.getEventSource()).getText());
+		// sendBochsCommand("sb " + l);
+		// Setting.getInstance().sbAddress.add(l);
+		// } else {
+		// String s = JOptionPane.showInputDialog(this, "Please input cycle
+		// interval for next stop?");
+		// if (s == null) {
+		// return;
+		// }
+		// try {
+		// long l = Long.parseLong(s);
+		// sendBochsCommand("sb " + l);
+		// Setting.getInstance().sbAddress.add(l);
+		// } catch (Exception ex) {
+		// if (Global.debug) {
+		// ex.printStackTrace();
+		// }
+		// }
+		// }
 		//
-		//		for (int x = 0; x < Setting.getInstance().sbAddress.size() - 10; x++) {
-		//			Setting.getInstance().sbAddress.remove(Setting.getInstance().sbAddress.toArray()[x]);
-		//		}
-		//		Setting.getInstance().save();
-		//		loadSBButton();
+		// for (int x = 0; x < Setting.getInstance().sbAddress.size() - 10; x++)
+		// {
+		// Setting.getInstance().sbAddress.remove(Setting.getInstance().sbAddress.toArray()[x]);
+		// }
+		// Setting.getInstance().save();
+		// loadSBButton();
 	}
 
 	private void sbaButtonActionPerformed(ActionEvent evt) {
-		//TODO sba
-		//		if (jSBAButton.getEventSource() != null) {
-		//			long l = Long.parseLong(((JMenuItem) jSBAButton.getEventSource()).getText());
-		//			sendBochsCommand("sba " + l);
-		//			Setting.getInstance().sbaAddress.add(l);
-		//		} else {
-		//			String s = JOptionPane.showInputDialog(this, "Please input cycle interval for next stop?");
-		//			if (s == null) {
-		//				return;
-		//			}
-		//			try {
-		//				long l = Long.parseLong(s);
-		//				sendBochsCommand("sba " + l);
-		//				Setting.getInstance().sbaAddress.add(l);
-		//			} catch (Exception ex) {
-		//				if (Global.debug) {
-		//					ex.printStackTrace();
-		//				}
-		//			}
-		//		}
+		// TODO sba
+		// if (jSBAButton.getEventSource() != null) {
+		// long l = Long.parseLong(((JMenuItem)
+		// jSBAButton.getEventSource()).getText());
+		// sendBochsCommand("sba " + l);
+		// Setting.getInstance().sbaAddress.add(l);
+		// } else {
+		// String s = JOptionPane.showInputDialog(this, "Please input cycle
+		// interval for next stop?");
+		// if (s == null) {
+		// return;
+		// }
+		// try {
+		// long l = Long.parseLong(s);
+		// sendBochsCommand("sba " + l);
+		// Setting.getInstance().sbaAddress.add(l);
+		// } catch (Exception ex) {
+		// if (Global.debug) {
+		// ex.printStackTrace();
+		// }
+		// }
+		// }
 
-		//		for (int x = 0; x < Setting.getInstance().sbaAddress.size() - 10; x++) {
-		//			Setting.getInstance().sbaAddress.remove(Setting.getInstance().sbaAddress.toArray()[x]);
-		//		}
-		//		Setting.getInstance().save();
-		//		loadSBAButton();
+		// for (int x = 0; x < Setting.getInstance().sbaAddress.size() - 10;
+		// x++) {
+		// Setting.getInstance().sbaAddress.remove(Setting.getInstance().sbaAddress.toArray()[x]);
+		// }
+		// Setting.getInstance().save();
+		// loadSBAButton();
 	}
 
 	private JMenuItem getShortcutHelpMenuItem() {
@@ -7916,8 +8238,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void shortcutHelpMenuItemActionPerformed(ActionEvent evt) {
-		String s = "F1 : Show memory\n" + "F2 : Show GDT\n" + "F3 : Show IDT\n" + "F4 : Show LDT\n" + "F5 : Start bochs\n" + "F6 : Stop bochs\n" + "F7 : Run/Pause bochs\n"
-				+ "F8 : Step\n" + "F9 : Fast step\n";
+		String s = "F1 : Show memory\n" + "F2 : Show GDT\n" + "F3 : Show IDT\n" + "F4 : Show LDT\n"
+				+ "F5 : Start bochs\n" + "F6 : Stop bochs\n" + "F7 : Run/Pause bochs\n" + "F8 : Step\n"
+				+ "F9 : Fast step\n";
 		JOptionPane.showMessageDialog(this, s);
 	}
 
@@ -8002,7 +8325,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (stepOverDropDownButton == null) {
 			stepOverDropDownButton = new JDropDownButton();
 			stepOverDropDownButton.setText(MyLanguage.getString("Step_over"));
-			stepOverDropDownButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step_over.png")));
+			stepOverDropDownButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step_over.png")));
 			stepOverDropDownButton.setMaximumSize(new java.awt.Dimension(115, 26));
 			stepOverDropDownButton.add(getStepOver10MenuItem());
 			stepOverDropDownButton.add(getStepOver100MenuItem());
@@ -8018,27 +8342,29 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private void stepOverDropDownButtonActionPerformed(ActionEvent evt) {
 		logger.debug(stepVMButton.isEnabled());
-		//		if (stepOverDropDownButton.getEventSource() != null) {
-		//			stepThread = new StepThread(stepOverDropDownButton.getEventSource());
-		//			if (stepOverDropDownButton.getEventSource() == stepOverNTimesMenuItem) {
-		//				String s = JOptionPane.showInputDialog("Please input the instruction count?");
-		//				if (s == null) {
-		//					return;
-		//				}
-		//				stepThread.instructionCount = Integer.parseInt(s);
-		//			}
+		// if (stepOverDropDownButton.getEventSource() != null) {
+		// stepThread = new StepThread(stepOverDropDownButton.getEventSource());
+		// if (stepOverDropDownButton.getEventSource() ==
+		// stepOverNTimesMenuItem) {
+		// String s = JOptionPane.showInputDialog("Please input the instruction
+		// count?");
+		// if (s == null) {
+		// return;
+		// }
+		// stepThread.instructionCount = Integer.parseInt(s);
+		// }
 		//
-		//			// if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
-		//			CardLayout cl = (CardLayout) (mainPanel.getLayout());
-		//			cl.show(mainPanel, "Running Panel");
-		//			// }
-		//			new Thread(stepThread, "Step until thread").start();
-		//		} else {
-		//			VMController.getVM().stepOver();
-		//			WebServiceUtil.log("gkd", "step over", null, null, null);
-		//			updateVMStatus(true);
-		//			// updateHistoryTable(re);
-		//		}
+		// // if (currentPanel.equals("jMaximizableTabbedPane_BasePanel1")) {
+		// CardLayout cl = (CardLayout) (mainPanel.getLayout());
+		// cl.show(mainPanel, "Running Panel");
+		// // }
+		// new Thread(stepThread, "Step until thread").start();
+		// } else {
+		// VMController.getVM().stepOver();
+		// WebServiceUtil.log("gkd", "step over", null, null, null);
+		// updateVMStatus(true);
+		// // updateHistoryTable(re);
+		// }
 	}
 
 	private JMenuItem getStepOver10MenuItem() {
@@ -8118,7 +8444,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			} else {
 				VMController.getVM().singleStep();
 			}
-			//			sendBochsCommand(command);
+			// sendBochsCommand(command);
 			updateRegister(true);
 			waitUpdateFinish();
 			currentEIP = getRealEIP();
@@ -8147,7 +8473,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton getNextOverButton() {
 		if (nextOverButton == null) {
 			nextOverButton = new JButton();
-			nextOverButton.setIcon(new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
+			nextOverButton.setIcon(
+					new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/step.png")));
 			nextOverButton.setText("NextO");
 			nextOverButton.setToolTipText("c/c++ level step-over");
 			nextOverButton.addActionListener(new ActionListener() {
@@ -8203,7 +8530,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (Global.clickedWhichInstructionPanel == 0) {
 			str = (String) instructionTable.getValueAt(instructionTable.getSelectedRow(), 1);
 		} else {
-			str = (String) sourceLevelDebugger.instructionTable.getValueAt(sourceLevelDebugger.instructionTable.getSelectedRow(), 1);
+			str = (String) sourceLevelDebugger.instructionTable
+					.getValueAt(sourceLevelDebugger.instructionTable.getSelectedRow(), 1);
 		}
 
 		BigInteger address;
@@ -8296,7 +8624,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		Setting.getInstance().divX = jSplitPane1.getDividerLocation();
 		Setting.getInstance().divY = jSplitPane2.getDividerLocation();
 		Setting.getInstance().jmpSplitPanel_divY = instrumentPanel.getJmpSplitPane().getDividerLocation();
-		Setting.getInstance().osDebugSplitPane_DividerLocation = this.osDebugInformationPanel1.getMainSplitPane().getDividerLocation();
+		Setting.getInstance().osDebugSplitPane_DividerLocation = this.osDebugInformationPanel1.getMainSplitPane()
+				.getDividerLocation();
 		Setting.getInstance().save();
 		System.exit(0);
 	}
@@ -8320,7 +8649,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					jumpToRowInstructionTable(getRealEIP());
 				}
 			});
-			jumpToInstructionButton.setIcon(new ImageIcon(GKD.class.getResource("/com/gkd/icons/famfam_icons/eye.png")));
+			jumpToInstructionButton
+					.setIcon(new ImageIcon(GKD.class.getResource("/com/gkd/icons/famfam_icons/eye.png")));
 		}
 		return jumpToInstructionButton;
 	}
@@ -8493,7 +8823,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			dumpPagingSummaryTableAtAddressButton = new JButton("Dump at here");
 			dumpPagingSummaryTableAtAddressButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					updatePagingSummaryTable(CommonLib.string2BigInteger(dumpPagingSummaryPageDirectoryAddressTextField.getText()),
+					updatePagingSummaryTable(
+							CommonLib.string2BigInteger(dumpPagingSummaryPageDirectoryAddressTextField.getText()),
 							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 4) == 1,
 							CommonLib.getBit(CommonLib.string2long(registerPanel.cr4TextField.getText()), 5) == 1);
 				}

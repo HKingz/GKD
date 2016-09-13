@@ -17,6 +17,8 @@ public class CustomPanel extends JPanel {
 	public JTable table;
 	public CustomPanelData customPanelData;
 	CustomPanelTableModel model = new CustomPanelTableModel();
+	public int noOfColumn = 8;
+	int[] bytes;
 
 	public CustomPanel(CustomPanelData customPanelData) {
 		this.customPanelData = customPanelData;
@@ -33,8 +35,14 @@ public class CustomPanel extends JPanel {
 
 	}
 
+	public void refresData() {
+		initData(bytes);
+	}
+
 	public void initData(int[] bytes) {
-		model.columnNames = new String[customPanelData.columnNames.length * 4];
+		this.bytes = bytes;
+		model.columnNames = new String[customPanelData.columnNames.length
+				* (noOfColumn / customPanelData.columnNames.length)];
 		for (int x = 0; x < model.columnNames.length; x++) {
 			model.columnNames[x] = customPanelData.columnNames[x % customPanelData.columnNames.length];
 		}
