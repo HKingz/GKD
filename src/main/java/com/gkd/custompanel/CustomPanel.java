@@ -67,11 +67,12 @@ public class CustomPanel extends JPanel {
 
 		int row = 0;
 		int col = 0;
-		System.out.println(data.size());
-		System.out.println(model.getColumnCount());
-		System.out.println((float) data.size() / model.getColumnCount());
+		// System.out.println(data.size());
+		// System.out.println(model.getColumnCount());
+		// System.out.println((float) data.size() / model.getColumnCount());
 		model.data = new String[(int) Math.ceil((float) data.size() / model.getColumnCount())][model.getColumnCount()];
-		System.out.println(model.getRowCount() + " , " + model.getColumnCount());
+		// System.out.println(model.getRowCount() + " , " +
+		// model.getColumnCount());
 		for (String d : data) {
 			model.data[row][col] = d;
 			col++;

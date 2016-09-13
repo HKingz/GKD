@@ -24,7 +24,7 @@ public class CustomMotherPanel extends JPanel {
 		flowLayout.setAlignment(FlowLayout.LEFT);
 		add(panel, BorderLayout.NORTH);
 
-		JLabel lblNoOfColumn = new JLabel("No. of colume");
+		JLabel lblNoOfColumn = new JLabel("No. of column");
 		panel.add(lblNoOfColumn);
 
 		JSpinner spinner = new JSpinner();
