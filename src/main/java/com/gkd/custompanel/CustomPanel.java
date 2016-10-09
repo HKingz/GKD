@@ -45,6 +45,7 @@ public class CustomPanel extends JPanel {
 		btnShowInMemory = new JButton("Show in memory");
 		btnShowInMemory.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				gkd.tabbedPane3.setSelectedIndex(1);
 				gkd.memoryAddressComboBox.setSelectedItem("0x" + customPanelData.physicalAddress.toString(16));
 				gkd.goMemoryButton.doClick();
 			}
