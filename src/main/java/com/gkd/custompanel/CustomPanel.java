@@ -9,8 +9,12 @@ import javax.swing.JTable;
 
 import com.gkd.CustomPanelData;
 import com.gkd.CustomPanelTableModel;
+import com.gkd.GKD;
 
 import net.miginfocom.swing.MigLayout;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class CustomPanel extends JPanel {
 	public JLabel infoLabel;
@@ -19,16 +23,36 @@ public class CustomPanel extends JPanel {
 	CustomPanelTableModel model = new CustomPanelTableModel();
 	public int noOfColumn = 8;
 	int[] bytes;
+	private JButton btnRefresh;
+	private JButton btnShowInMemory;
+	GKD gkd;
 
-	public CustomPanel(CustomPanelData customPanelData) {
+	public CustomPanel(GKD gkd, CustomPanelData customPanelData) {
+		this.gkd = gkd;
 		this.customPanelData = customPanelData;
-		setLayout(new MigLayout("", "[grow]", "[][grow]"));
+		setLayout(new MigLayout("", "[grow][][]", "[][grow]"));
 
 		infoLabel = new JLabel(customPanelData.name + " 0x" + customPanelData.physicalAddress.toString(16));
 		add(infoLabel, "cell 0 0");
 
+		btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		add(btnRefresh, "cell 1 0");
+
+		btnShowInMemory = new JButton("Show in memory");
+		btnShowInMemory.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				gkd.memoryAddressComboBox.setSelectedItem("0x" + customPanelData.physicalAddress.toString(16));
+				gkd.goMemoryButton.doClick();
+			}
+		});
+		add(btnShowInMemory, "cell 2 0");
+
 		JScrollPane scrollPane = new JScrollPane();
-		add(scrollPane, "cell 0 1,grow");
+		add(scrollPane, "cell 0 1 3 1,grow");
 
 		table = new JTable(model);
 		scrollPane.setViewportView(table);
@@ -41,8 +65,7 @@ public class CustomPanel extends JPanel {
 
 	public void initData(int[] bytes) {
 		this.bytes = bytes;
-		model.columnNames = new String[customPanelData.columnNames.length
-				* (noOfColumn / customPanelData.columnNames.length)];
+		model.columnNames = new String[customPanelData.columnNames.length * (noOfColumn / customPanelData.columnNames.length)];
 		for (int x = 0; x < model.columnNames.length; x++) {
 			model.columnNames[x] = customPanelData.columnNames[x % customPanelData.columnNames.length];
 		}
