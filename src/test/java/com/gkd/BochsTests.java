@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BochsTests {
+
 	OutputStreamWriter commandOutputStream;
 	BufferedReader br;
 	Process p = null;
@@ -125,7 +127,6 @@ public class BochsTests {
 	//			e.printStackTrace();
 	//		}
 	//	}
-
 	public String sendCommand(String command) {
 		try {
 			System.out.println("command====" + command);

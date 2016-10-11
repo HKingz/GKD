@@ -524,7 +524,7 @@ public class SettingDialog extends JDialog {
 			if (Setting.getInstance().customPanelData != null) {
 				for (CustomPanelData customPanelData : Setting.getInstance().customPanelData) {
 					customPanelTableModel.addRow(new Object[] { customPanelData.name, "0x" + customPanelData.physicalAddress.toString(16),
-							String.join(",", customPanelData.columnNames), String.join(",", Arrays.toString(customPanelData.definitions)).replaceAll("\\[|\\]|,|\\s", ""),
+							String.join(",", customPanelData.columnNames), String.join(",", Arrays.toString(customPanelData.definitions)).replaceAll("\\[|\\]| ", ""),
 							customPanelData.updateAfterPause, customPanelData.independentPane });
 				}
 			}

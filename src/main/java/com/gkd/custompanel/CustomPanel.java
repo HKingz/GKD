@@ -10,13 +10,20 @@ import javax.swing.JTable;
 import com.gkd.CustomPanelData;
 import com.gkd.CustomPanelTableModel;
 import com.gkd.GKD;
+import static com.gkd.GKD.logger;
+import com.gkd.stub.VMController;
+import com.peterswing.CommonLib;
 
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import org.apache.log4j.Logger;
 
 public class CustomPanel extends JPanel {
+
+	public static Logger logger = Logger.getLogger(CustomPanel.class);
+
 	public JLabel infoLabel;
 	public JTable table;
 	public CustomPanelData customPanelData;
@@ -38,6 +45,10 @@ public class CustomPanel extends JPanel {
 		btnRefresh = new JButton("Refresh");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int totalByte = 200;
+				logger.info("custome panel update " + customPanelData.physicalAddress.toString(16));
+				int bytes[] = VMController.getVM().physicalMemory(customPanelData.physicalAddress, totalByte);
+				initData(bytes);
 			}
 		});
 		add(btnRefresh, "cell 1 0");
@@ -66,6 +77,7 @@ public class CustomPanel extends JPanel {
 
 	public void initData(int[] bytes) {
 		this.bytes = bytes;
+		System.out.println(CommonLib.getHexString(bytes, " "));
 		model.columnNames = new String[customPanelData.columnNames.length * (noOfColumn / customPanelData.columnNames.length)];
 		for (int x = 0; x < model.columnNames.length; x++) {
 			model.columnNames[x] = customPanelData.columnNames[x % customPanelData.columnNames.length];
@@ -75,17 +87,20 @@ public class CustomPanel extends JPanel {
 		int definitions[] = customPanelData.definitions;
 		ArrayList<String> data = new ArrayList<String>();
 		while (offset < bytes.length) {
-			int d = definitions[x % definitions.length];
+			int len = definitions[x % definitions.length];
 			long value = 0;
 			int o = 0;
-			for (int z = 0; z < d; z++) {
+			System.out.println("----------------");
+			for (int z = 0; z < len; z++) {
 				if (offset + z < bytes.length) {
+					System.out.println("   " + offset + "  > " + bytes[offset + z]);
 					value += bytes[offset + z] << o;
 					o += 8;
 				}
 			}
+			System.out.println("   ="+Long.toHexString(value));
 			data.add("0x" + Long.toHexString(value));
-			offset += d;
+			offset += len;
 			x++;
 		}
 

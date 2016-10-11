@@ -1904,9 +1904,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				for (CustomPanel customPanel : customPanels) {
 					if (customPanel.customPanelData.updateAfterPause) {
 						int totalByte = 200;
-						int bytes[] = new int[0];
 						logger.info("custome panel update " + customPanel.customPanelData.physicalAddress.toString(16));
-						bytes = VMController.getVM().physicalMemory(customPanel.customPanelData.physicalAddress, totalByte);
+						int bytes[] = VMController.getVM().physicalMemory(customPanel.customPanelData.physicalAddress, totalByte);
 						customPanel.initData(bytes);
 					}
 				}
