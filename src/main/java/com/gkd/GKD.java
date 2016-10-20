@@ -2419,15 +2419,15 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		updateInstruction(address, is32Bits());
 	}
 
-	public void updateInstruction(BigInteger physicalAddress, boolean is32Bits) {
+	public void updateInstruction(BigInteger virtualAddress, boolean is32Bits) {
 		statusLabel.setText("Updating instruction");
 		InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
 
-		if (physicalAddress == null) {
-			physicalAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase()).add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
+		if (virtualAddress == null) {
+			virtualAddress = CommonLib.string2BigInteger(registerPanel.csTextField.getBase()).add(CommonLib.string2BigInteger(registerPanel.eipTextField.getText()));
 		}
 
-		Vector<String[]> r = VMController.getVM().instruction(physicalAddress, is32Bits);
+		Vector<String[]> r = VMController.getVM().instruction(virtualAddress, is32Bits);
 		String lastAddress = null;
 		for (String[] s : r) {
 			if (lastAddress != s[1]) {
@@ -4178,8 +4178,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		instructionTable.getTableHeader().setReorderingAllowed(false);
 		instructionTable.getColumnModel().getColumn(0).setMaxWidth(20);
-		instructionTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-		instructionTable.getColumnModel().getColumn(2).setPreferredWidth(200);
+		instructionTable.getColumnModel().getColumn(1).setPreferredWidth(250);
+		instructionTable.getColumnModel().getColumn(2).setPreferredWidth(500);
 		instructionTable.getColumnModel().getColumn(3).setPreferredWidth(200);
 		instructionTable.setDefaultRenderer(String.class, new InstructionTableCellRenderer());
 		instructionTable.addMouseListener(new MouseAdapter() {

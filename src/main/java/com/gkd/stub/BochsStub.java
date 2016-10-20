@@ -199,8 +199,8 @@ public class BochsStub implements VMStub {
 	}
 
 	@Override
-	public Vector<String[]> instruction(BigInteger physicalAddress, boolean is32Bit) {
-		logger.debug("updateInstruction " + physicalAddress);
+	public Vector<String[]> instruction(BigInteger virtualAddress, boolean is32Bit) {
+		logger.debug("updateInstruction " + virtualAddress);
 		Vector<String[]> r = new Vector<String[]>();
 		//		if (csBaseAddress == null) {
 		//			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
@@ -211,8 +211,8 @@ public class BochsStub implements VMStub {
 		//		}
 		//		logger.debug("csBaseAddress=" + csBaseAddress.toString());
 
-		int bytes[] = physicalMemory(physicalAddress, 200);
-		String result = Disassemble.disassemble(bytes, is32Bit, physicalAddress);
+		int bytes[] = virtualMemory(virtualAddress, 200);
+		String result = Disassemble.disassemble(bytes, is32Bit, virtualAddress);
 
 		String lines[] = result.split("\n");
 		if (lines.length > 0) {

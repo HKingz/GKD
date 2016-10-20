@@ -118,15 +118,15 @@ public class QemuStub implements VMStub {
 	}
 
 	@Override
-	public Vector<String[]> instruction(BigInteger physicalAddress, boolean is32Bit) {
+	public Vector<String[]> instruction(BigInteger virtualAddress, boolean is32Bit) {
 		Vector<String[]> r = new Vector<String[]>();
 		//		if (address == null) {
 		//			eip = eip.and(CommonLib.string2BigInteger("0xffffffffffffffff"));
 		//			address = cs.add(eip);
 		//		}
 		//		jStatusLabel.setText("Updating instruction");
-		int bytes[] = physicalMemory(physicalAddress, 200);
-		String result = Disassemble.disassemble(bytes, is32Bit, physicalAddress);
+		int bytes[] = physicalMemory(virtualAddress, 200);
+		String result = Disassemble.disassemble(bytes, is32Bit, virtualAddress);
 		String lines[] = result.split("\n");
 		if (lines.length > 0) {
 			//			InstructionTableModel model = (InstructionTableModel) instructionTable.getModel();
