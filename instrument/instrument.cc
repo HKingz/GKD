@@ -20,10 +20,10 @@
 //  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301 USA
 
 #include <assert.h>
-#include <bochs.h>
-#include <config.h>
-#include <cpu/cpu.h>
-#include <cpu/descriptor.h>
+#include "bochs.h"
+#include "cpu/cpu.h"
+//#include <config.h>
+//#include <cpu/descriptor.h>
 //#include <cpu/instr.h>
 #include <disasm/disasm.h>
 //#include <gui/siminterface.h>
@@ -143,11 +143,11 @@ void saveData(int exceptionNo, int error_code, bx_phy_address fromPhysicalAddres
 		Bit32u edx, Bit32u ebx, Bit32u esp, Bit32u ebp, Bit32u esi, Bit32u edi, Bit16u es, Bit16u cs, Bit16u ss, Bit16u ds, Bit16u fs, Bit16u gs, Bit8u *stackValue,
 		bx_phy_address stackBaseValue) {
 	pthread_mutex_lock(&jmpMutex);
-	
-	
+
+
 	exceptionNoVector[jumpIndex] = exceptionNo;
 	errorCodeVector[jumpIndex] = error_code;
-	
+
 	fromAddressVector[jumpIndex] = fromPhysicalAddress;
 	toAddressVector[jumpIndex] = toPhysicalAddress;
 
@@ -171,13 +171,13 @@ void saveData(int exceptionNo, int error_code, bx_phy_address fromPhysicalAddres
 	dsVector[jumpIndex] = ds;
 	fsVector[jumpIndex] = fs;
 	gsVector[jumpIndex] = gs;
-	
+
 	memcpy(stack[jumpIndex], stackValue, STACK_SIZE);
 	stackBase[jumpIndex] = stackBaseValue;
 
 	jumpIndex++;
-	
-	
+
+
 	pthread_mutex_unlock(&jmpMutex);
 }
 
@@ -205,16 +205,16 @@ int writeToSocket(int sock, const void *data, int size) {
 void * jmpTimer(void *arg) {
 	while (1) {
 		sleep(1);
-		
+
 		pthread_mutex_lock(&jmpMutex);
-		
+
 		if (jumpIndex > 0) {
 			fprintf(log, "jmpTimer, sending back %d records\n", jumpIndex);
 			fflush(log);
-			
+
 			writeToSocket(jmpSockfd, "start", 5);
 			writeToSocket(jmpSockfd, &jumpIndex, 4);
-			
+
 			writeToSocket(jmpSockfd, exceptionNoVector, 4 * jumpIndex);
 			writeToSocket(jmpSockfd, errorCodeVector, 4 * jumpIndex);
 
@@ -246,7 +246,7 @@ void * jmpTimer(void *arg) {
 			writeToSocket(jmpSockfd, stackBase, physicalAddressSize * jumpIndex);
 
 			writeToSocket(jmpSockfd, "end", 3);
-			
+
 			char readBytes[4];
 			read(jmpSockfd, readBytes, 4);
 			if (strncmp(readBytes, "done", 4) != 0) {
@@ -257,8 +257,8 @@ void * jmpTimer(void *arg) {
 			jumpIndex = 0;
 		}
 		pthread_mutex_unlock(&jmpMutex);
-		
-		
+
+
 		//logGKD("b4\n");
 	}
 	return 0;
@@ -267,10 +267,10 @@ void * jmpTimer(void *arg) {
 void * memoryTimer(void *arg) {
 	while (1) {
 		sleep(1);
-		
+
 		pthread_mutex_lock(&memoryMutex);
-		
-		//if (pointer>0) {		
+
+		//if (pointer>0) {
 			//fprintf(log, "send back memory %d records\n", pointer);
 			//fflush(log);
 
@@ -340,7 +340,7 @@ void * memoryTimer(void *arg) {
 
 			pointer = 0;
 		//}
-		pthread_mutex_unlock(&memoryMutex);	
+		pthread_mutex_unlock(&memoryMutex);
 		//logGKD("b4\n");
 	}
 	return 0;
@@ -379,13 +379,13 @@ void initMemorySocket() {
 	if (ret == -1) {
 		fprintf(log, "memorySockfd couldn't setsockopt(TCP_NODELAY)\n");
 	}
-	
+
 	pthread_mutex_init(&memoryMutex, NULL);
 	int err = pthread_create(&memoryThread, NULL, memoryTimer, NULL);
 	if (err != 0) {
 		fprintf(log, "pthread_create error\n");
 	}
-	
+
 	fprintf(log, "initMemorySocket end\n");
 	fflush(log);
 }
@@ -726,14 +726,14 @@ void bxInstrumentation::memorySampling(bx_address lin, bx_phy_address paddr, uns
 		return;
 	}
 	pthread_mutex_lock(&memoryMutex);
-	
+
 	/*memoryRecords[pointer].lin=lin;
 	memoryRecords[pointer].phy=paddr;
 	memoryRecords[pointer].len=len;
 	memoryRecords[pointer].memType=memtype;
 	memoryRecords[pointer].rw=rw;
 	pointer++;*/
-	
+
 	//fprintf(log, "pointer = %d", pointer);
 	//fflush(log);
 
@@ -754,9 +754,9 @@ void bxInstrumentation::memorySampling(bx_address lin, bx_phy_address paddr, uns
 		}
 	}
 	// end check zone hit count
-	
+
 	pthread_mutex_unlock(&memoryMutex);
-	
+
 	while (pointer >= MAX_NO_OF_MEMORY_RECORD) {
 		fprintf(log, "memory buffer overflow, pointer=%d\n", pointer);
 		fflush(log);
