@@ -201,9 +201,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton enableBreakpointButton;
 	private JButton saveBreakpointButton;
 	private JButton addBreakpointButton;
-	private JButton jRefreshBreakpointButton;
+	private JButton refreshBreakpointButton;
 	private JScrollPane jScrollPane9;
-	private JPanel jPanel4;
+	private JPanel breakpointPanel;
 	private JScrollPane historyTableScrollPane6;
 	private JLabel jLabel3;
 	private JScrollPane jScrollPane8;
@@ -218,7 +218,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JPanel jPanel9;
 	private JMenu jMenu3;
 	private JMenuBar jMenuBar1;
-	// private static BufferedWriter commandOutputStream;
 	private JSplitPane jSplitPane2;
 	private JProgressBar statusProgressBar;
 	private JPanel statusPanel;
@@ -499,8 +498,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton jumpToInstructionButton;
 	public static JLabel instrumentStatusLabel;
 
-	TableModel jBreakpointTableModel = new DefaultTableModel(new String[][] {},
+	TableModel breakpointTableModel = new DefaultTableModel(new String[][] {},
 			new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit") }) {
+		public boolean isCellEditable(int row, int col) {
+			return false;
+		}
+	};
+	TableModel watchPointTableModel = new DefaultTableModel(new String[][] {}, new String[] { "Type", "Address", "Len", "Bytes" }) {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
@@ -527,7 +531,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private ArrayList<CustomPanel> customPanels = new ArrayList<CustomPanel>();
 	private JPanel watchPointPanel;
 	private JScrollPane scrollPane;
-	private JTable table;
+	private JTable watchPointTable;
 	private JPanel panel_3;
 	private JButton addWatchPointButton;
 	private JButton editWatchPointButton;
@@ -1880,6 +1884,12 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				}
 				updateBreakpoint();
 
+				d.progressBar.setString("updateWatchPoint");
+				if (Global.debug) {
+					logger.debug("updateWatchPoint");
+				}
+				updateWatchPoint();
+
 				d.progressBar.setString("updateBreakpointTableColor");
 				if (Global.debug) {
 					logger.debug("updateBreakpointTableColor");
@@ -2084,6 +2094,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					}
 					updateBreakpoint();
 					updateBreakpointTableColor();
+				}
+
+				if (Setting.getInstance().updateAfterGKDCommand_watchPoint) {
+					if (Global.debug) {
+						logger.debug("updateWatchPoint");
+					}
+					updateWatchPoint();
 				}
 
 				statusLabel.setText("");
@@ -2941,9 +2958,9 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	}
 
 	private void refreshBreakpointButtonActionPerformed(ActionEvent evt) {
-		jRefreshBreakpointButton.setEnabled(false);
+		refreshBreakpointButton.setEnabled(false);
 		updateBreakpoint();
-		jRefreshBreakpointButton.setEnabled(true);
+		refreshBreakpointButton.setEnabled(true);
 	}
 
 	public void updateBreakpoint() {
@@ -2966,9 +2983,23 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		}
 	}
 
-	protected void updateWatchPointTable() {
-		// TODO Auto-generated method stub
+	protected void updateWatchPoint() {
+		try {
+			statusLabel.setText("Updating watch point");
 
+			DefaultTableModel model = (DefaultTableModel) watchPointTable.getModel();
+			while (model.getRowCount() > 0) {
+				model.removeRow(0);
+			}
+
+			Vector<Vector<String>> r = VMController.getVM().watchpoint();
+			for (Vector<String> v : r) {
+				model.addRow(v);
+			}
+			statusLabel.setText("");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private void disassembleCurrentIPButtonActionPerformed(ActionEvent evt) {
@@ -4208,18 +4239,18 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				instructionTableMouseClicked(evt);
 			}
 		});
-		jPanel4 = new JPanel();
-		upperRightTabbedPane.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")), jPanel4,
-				null);
-		BorderLayout jPanel4Layout = new BorderLayout();
-		jPanel4.setLayout(jPanel4Layout);
+		breakpointPanel = new JPanel();
+		upperRightTabbedPane.addTab(MyLanguage.getString("Breakpoint"), new ImageIcon(getClass().getClassLoader().getResource("com/gkd/icons/famfam_icons/cancel.png")),
+				breakpointPanel, null);
+		BorderLayout bl_breakpointPanel = new BorderLayout();
+		breakpointPanel.setLayout(bl_breakpointPanel);
 
 		jScrollPane9 = new JScrollPane();
-		jPanel4.add(jScrollPane9, BorderLayout.CENTER);
+		breakpointPanel.add(jScrollPane9, BorderLayout.CENTER);
 		breakpointTable = new JTable();
 		breakpointTable.getTableHeader().setReorderingAllowed(false);
 		jScrollPane9.setViewportView(breakpointTable);
-		breakpointTable.setModel(jBreakpointTableModel);
+		breakpointTable.setModel(breakpointTableModel);
 		breakpointTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 		breakpointTable.getColumnModel().getColumn(0).setCellRenderer(new BreakpointTableCellRenderer());
 		breakpointTable.addMouseListener(new MouseAdapter() {
@@ -4231,7 +4262,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		breakpointTable.getColumnModel().getColumn(3).setPreferredWidth(20);
 
 		jPanel12 = new JPanel();
-		jPanel4.add(jPanel12, BorderLayout.SOUTH);
+		breakpointPanel.add(jPanel12, BorderLayout.SOUTH);
 
 		addBreakpointButton = new JButton();
 		jPanel12.add(addBreakpointButton);
@@ -4249,10 +4280,10 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				deleteBreakpointButtonActionPerformed(evt);
 			}
 		});
-		jRefreshBreakpointButton = new JButton();
-		jPanel12.add(jRefreshBreakpointButton);
-		jRefreshBreakpointButton.setText(MyLanguage.getString("Refresh"));
-		jRefreshBreakpointButton.addActionListener(new ActionListener() {
+		refreshBreakpointButton = new JButton();
+		jPanel12.add(refreshBreakpointButton);
+		refreshBreakpointButton.setText(MyLanguage.getString("Refresh"));
+		refreshBreakpointButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				refreshBreakpointButtonActionPerformed(evt);
 			}
@@ -6664,6 +6695,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						updateBreakpointTableColor();
 					}
 
+					if (Setting.getInstance().updateFastStepCommand_watchPoint) {
+						if (Global.debug) {
+							logger.debug("updateWatchPoint");
+						}
+						updateWatchPoint();
+					}
+
 					if (Setting.getInstance().updateFastStepCommand_history) {
 						if (Global.debug) {
 							logger.debug("updateHistory");
@@ -8588,16 +8626,22 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JScrollPane getScrollPane() {
 		if (scrollPane == null) {
 			scrollPane = new JScrollPane();
-			scrollPane.setViewportView(getTable());
+			scrollPane.setViewportView(getWatchPointTable());
 		}
 		return scrollPane;
 	}
 
-	private JTable getTable() {
-		if (table == null) {
-			table = new JTable();
+	private JTable getWatchPointTable() {
+		if (watchPointTable == null) {
+			watchPointTable = new JTable();
+			watchPointTable.getTableHeader().setReorderingAllowed(false);
+			jScrollPane9.setViewportView(watchPointTable);
+			watchPointTable.setModel(watchPointTableModel);
+			watchPointTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
+			watchPointTable.getColumnModel().getColumn(0).setCellRenderer(new BreakpointTableCellRenderer());
+			watchPointTable.getColumnModel().getColumn(1).setPreferredWidth(100);
 		}
-		return table;
+		return watchPointTable;
 	}
 
 	private JPanel getPanel_3() {
@@ -8619,15 +8663,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					String address = JOptionPane.showInputDialog(GKD.this, "Please input watch address", "Add watch point", JOptionPane.QUESTION_MESSAGE);
 					if (address != null) {
 						VMController.getVM().addPhysicalWatchPoint(CommonLib.string2BigInteger(address));
-
-						updateWatchPointTable();
+						updateWatchPoint();
 					}
 					addWatchPointButton.setEnabled(true);
 				}
 			});
 		}
 		return addWatchPointButton;
-
 	}
 
 	private JButton getEditWatchPointButton() {

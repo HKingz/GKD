@@ -535,15 +535,15 @@ public class QemuStub implements VMStub {
 	}
 
 	@Override
-	public void addPhysicalWatchPoint(BigInteger address) {
+	public void addPhysicalWatchPoint(BigInteger address, boolean isRead) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void deletePhysicalWatchPoint(BigInteger breakpointNo) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

@@ -915,15 +915,35 @@ public class BochsStub implements VMStub {
 	}
 
 	@Override
-	public void addPhysicalWatchPoint(BigInteger address) {
-		// TODO Auto-generated method stub
-		
+	public void addPhysicalWatchPoint(BigInteger address, boolean isRead) {
+		if (isRead) {
+			sendBochsCommand("watch r" + address);
+		} else {
+			sendBochsCommand("watch w" + address);
+		}
 	}
 
 	@Override
 	public void deletePhysicalWatchPoint(BigInteger breakpointNo) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
+	@Override
+	public Vector<Vector<String>> watchpoint() {
+		Vector<Vector<String>> r = new Vector<Vector<String>>();
+		String result = sendBochsCommand("watch");
+		String[] lines = result.split("\n");
+
+		for (int x = 0; x < lines.length; x++) {
+			if (lines[x].contains("breakpoint")) {
+				Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
+				if (strs.size() == 4) {
+					strs.remove(1);
+					r.add(strs);
+				}
+			}
+		}
+		return r;
+	}
 }

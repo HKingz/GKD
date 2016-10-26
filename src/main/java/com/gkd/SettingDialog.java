@@ -36,6 +36,10 @@ import com.peterswing.advancedswing.searchtextfield.JSearchTextField;
 
 import info.clearthought.layout.TableLayout;
 import net.miginfocom.swing.MigLayout;
+import com.jgoodies.forms.layout.FormLayout;
+import com.jgoodies.forms.layout.ColumnSpec;
+import com.jgoodies.forms.layout.FormSpecs;
+import com.jgoodies.forms.layout.RowSpec;
 
 public class SettingDialog extends JDialog {
 	private JCheckBox checkBox1;
@@ -101,6 +105,8 @@ public class SettingDialog extends JDialog {
 	private JTextField columnNamesTextField;
 	private JLabel lblPhysicalAddress;
 	private JTextField physicalAddressTextField;
+	private JCheckBox gkdWatchPointCheckBox;
+	private JCheckBox fastStepWatchPointCheckBox;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -151,14 +157,14 @@ public class SettingDialog extends JDialog {
 
 			jPanel1 = new JPanel();
 			jPanel3.add(jPanel1, "0, 2, 3, 2");
-			TableLayout jPanel1Layout = new TableLayout(
-					new double[][] { { 34.0, TableLayout.FILL, TableLayout.FILL, TableLayout.PREFERRED }, { 15.0, 15.0, 15.0, TableLayout.PREFERRED } });
-			jPanel1Layout.setHGap(10);
-			jPanel1Layout.setVGap(5);
-			jPanel1.setLayout(jPanel1Layout);
+			jPanel1.setLayout(new FormLayout(
+					new ColumnSpec[] { ColumnSpec.decode("44px"), ColumnSpec.decode("307px"), FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("307px"),
+							FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("101px"), },
+					new RowSpec[] { RowSpec.decode("15px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15px"),
+							FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15dlu"), }));
 
 			gkdRegisterCheckBox = new JCheckBox();
-			jPanel1.add(gkdRegisterCheckBox, "1, 0");
+			jPanel1.add(gkdRegisterCheckBox, "2, 1, fill, fill");
 			gkdRegisterCheckBox.setText(MyLanguage.getString("Register"));
 			gkdRegisterCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -167,7 +173,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdMemoryCheckBox = new JCheckBox();
-			jPanel1.add(gkdMemoryCheckBox, "2, 0");
+			jPanel1.add(gkdMemoryCheckBox, "4, 1, fill, fill");
 			gkdMemoryCheckBox.setText("Memory");
 			gkdMemoryCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -176,7 +182,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdInstructionCheckBox = new JCheckBox();
-			jPanel1.add(gkdInstructionCheckBox, "3, 0");
+			jPanel1.add(gkdInstructionCheckBox, "6, 1, left, fill");
 			gkdInstructionCheckBox.setText(MyLanguage.getString("Instruction"));
 			gkdInstructionCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -185,7 +191,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdBreakpointCheckBox = new JCheckBox();
-			jPanel1.add(gkdBreakpointCheckBox, "1, 1");
+			jPanel1.add(gkdBreakpointCheckBox, "2, 3, fill, fill");
 			gkdBreakpointCheckBox.setText(MyLanguage.getString("Breakpoint"));
 			gkdBreakpointCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -194,7 +200,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdGDTCheckBox = new JCheckBox();
-			jPanel1.add(gkdGDTCheckBox, "2, 1");
+			jPanel1.add(gkdGDTCheckBox, "4, 3, fill, fill");
 			gkdGDTCheckBox.setText(MyLanguage.getString("GDT"));
 			gkdGDTCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -203,7 +209,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdLDTCheckBox = new JCheckBox();
-			jPanel1.add(gkdLDTCheckBox, "3, 1");
+			jPanel1.add(gkdLDTCheckBox, "6, 3, fill, fill");
 			gkdLDTCheckBox.setText(MyLanguage.getString("LDT"));
 			gkdLDTCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -212,7 +218,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdIDTCheckBox = new JCheckBox();
-			jPanel1.add(gkdIDTCheckBox, "1, 2");
+			jPanel1.add(gkdIDTCheckBox, "2, 5, fill, fill");
 			gkdIDTCheckBox.setText(MyLanguage.getString("IDT"));
 			gkdIDTCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -221,7 +227,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdPageTableCheckBox = new JCheckBox();
-			jPanel1.add(gkdPageTableCheckBox, "2, 2");
+			jPanel1.add(gkdPageTableCheckBox, "4, 5, fill, fill");
 			gkdPageTableCheckBox.setText(MyLanguage.getString("Page_table"));
 			gkdPageTableCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -230,7 +236,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdStackCheckBox = new JCheckBox();
-			jPanel1.add(gkdStackCheckBox, "3, 2");
+			jPanel1.add(gkdStackCheckBox, "6, 5, fill, fill");
 			gkdStackCheckBox.setText(MyLanguage.getString("Stack"));
 			gkdStackCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -239,7 +245,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdAddressTranslateCheckBox = new JCheckBox();
-			jPanel1.add(gkdAddressTranslateCheckBox, "1, 3, 2, 3");
+			jPanel1.add(gkdAddressTranslateCheckBox, "2, 7, fill, top");
 			gkdAddressTranslateCheckBox.setText(MyLanguage.getString("Address_translate"));
 			gkdAddressTranslateCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -248,8 +254,16 @@ public class SettingDialog extends JDialog {
 			});
 
 			gkdHistoryCheckBox = new JCheckBox();
-			jPanel1.add(gkdHistoryCheckBox, "3, 3");
+			jPanel1.add(gkdHistoryCheckBox, "4, 7, fill, top");
 			gkdHistoryCheckBox.setText(MyLanguage.getString("History"));
+
+			gkdWatchPointCheckBox = new JCheckBox("Watch point");
+			gkdWatchPointCheckBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Setting.getInstance().updateAfterGKDCommand_watchPoint = gkdBreakpointCheckBox.isSelected();
+				}
+			});
+			jPanel1.add(gkdWatchPointCheckBox, "6, 7");
 			gkdHistoryCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					jGKDHistoryCheckBoxActionPerformed(evt);
@@ -262,14 +276,13 @@ public class SettingDialog extends JDialog {
 
 			jPanel2 = new JPanel();
 			jPanel3.add(jPanel2, "0, 4, 3, 4");
-			TableLayout jPanel2Layout = new TableLayout(
-					new double[][] { { 34.0, TableLayout.FILL, TableLayout.FILL, TableLayout.PREFERRED }, { 15.0, 15.0, 15.0, TableLayout.FILL } });
-			jPanel2Layout.setHGap(10);
-			jPanel2Layout.setVGap(5);
-			jPanel2.setLayout(jPanel2Layout);
+			jPanel2.setLayout(new FormLayout(
+					new ColumnSpec[] { ColumnSpec.decode("44px"), ColumnSpec.decode("307px"), FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("307px"),
+							FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("101px"), },
+					new RowSpec[] { RowSpec.decode("15px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("15px"), }));
 
 			fastStepRegisterCheckBox = new JCheckBox();
-			jPanel2.add(fastStepRegisterCheckBox, "1, 0");
+			jPanel2.add(fastStepRegisterCheckBox, "2, 1, fill, fill");
 			fastStepRegisterCheckBox.setText(MyLanguage.getString("Register"));
 			fastStepRegisterCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -278,7 +291,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			fastStepMemoryCheckBox = new JCheckBox();
-			jPanel2.add(fastStepMemoryCheckBox, "2, 0");
+			jPanel2.add(fastStepMemoryCheckBox, "4, 1, fill, fill");
 			fastStepMemoryCheckBox.setText(MyLanguage.getString("Memory"));
 			fastStepMemoryCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -287,7 +300,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			fastStepInstructionCheckBox = new JCheckBox();
-			jPanel2.add(fastStepInstructionCheckBox, "3, 0");
+			jPanel2.add(fastStepInstructionCheckBox, "6, 1, left, fill");
 			fastStepInstructionCheckBox.setText(MyLanguage.getString("Instruction"));
 			fastStepInstructionCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -296,7 +309,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			fastStepBreakpointCheckBox = new JCheckBox();
-			jPanel2.add(fastStepBreakpointCheckBox, "1, 1");
+			jPanel2.add(fastStepBreakpointCheckBox, "2, 3, fill, fill");
 			fastStepBreakpointCheckBox.setText(MyLanguage.getString("Breakpoint"));
 			fastStepBreakpointCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -305,7 +318,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			fastStepGDTCheckBox = new JCheckBox();
-			jPanel2.add(fastStepGDTCheckBox, "2, 1");
+			jPanel2.add(fastStepGDTCheckBox, "4, 3, fill, fill");
 			fastStepGDTCheckBox.setText(MyLanguage.getString(MyLanguage.getString("GDT")));
 			fastStepGDTCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -314,7 +327,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			fastStepLDTCheckBox = new JCheckBox();
-			jPanel2.add(fastStepLDTCheckBox, "3, 1");
+			jPanel2.add(fastStepLDTCheckBox, "6, 3, fill, fill");
 			fastStepLDTCheckBox.setText(MyLanguage.getString(MyLanguage.getString("LDT")));
 			fastStepLDTCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -323,7 +336,7 @@ public class SettingDialog extends JDialog {
 			});
 
 			fastStepIDTCheckBox = new JCheckBox();
-			jPanel2.add(fastStepIDTCheckBox, "1, 2");
+			jPanel2.add(fastStepIDTCheckBox, "2, 5, fill, fill");
 			fastStepIDTCheckBox.setText(MyLanguage.getString(MyLanguage.getString("IDT")));
 			fastStepIDTCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
@@ -332,8 +345,16 @@ public class SettingDialog extends JDialog {
 			});
 
 			fastStepHistoryCheckBox = new JCheckBox();
-			jPanel2.add(fastStepHistoryCheckBox, "2, 2");
+			jPanel2.add(fastStepHistoryCheckBox, "4, 5, fill, fill");
 			fastStepHistoryCheckBox.setText(MyLanguage.getString("History"));
+
+			fastStepWatchPointCheckBox = new JCheckBox("Watch point");
+			fastStepWatchPointCheckBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					Setting.getInstance().updateFastStepCommand_watchPoint = fastStepWatchPointCheckBox.isSelected();
+				}
+			});
+			jPanel2.add(fastStepWatchPointCheckBox, "6, 5");
 			fastStepHistoryCheckBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent evt) {
 					fastHistoryCheckBoxActionPerformed(evt);
@@ -600,6 +621,7 @@ public class SettingDialog extends JDialog {
 		gkdMemoryCheckBox.setSelected(Setting.getInstance().updateAfterGKDCommand_memory);
 		gkdInstructionCheckBox.setSelected(Setting.getInstance().updateAfterGKDCommand_instruction);
 		gkdBreakpointCheckBox.setSelected(Setting.getInstance().updateAfterGKDCommand_breakpoint);
+		gkdWatchPointCheckBox.setSelected(Setting.getInstance().updateAfterGKDCommand_watchPoint);
 		gkdGDTCheckBox.setSelected(Setting.getInstance().updateAfterGKDCommand_gdt);
 		gkdLDTCheckBox.setSelected(Setting.getInstance().updateAfterGKDCommand_ldt);
 		gkdIDTCheckBox.setSelected(Setting.getInstance().updateAfterGKDCommand_idt);
@@ -612,6 +634,7 @@ public class SettingDialog extends JDialog {
 		fastStepLDTCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_ldt);
 		fastStepGDTCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_gdt);
 		fastStepBreakpointCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_breakpoint);
+		fastStepWatchPointCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_watchPoint);
 		fastStepInstructionCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_instruction);
 		fastStepMemoryCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_memory);
 		fastStepRegisterCheckBox.setSelected(Setting.getInstance().updateFastStepCommand_register);

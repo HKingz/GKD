@@ -61,6 +61,7 @@ public class Setting {
 	public boolean updateAfterGKDCommand_memory;
 	public boolean updateAfterGKDCommand_instruction;
 	public boolean updateAfterGKDCommand_breakpoint;
+	public boolean updateAfterGKDCommand_watchPoint;
 	public boolean updateAfterGKDCommand_gdt;
 	public boolean updateAfterGKDCommand_ldt;
 	public boolean updateAfterGKDCommand_idt;
@@ -73,6 +74,7 @@ public class Setting {
 	public boolean updateFastStepCommand_memory;
 	public boolean updateFastStepCommand_instruction;
 	public boolean updateFastStepCommand_breakpoint;
+	public boolean updateFastStepCommand_watchPoint;
 	public boolean updateFastStepCommand_gdt;
 	public boolean updateFastStepCommand_ldt;
 	public boolean updateFastStepCommand_idt;
@@ -108,6 +110,7 @@ public class Setting {
 	}
 
 	public HashMap<String, DialogPosition> dialogPositions = new HashMap<String, DialogPosition>();
+
 
 	public Setting() {
 		currentLanguage = "en_US";
