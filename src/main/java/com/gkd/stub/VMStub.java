@@ -80,4 +80,9 @@ public interface VMStub {
 	public void changeReigsterValue(String register, BigInteger value);
 
 	public void waitVMStop();
+
+	public void addPhysicalWatchPoint(BigInteger address);
+
+	public void deletePhysicalWatchPoint(BigInteger breakpointNo);
+
 }

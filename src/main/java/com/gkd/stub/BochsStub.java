@@ -914,4 +914,16 @@ public class BochsStub implements VMStub {
 		commandReceiver.getCommandResult();
 	}
 
+	@Override
+	public void addPhysicalWatchPoint(BigInteger address) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deletePhysicalWatchPoint(BigInteger breakpointNo) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
