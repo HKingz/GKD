@@ -525,6 +525,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	public JTextField dumpPagingSummaryPageDirectoryAddressTextField;
 	private JButton dumpPagingSummaryTableAtAddressButton;
 	private ArrayList<CustomPanel> customPanels = new ArrayList<CustomPanel>();
+	private JPanel watchPointPanel;
+	private JScrollPane scrollPane;
+	private JTable table;
+	private JPanel panel_3;
+	private JButton addWatchPointButton;
+	private JButton editWatchPointButton;
+	private JButton deleteWatchPointButton;
 
 	public GKD() {
 		super();
@@ -4320,6 +4327,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		jPanel2.add(vmCommandButton, "2, 0");
 		jPanel2.add(getClearBochsButton(), "3, 0");
 		vmCommandButton.setText("Run");
+		upperRightTabbedPane.addTab("Watch point", null, getWatchPointPanel(), null);
 		vmCommandButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				vmCommandButtonActionPerformed(evt);
@@ -8551,5 +8559,88 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			});
 		}
 		return dumpPagingSummaryTableAtAddressButton;
+	}
+	private JPanel getWatchPointPanel() {
+		if (watchPointPanel == null) {
+			watchPointPanel = new JPanel();
+			watchPointPanel.setLayout(new BorderLayout(0, 0));
+			watchPointPanel.add(getScrollPane(), BorderLayout.CENTER);
+			watchPointPanel.add(getPanel_3(), BorderLayout.SOUTH);
+		}
+		return watchPointPanel;
+	}
+	private JScrollPane getScrollPane() {
+		if (scrollPane == null) {
+			scrollPane = new JScrollPane();
+			scrollPane.setViewportView(getTable());
+		}
+		return scrollPane;
+	}
+	private JTable getTable() {
+		if (table == null) {
+			table = new JTable();
+		}
+		return table;
+	}
+	private JPanel getPanel_3() {
+		if (panel_3 == null) {
+			panel_3 = new JPanel();
+			panel_3.add(getAddWatchPointButton());
+			panel_3.add(getEditWatchPointButton());
+			panel_3.add(getDeleteWatchPointButton());
+		}
+		return panel_3;
+	}
+	private JButton getAddWatchPointButton() {
+		if (addWatchPointButton == null) {
+			addWatchPointButton = new JButton("Add");
+			addWatchPointButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					addWatchPointButton.setEnabled(false);
+					String type = (String) JOptionPane.showInputDialog(GKD.this, null, "Add watch point", JOptionPane.QUESTION_MESSAGE, null,
+							new Object[] { MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address") },
+							MyLanguage.getString("Physical_address"));
+					if (type != null) {
+						String address = JOptionPane.showInputDialog(GKD.this, "Please input watch address", "Add watch point", JOptionPane.QUESTION_MESSAGE);
+						if (address != null) {
+							if (type.equals(MyLanguage.getString("Physical_address"))) {
+								VMController.getVM().addPhysicalWatchPoint(CommonLib.string2BigInteger(address));
+							} else if (type.equals(MyLanguage.getString("Linear_address"))) {
+								VMController.getVM().addLinearBreakpoint(CommonLib.string2BigInteger(address));
+							} else {
+								try {
+									VMController.getVM().addVirtualWatchPoint(CommonLib.string2BigInteger(address.split(":")[0]), CommonLib.string2BigInteger(address.split(":")[1]));
+								} catch (Exception ex) {
+									JOptionPane.showMessageDialog(GKD.this, "Virtual address should be in form 0x12:0xabcdef", "Error", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							updateWatchPointTable();
+						}
+					}
+					addWatchPointButton.setEnabled(true);
+				}
+			});
+		}
+		return addWatchPointButton;
+	}
+	private JButton getEditWatchPointButton() {
+		if (editWatchPointButton == null) {
+			editWatchPointButton = new JButton("Edit");
+			editWatchPointButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+		}
+		return editWatchPointButton;
+	}
+	private JButton getDeleteWatchPointButton() {
+		if (deleteWatchPointButton == null) {
+			deleteWatchPointButton = new JButton("Delete");
+			deleteWatchPointButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+				}
+			});
+		}
+		return deleteWatchPointButton;
 	}
 }
