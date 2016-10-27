@@ -77,7 +77,7 @@ public class CustomPanel extends JPanel {
 
 	public void initData(int[] bytes) {
 		this.bytes = bytes;
-		System.out.println(CommonLib.getHexString(bytes, " "));
+//		System.out.println(CommonLib.getHexString(bytes, " "));
 		model.columnNames = new String[customPanelData.columnNames.length * (noOfColumn / customPanelData.columnNames.length)];
 		for (int x = 0; x < model.columnNames.length; x++) {
 			model.columnNames[x] = customPanelData.columnNames[x % customPanelData.columnNames.length];
@@ -96,7 +96,7 @@ public class CustomPanel extends JPanel {
 					o += 8;
 				}
 			}
-			System.out.println("   ="+Long.toHexString(value));
+			//System.out.println("   ="+Long.toHexString(value));
 			data.add("0x" + Long.toHexString(value));
 			offset += len;
 			x++;

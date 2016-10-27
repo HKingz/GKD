@@ -534,7 +534,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable watchPointTable;
 	private JPanel panel_3;
 	private JButton addWatchPointButton;
-	private JButton editWatchPointButton;
 	private JButton deleteWatchPointButton;
 
 	public GKD() {
@@ -8635,7 +8634,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (watchPointTable == null) {
 			watchPointTable = new JTable();
 			watchPointTable.getTableHeader().setReorderingAllowed(false);
-			jScrollPane9.setViewportView(watchPointTable);
 			watchPointTable.setModel(watchPointTableModel);
 			watchPointTable.setAutoResizeMode(JTable.AUTO_RESIZE_LAST_COLUMN);
 			watchPointTable.getColumnModel().getColumn(0).setCellRenderer(new BreakpointTableCellRenderer());
@@ -8648,7 +8646,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (panel_3 == null) {
 			panel_3 = new JPanel();
 			panel_3.add(getAddWatchPointButton());
-			panel_3.add(getEditWatchPointButton());
 			panel_3.add(getDeleteWatchPointButton());
 		}
 		return panel_3;
@@ -8677,17 +8674,6 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			});
 		}
 		return addWatchPointButton;
-	}
-
-	private JButton getEditWatchPointButton() {
-		if (editWatchPointButton == null) {
-			editWatchPointButton = new JButton("Edit");
-			editWatchPointButton.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
-				}
-			});
-		}
-		return editWatchPointButton;
 	}
 
 	private JButton getDeleteWatchPointButton() {

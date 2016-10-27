@@ -936,8 +936,8 @@ public class BochsStub implements VMStub {
 
 		for (int x = 0; x < lines.length; x++) {
 			if (lines[x].contains("wr") || lines[x].contains("rd")) {
-				Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s+")));
-				if (strs.size() == 3) {
+				Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split("\\s+(?![^(]*\\))")));
+				if (strs.size() == 4) {
 					r.add(strs);
 				}
 			}

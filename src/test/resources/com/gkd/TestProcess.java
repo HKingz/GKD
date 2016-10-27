@@ -15,7 +15,7 @@ public class TestProcess implements Runnable {
 	Vector<String> lines = new Vector<String>();
 	BufferedReader br;
 
-	public static void main(String[] args) {
+	public static void main(String args[]) {
 		new TestProcess();
 	}
 
