@@ -8660,10 +8660,17 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			addWatchPointButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					addWatchPointButton.setEnabled(false);
-					String address = JOptionPane.showInputDialog(GKD.this, "Please input watch address", "Add watch point", JOptionPane.QUESTION_MESSAGE);
-					if (address != null) {
-						VMController.getVM().addPhysicalWatchPoint(CommonLib.string2BigInteger(address));
-						updateWatchPoint();
+					try {
+						String[] options = { "Write", "read" };
+						int opt = JOptionPane.showOptionDialog(GKD.this, "What watchpoint you want to add ?", "Question", JOptionPane.YES_NO_CANCEL_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options, "Write");
+						String address = JOptionPane.showInputDialog(GKD.this, "Please input watch address", "Add watch point", JOptionPane.QUESTION_MESSAGE);
+						if (address != null) {
+							VMController.getVM().addPhysicalWatchPoint(CommonLib.string2BigInteger(address), opt == 1);
+							updateWatchPoint();
+						}
+					} catch (Exception ex) {
+						ex.printStackTrace();
 					}
 					addWatchPointButton.setEnabled(true);
 				}
@@ -8688,6 +8695,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			deleteWatchPointButton = new JButton("Delete");
 			deleteWatchPointButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
+					deleteWatchPointButton.setEnabled(false);
+					int rows[] = watchPointTable.getSelectedRows();
+					for (int x = 0; x < rows.length; x++) {
+						VMController.getVM().deleteWatchPoint(CommonLib.string2BigInteger(watchPointTable.getValueAt(rows[x], 1).toString()));
+					}
+					updateWatchPoint();
+					deleteWatchPointButton.setEnabled(true);
 				}
 			});
 		}

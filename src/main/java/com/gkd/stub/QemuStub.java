@@ -541,9 +541,15 @@ public class QemuStub implements VMStub {
 	}
 
 	@Override
-	public void deletePhysicalWatchPoint(BigInteger breakpointNo) {
+	public void deleteWatchPoint(BigInteger address) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public Vector<Vector<String>> watchpoint() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

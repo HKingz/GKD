@@ -83,7 +83,7 @@ public interface VMStub {
 
 	public void addPhysicalWatchPoint(BigInteger address, boolean isRead);
 
-	public void deletePhysicalWatchPoint(BigInteger breakpointNo);
+	public void deleteWatchPoint(BigInteger address);
 
 	public Vector<Vector<String>> watchpoint();
 }

@@ -755,7 +755,7 @@ public class BochsStub implements VMStub {
 						String wr = String.valueOf((value >> 1) & 1);
 						String p = String.valueOf((value >> 0) & 1);
 						String base = "";
-						if (ps.equals("1")) {
+						if ( ps.equals("1")) {
 							long baseL = value & 0xffc00000;
 							base = "0x" + Long.toHexString(baseL);
 						} else {
@@ -917,16 +917,15 @@ public class BochsStub implements VMStub {
 	@Override
 	public void addPhysicalWatchPoint(BigInteger address, boolean isRead) {
 		if (isRead) {
-			sendBochsCommand("watch r" + address);
+			sendBochsCommand("watch r 0x" + address.toString(16));
 		} else {
-			sendBochsCommand("watch w" + address);
+			sendBochsCommand("watch w 0x" + address.toString(16));
 		}
 	}
 
 	@Override
-	public void deletePhysicalWatchPoint(BigInteger breakpointNo) {
-		// TODO Auto-generated method stub
-
+	public void deleteWatchPoint(BigInteger address) {
+		sendBochsCommand("unwatch 0x" + address.toString(16));
 	}
 
 	@Override
@@ -936,10 +935,9 @@ public class BochsStub implements VMStub {
 		String[] lines = result.split("\n");
 
 		for (int x = 0; x < lines.length; x++) {
-			if (lines[x].contains("breakpoint")) {
-				Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s")));
-				if (strs.size() == 4) {
-					strs.remove(1);
+			if (lines[x].contains("wr") || lines[x].contains("rd")) {
+				Vector<String> strs = new Vector<String>(Arrays.asList(lines[x].trim().split(" \\s+")));
+				if (strs.size() == 3) {
 					r.add(strs);
 				}
 			}

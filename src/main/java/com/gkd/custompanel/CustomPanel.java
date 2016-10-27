@@ -90,10 +90,8 @@ public class CustomPanel extends JPanel {
 			int len = definitions[x % definitions.length];
 			long value = 0;
 			int o = 0;
-			System.out.println("----------------");
 			for (int z = 0; z < len; z++) {
 				if (offset + z < bytes.length) {
-					System.out.println("   " + offset + "  > " + bytes[offset + z]);
 					value += bytes[offset + z] << o;
 					o += 8;
 				}
