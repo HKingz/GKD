@@ -77,7 +77,7 @@ public class JmpSocketServer implements Runnable {
 			Thread t = new Thread() {
 				public void run() {
 					try {
-						Thread.sleep(2000);
+						Thread.sleep(1000);
 						JOptionPane.getRootFrame().dispose();
 						DeleteDbFiles.execute(new File(".").getAbsolutePath(), "jmpDB", true);
 					} catch (InterruptedException ex) {

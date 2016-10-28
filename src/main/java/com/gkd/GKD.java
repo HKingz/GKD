@@ -498,13 +498,13 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JButton jumpToInstructionButton;
 	public static JLabel instrumentStatusLabel;
 
-	TableModel breakpointTableModel = new DefaultTableModel(new String[][] {},
-			new String[] { MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit") }) {
+	TableModel breakpointTableModel = new DefaultTableModel(new String[][]{},
+			new String[]{MyLanguage.getString("No"), MyLanguage.getString("Address_type"), "Disp Enb Address", MyLanguage.getString("Hit")}) {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
 	};
-	TableModel watchPointTableModel = new DefaultTableModel(new String[][] {}, new String[] { "Type", "Address", "Len", "Bytes" }) {
+	TableModel watchPointTableModel = new DefaultTableModel(new String[][]{}, new String[]{"Type", "Address", "Len", "Bytes"}) {
 		public boolean isCellEditable(int row, int col) {
 			return false;
 		}
@@ -743,7 +743,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// libGDB = new JLibGDB("localhost",
 			// Integer.parseInt(GKDCommonLib.readConfig(cmd,
 			// "/gkd/gkd_server_port/text()")));
-			VMController.getVM().initStub(new String[] { "localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()") });
+			VMController.getVM().initStub(new String[]{"localhost", GKDCommonLib.readConfig(cmd, "/gkd/gkd_server_port/text()")});
 		}
 
 		// Setting.getInstance().loadBreakpointAtStartup =
@@ -1188,9 +1188,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// end load customPanel
 			logger.info("started GKD " + simpleDateFormat.format(new Date()));
 			logger.info("used " + (double) (new Date().getTime() - startDate.getTime()) / 1000 + " sec");
-		} catch (
-
-		Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(ERROR);
 		}
@@ -2345,7 +2343,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			Vector<Long> linearAddresses = new Vector<Long>();
 			Vector<Long> physicalAddresses = new Vector<Long>();
 			long linearAddress = 0;
-			outerloop: for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
+			outerloop:
+			for (int pageDirectoryNo = 0; pageDirectoryNo < 1024; pageDirectoryNo++) {
 				long value = CommonLib.getInt(pageDirectoryBytes, pageDirectoryNo * 4);
 				long pageTableBaseAddress = value & 0xfffff000;
 
@@ -2541,11 +2540,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							String lineNo[] = getCCode(pc, true);
 							if (s != null && lineNo != null) {
 								for (int index = 0; index < s.length; index++) {
-									model.addRow(new String[] { "", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], "" });
+									model.addRow(new String[]{"", "cCode : 0x" + pc.toString(16) + " : " + lineNo[index], s[index], ""});
 								}
 							}
 							// end load cCode
-							model.addRow(new String[] { "", pc.toString(), instruction, decodedBytes });
+							model.addRow(new String[]{"", pc.toString(), instruction, decodedBytes});
 						} else {
 							model.replace(model.getRowCount() - 1, 3, model.getRow(model.getRowCount() - 1)[3] + temp[1].trim().replaceAll("-", ""));
 						}
@@ -2592,7 +2591,8 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				DwarfLine startLine = null;
 				DwarfLine endLine = null;
 				DwarfDebugLineHeader startHeader = null;
-				loop1: for (CompileUnit cu : dwarf.compileUnits) {
+				loop1:
+				for (CompileUnit cu : dwarf.compileUnits) {
 					DwarfDebugLineHeader header = cu.dwarfDebugLineHeader;
 					boolean toggle = false;
 					for (DwarfLine line : header.lines) {
@@ -2918,7 +2918,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 					String p = String.valueOf((value >> 0) & 1);
 					boolean tempB = model.isShowZeroAddress();
 					model.setShowZeroAddress(true);
-					model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+					model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p});
 					model.setShowZeroAddress(tempB);
 				} else if (pse) {
 					if (ps == 0) {
@@ -2935,7 +2935,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 						String p = String.valueOf((value >> 0) & 1);
 						boolean tempB = model.isShowZeroAddress();
 						model.setShowZeroAddress(true);
-						model.addRow(new String[] { String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p });
+						model.addRow(new String[]{String.valueOf(x / 4), base, avl, g, pat, d, a, pcd, pwt, us, wr, p});
 						model.setShowZeroAddress(tempB);
 					} else {
 						// no page table
@@ -3011,7 +3011,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private void addBreakpointButtonActionPerformed(ActionEvent evt) {
 		addBreakpointButton.setEnabled(false);
 		String type = (String) JOptionPane.showInputDialog(this, null, "Add breakpoint", JOptionPane.QUESTION_MESSAGE, null,
-				new Object[] { MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address") },
+				new Object[]{MyLanguage.getString("Physical_address"), MyLanguage.getString("Linear_address"), MyLanguage.getString("Virtual_address")},
 				MyLanguage.getString("Physical_address"));
 		if (type != null) {
 			String address = JOptionPane.showInputDialog(this, "Please input breakpoint address", "Add breakpoint", JOptionPane.QUESTION_MESSAGE);
@@ -3989,7 +3989,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getSearchMemoryFromComboBox() {
 		if (searchMemoryFromComboBox == null) {
-			ComboBoxModel<String> searchMemoryFromComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+			ComboBoxModel<String> searchMemoryFromComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
 			searchMemoryFromComboBox = new JComboBox<String>();
 			searchMemoryFromComboBox.setModel(searchMemoryFromComboBoxModel);
 			searchMemoryFromComboBox.setEditable(true);
@@ -4008,7 +4008,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getSearchMemoryToComboBox() {
 		if (searchMemoryToComboBox == null) {
-			ComboBoxModel<String> jSearchMemoryToComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+			ComboBoxModel<String> jSearchMemoryToComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
 			searchMemoryToComboBox = new JComboBox<String>();
 			searchMemoryToComboBox.setModel(jSearchMemoryToComboBoxModel);
 			searchMemoryToComboBox.setEditable(true);
@@ -4100,31 +4100,26 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			{
 				progressBarDialog.progressBar.setValue(51);
 				progressBarDialog.progressBar.setString("Init GUI - 3.1");
-				
+
 				//$hide>>$
 				Thread loadThread1 = new Thread() {
 					public void run() {
-				//$hide<<$
+						//$hide<<$
 						mainPanel.add(getMaximizableTabbedPane_BasePanel(), "jMaximizableTabbedPane_BasePanel1");
-				//$hide>>$
+						//$hide>>$
 					}
 				};
 				//$hide<<$
-				
-				progressBarDialog.progressBar.setValue(52);
-				progressBarDialog.progressBar.setString("Init GUI - 3.2");
-				
+
 				//$hide>>$
 				Thread loadThread2 = new Thread() {
 					public void run() {
-				//$hide<<$
+						//$hide<<$
 						mainPanel.add(getJInstrumentPanel(), "instrumentPanel");
-				//$hide>>$
+						//$hide>>$
 					}
 				};
 				//$hide<<$
-				progressBarDialog.progressBar.setValue(53);
-				progressBarDialog.progressBar.setString("Init GUI - 3.3");
 				// don't remove this line, because i uncomment this line to make
 				// runningPanel appears in windowbuilder
 				// mainPanel.add(getRunningPanel(), "Running Panel");
@@ -4132,28 +4127,31 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				//$hide>>$
 				Thread loadThread3 = new Thread() {
 					public void run() {
-				//$hide<<$
+						//$hide<<$
 						mainPanel.add(getJRunningLabel(), "Running Label");
 						mainPanel.add(getOsLogPanel(), "osLogPanel");
 						mainPanel.add(getRunningPanel(), "Running Panel");
-						
-						progressBarDialog.progressBar.setValue(56);
-						progressBarDialog.progressBar.setString("Init GUI - 3.4");
 						mainPanel.add(getSourceLevelDebugger(), "sourceLevelDebugger");
-				//$hide>>$
+						//$hide>>$
 					}
 				};
 				//$hide<<$
-				
+
 				//$hide>>$
 				loadThread1.start();
 				loadThread2.start();
 				loadThread3.start();
-				
+
 				try {
 					loadThread1.join();
+					progressBarDialog.progressBar.setValue(52);
+					progressBarDialog.progressBar.setString("Init GUI - 3.2");
 					loadThread2.join();
+					progressBarDialog.progressBar.setValue(53);
+					progressBarDialog.progressBar.setString("Init GUI - 3.3");
 					loadThread3.join();
+					progressBarDialog.progressBar.setValue(56);
+					progressBarDialog.progressBar.setString("Init GUI - 3.4");
 				} catch (Exception ex) {
 					logger.error("Load thread error : " + ex.getMessage());
 					System.exit(1234);
@@ -4193,7 +4191,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		instructionPanel.setPreferredSize(new java.awt.Dimension(604, 452));
 		instructionControlPanel = new JToolBar();
 		instructionPanel.add(instructionControlPanel, BorderLayout.NORTH);
-		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[] {});
+		ComboBoxModel<String> instructionComboBoxModel = new DefaultComboBoxModel<String>(new String[]{});
 		instructionComboBox = new JComboBox<String>();
 		instructionComboBox.setMaximumSize(new Dimension(200, 23));
 		instructionComboBox.setOpaque(false);
@@ -4351,7 +4349,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		vmCommandScrollPane4.setViewportView(vmCommandEditorPane);
 		vmPanel.add(vmCommandScrollPane4, BorderLayout.CENTER);
 		jPanel2 = new JPanel();
-		TableLayout jPanel2Layout = new TableLayout(new double[][] { { TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM }, { TableLayout.FILL } });
+		TableLayout jPanel2Layout = new TableLayout(new double[][]{{TableLayout.FILL, 411.0, TableLayout.MINIMUM, TableLayout.MINIMUM}, {TableLayout.FILL}});
 		jPanel2Layout.setHGap(5);
 		jPanel2Layout.setVGap(5);
 		jPanel2.setLayout(jPanel2Layout);
@@ -4739,11 +4737,11 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 		if (jPanel20 == null) {
 			jPanel20 = new JPanel();
 			jPanel20.setPreferredSize(new java.awt.Dimension(189, 629));
-			jPanel20.setLayout(new FormLayout(new ColumnSpec[] { FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"), },
-					new RowSpec[] { RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-							FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
-							FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
-							FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, }));
+			jPanel20.setLayout(new FormLayout(new ColumnSpec[]{FormSpecs.UNRELATED_GAP_COLSPEC, ColumnSpec.decode("174px:grow"),},
+					new RowSpec[]{RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("25px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, RowSpec.decode("22px"), FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC,
+						FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC, FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,
+						FormSpecs.RELATED_GAP_ROWSPEC, FormSpecs.DEFAULT_ROWSPEC,}));
 			jPanel20.add(getLblCr(), "2, 1");
 			jPanel20.add(getCr3RadioButton(), "2, 3");
 			jPanel20.add(getPanel(), "2, 5, fill, fill");
@@ -5711,7 +5709,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getELFHeaderTable() {
 		if (elfHeaderTable == null) {
-			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[] { MyLanguage.getString("Field"), MyLanguage.getString("Value") });
+			TableModel jELFHeaderTableModel = new DefaultTableModel(null, new String[]{MyLanguage.getString("Field"), MyLanguage.getString("Value")});
 			elfHeaderTable = new JTable();
 			elfHeaderTable.getTableHeader().setReorderingAllowed(false);
 			elfHeaderTable.setModel(jELFHeaderTableModel);
@@ -5857,7 +5855,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// symbol table
 			int symbolTableNo = 0;
 			while (map.get("symbolTable" + symbolTableNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx" });
+				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[]{"No.", "st_name", "st_value", "st_size", "st_info", "st_other", "p_st_shndx"});
 				JTable tempTable = new JTable();
 				HashMap tempMap = (HashMap) map.get("symbolTable" + symbolTableNo);
 				Vector<LinkedHashMap> v = (Vector<LinkedHashMap>) tempMap.get("vector");
@@ -5887,7 +5885,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 			// note
 			int noteSectionNo = 0;
 			while (map.get("note" + noteSectionNo) != null) {
-				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[] { "No.", "namesz", "descsz", "type", "name", "desc" });
+				DefaultTableModel tempTableModel = new DefaultTableModel(null, new String[]{"No.", "namesz", "descsz", "type", "name", "desc"});
 				JTable tempTable = new JTable();
 				HashMap<String, Vector<LinkedHashMap<String, Object>>> tempMap = (HashMap) map.get("note" + noteSectionNo);
 				Vector<LinkedHashMap<String, Object>> v = tempMap.get("vector");
@@ -5969,7 +5967,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 	private JTable getJSectionTable() {
 		if (elfSectionTable == null) {
 			TableModel jSectionTableModel = new DefaultTableModel(null,
-					new String[] { "No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize" });
+					new String[]{"No.", "sh_name", "sh_type", "sh_flags", "sh_addr", "sh_offset", "sh_size", "sh_link", "sh_info", "sh_addralign", "sh_entsize"});
 			elfSectionTable = new JTable();
 			elfSectionTable.getTableHeader().setReorderingAllowed(false);
 			elfSectionTable.setModel(jSectionTableModel);
@@ -5988,7 +5986,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JTable getJProgramHeaderTable() {
 		if (programHeaderTable == null) {
-			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[] { "No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align" });
+			TableModel jProgramHeaderTableModel = new DefaultTableModel(null, new String[]{"No.", "p_type", "p_offset", "p_vaddr", "p_filesz", "p_memsz", "p_flags", "p_align"});
 			programHeaderTable = new JTable();
 			programHeaderTable.getTableHeader().setReorderingAllowed(false);
 			programHeaderTable.setModel(jProgramHeaderTableModel);
@@ -7356,19 +7354,19 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 							.addComponent(getClearRunningTextAreaButton(), GroupLayout.PREFERRED_SIZE, 45, GroupLayout.PREFERRED_SIZE)
 							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(getStepCountLabel(), 0, 749, Short.MAX_VALUE).addGap(48))
 							.addComponent(getRunningTextArea(), GroupLayout.Alignment.LEADING, 0, 1116, Short.MAX_VALUE).addGroup(GroupLayout.Alignment.LEADING,
-									jRunningPanelLayout.createSequentialGroup().addGap(65)
-											.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE).addPreferredGap(
-													LayoutStyle.ComponentPlacement.RELATED)
-											.addGroup(jRunningPanelLayout.createParallelGroup()
-													.addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
-																	.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-																	.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
-													.addGroup(GroupLayout.Alignment.LEADING,
-															jRunningPanelLayout.createSequentialGroup()
-																	.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(), LayoutStyle.ComponentPlacement.INDENT)
-																	.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
-																	.addGap(0, 25, Short.MAX_VALUE))))));
+							jRunningPanelLayout.createSequentialGroup().addGap(65)
+									.addComponent(getJCheckBox1(), GroupLayout.PREFERRED_SIZE, 335, GroupLayout.PREFERRED_SIZE).addPreferredGap(
+									LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(jRunningPanelLayout.createParallelGroup()
+											.addGroup(GroupLayout.Alignment.LEADING,
+													jRunningPanelLayout.createSequentialGroup().addComponent(getAutoUpdateEvery20LinesCheckBox(), 0, 546, Short.MAX_VALUE)
+															.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+															.addComponent(getSaveToRunDotTxtCheckBox(), GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
+											.addGroup(GroupLayout.Alignment.LEADING,
+													jRunningPanelLayout.createSequentialGroup()
+															.addPreferredGap(getAutoUpdateEvery20LinesCheckBox(), getRunningLabel(), LayoutStyle.ComponentPlacement.INDENT)
+															.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 679, GroupLayout.PREFERRED_SIZE)
+															.addGap(0, 25, Short.MAX_VALUE))))));
 			jRunningPanelLayout.setVerticalGroup(jRunningPanelLayout.createSequentialGroup()
 					.addComponent(getRunningLabel(), GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 					.addGroup(jRunningPanelLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -7487,7 +7485,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 
 	private JComboBox<String> getMaxRowComboBox() {
 		if (maxRowComboBox == null) {
-			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[] { "infinite", "10", "100", "200", "500", "1000", "2000" });
+			ComboBoxModel<String> maxRowComboBoxModel = new DefaultComboBoxModel<String>(new String[]{"infinite", "10", "100", "200", "500", "1000", "2000"});
 			maxRowComboBox = new JComboBox<String>();
 			maxRowComboBox.setModel(maxRowComboBoxModel);
 			maxRowComboBox.setSelectedItem("100");
@@ -8658,7 +8656,7 @@ public class GKD extends JFrame implements WindowListener, ApplicationListener, 
 				public void actionPerformed(ActionEvent e) {
 					addWatchPointButton.setEnabled(false);
 					try {
-						String[] options = { "Write", "read" };
+						String[] options = {"Write", "read"};
 						int opt = JOptionPane.showOptionDialog(GKD.this, "What watchpoint you want to add ?", "Question", JOptionPane.YES_NO_CANCEL_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options, "Write");
 						String address = JOptionPane.showInputDialog(GKD.this, "Please input watch address", "Add watch point", JOptionPane.QUESTION_MESSAGE);
