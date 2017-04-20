@@ -215,7 +215,7 @@
 		<dependency>
 			<groupId>com.peter</groupId>
 			<artifactId>peter-dwarf</artifactId>
-			<version>20160709</version>
+			<version>20170312</version>
 		</dependency>
 		<dependency>
 			<groupId>com.peter</groupId>
